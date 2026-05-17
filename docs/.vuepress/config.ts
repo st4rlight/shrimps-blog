@@ -42,10 +42,13 @@ export default defineUserConfig({
         title: '博客',
       },
       {
-        type: 'post',
-        dir: 'blog/ClaudeCode分析',
+        type: 'doc',
+        dir: 'claude-code-analysis',
         title: 'ClaudeCode分析',
-        link: '/claude-code-analysis/',
+        sidebar: [
+          'README.md',
+          'context-compression-and-cache-analysis.md',
+        ],
       },
     ],
     search: {

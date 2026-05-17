@@ -6,15 +6,8 @@ config:
     full: true
     hero:
       name: st4rlight
-      tagline: 光要落在正在发生的事上
-      text: 记录技术、想法、折腾与一些还没来得及整理好的生活碎片。
-      actions:
-        - theme: brand
-          text: 进入博客
-          link: /blog/
-        - theme: alt
-          text: 认识一下我
-          link: /about/
+      tagline: 平安.健康.自律.快樂.長久<span class="hero-nowrap">(●'◡'●)</span>
+      text: 我依然相信愛情，但是不再相信會降臨到我身上
 ---
 
 欢迎来到我的个人博客。

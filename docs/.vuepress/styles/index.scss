@@ -14,9 +14,15 @@
   position: relative;
   overflow: hidden;
   background:
-    radial-gradient(circle at top left, rgb(139 92 246 / 8%), transparent 38%),
-    radial-gradient(circle at top right, rgb(59 130 246 / 7%), transparent 36%),
-    linear-gradient(180deg, #fcfcff 0%, #f7f8fc 100%);
+    radial-gradient(circle at 18% 18%, rgb(236 72 153 / 18%), transparent 24%),
+    radial-gradient(circle at 82% 16%, rgb(59 130 246 / 18%), transparent 26%),
+    radial-gradient(circle at 50% 82%, rgb(250 204 21 / 12%), transparent 24%),
+    radial-gradient(circle at 50% 40%, rgb(168 85 247 / 10%), transparent 34%),
+    linear-gradient(180deg, #fffefe 0%, #fbfbff 42%, #f5f7ff 100%);
+}
+
+.vp-home-hero::selection {
+  background: rgb(139 92 246 / 18%);
 }
 
 .vp-home-hero::before,
@@ -32,23 +38,50 @@
 }
 
 .vp-home-hero::before {
-  top: -8rem;
-  left: -10rem;
-  background: rgb(168 85 247 / 12%);
-  animation: home-float 16s ease-in-out infinite;
+  top: -10rem;
+  left: -12rem;
+  width: 36rem;
+  height: 36rem;
+  background: radial-gradient(circle, rgb(244 114 182 / 22%) 0%, rgb(168 85 247 / 12%) 45%, transparent 72%);
+  animation: home-float 18s ease-in-out infinite;
 }
 
 .vp-home-hero::after {
-  right: -8rem;
-  bottom: -10rem;
-  background: rgb(96 165 250 / 10%);
-  animation: home-float 20s ease-in-out infinite reverse;
+  right: -10rem;
+  bottom: -12rem;
+  width: 38rem;
+  height: 38rem;
+  background: radial-gradient(circle, rgb(96 165 250 / 20%) 0%, rgb(34 211 238 / 10%) 46%, transparent 72%);
+  animation: home-float 22s ease-in-out infinite reverse;
+}
+
+.vp-home-hero .hero-container::before {
+  position: absolute;
+  inset: 6% 5% auto 5%;
+  z-index: 0;
+  height: 78%;
+  pointer-events: none;
+  content: '';
+  background-image:
+    linear-gradient(rgb(148 163 184 / 8%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(148 163 184 / 8%) 1px, transparent 1px);
+  background-size: 28px 28px;
+  mask-image: radial-gradient(circle at center, rgb(0 0 0 / 78%), transparent 84%);
 }
 
 .vp-home-hero .hero-container,
 .vp-home-hero .hero-content {
   position: relative;
   z-index: 1;
+}
+
+.vp-home-hero .hero-tagline {
+  font-size: 40px;
+  line-height: 1.22;
+}
+
+.vp-home-hero .hero-tagline .hero-nowrap {
+  white-space: nowrap;
 }
 
 .home-panels {
@@ -101,6 +134,10 @@
 }
 
 @media (max-width: 959px) {
+  .vp-home-hero .hero-tagline {
+    font-size: 34px;
+  }
+
   .home-panels {
     grid-template-columns: 1fr;
   }
