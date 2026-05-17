@@ -29,6 +29,7 @@ export default defineUserConfig({
     navbar: [
       { text: '首页', link: '/' },
       { text: '博客', link: '/blog/' },
+      { text: 'ClaudeCode分析', link: '/claude-code-analysis/' },
       { text: '归档', link: '/blog/archives/' },
       { text: '标签', link: '/blog/tags/' },
       { text: '关于', link: '/about/' },
