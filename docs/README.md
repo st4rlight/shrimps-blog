@@ -1,5 +1,10 @@
 ---
+pageLayout: home
 home: true
+config:
+  - type: hero
+    full: true
+    effect: tint-plate
 ---
 
 # st4rlight
@@ -18,6 +23,14 @@ home: true
 - [查看归档](/blog/archives/)
 - [看看标签](/blog/tags/)
 - [认识一下我](/about/)
+
+## 正在发生
+
+这里会持续更新我最近在关注的内容：
+
+- VuePress 与博客系统折腾
+- 前端开发中的实践与复盘
+- 有意思的工具、想法和灵感片段
 
 ## 近期计划
 

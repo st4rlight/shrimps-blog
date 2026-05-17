@@ -5,12 +5,13 @@ import { plumeTheme } from 'vuepress-theme-plume'
 export default defineUserConfig({
   base: '/shrimps-blog/',
   lang: 'zh-CN',
-  title: "st4rlight's blog",
+  title: 'st4rlight',
   description: '记录技术、想法与生活碎片',
   head: [['meta', { name: 'theme-color', content: '#8b5cf6' }]],
   bundler: viteBundler(),
   theme: plumeTheme({
     hostname: 'https://st4rlight.github.io/shrimps-blog',
+    appearance: false,
     autoFrontmatter: {
       title: true,
       createTime: true,
