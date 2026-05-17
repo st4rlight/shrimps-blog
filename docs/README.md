@@ -5,6 +5,7 @@ config:
   - type: hero
     full: true
     effect: tint-plate
+    effectConfig: 242
 ---
 
 # st4rlight
