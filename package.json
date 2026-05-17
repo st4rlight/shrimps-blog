@@ -1,5 +1,5 @@
 {
-  "name": "st4rlight.github.io",
+  "name": "shrimps-blog",
   "version": "0.1.0",
   "description": "st4rlight 的个人博客，基于 VuePress 和 vuepress-theme-plume",
   "private": true,

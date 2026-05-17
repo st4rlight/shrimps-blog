@@ -3,7 +3,7 @@ name: Deploy VuePress Site
 on:
   push:
     branches:
-      - main
+      - master
   workflow_dispatch:
 
 permissions:
