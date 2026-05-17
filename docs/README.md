@@ -4,11 +4,18 @@ home: true
 config:
   - type: hero
     full: true
-    effect: tint-plate
-    effectConfig: 242
+    hero:
+      name: st4rlight
+      tagline: 光要落在正在发生的事上
+      text: 记录技术、想法、折腾与一些还没来得及整理好的生活碎片。
+      actions:
+        - theme: brand
+          text: 进入博客
+          link: /blog/
+        - theme: alt
+          text: 认识一下我
+          link: /about/
 ---
-
-# st4rlight
 
 欢迎来到我的个人博客。
 
@@ -25,6 +32,24 @@ config:
 - [看看标签](/blog/tags/)
 - [认识一下我](/about/)
 
+<div class="home-panels">
+  <div class="home-panel">
+    <span class="home-panel__label">最近状态</span>
+    <strong>持续折腾中</strong>
+    <p>博客刚上线，正在慢慢把它收拾成更顺眼的样子。</p>
+  </div>
+  <div class="home-panel">
+    <span class="home-panel__label">灵感捕获率</span>
+    <strong>时高时低</strong>
+    <p>想到什么就先记下来，之后再决定它值不值得写成长文。</p>
+  </div>
+  <div class="home-panel">
+    <span class="home-panel__label">今日浓度</span>
+    <strong>咖啡 + 代码</strong>
+    <p>如果页面哪里还不够好看，大概率我还会继续改。</p>
+  </div>
+</div>
+
 ## 正在发生
 
 这里会持续更新我最近在关注的内容：
@@ -32,6 +57,13 @@ config:
 - VuePress 与博客系统折腾
 - 前端开发中的实践与复盘
 - 有意思的工具、想法和灵感片段
+
+## 无用但保留
+
+- 喜欢把已经能用的东西继续改到更顺眼
+- 常常先开工，再边写边想名字
+- 对首页留白很多，但又忍不住想往里面塞点东西
+- 希望这个博客最后会长成一个很私人、但也很好逛的地方
 
 ## 近期计划
 
