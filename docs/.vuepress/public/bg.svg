@@ -1,0 +1,37 @@
+<svg width="1600" height="1200" viewBox="0 0 1600 1200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgBase" x1="800" y1="0" x2="800" y2="1200" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFFEFE"/>
+      <stop offset="0.52" stop-color="#FBFBFF"/>
+      <stop offset="1" stop-color="#F4F7FF"/>
+    </linearGradient>
+    <radialGradient id="pinkGlow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(280 220) rotate(16) scale(420 320)">
+      <stop stop-color="#FB7185" stop-opacity="0.28"/>
+      <stop offset="0.45" stop-color="#F472B6" stop-opacity="0.18"/>
+      <stop offset="1" stop-color="#F472B6" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="blueGlow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(1320 220) rotate(-12) scale(430 330)">
+      <stop stop-color="#60A5FA" stop-opacity="0.28"/>
+      <stop offset="0.5" stop-color="#38BDF8" stop-opacity="0.16"/>
+      <stop offset="1" stop-color="#38BDF8" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="violetGlow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(820 560) rotate(90) scale(520 360)">
+      <stop stop-color="#A78BFA" stop-opacity="0.2"/>
+      <stop offset="0.54" stop-color="#C084FC" stop-opacity="0.11"/>
+      <stop offset="1" stop-color="#C084FC" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="grid" width="36" height="36" patternUnits="userSpaceOnUse">
+      <path d="M36 0H0V36" stroke="#94A3B8" stroke-opacity="0.12"/>
+    </pattern>
+    <filter id="blurA" x="-200" y="-200" width="2000" height="1600" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="60"/>
+    </filter>
+  </defs>
+  <rect width="1600" height="1200" fill="url(#bgBase)"/>
+  <g filter="url(#blurA)">
+    <ellipse cx="260" cy="210" rx="280" ry="220" fill="url(#pinkGlow)"/>
+    <ellipse cx="1330" cy="200" rx="300" ry="230" fill="url(#blueGlow)"/>
+    <ellipse cx="820" cy="600" rx="360" ry="250" fill="url(#violetGlow)"/>
+  </g>
+  <rect x="120" y="90" width="1360" height="900" rx="36" fill="url(#grid)" opacity="0.5"/>
+</svg>

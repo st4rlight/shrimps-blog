@@ -46,8 +46,14 @@ export default defineUserConfig({
         dir: 'claude-code-analysis',
         title: 'ClaudeCode分析',
         sidebar: [
-          'README.md',
-          'context-compression-and-cache-analysis.md',
+          {
+            text: 'ClaudeCode分析',
+            link: '/claude-code-analysis/',
+            collapsed: false,
+            items: [
+              'context-compression-and-cache-analysis.md',
+            ],
+          },
         ],
       },
     ],
