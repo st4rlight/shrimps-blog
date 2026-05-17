@@ -5,8 +5,7 @@ config:
   - type: hero
     full: true
     hero:
-      name: st4rlight
-      tagline: 平安.健康.自律.快樂.<span class="hero-nowrap">長久(●'◡'●)</span>
+      tagline: <span class="hero-nowrap">平安.健康.自律.快樂.長久</span><br />(●'◡'●)<br />
       text: 我依然相信愛情，但是不再相信會降臨到我身上
 ---
 
