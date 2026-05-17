@@ -1,3 +1,15 @@
+:root {
+  --vp-nav-logo-height: 28px;
+}
+
+.vp-navbar-title .logo {
+  padding: 2px;
+  background: rgb(255 255 255 / 92%);
+  border: 1px solid rgb(148 163 184 / 18%);
+  border-radius: 10px;
+  box-shadow: 0 6px 18px rgb(15 23 42 / 8%);
+}
+
 .vp-home-hero {
   position: relative;
   overflow: hidden;
