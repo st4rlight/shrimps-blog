@@ -11,6 +11,7 @@ export default defineUserConfig({
   bundler: viteBundler(),
   theme: plumeTheme({
     hostname: 'https://st4rlight.github.io/shrimps-blog',
+    logo: '/logo.svg',
     appearance: false,
     autoFrontmatter: {
       title: true,
@@ -39,6 +40,12 @@ export default defineUserConfig({
         type: 'post',
         dir: 'blog',
         title: '博客',
+      },
+      {
+        type: 'post',
+        dir: 'blog/ClaudeCode分析',
+        title: 'ClaudeCode分析',
+        link: '/claude-code-analysis/',
       },
     ],
     search: {
