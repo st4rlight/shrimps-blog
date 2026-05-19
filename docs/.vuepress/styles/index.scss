@@ -253,6 +253,17 @@
   }
 }
 
+/* 修复 --- 渲染双线问题：hr 的 border-top 与紧跟的 h2 border-top 重叠 */
+.vp-doc hr {
+  margin: 28px 0 0;
+  border-top: none;
+}
+
+.vp-doc hr + h2 {
+  margin-top: 0;
+  padding-top: 28px;
+}
+
 @media (max-width: 959px) {
   .vp-layout::before {
     background-position: center 4.5rem;
