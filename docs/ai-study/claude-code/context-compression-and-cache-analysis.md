@@ -6,12 +6,12 @@ tags:
   - Prompt Cache
 excerpt: 从六层压缩防线、缓存保护体系到具体源码路径，系统分析 Claude Code 如何在压缩上下文时尽量保住缓存命中率。
 createTime: 2026/05/17 15:07:14
-permalink: /claude-code-analysis/513g0b0b/
+permalink: /ai-study/claude-code-context-compression-and-cache-analysis/
 ---
 
 # Claude Code 上下文压缩机制与缓存命中率深度分析
 
-> 源码版本：claude-code-analysis (2026-05)
+> 源码分析版本：2026-05
 > 核心目录：`src/services/compact/`, `src/services/api/`, `src/query.ts`
 
 ---
