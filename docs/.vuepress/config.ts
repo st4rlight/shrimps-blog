@@ -20,7 +20,7 @@ export default defineUserConfig({
     },
     profile: {
       name: 'st4rlight',
-      description: '在代码、灵感和日常之间持续发光',
+      description: "平安.健康.自律.快樂.長久(●'◡'●)",
       circle: true,
       layout: 'right',
     },
@@ -56,9 +56,18 @@ export default defineUserConfig({
           },
           {
             text: 'Superpowers',
+            link: '/ai-study/',
             collapsed: false,
             items: [
               'superpowers/superpowers-guide.md',
+            ],
+          },
+          {
+            text: 'RAG技术学习',
+            link: '/ai-study/',
+            collapsed: false,
+            items: [
+              'rag/taotian-rag-solution.md',
             ],
           },
         ],
