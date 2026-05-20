@@ -30,6 +30,7 @@ export default defineUserConfig({
     navbar: [
       { text: '首页', link: '/' },
       { text: '博客', link: '/blog/' },
+      { text: '思考领悟', link: '/thoughts/' },
       { text: 'AI学习', link: '/ai-study/' },
       { text: '归档', link: '/blog/archives/' },
       { text: '标签', link: '/blog/tags/' },
@@ -40,6 +41,11 @@ export default defineUserConfig({
         type: 'post',
         dir: 'blog',
         title: '博客',
+      },
+      {
+        type: 'post',
+        dir: 'thoughts',
+        title: '思考领悟',
       },
       {
         type: 'doc',

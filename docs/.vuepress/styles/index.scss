@@ -41,7 +41,7 @@
   pointer-events: none;
   content: '';
   background:
-    url('/shrimps-blog/bg.svg') center 3rem / min(1250px, 96vw) auto no-repeat;
+    url('/shrimps-blog/bg.svg') center 3rem / 100vw auto no-repeat;
   opacity: 1;
 }
 
@@ -267,7 +267,7 @@
 @media (max-width: 959px) {
   .vp-layout::before {
     background-position: center 4.5rem;
-    background-size: min(1200px, 145vw) auto;
+    background-size: 100vw auto;
   }
 
   .vp-home-hero .hero-tagline {
