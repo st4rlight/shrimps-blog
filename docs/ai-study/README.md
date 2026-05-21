@@ -22,7 +22,7 @@ permalink: /ai-study/
 
 这一部分主要记录 `Superpowers` 的使用方法、触发机制和工作流实践。
 
-- [Superpowers 使用技巧](./superpowers/superpowers-guide.md)
+- [Superpowers 使用技巧](./sdd/superpowers-guide.md)
 
 ### Harness
 

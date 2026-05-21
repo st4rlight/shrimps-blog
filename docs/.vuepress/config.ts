@@ -43,6 +43,11 @@ export default defineUserConfig({
         title: '博客',
       },
       {
+        type: 'post',
+        dir: 'thoughts',
+        title: '思考领悟',
+      },
+      {
         type: 'doc',
         dir: 'ai-study',
         title: 'AI学习',
@@ -56,11 +61,11 @@ export default defineUserConfig({
             ],
           },
           {
-            text: 'Superpowers',
+            text: 'SDD规范驱动开发',
             link: '/ai-study/',
             collapsed: false,
             items: [
-              'superpowers/superpowers-guide.md',
+              'sdd/superpowers-guide.md',
             ],
           },
           {
