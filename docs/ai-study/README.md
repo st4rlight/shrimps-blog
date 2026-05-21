@@ -24,6 +24,12 @@ permalink: /ai-study/
 
 - [Superpowers 使用技巧](./superpowers/superpowers-guide.md)
 
+### Harness
+
+这一部分主要记录 `Claude Code` Harness 体系的实战经验，包括 Hooks 机制、Subagent 隔离、上下文持久化等。
+
+- [得物数仓Harness实战](./harness/dewu-harness-practice.md)
+
 ### RAG技术学习
 
 这一部分主要记录 `RAG`（检索增强生成）相关的技术方案、实践总结和评估方法。
@@ -36,5 +42,6 @@ permalink: /ai-study/
 
 - `Claude Code` 的更多机制分析
 - `Superpowers` 的常用技能与工作流
+- `Harness` 的更多场景实践
 - `RAG` 的更多技术方案与评估实践
 - 其他 AI 编程工具的实践记录

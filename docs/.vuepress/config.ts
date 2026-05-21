@@ -20,7 +20,7 @@ export default defineUserConfig({
     },
     profile: {
       name: 'st4rlight',
-      description: "平安.健康.自律.快樂.長久(●'◡'●)",
+      description: '在代码、灵感和日常之间持续发光',
       circle: true,
       layout: 'right',
     },
@@ -43,17 +43,12 @@ export default defineUserConfig({
         title: '博客',
       },
       {
-        type: 'post',
-        dir: 'thoughts',
-        title: '思考领悟',
-      },
-      {
         type: 'doc',
         dir: 'ai-study',
         title: 'AI学习',
         sidebar: [
           {
-            text: 'Claude Code',
+            text: 'ClaudeCode分析',
             link: '/ai-study/',
             collapsed: false,
             items: [
@@ -66,6 +61,14 @@ export default defineUserConfig({
             collapsed: false,
             items: [
               'superpowers/superpowers-guide.md',
+            ],
+          },
+          {
+            text: 'Harness',
+            link: '/ai-study/',
+            collapsed: false,
+            items: [
+              'harness/dewu-harness-practice.md',
             ],
           },
           {
