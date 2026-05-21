@@ -20,7 +20,7 @@ export default defineUserConfig({
     },
     profile: {
       name: 'st4rlight',
-      description: '在代码、灵感和日常之间持续发光',
+      description: '所有事与愿违都是另有安排',
       circle: true,
       layout: 'right',
     },
@@ -28,13 +28,13 @@ export default defineUserConfig({
       { icon: 'github', link: 'https://github.com/st4rlight' },
     ],
     navbar: [
-      { text: '首页', link: '/' },
-      { text: '博客', link: '/blog/' },
-      { text: '思考领悟', link: '/thoughts/' },
-      { text: 'AI学习', link: '/ai-study/' },
-      { text: '归档', link: '/blog/archives/' },
-      { text: '标签', link: '/blog/tags/' },
-      { text: '关于', link: '/about/' },
+      { text: '首页', link: '/', icon: 'mdi:home' },
+      { text: '博客', link: '/blog/', icon: 'mdi:post-outline' },
+      { text: '思考领悟', link: '/thoughts/', icon: 'mdi:lightbulb-outline' },
+      { text: 'AI学习', link: '/ai-study/', icon: 'mdi:robot-outline' },
+      { text: '归档', link: '/blog/archives/', icon: 'mdi:archive-outline' },
+      { text: '标签', link: '/blog/tags/', icon: 'mdi:tag-outline' },
+      { text: '关于', link: '/about/', icon: 'mdi:account-outline' },
     ],
     collections: [
       {
