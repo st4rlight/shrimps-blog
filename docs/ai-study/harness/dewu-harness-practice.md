@@ -231,6 +231,8 @@ exit 0
 
 ## 数仓Harness架构
 
+![数仓Harness架构](/ai-study/harness/dewu-harness-architecture.png)
+
 不同类型的工作交给最合适的机制去做，而不是全部压在 Claude 的推理循环里。
 
 - **持久化层**：解决的是"失忆"问题
