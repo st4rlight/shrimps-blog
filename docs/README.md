@@ -22,6 +22,8 @@ config:
 
 - [进入博客列表](/blog/)
 - [思考领悟](/thoughts/)
+- [AI学习](/ai-study/)
+- [拾遗补阙](/notes/)
 - [查看归档](/blog/archives/)
 - [看看标签](/blog/tags/)
 - [认识一下我](/about/)

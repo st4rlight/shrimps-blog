@@ -32,6 +32,7 @@ export default defineUserConfig({
       { text: '博客', link: '/blog/', icon: 'mdi:post-outline' },
       { text: '思考领悟', link: '/thoughts/', icon: 'mdi:lightbulb-outline' },
       { text: 'AI学习', link: '/ai-study/', icon: 'mdi:robot-outline' },
+      { text: '拾遗补阙', link: '/notes/', icon: 'mdi:puzzle-outline' },
       { text: '归档', link: '/blog/archives/', icon: 'mdi:archive-outline' },
       { text: '标签', link: '/blog/tags/', icon: 'mdi:tag-outline' },
       { text: '关于', link: '/about/', icon: 'mdi:account-outline' },
@@ -82,6 +83,21 @@ export default defineUserConfig({
             collapsed: false,
             items: [
               'rag/taotian-rag-solution.md',
+            ],
+          },
+        ],
+      },
+      {
+        type: 'doc',
+        dir: 'notes',
+        title: '拾遗补阙',
+        sidebar: [
+          {
+            text: 'Java拾遗',
+            link: '/notes/',
+            collapsed: false,
+            items: [
+              'java-pickup/java-thread-synchronization.md',
             ],
           },
         ],
