@@ -3,7 +3,7 @@ title: Superpowers 使用技巧
 tags:
   - Claude Code
   - Superpowers
-  - 使用技巧
+  - SDD
 excerpt: 这篇文章聚焦 Superpowers 本身：它是什么、核心技能有哪些、工作流程如何串起来，以及在什么场景下会触发执行。
 createTime: 2026/05/19 10:00:00
 permalink: /ai-study/superpowers-guide/

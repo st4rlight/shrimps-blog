@@ -4,7 +4,7 @@ tags:
   - OpenSpec
   - SDD
   - 规范驱动开发
-  - AI编程
+  - Claude Code
 excerpt: OpenSpec 是面向 AI 编码助手的轻量级规范驱动开发（SDD）框架，核心理念是"先对齐，再构建"。这篇文章系统介绍 OpenSpec 的核心理念、工作流、目录结构、命令体系和实战用法。
 createTime: 2026/05/31 10:00:00
 permalink: /ai-study/openspec-guide/
