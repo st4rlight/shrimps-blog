@@ -66,6 +66,7 @@ export default defineUserConfig({
             link: '/ai-study/',
             collapsed: false,
             items: [
+              'sdd/openspec-guide.md',
               'sdd/superpowers-guide.md',
             ],
           },

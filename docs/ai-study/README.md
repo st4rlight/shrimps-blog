@@ -18,11 +18,12 @@ permalink: /ai-study/
 
 - [上下文压缩机制与缓存命中率深度分析](./claude-code/context-compression-and-cache-analysis.md)
 
-### Superpowers
+### SDD 规范驱动开发
 
-这一部分主要记录 `Superpowers` 的使用方法、触发机制和工作流实践。
+这一部分主要记录规范驱动开发（Spec-Driven Development）相关工具的使用方法、工作流实践和实战经验。
 
 - [Superpowers 使用技巧](./sdd/superpowers-guide.md)
+- [OpenSpec 实战指南](./sdd/openspec-guide.md)
 
 ### Harness
 
