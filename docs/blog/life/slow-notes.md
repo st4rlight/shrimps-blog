@@ -1,8 +1,8 @@
 ---
-title: 【AI生成测试文章】慢一点，也是在前进
+title: 慢一点，也是在前进
 tags:
   - 随笔
-  - 生活
+  - 生活态度
 excerpt: 不是所有进步都需要立刻被看见，很多时候，稳定地往前走就已经很难得。
 createTime: 2026/05/17 14:41:44
 permalink: /blog/69pnzplb/

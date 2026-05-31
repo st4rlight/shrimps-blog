@@ -2,7 +2,7 @@
 title: Claude Code 上下文压缩机制与缓存命中率深度分析
 tags:
   - Claude Code
-  - 上下文压缩
+  - 上下文管理
   - Prompt Cache
 excerpt: 从六层压缩防线、缓存保护体系到具体源码路径，系统分析 Claude Code 如何在压缩上下文时尽量保住缓存命中率。
 createTime: 2026/05/17 15:07:14

@@ -1,9 +1,9 @@
 ---
-title: 【AI生成测试文章】我想要的写作工作流
+title: 我想要的写作工作流
 tags:
   - Markdown
-  - 效率
-  - 写作
+  - 写作工作流
+  - 效率工具
 excerpt: 希望博客写作尽可能轻量，能快速开始、持续输出，而不是把精力都耗在发布流程上。
 createTime: 2026/05/17 14:41:35
 permalink: /blog/yucphnuc/
