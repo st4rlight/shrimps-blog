@@ -27,9 +27,13 @@ permalink: /notes/java-thread-synchronization/
 
 Java 提供了从轻量到重量级的多种同步方案，适用于不同场景。
 
+![Java线程同步方案总览](/notes/java-pickup/java-thread-synchronization/sync-overview.svg)
+
 ---
 
 ## synchronized 与 Object wait/notify
+
+![synchronized vs ReentrantLock 对比](/notes/java-pickup/java-thread-synchronization/synchronized-vs-reentrantlock.svg)
 
 `synchronized` 是 Java 内置的同步机制，基于 Monitor 实现。配合 `Object` 的 `wait()`、`notify()`、`notifyAll()` 可实现线程间通信。
 
@@ -183,6 +187,8 @@ public void method() {
 
 ### Condition 条件变量
 
+![Condition vs Object wait/notify](/notes/java-pickup/java-thread-synchronization/condition-vs-wait-notify.svg)
+
 `Condition` 解决了 `wait/notify` 只有单一等待队列的问题，每个 `Condition` 对应一个独立的等待队列：
 
 ```java
@@ -242,6 +248,8 @@ public String consume() throws InterruptedException {
 ---
 
 ## ReadWriteLock 与 StampedLock
+
+![读写锁机制对比](/notes/java-pickup/java-thread-synchronization/read-write-lock-mechanism.svg)
 
 ### ReadWriteLock
 
@@ -319,6 +327,8 @@ public void write(Object newData) {
 
 `Atomic` 类基于 CAS（Compare-And-Swap）实现，无锁并发，适合简单的计数或引用更新。
 
+![CAS机制与ABA问题](/notes/java-pickup/java-thread-synchronization/cas-and-aba-problem.svg)
+
 ```java
 private final AtomicInteger count = new AtomicInteger(0);
 
@@ -350,6 +360,8 @@ public int getCount() {
 ---
 
 ## CountDownLatch 与 CyclicBarrier
+
+![线程协调工具对比](/notes/java-pickup/java-thread-synchronization/coordination-tools-comparison.svg)
 
 ### CountDownLatch
 
@@ -500,6 +512,8 @@ Semaphore mutex = new Semaphore(1);
 ---
 
 ## 方案对比与选型
+
+![线程同步方案选型决策图](/notes/java-pickup/java-thread-synchronization/sync-selection-guide.svg)
 
 | 方案 | 互斥 | 可见性 | 原子性 | 可中断 | 适用场景 |
 |------|:----:|:------:|:------:|:------:|----------|

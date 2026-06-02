@@ -1,0 +1,139 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 580" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#c4b5fd;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="g2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#93c5fd;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="g3" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#6ee7b7;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="g4" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#fcd34d;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="g5" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#fca5a5;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ef4444;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="3" stdDeviation="5" flood-opacity="0.15"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="820" height="580" rx="16" fill="#f8fafc"/>
+
+  <!-- Title -->
+  <text x="410" y="42" text-anchor="middle" font-size="22" font-weight="700" fill="#1e293b">Java 线程同步方案总览</text>
+  <text x="410" y="65" text-anchor="middle" font-size="13" fill="#94a3b8">从轻量到重量级，覆盖互斥、可见性、原子性、线程协调四大维度</text>
+
+  <!-- Weight arrow at top -->
+  <line x1="120" y1="90" x2="700" y2="90" stroke="#cbd5e1" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="120" y="86" font-size="11" fill="#94a3b8" font-weight="600">轻量级</text>
+  <text x="660" y="86" font-size="11" fill="#94a3b8" font-weight="600">重量级</text>
+
+  <!-- Category labels on left -->
+  <g transform="translate(30, 155)">
+    <rect x="0" y="0" width="70" height="28" rx="6" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1"/>
+    <text x="35" y="19" text-anchor="middle" font-size="11" font-weight="600" fill="#7c3aed">可见性</text>
+  </g>
+  <g transform="translate(30, 225)">
+    <rect x="0" y="0" width="70" height="28" rx="6" fill="#eff6ff" stroke="#3b82f6" stroke-width="1"/>
+    <text x="35" y="19" text-anchor="middle" font-size="11" font-weight="600" fill="#1d4ed8">原子性</text>
+  </g>
+  <g transform="translate(30, 315)">
+    <rect x="0" y="0" width="70" height="28" rx="6" fill="#ecfdf5" stroke="#10b981" stroke-width="1"/>
+    <text x="35" y="19" text-anchor="middle" font-size="11" font-weight="600" fill="#047857">互斥锁</text>
+  </g>
+  <g transform="translate(30, 435)">
+    <rect x="0" y="0" width="70" height="28" rx="6" fill="#fffbeb" stroke="#f59e0b" stroke-width="1"/>
+    <text x="35" y="19" text-anchor="middle" font-size="11" font-weight="600" fill="#b45309">线程协调</text>
+  </g>
+
+  <!-- Row 1: volatile (visibility) -->
+  <g filter="url(#shadow)" transform="translate(120, 130)">
+    <rect x="0" y="0" width="170" height="80" rx="12" fill="white" stroke="#8b5cf6" stroke-width="2"/>
+    <rect x="0" y="0" width="6" height="80" rx="3" fill="url(#g1)"/>
+    <text x="20" y="28" font-size="16" font-weight="700" fill="#1e293b">volatile</text>
+    <text x="20" y="48" font-size="11" fill="#64748b">保证可见性 + 禁止重排序</text>
+    <text x="20" y="66" font-size="10" fill="#8b5cf6" font-weight="500">❌ 不保证原子性</text>
+  </g>
+
+  <!-- Row 2: Atomic classes (atomicity) -->
+  <g filter="url(#shadow)" transform="translate(120, 200)">
+    <rect x="0" y="0" width="170" height="80" rx="12" fill="white" stroke="#3b82f6" stroke-width="2"/>
+    <rect x="0" y="0" width="6" height="80" rx="3" fill="url(#g2)"/>
+    <text x="20" y="28" font-size="16" font-weight="700" fill="#1e293b">Atomic 类</text>
+    <text x="20" y="48" font-size="11" fill="#64748b">基于 CAS 无锁并发</text>
+    <text x="20" y="66" font-size="10" fill="#3b82f6" font-weight="500">计数 / 引用更新 / LongAdder</text>
+  </g>
+
+  <!-- Row 3: Locks (mutual exclusion) -->
+  <g filter="url(#shadow)" transform="translate(320, 270)">
+    <rect x="0" y="0" width="180" height="80" rx="12" fill="white" stroke="#10b981" stroke-width="2"/>
+    <rect x="0" y="0" width="6" height="80" rx="3" fill="url(#g3)"/>
+    <text x="20" y="28" font-size="16" font-weight="700" fill="#1e293b">synchronized</text>
+    <text x="20" y="48" font-size="11" fill="#64748b">内置锁，基于 Monitor</text>
+    <text x="20" y="66" font-size="10" fill="#10b981" font-weight="500">简洁 + 自动释放</text>
+  </g>
+
+  <g filter="url(#shadow)" transform="translate(520, 270)">
+    <rect x="0" y="0" width="180" height="80" rx="12" fill="white" stroke="#10b981" stroke-width="2"/>
+    <rect x="0" y="0" width="6" height="80" rx="3" fill="url(#g3)"/>
+    <text x="20" y="28" font-size="16" font-weight="700" fill="#1e293b">ReentrantLock</text>
+    <text x="20" y="48" font-size="11" fill="#64748b">可重入独占锁</text>
+    <text x="20" y="66" font-size="10" fill="#10b981" font-weight="500">超时 / 公平 / Condition</text>
+  </g>
+
+  <!-- Row 3 continued: RWLock and StampedLock -->
+  <g filter="url(#shadow)" transform="translate(320, 370)">
+    <rect x="0" y="0" width="180" height="60" rx="10" fill="white" stroke="#059669" stroke-width="1.5"/>
+    <rect x="0" y="0" width="5" height="60" rx="2.5" fill="#059669"/>
+    <text x="18" y="24" font-size="14" font-weight="600" fill="#1e293b">ReadWriteLock</text>
+    <text x="18" y="44" font-size="10" fill="#64748b">读共享 + 写独占</text>
+  </g>
+
+  <g filter="url(#shadow)" transform="translate(520, 370)">
+    <rect x="0" y="0" width="180" height="60" rx="10" fill="white" stroke="#059669" stroke-width="1.5"/>
+    <rect x="0" y="0" width="5" height="60" rx="2.5" fill="#059669"/>
+    <text x="18" y="24" font-size="14" font-weight="600" fill="#1e293b">StampedLock</text>
+    <text x="18" y="44" font-size="10" fill="#64748b">乐观读 + 性能更优</text>
+  </g>
+
+  <!-- Row 4: Coordination tools -->
+  <g filter="url(#shadow)" transform="translate(120, 460)">
+    <rect x="0" y="0" width="180" height="70" rx="12" fill="white" stroke="#f59e0b" stroke-width="2"/>
+    <rect x="0" y="0" width="6" height="70" rx="3" fill="url(#g4)"/>
+    <text x="20" y="26" font-size="15" font-weight="700" fill="#1e293b">CountDownLatch</text>
+    <text x="20" y="46" font-size="11" fill="#64748b">等待 N 个线程完成</text>
+    <text x="20" y="62" font-size="10" fill="#f59e0b" font-weight="500">一次性使用</text>
+  </g>
+
+  <g filter="url(#shadow)" transform="translate(320, 460)">
+    <rect x="0" y="0" width="180" height="70" rx="12" fill="white" stroke="#f59e0b" stroke-width="2"/>
+    <rect x="0" y="0" width="6" height="70" rx="3" fill="url(#g4)"/>
+    <text x="20" y="26" font-size="15" font-weight="700" fill="#1e293b">CyclicBarrier</text>
+    <text x="20" y="46" font-size="11" fill="#64748b">线程互相等待到齐</text>
+    <text x="20" y="62" font-size="10" fill="#f59e0b" font-weight="500">可循环重用</text>
+  </g>
+
+  <g filter="url(#shadow)" transform="translate(520, 460)">
+    <rect x="0" y="0" width="180" height="70" rx="12" fill="white" stroke="#f59e0b" stroke-width="2"/>
+    <rect x="0" y="0" width="6" height="70" rx="3" fill="url(#g4)"/>
+    <text x="20" y="26" font-size="15" font-weight="700" fill="#1e293b">Semaphore</text>
+    <text x="20" y="46" font-size="11" fill="#64748b">控制并发访问数量</text>
+    <text x="20" y="62" font-size="10" fill="#f59e0b" font-weight="500">限流 / 资源池</text>
+  </g>
+
+  <!-- Bottom tip -->
+  <rect x="180" y="548" width="460" height="26" rx="13" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1"/>
+  <text x="410" y="565" text-anchor="middle" font-size="11" fill="#15803d">选型原则：能简单就简单，优先 synchronized，需要高级特性才用 Lock</text>
+</svg>

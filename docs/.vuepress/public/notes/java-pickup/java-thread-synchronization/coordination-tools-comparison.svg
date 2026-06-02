@@ -1,0 +1,130 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 480" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <linearGradient id="blueG" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="amberG" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="greenG" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#34d399;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.12"/>
+    </filter>
+  </defs>
+
+  <rect width="840" height="480" rx="12" fill="#f8fafc"/>
+  <text x="420" y="38" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">线程协调工具对比</text>
+  <text x="420" y="58" text-anchor="middle" font-size="12" fill="#94a3b8">CountDownLatch 一次性等待 · CyclicBarrier 循环同步 · Semaphore 限流控制</text>
+
+  <!-- ===== CountDownLatch ===== -->
+  <g filter="url(#shadow)">
+    <rect x="25" y="80" width="250" height="370" rx="12" fill="white" stroke="#3b82f6" stroke-width="2"/>
+  </g>
+  <rect x="25" y="80" width="250" height="45" rx="12" fill="url(#blueG)"/>
+  <rect x="25" y="105" width="250" height="20" fill="url(#blueG)"/>
+  <text x="150" y="108" text-anchor="middle" font-size="15" font-weight="700" fill="white">CountDownLatch</text>
+
+  <text x="150" y="150" text-anchor="middle" font-size="12" font-weight="600" fill="#475569">计数器: 3 → 0</text>
+  <circle cx="80" cy="185" r="22" fill="#dbeafe" stroke="#3b82f6" stroke-width="2"/>
+  <text x="80" y="190" text-anchor="middle" font-size="14" font-weight="700" fill="#3b82f6">3</text>
+  <text x="120" y="190" text-anchor="middle" font-size="14" fill="#94a3b8">→</text>
+  <circle cx="150" cy="185" r="22" fill="#dbeafe" stroke="#3b82f6" stroke-width="2"/>
+  <text x="150" y="190" text-anchor="middle" font-size="14" font-weight="700" fill="#3b82f6">2</text>
+  <text x="190" y="190" text-anchor="middle" font-size="14" fill="#94a3b8">→</text>
+  <circle cx="220" cy="185" r="22" fill="#dcfce7" stroke="#22c55e" stroke-width="2"/>
+  <text x="220" y="190" text-anchor="middle" font-size="14" font-weight="700" fill="#16a34a">0</text>
+
+  <text x="55" y="230" font-size="11" font-weight="600" fill="#475569">工作线程 countDown()</text>
+  <rect x="40" y="240" width="60" height="28" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="70" y="259" text-anchor="middle" font-size="9" fill="#1d4ed8">Worker1</text>
+  <rect x="110" y="240" width="60" height="28" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="140" y="259" text-anchor="middle" font-size="9" fill="#1d4ed8">Worker2</text>
+  <rect x="180" y="240" width="60" height="28" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="210" y="259" text-anchor="middle" font-size="9" fill="#1d4ed8">Worker3</text>
+
+  <text x="55" y="295" font-size="11" font-weight="600" fill="#475569">主线程 await()</text>
+  <rect x="55" y="305" width="190" height="30" rx="6" fill="#fef3c7" stroke="#fbbf24" stroke-width="1"/>
+  <text x="150" y="325" text-anchor="middle" font-size="10" fill="#92400e">等待计数归零 → 继续执行</text>
+
+  <line x1="40" y1="350" x2="260" y2="350" stroke="#e2e8f0" stroke-width="1"/>
+  <text x="55" y="370" font-size="10" fill="#ef4444" font-weight="500">❌ 一次性，不可重置</text>
+  <text x="55" y="388" font-size="10" fill="#64748b">外部线程等待其他线程完成</text>
+  <text x="55" y="406" font-size="10" fill="#64748b">典型：主线程等 N 个子任务</text>
+
+  <!-- ===== CyclicBarrier ===== -->
+  <g filter="url(#shadow)">
+    <rect x="295" y="80" width="250" height="370" rx="12" fill="white" stroke="#f59e0b" stroke-width="2"/>
+  </g>
+  <rect x="295" y="80" width="250" height="45" rx="12" fill="url(#amberG)"/>
+  <rect x="295" y="105" width="250" height="20" fill="url(#amberG)"/>
+  <text x="420" y="108" text-anchor="middle" font-size="15" font-weight="700" fill="white">CyclicBarrier</text>
+
+  <text x="420" y="150" text-anchor="middle" font-size="12" font-weight="600" fill="#475569">屏障点: parties = 3</text>
+  <text x="310" y="178" font-size="10" fill="#94a3b8" font-weight="500">Round 1</text>
+  <rect x="310" y="188" width="50" height="28" rx="6" fill="#fef3c7" stroke="#fbbf24" stroke-width="1"/>
+  <text x="335" y="207" text-anchor="middle" font-size="9" fill="#92400e">T1</text>
+  <rect x="370" y="188" width="50" height="28" rx="6" fill="#fef3c7" stroke="#fbbf24" stroke-width="1"/>
+  <text x="395" y="207" text-anchor="middle" font-size="9" fill="#92400e">T2</text>
+  <rect x="430" y="188" width="50" height="28" rx="6" fill="#fef3c7" stroke="#fbbf24" stroke-width="1"/>
+  <text x="455" y="207" text-anchor="middle" font-size="9" fill="#92400e">T3</text>
+
+  <rect x="310" y="225" width="170" height="22" rx="4" fill="#f59e0b"/>
+  <text x="395" y="240" text-anchor="middle" font-size="10" font-weight="600" fill="white">屏障触发 → barrierAction</text>
+
+  <text x="310" y="265" font-size="10" fill="#94a3b8" font-weight="500">Round 2 (自动重置 ↻)</text>
+  <rect x="310" y="275" width="50" height="28" rx="6" fill="#fef3c7" stroke="#fbbf24" stroke-width="1"/>
+  <text x="335" y="294" text-anchor="middle" font-size="9" fill="#92400e">T1</text>
+  <rect x="370" y="275" width="50" height="28" rx="6" fill="#fef3c7" stroke="#fbbf24" stroke-width="1"/>
+  <text x="395" y="294" text-anchor="middle" font-size="9" fill="#92400e">T2</text>
+  <rect x="430" y="275" width="50" height="28" rx="6" fill="#fef3c7" stroke="#fbbf24" stroke-width="1"/>
+  <text x="455" y="294" text-anchor="middle" font-size="9" fill="#92400e">T3</text>
+
+  <rect x="310" y="310" width="170" height="22" rx="4" fill="#f59e0b"/>
+  <text x="395" y="325" text-anchor="middle" font-size="10" font-weight="600" fill="white">屏障再次触发 ↻</text>
+
+  <line x1="310" y1="350" x2="530" y2="350" stroke="#e2e8f0" stroke-width="1"/>
+  <text x="325" y="370" font-size="10" fill="#16a34a" font-weight="500">✅ 自动重置，可循环使用</text>
+  <text x="325" y="388" font-size="10" fill="#64748b">线程之间互相等待到齐</text>
+  <text x="325" y="406" font-size="10" fill="#64748b">可指定 barrierAction 回调</text>
+  <text x="325" y="424" font-size="10" fill="#f59e0b" font-weight="500">⚠ 一个异常会破坏屏障</text>
+
+  <!-- ===== Semaphore ===== -->
+  <g filter="url(#shadow)">
+    <rect x="565" y="80" width="250" height="370" rx="12" fill="white" stroke="#10b981" stroke-width="2"/>
+  </g>
+  <rect x="565" y="80" width="250" height="45" rx="12" fill="url(#greenG)"/>
+  <rect x="565" y="105" width="250" height="20" fill="url(#greenG)"/>
+  <text x="690" y="108" text-anchor="middle" font-size="15" font-weight="700" fill="white">Semaphore</text>
+
+  <text x="690" y="150" text-anchor="middle" font-size="12" font-weight="600" fill="#475569">许可数: permits = 3</text>
+  <rect x="595" y="162" width="190" height="55" rx="8" fill="#d1fae5" stroke="#6ee7b7" stroke-width="1"/>
+  <circle cx="625" cy="190" r="16" fill="#10b981"/>
+  <text x="625" y="195" text-anchor="middle" font-size="10" font-weight="700" fill="white">1</text>
+  <circle cx="665" cy="190" r="16" fill="#10b981"/>
+  <text x="665" y="195" text-anchor="middle" font-size="10" font-weight="700" fill="white">2</text>
+  <circle cx="705" cy="190" r="16" fill="#10b981"/>
+  <text x="705" y="195" text-anchor="middle" font-size="10" font-weight="700" fill="white">3</text>
+
+  <text x="690" y="238" text-anchor="middle" font-size="11" font-weight="600" fill="#475569">acquire() 获取许可</text>
+  <rect x="595" y="248" width="55" height="28" rx="6" fill="#d1fae5" stroke="#6ee7b7" stroke-width="1"/>
+  <text x="622" y="267" text-anchor="middle" font-size="9" fill="#047857">Thread1</text>
+  <rect x="660" y="248" width="55" height="28" rx="6" fill="#d1fae5" stroke="#6ee7b7" stroke-width="1"/>
+  <text x="687" y="267" text-anchor="middle" font-size="9" fill="#047857">Thread2</text>
+  <rect x="725" y="248" width="55" height="28" rx="6" fill="#d1fae5" stroke="#6ee7b7" stroke-width="1"/>
+  <text x="752" y="267" text-anchor="middle" font-size="9" fill="#047857">Thread3</text>
+
+  <rect x="595" y="290" width="190" height="30" rx="6" fill="#fee2e2" stroke="#fca5a5" stroke-width="1"/>
+  <text x="690" y="310" text-anchor="middle" font-size="10" fill="#dc2626">Thread4 → 阻塞等待 (无可用许可)</text>
+
+  <line x1="580" y1="340" x2="800" y2="340" stroke="#e2e8f0" stroke-width="1"/>
+  <text x="595" y="360" font-size="10" fill="#16a34a" font-weight="500">✅ acquire/release 不要求同一线程</text>
+  <text x="595" y="378" font-size="10" fill="#64748b">控制同时访问的线程数量</text>
+  <text x="595" y="396" font-size="10" fill="#64748b">permits=1 退化为互斥锁</text>
+  <text x="595" y="414" font-size="10" fill="#64748b">典型：连接池限流 / 接口并发</text>
+  <text x="595" y="432" font-size="10" fill="#f59e0b" font-weight="500">⚠ 必须在 finally 中 release()</text>
+</svg>

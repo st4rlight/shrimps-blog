@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 420" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <linearGradient id="blueG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1d4ed8;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="greenG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#10b981;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#047857;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.12"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="820" height="420" rx="12" fill="#f8fafc"/>
+
+  <!-- Title -->
+  <text x="410" y="38" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">Condition vs Object wait/notify</text>
+  <text x="410" y="58" text-anchor="middle" font-size="12" fill="#94a3b8">多条件精确唤醒是 Condition 的核心优势</text>
+
+  <!-- ===== Left: wait/notify - Single Queue ===== -->
+  <g filter="url(#shadow)">
+    <rect x="30" y="80" width="340" height="310" rx="12" fill="white"/>
+  </g>
+  <!-- Header -->
+  <rect x="30" y="80" width="340" height="45" rx="12" fill="url(#blueG)"/>
+  <rect x="30" y="105" width="340" height="20" fill="url(#blueG)"/>
+  <text x="200" y="108" text-anchor="middle" font-size="15" font-weight="700" fill="white">Object wait/notify</text>
+
+  <!-- Lock box -->
+  <rect x="60" y="145" width="280" height="40" rx="8" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="200" y="170" text-anchor="middle" font-size="13" font-weight="600" fill="#1d4ed8">synchronized 锁</text>
+
+  <!-- Single wait queue -->
+  <text x="80" y="210" font-size="12" font-weight="600" fill="#475569">等待队列（唯一）</text>
+  <rect x="60" y="220" width="280" height="55" rx="8" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="5,3"/>
+  
+  <!-- Threads in queue -->
+  <rect x="75" y="232" width="60" height="30" rx="6" fill="#fef3c7" stroke="#f59e0b" stroke-width="1"/>
+  <text x="105" y="252" text-anchor="middle" font-size="10" font-weight="500" fill="#92400e">生产者A</text>
+  
+  <rect x="145" y="232" width="60" height="30" rx="6" fill="#fef3c7" stroke="#f59e0b" stroke-width="1"/>
+  <text x="175" y="252" text-anchor="middle" font-size="10" font-weight="500" fill="#92400e">消费者B</text>
+  
+  <rect x="215" y="232" width="60" height="30" rx="6" fill="#fef3c7" stroke="#f59e0b" stroke-width="1"/>
+  <text x="245" y="252" text-anchor="middle" font-size="10" font-weight="500" fill="#92400e">生产者C</text>
+  
+  <rect x="285" y="232" width="50" height="30" rx="6" fill="#fef3c7" stroke="#f59e0b" stroke-width="1"/>
+  <text x="310" y="252" text-anchor="middle" font-size="10" font-weight="500" fill="#92400e">...</text>
+
+  <!-- notify random -->
+  <rect x="60" y="295" width="280" height="40" rx="6" fill="#fee2e2" stroke="#ef4444" stroke-width="1"/>
+  <text x="200" y="312" text-anchor="middle" font-size="11" fill="#dc2626" font-weight="500">notify() 随机唤醒一个线程</text>
+  <text x="200" y="327" text-anchor="middle" font-size="10" fill="#ef4444">无法精确唤醒特定条件的线程</text>
+
+  <!-- Problem mark -->
+  <text x="200" y="375" text-anchor="middle" font-size="22">❌</text>
+  <text x="200" y="392" text-anchor="middle" font-size="11" fill="#ef4444" font-weight="500">可能唤醒错误类型的线程</text>
+
+  <!-- ===== Right: Condition - Multiple Queues ===== -->
+  <g filter="url(#shadow)">
+    <rect x="420" y="80" width="370" height="310" rx="12" fill="white"/>
+  </g>
+  <!-- Header -->
+  <rect x="420" y="80" width="370" height="45" rx="12" fill="url(#greenG)"/>
+  <rect x="420" y="105" width="370" height="20" fill="url(#greenG)"/>
+  <text x="605" y="108" text-anchor="middle" font-size="15" font-weight="700" fill="white">Condition 条件变量</text>
+
+  <!-- Lock box -->
+  <rect x="445" y="145" width="320" height="40" rx="8" fill="#d1fae5" stroke="#10b981" stroke-width="1.5"/>
+  <text x="605" y="170" text-anchor="middle" font-size="13" font-weight="600" fill="#047857">ReentrantLock 锁</text>
+
+  <!-- notFull condition -->
+  <text x="465" y="210" font-size="12" font-weight="600" fill="#475569">notFull 条件队列</text>
+  <rect x="445" y="220" width="150" height="55" rx="8" fill="#fef3c7" stroke="#f59e0b" stroke-width="1"/>
+  
+  <rect x="455" y="232" width="60" height="30" rx="6" fill="#fff7ed" stroke="#fb923c" stroke-width="1"/>
+  <text x="485" y="252" text-anchor="middle" font-size="10" font-weight="500" fill="#9a3412">生产者A</text>
+  
+  <rect x="525" y="232" width="60" height="30" rx="6" fill="#fff7ed" stroke="#fb923c" stroke-width="1"/>
+  <text x="555" y="252" text-anchor="middle" font-size="10" font-weight="500" fill="#9a3412">生产者C</text>
+
+  <!-- notEmpty condition -->
+  <text x="625" y="210" font-size="12" font-weight="600" fill="#475569">notEmpty 条件队列</text>
+  <rect x="615" y="220" width="150" height="55" rx="8" fill="#ede9fe" stroke="#8b5cf6" stroke-width="1"/>
+  
+  <rect x="625" y="232" width="60" height="30" rx="6" fill="#f5f3ff" stroke="#a78bfa" stroke-width="1"/>
+  <text x="655" y="252" text-anchor="middle" font-size="10" font-weight="500" fill="#5b21b6">消费者B</text>
+  
+  <rect x="695" y="232" width="60" height="30" rx="6" fill="#f5f3ff" stroke="#a78bfa" stroke-width="1"/>
+  <text x="725" y="252" text-anchor="middle" font-size="10" font-weight="500" fill="#5b21b6">消费者D</text>
+
+  <!-- precise signal -->
+  <rect x="445" y="295" width="150" height="40" rx="6" fill="#dcfce7" stroke="#22c55e" stroke-width="1"/>
+  <text x="520" y="312" text-anchor="middle" font-size="11" fill="#16a34a" font-weight="500">notFull.signal()</text>
+  <text x="520" y="327" text-anchor="middle" font-size="10" fill="#22c55e">只唤醒生产者</text>
+
+  <rect x="615" y="295" width="150" height="40" rx="6" fill="#dcfce7" stroke="#22c55e" stroke-width="1"/>
+  <text x="690" y="312" text-anchor="middle" font-size="11" fill="#16a34a" font-weight="500">notEmpty.signal()</text>
+  <text x="690" y="327" text-anchor="middle" font-size="10" fill="#22c55e">只唤醒消费者</text>
+
+  <!-- Check mark -->
+  <text x="605" y="375" text-anchor="middle" font-size="22">✅</text>
+  <text x="605" y="392" text-anchor="middle" font-size="11" fill="#16a34a" font-weight="500">精确唤醒指定条件上的线程</text>
+</svg>

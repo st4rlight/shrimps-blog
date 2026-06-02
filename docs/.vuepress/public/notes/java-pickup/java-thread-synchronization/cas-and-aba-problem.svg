@@ -1,0 +1,135 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 380" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <linearGradient id="blueG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="greenG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#34d399;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="redG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#f87171;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ef4444;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.12"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/>
+    </marker>
+    <marker id="arrowR" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#ef4444"/>
+    </marker>
+    <marker id="arrowG" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#10b981"/>
+    </marker>
+  </defs>
+
+  <rect width="800" height="380" rx="12" fill="#f8fafc"/>
+  <text x="400" y="35" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">CAS 机制与 ABA 问题</text>
+
+  <!-- ===== Left: CAS Flow ===== -->
+  <g filter="url(#shadow)">
+    <rect x="25" y="55" width="360" height="310" rx="12" fill="white" stroke="#3b82f6" stroke-width="2"/>
+  </g>
+  <rect x="25" y="55" width="360" height="40" rx="12" fill="url(#blueG)"/>
+  <rect x="25" y="75" width="360" height="20" fill="url(#blueG)"/>
+  <text x="205" y="80" text-anchor="middle" font-size="15" font-weight="700" fill="white">CAS 工作流程</text>
+
+  <!-- Step 1: Read -->
+  <rect x="45" y="110" width="160" height="35" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="125" y="132" text-anchor="middle" font-size="11" font-weight="500" fill="#1d4ed8">1. 读取内存值 V = A</text>
+
+  <line x1="205" y1="127" x2="225" y2="127" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <rect x="230" y="110" width="140" height="35" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="300" y="132" text-anchor="middle" font-size="11" font-weight="500" fill="#1d4ed8">2. 计算新值 N</text>
+
+  <!-- Step 3: Compare -->
+  <rect x="45" y="165" width="325" height="35" rx="6" fill="#fef3c7" stroke="#fbbf24" stroke-width="1.5"/>
+  <text x="207" y="187" text-anchor="middle" font-size="11" font-weight="600" fill="#92400e">3. 比较 V == A ?</text>
+
+  <line x1="130" y1="200" x2="100" y2="225" stroke="#10b981" stroke-width="1.5" marker-end="url(#arrowG)"/>
+  <text x="100" y="215" font-size="10" fill="#10b981" font-weight="600">是</text>
+
+  <line x1="280" y1="200" x2="310" y2="225" stroke="#ef4444" stroke-width="1.5" marker-end="url(#arrowR)"/>
+  <text x="310" y="215" font-size="10" fill="#ef4444" font-weight="600">否</text>
+
+  <!-- Success -->
+  <rect x="45" y="228" width="160" height="35" rx="6" fill="#dcfce7" stroke="#86efac" stroke-width="1.5"/>
+  <text x="125" y="250" text-anchor="middle" font-size="11" font-weight="600" fill="#166534">写入新值 N ✅</text>
+
+  <!-- Retry -->
+  <rect x="230" y="228" width="140" height="35" rx="6" fill="#fee2e2" stroke="#fca5a5" stroke-width="1.5"/>
+  <text x="300" y="250" text-anchor="middle" font-size="11" font-weight="600" fill="#991b1b">自旋重试 🔄</text>
+
+  <!-- Bottom note -->
+  <rect x="45" y="280" width="325" height="70" rx="8" fill="#f1f5f9"/>
+  <text x="207" y="300" text-anchor="middle" font-size="11" font-weight="600" fill="#475569">CAS 特点</text>
+  <text x="207" y="318" text-anchor="middle" font-size="10" fill="#64748b">✅ 无锁并发，避免线程阻塞</text>
+  <text x="207" y="334" text-anchor="middle" font-size="10" fill="#64748b">✅ 适合低竞争场景</text>
+  <text x="207" y="350" text-anchor="middle" font-size="10" fill="#f59e0b">⚠ 高竞争时自旋消耗 CPU</text>
+
+  <!-- ===== Right: ABA Problem ===== -->
+  <g filter="url(#shadow)">
+    <rect x="415" y="55" width="360" height="310" rx="12" fill="white" stroke="#ef4444" stroke-width="2"/>
+  </g>
+  <rect x="415" y="55" width="360" height="40" rx="12" fill="url(#redG)"/>
+  <rect x="415" y="75" width="360" height="20" fill="url(#redG)"/>
+  <text x="595" y="80" text-anchor="middle" font-size="15" font-weight="700" fill="white">ABA 问题</text>
+
+  <!-- Timeline -->
+  <line x1="440" y1="130" x2="750" y2="130" stroke="#cbd5e1" stroke-width="2"/>
+  <text x="440" y="125" font-size="9" fill="#94a3b8">T1</text>
+  <text x="545" y="125" font-size="9" fill="#94a3b8">T2</text>
+  <text x="650" y="125" font-size="9" fill="#94a3b8">T3</text>
+  <text x="740" y="125" font-size="9" fill="#94a3b8">T4</text>
+
+  <!-- Thread 1 -->
+  <text x="440" y="155" font-size="11" font-weight="600" fill="#3b82f6">Thread 1</text>
+  <rect x="435" y="162" width="80" height="30" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="475" y="181" text-anchor="middle" font-size="10" fill="#1d4ed8">读取 V=A</text>
+
+  <!-- Gap for thread 1 (suspended) -->
+  <rect x="530" y="162" width="160" height="30" rx="6" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="610" y="181" text-anchor="middle" font-size="9" fill="#94a3b8">... 挂起中 ...</text>
+
+  <rect x="705" y="162" width="60" height="30" rx="6" fill="#fef3c7" stroke="#fbbf24" stroke-width="1.5"/>
+  <text x="735" y="181" text-anchor="middle" font-size="9" fill="#92400e">CAS</text>
+
+  <!-- Thread 2 -->
+  <text x="440" y="215" font-size="11" font-weight="600" fill="#ef4444">Thread 2</text>
+  
+  <rect x="510" y="222" width="80" height="30" rx="6" fill="#fee2e2" stroke="#fca5a5" stroke-width="1"/>
+  <text x="550" y="241" text-anchor="middle" font-size="10" fill="#991b1b">A → B</text>
+  
+  <rect x="610" y="222" width="80" height="30" rx="6" fill="#fee2e2" stroke="#fca5a5" stroke-width="1"/>
+  <text x="650" y="241" text-anchor="middle" font-size="10" fill="#991b1b">B → A</text>
+
+  <!-- Memory state -->
+  <text x="440" y="275" font-size="11" font-weight="600" fill="#475569">内存值变化</text>
+  <rect x="435" y="282" width="60" height="28" rx="6" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="465" y="300" text-anchor="middle" font-size="12" font-weight="700" fill="#1d4ed8">A</text>
+  <text x="505" y="300" text-anchor="middle" font-size="12" fill="#94a3b8">→</text>
+  <rect x="520" y="282" width="60" height="28" rx="6" fill="#fee2e2" stroke="#ef4444" stroke-width="1.5"/>
+  <text x="550" y="300" text-anchor="middle" font-size="12" font-weight="700" fill="#ef4444">B</text>
+  <text x="590" y="300" text-anchor="middle" font-size="12" fill="#94a3b8">→</text>
+  <rect x="605" y="282" width="60" height="28" rx="6" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="635" y="300" text-anchor="middle" font-size="12" font-weight="700" fill="#1d4ed8">A</text>
+
+  <!-- Problem description -->
+  <rect x="435" y="322" width="325" height="36" rx="6" fill="#fee2e2" stroke="#ef4444" stroke-width="1"/>
+  <text x="597" y="338" text-anchor="middle" font-size="10" fill="#dc2626" font-weight="600">Thread1 CAS 时：V==A ✅ 但值已被修改过！</text>
+  <text x="597" y="352" text-anchor="middle" font-size="9" fill="#ef4444">无法感知中间发生了变化 → ABA 问题</text>
+
+  <!-- Solution box -->
+  <rect x="680" y="282" width="80" height="28" rx="6" fill="#dcfce7" stroke="#22c55e" stroke-width="1.5"/>
+  <text x="720" y="300" text-anchor="middle" font-size="9" font-weight="600" fill="#166534">+ 版本号</text>
+  <line x1="665" y1="296" x2="680" y2="296" stroke="#22c55e" stroke-width="1.5" marker-end="url(#arrowG)"/>
+
+  <!-- Solution note -->
+  <rect x="680" y="322" width="80" height="36" rx="6" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1"/>
+  <text x="720" y="337" text-anchor="middle" font-size="8" fill="#15803d" font-weight="500">解决方案:</text>
+  <text x="720" y="351" text-anchor="middle" font-size="8" fill="#15803d">StampedRef</text>
+</svg>

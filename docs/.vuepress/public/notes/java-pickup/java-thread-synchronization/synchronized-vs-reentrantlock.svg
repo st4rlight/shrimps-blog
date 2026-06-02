@@ -1,0 +1,146 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 480" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <linearGradient id="blueGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1d4ed8;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="greenGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#10b981;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#047857;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.12"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="780" height="480" rx="12" fill="#f8fafc"/>
+
+  <!-- Title -->
+  <text x="390" y="38" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">synchronized vs ReentrantLock 对比</text>
+
+  <!-- Left Column: synchronized -->
+  <g filter="url(#shadow)">
+    <rect x="30" y="65" width="340" height="390" rx="12" fill="white" stroke="#3b82f6" stroke-width="2"/>
+  </g>
+  <!-- Header -->
+  <rect x="30" y="65" width="340" height="50" rx="12" fill="url(#blueGrad)"/>
+  <rect x="30" y="95" width="340" height="20" fill="url(#blueGrad)"/>
+  <text x="200" y="96" text-anchor="middle" font-size="18" font-weight="700" fill="white">synchronized</text>
+
+  <!-- Features -->
+  <g transform="translate(50, 135)">
+    <circle cx="8" cy="8" r="8" fill="#dbeafe"/>
+    <text x="8" y="12" text-anchor="middle" font-size="10" fill="#3b82f6">✓</text>
+    <text x="24" y="12" font-size="13" fill="#1e293b" font-weight="600">JVM 内置关键字</text>
+  </g>
+  <g transform="translate(50, 165)">
+    <circle cx="8" cy="8" r="8" fill="#dbeafe"/>
+    <text x="8" y="12" text-anchor="middle" font-size="10" fill="#3b82f6">✓</text>
+    <text x="24" y="12" font-size="13" fill="#1e293b" font-weight="600">自动释放锁</text>
+  </g>
+  <g transform="translate(50, 195)">
+    <circle cx="8" cy="8" r="8" fill="#dbeafe"/>
+    <text x="8" y="12" text-anchor="middle" font-size="10" fill="#3b82f6">✓</text>
+    <text x="24" y="12" font-size="13" fill="#1e293b" font-weight="600">代码简洁，不易出错</text>
+  </g>
+  <g transform="translate(50, 225)">
+    <circle cx="8" cy="8" r="8" fill="#dbeafe"/>
+    <text x="8" y="12" text-anchor="middle" font-size="10" fill="#3b82f6">✓</text>
+    <text x="24" y="12" font-size="13" fill="#1e293b" font-weight="600">锁升级优化（偏向→轻量→重量）</text>
+  </g>
+
+  <!-- Limitations -->
+  <line x1="50" y1="255" x2="350" y2="255" stroke="#e2e8f0" stroke-width="1"/>
+  <text x="200" y="275" text-anchor="middle" font-size="12" font-weight="600" fill="#64748b">局限</text>
+
+  <g transform="translate(50, 290)">
+    <circle cx="8" cy="8" r="8" fill="#fee2e2"/>
+    <text x="8" y="12" text-anchor="middle" font-size="10" fill="#ef4444">✗</text>
+    <text x="24" y="12" font-size="12" fill="#64748b">不可中断获取锁</text>
+  </g>
+  <g transform="translate(50, 315)">
+    <circle cx="8" cy="8" r="8" fill="#fee2e2"/>
+    <text x="8" y="12" text-anchor="middle" font-size="10" fill="#ef4444">✗</text>
+    <text x="24" y="12" font-size="12" fill="#64748b">不支持超时获取</text>
+  </g>
+  <g transform="translate(50, 340)">
+    <circle cx="8" cy="8" r="8" fill="#fee2e2"/>
+    <text x="8" y="12" text-anchor="middle" font-size="10" fill="#ef4444">✗</text>
+    <text x="24" y="12" font-size="12" fill="#64748b">不支持公平锁</text>
+  </g>
+  <g transform="translate(50, 365)">
+    <circle cx="8" cy="8" r="8" fill="#fee2e2"/>
+    <text x="8" y="12" text-anchor="middle" font-size="10" fill="#ef4444">✗</text>
+    <text x="24" y="12" font-size="12" fill="#64748b">只有一个 wait/notify 队列</text>
+  </g>
+  <g transform="translate(50, 390)">
+    <circle cx="8" cy="8" r="8" fill="#fee2e2"/>
+    <text x="8" y="12" text-anchor="middle" font-size="10" fill="#ef4444">✗</text>
+    <text x="24" y="12" font-size="12" fill="#64748b">无法查询锁状态</text>
+  </g>
+
+  <!-- Right Column: ReentrantLock -->
+  <g filter="url(#shadow)">
+    <rect x="410" y="65" width="340" height="390" rx="12" fill="white" stroke="#10b981" stroke-width="2"/>
+  </g>
+  <!-- Header -->
+  <rect x="410" y="65" width="340" height="50" rx="12" fill="url(#greenGrad)"/>
+  <rect x="410" y="95" width="340" height="20" fill="url(#greenGrad)"/>
+  <text x="580" y="96" text-anchor="middle" font-size="18" font-weight="700" fill="white">ReentrantLock</text>
+
+  <!-- Features -->
+  <g transform="translate(430, 135)">
+    <circle cx="8" cy="8" r="8" fill="#d1fae5"/>
+    <text x="8" y="12" text-anchor="middle" font-size="10" fill="#10b981">✓</text>
+    <text x="24" y="12" font-size="13" fill="#1e293b" font-weight="600">可中断获取 lockInterruptibly()</text>
+  </g>
+  <g transform="translate(430, 165)">
+    <circle cx="8" cy="8" r="8" fill="#d1fae5"/>
+    <text x="8" y="12" text-anchor="middle" font-size="10" fill="#10b981">✓</text>
+    <text x="24" y="12" font-size="13" fill="#1e293b" font-weight="600">超时获取 tryLock(timeout)</text>
+  </g>
+  <g transform="translate(430, 195)">
+    <circle cx="8" cy="8" r="8" fill="#d1fae5"/>
+    <text x="8" y="12" text-anchor="middle" font-size="10" fill="#10b981">✓</text>
+    <text x="24" y="12" font-size="13" fill="#1e293b" font-weight="600">支持公平锁 new(true)</text>
+  </g>
+  <g transform="translate(430, 225)">
+    <circle cx="8" cy="8" r="8" fill="#d1fae5"/>
+    <text x="8" y="12" text-anchor="middle" font-size="10" fill="#10b981">✓</text>
+    <text x="24" y="12" font-size="13" fill="#1e293b" font-weight="600">多个 Condition 条件队列</text>
+  </g>
+  <g transform="translate(430, 255)">
+    <circle cx="8" cy="8" r="8" fill="#d1fae5"/>
+    <text x="8" y="12" text-anchor="middle" font-size="10" fill="#10b981">✓</text>
+    <text x="24" y="12" font-size="13" fill="#1e293b" font-weight="600">可查询锁状态 isHeld()</text>
+  </g>
+
+  <!-- Cautions -->
+  <line x1="430" y1="285" x2="730" y2="285" stroke="#e2e8f0" stroke-width="1"/>
+  <text x="580" y="305" text-anchor="middle" font-size="12" font-weight="600" fill="#64748b">注意</text>
+
+  <g transform="translate(430, 320)">
+    <circle cx="8" cy="8" r="8" fill="#fef3c7"/>
+    <text x="8" y="12" text-anchor="middle" font-size="10" fill="#f59e0b">!</text>
+    <text x="24" y="12" font-size="12" fill="#64748b">必须在 finally 中 unlock()</text>
+  </g>
+  <g transform="translate(430, 345)">
+    <circle cx="8" cy="8" r="8" fill="#fef3c7"/>
+    <text x="8" y="12" text-anchor="middle" font-size="10" fill="#f59e0b">!</text>
+    <text x="24" y="12" font-size="12" fill="#64748b">lock() 不能放在 try 块内</text>
+  </g>
+  <g transform="translate(430, 370)">
+    <circle cx="8" cy="8" r="8" fill="#fef3c7"/>
+    <text x="8" y="12" text-anchor="middle" font-size="10" fill="#f59e0b">!</text>
+    <text x="24" y="12" font-size="12" fill="#64748b">忘记 unlock → 锁永不释放</text>
+  </g>
+
+  <!-- VS circle -->
+  <circle cx="390" cy="260" r="24" fill="#f1f5f9" stroke="#94a3b8" stroke-width="2"/>
+  <text x="390" y="265" text-anchor="middle" font-size="14" font-weight="700" fill="#64748b">VS</text>
+
+  <!-- Bottom tip -->
+  <rect x="140" y="460" width="500" height="16" rx="8" fill="#f1f5f9"/>
+  <text x="390" y="473" text-anchor="middle" font-size="10" fill="#64748b">优先 synchronized；需要高级特性（超时、公平、多条件）时才用 ReentrantLock</text>
+</svg>

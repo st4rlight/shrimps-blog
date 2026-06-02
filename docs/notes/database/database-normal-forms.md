@@ -49,7 +49,7 @@ permalink: /notes/database-normal-forms/
 
 ---
 
-![范式递进关系总览](/notes/database/normal-forms-overview.svg)
+![范式递进关系总览](/notes/database/database-normal-forms/normal-forms-overview.svg)
 
 ## 📊 四大范式详解
 
@@ -67,7 +67,7 @@ permalink: /notes/database-normal-forms/
 
 **修正：** 拆分为"手机号"和"邮箱"两个独立字段。
 
-![1NF反例与修正对比](/notes/database/1nf-comparison.svg)
+![1NF反例与修正对比](/notes/database/database-normal-forms/1nf-comparison.svg)
 
 ### 2. 第二范式（2NF）
 
@@ -88,7 +88,7 @@ permalink: /notes/database-normal-forms/
 - 订单明细表：(订单号, 商品ID, 数量)
 - 商品信息表：(商品ID, 商品名称)
 
-![2NF反例与修正对比](/notes/database/2nf-comparison.svg)
+![2NF反例与修正对比](/notes/database/database-normal-forms/2nf-comparison.svg)
 
 ### 3. 第三范式（3NF）
 
@@ -109,7 +109,7 @@ permalink: /notes/database-normal-forms/
 - 员工表：(工号, 部门号)
 - 部门表：(部门号, 部门名称)
 
-![3NF反例与修正对比](/notes/database/3nf-comparison.svg)
+![3NF反例与修正对比](/notes/database/database-normal-forms/3nf-comparison.svg)
 
 ### 4. BCNF
 
@@ -134,7 +134,7 @@ permalink: /notes/database-normal-forms/
 
 **修正：** 拆分为 (仓库名, 管理员) 和 (仓库名, 物品名, 数量)。
 
-![BCNF反例与修正对比](/notes/database/bcnf-comparison.svg)
+![BCNF反例与修正对比](/notes/database/database-normal-forms/bcnf-comparison.svg)
 
 ---
 
@@ -149,7 +149,7 @@ permalink: /notes/database-normal-forms/
 
 ---
 
-![范式vs性能权衡](/notes/database/normal-forms-tradeoff.svg)
+![范式vs性能权衡](/notes/database/database-normal-forms/normal-forms-tradeoff.svg)
 
 ## ⚠️ 重要提示：范式不是越高越好
 
