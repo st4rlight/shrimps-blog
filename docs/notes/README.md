@@ -18,6 +18,18 @@ permalink: /notes/
 
 - [Java线程同步方案](./java-pickup/java-thread-synchronization.md)
 
+### 离线数仓建设
+
+这一部分主要记录离线数仓建设中的建模方法、分层策略、设计规范等核心知识，帮助厘清数仓建设的脉络与最佳实践。
+
+- [数仓表建设范式与分层方案](./data-warehouse/warehouse-table-paradigm-and-layering.md)
+
+### 数据库技术
+
+这一部分主要记录数据库相关的核心概念、设计范式、调优经验等知识，帮助夯实数据库设计与优化的基本功。
+
+- [表设计的几大范式](./database/database-normal-forms.md)
+
 ## 后续计划
 
 后面如果继续新增拾遗补阙的内容，我会按专题继续往下整理，比如：
@@ -25,4 +37,5 @@ permalink: /notes/
 - `Java` 的更多底层机制与易错点
 - `Go` 语言的语法陷阱与最佳实践
 - 数据库的索引优化与调优经验
+- 数仓建设的更多建模方法与调优经验
 - 其他技术栈的查漏补缺

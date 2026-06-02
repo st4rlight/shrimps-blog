@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 520" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="g2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#34d399;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="g3" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="g4" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f87171;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ef4444;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="3" stdDeviation="5" flood-opacity="0.15"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/>
+    </marker>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="800" height="520" rx="16" fill="#f8fafc"/>
+  
+  <!-- Title -->
+  <text x="400" y="45" text-anchor="middle" font-size="22" font-weight="700" fill="#1e293b">范式递进关系总览</text>
+  <text x="400" y="68" text-anchor="middle" font-size="13" fill="#94a3b8">每一级范式都是在前一级基础上的进一步规范化</text>
+
+  <!-- Arrow line connecting all boxes -->
+  <line x1="400" y1="150" x2="400" y2="470" stroke="#cbd5e1" stroke-width="2" stroke-dasharray="6,4"/>
+
+  <!-- 1NF Box -->
+  <g filter="url(#shadow)">
+    <rect x="180" y="90" width="440" height="80" rx="12" fill="white" stroke="#3b82f6" stroke-width="2"/>
+    <rect x="180" y="90" width="8" height="80" rx="4" fill="url(#g1)"/>
+  </g>
+  <circle cx="215" cy="115" r="14" fill="url(#g1)"/>
+  <text x="215" y="120" text-anchor="middle" font-size="12" font-weight="700" fill="white">1</text>
+  <text x="245" y="118" font-size="16" font-weight="700" fill="#1e293b">第一范式（1NF）</text>
+  <text x="245" y="145" font-size="13" fill="#64748b">核心：属性原子性 → 消除非原子值</text>
+  <text x="560" y="132" text-anchor="middle" font-size="11" fill="#3b82f6" font-weight="600">字段不可分</text>
+
+  <!-- Arrow 1→2 -->
+  <line x1="400" y1="170" x2="400" y2="185" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="418" y="170" width="120" height="20" rx="4" fill="#f1f5f9"/>
+  <text x="478" y="184" text-anchor="middle" font-size="10" fill="#64748b">+ 消除部分依赖</text>
+
+  <!-- 2NF Box -->
+  <g filter="url(#shadow)">
+    <rect x="180" y="190" width="440" height="80" rx="12" fill="white" stroke="#10b981" stroke-width="2"/>
+    <rect x="180" y="190" width="8" height="80" rx="4" fill="url(#g2)"/>
+  </g>
+  <circle cx="215" cy="215" r="14" fill="url(#g2)"/>
+  <text x="215" y="220" text-anchor="middle" font-size="12" font-weight="700" fill="white">2</text>
+  <text x="245" y="218" font-size="16" font-weight="700" fill="#1e293b">第二范式（2NF）</text>
+  <text x="245" y="245" font-size="13" fill="#64748b">核心：非主属性完全依赖候选码 → 消除部分函数依赖</text>
+  <text x="560" y="232" text-anchor="middle" font-size="11" fill="#10b981" font-weight="600">非主属性不离群</text>
+
+  <!-- Arrow 2→3 -->
+  <line x1="400" y1="270" x2="400" y2="285" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="418" y="270" width="120" height="20" rx="4" fill="#f1f5f9"/>
+  <text x="478" y="284" text-anchor="middle" font-size="10" fill="#64748b">+ 消除传递依赖</text>
+
+  <!-- 3NF Box -->
+  <g filter="url(#shadow)">
+    <rect x="180" y="290" width="440" height="80" rx="12" fill="white" stroke="#f59e0b" stroke-width="2"/>
+    <rect x="180" y="290" width="8" height="80" rx="4" fill="url(#g3)"/>
+  </g>
+  <circle cx="215" cy="315" r="14" fill="url(#g3)"/>
+  <text x="215" y="320" text-anchor="middle" font-size="12" font-weight="700" fill="white">3</text>
+  <text x="245" y="318" font-size="16" font-weight="700" fill="#1e293b">第三范式（3NF）</text>
+  <text x="245" y="345" font-size="13" fill="#64748b">核心：非主属性不传递依赖候选码 → 消除传递函数依赖</text>
+  <text x="560" y="332" text-anchor="middle" font-size="11" fill="#f59e0b" font-weight="600">非主属性不传话</text>
+
+  <!-- Arrow 3→BCNF -->
+  <line x1="400" y1="370" x2="400" y2="385" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="418" y="370" width="130" height="20" rx="4" fill="#f1f5f9"/>
+  <text x="483" y="384" text-anchor="middle" font-size="10" fill="#64748b">+ 主属性也受约束</text>
+
+  <!-- BCNF Box -->
+  <g filter="url(#shadow)">
+    <rect x="180" y="390" width="440" height="80" rx="12" fill="white" stroke="#ef4444" stroke-width="2"/>
+    <rect x="180" y="390" width="8" height="80" rx="4" fill="url(#g4)"/>
+  </g>
+  <circle cx="215" cy="415" r="14" fill="url(#g4)"/>
+  <text x="215" y="420" text-anchor="middle" font-size="10" font-weight="700" fill="white">BC</text>
+  <text x="245" y="418" font-size="16" font-weight="700" fill="#1e293b">BC 范式（BCNF）</text>
+  <text x="245" y="445" font-size="13" fill="#64748b">核心：所有决定因素都是候选码 → 消除主属性的部分/传递依赖</text>
+  <text x="560" y="432" text-anchor="middle" font-size="11" fill="#ef4444" font-weight="600">只有候选码说了算</text>
+
+  <!-- Practice hint -->
+  <rect x="240" y="488" width="320" height="26" rx="13" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1"/>
+  <text x="400" y="505" text-anchor="middle" font-size="11" fill="#15803d">💡 实践建议：OLTP 系统设计到 3NF 即可满足大部分需求</text>
+</svg>

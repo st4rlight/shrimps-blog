@@ -1,0 +1,130 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 380" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.12"/>
+    </filter>
+    <marker id="arrow2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#f59e0b"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="380" rx="12" fill="#f8fafc"/>
+
+  <!-- Title -->
+  <text x="400" y="35" text-anchor="middle" font-size="18" font-weight="700" fill="#1e293b">2NF：消除部分函数依赖 — 反例 vs 修正</text>
+
+  <!-- === Left: Anti-pattern === -->
+  <g filter="url(#shadow)">
+    <rect x="20" y="55" width="310" height="310" rx="10" fill="white" stroke="#fca5a5" stroke-width="2"/>
+  </g>
+  <rect x="20" y="55" width="310" height="36" rx="10" fill="#fef2f2"/>
+  <rect x="20" y="81" width="310" height="10" fill="#fef2f2"/>
+  <text x="175" y="79" text-anchor="middle" font-size="13" font-weight="600" fill="#dc2626">❌ 违反 2NF：订单明细表</text>
+
+  <!-- Table header -->
+  <rect x="35" y="100" width="280" height="28" rx="4" fill="#fee2e2"/>
+  <text x="75" y="119" text-anchor="middle" font-size="11" font-weight="600" fill="#991b1b">订单号🔑</text>
+  <text x="145" y="119" text-anchor="middle" font-size="11" font-weight="600" fill="#991b1b">商品ID🔑</text>
+  <text x="220" y="119" text-anchor="middle" font-size="11" font-weight="600" fill="#991b1b">商品名称</text>
+  <text x="290" y="119" text-anchor="middle" font-size="11" font-weight="600" fill="#991b1b">数量</text>
+
+  <!-- Rows -->
+  <line x1="35" y1="128" x2="315" y2="128" stroke="#fecaca" stroke-width="1"/>
+  <text x="75" y="148" text-anchor="middle" font-size="11" fill="#374151">O001</text>
+  <text x="145" y="148" text-anchor="middle" font-size="11" fill="#374151">P01</text>
+  <text x="220" y="148" text-anchor="middle" font-size="11" fill="#374151">键盘</text>
+  <text x="290" y="148" text-anchor="middle" font-size="11" fill="#374151">2</text>
+
+  <line x1="35" y1="158" x2="315" y2="158" stroke="#fecaca" stroke-width="1"/>
+  <text x="75" y="178" text-anchor="middle" font-size="11" fill="#374151">O001</text>
+  <text x="145" y="178" text-anchor="middle" font-size="11" fill="#374151">P02</text>
+  <text x="220" y="178" text-anchor="middle" font-size="11" fill="#374151">鼠标</text>
+  <text x="290" y="178" text-anchor="middle" font-size="11" fill="#374151">1</text>
+
+  <line x1="35" y1="188" x2="315" y2="188" stroke="#fecaca" stroke-width="1"/>
+  <text x="75" y="208" text-anchor="middle" font-size="11" fill="#374151">O002</text>
+  <text x="145" y="208" text-anchor="middle" font-size="11" fill="#374151">P01</text>
+  <text x="220" y="208" text-anchor="middle" font-size="11" fill="#374151">键盘</text>
+  <text x="290" y="208" text-anchor="middle" font-size="11" fill="#374151">3</text>
+
+  <!-- Highlight partial dependency -->
+  <rect x="185" y="129" width="75" height="82" rx="3" fill="none" stroke="#ef4444" stroke-width="2" stroke-dasharray="4,3"/>
+
+  <!-- Dependency diagram -->
+  <rect x="40" y="240" width="270" height="110" rx="8" fill="#fff7ed" stroke="#fdba74" stroke-width="1"/>
+  <text x="175" y="262" text-anchor="middle" font-size="11" font-weight="600" fill="#c2410c">依赖关系分析</text>
+  
+  <text x="65" y="288" font-size="10" fill="#374151">(订单号, 商品ID)</text>
+  <text x="165" y="288" font-size="10" fill="#374151">→</text>
+  <text x="185" y="288" font-size="10" fill="#22c55e" font-weight="600">数量 ✓完全依赖</text>
+  
+  <text x="110" y="310" font-size="10" fill="#374151">商品ID</text>
+  <text x="155" y="310" font-size="10" fill="#374151">→</text>
+  <text x="175" y="310" font-size="10" fill="#ef4444" font-weight="600">商品名称 ✗部分依赖</text>
+
+  <text x="65" y="336" font-size="10" fill="#ef4444">⚠ 商品名称只依赖商品ID，不依赖订单号</text>
+
+  <!-- === Arrow === -->
+  <g transform="translate(370, 195)">
+    <circle r="22" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.5"/>
+    <text x="0" y="1" text-anchor="middle" font-size="18" fill="#64748b">→</text>
+  </g>
+
+  <!-- === Right: Correct === -->
+  <g filter="url(#shadow)">
+    <rect x="420" y="55" width="360" height="310" rx="10" fill="white" stroke="#86efac" stroke-width="2"/>
+  </g>
+  <rect x="420" y="55" width="360" height="36" rx="10" fill="#f0fdf4"/>
+  <rect x="420" y="81" width="360" height="10" fill="#f0fdf4"/>
+  <text x="600" y="79" text-anchor="middle" font-size="13" font-weight="600" fill="#16a34a">✅ 满足 2NF：拆分为两张表</text>
+
+  <!-- Table 1: Order Detail -->
+  <rect x="435" y="100" width="155" height="28" rx="4" fill="#dcfce7"/>
+  <text x="475" y="119" text-anchor="middle" font-size="10" font-weight="600" fill="#166534">订单号🔑</text>
+  <text x="540" y="119" text-anchor="middle" font-size="10" font-weight="600" fill="#166534">商品ID🔑</text>
+  <text x="575" y="119" text-anchor="middle" font-size="10" font-weight="600" fill="#166534">数量</text>
+
+  <line x1="435" y1="128" x2="590" y2="128" stroke="#bbf7d0" stroke-width="1"/>
+  <text x="475" y="146" text-anchor="middle" font-size="10" fill="#374151">O001</text>
+  <text x="540" y="146" text-anchor="middle" font-size="10" fill="#374151">P01</text>
+  <text x="575" y="146" text-anchor="middle" font-size="10" fill="#374151">2</text>
+
+  <line x1="435" y1="155" x2="590" y2="155" stroke="#bbf7d0" stroke-width="1"/>
+  <text x="475" y="173" text-anchor="middle" font-size="10" fill="#374151">O001</text>
+  <text x="540" y="173" text-anchor="middle" font-size="10" fill="#374151">P02</text>
+  <text x="575" y="173" text-anchor="middle" font-size="10" fill="#374151">1</text>
+
+  <line x1="435" y1="182" x2="590" y2="182" stroke="#bbf7d0" stroke-width="1"/>
+  <text x="475" y="200" text-anchor="middle" font-size="10" fill="#374151">O002</text>
+  <text x="540" y="200" text-anchor="middle" font-size="10" fill="#374151">P01</text>
+  <text x="575" y="200" text-anchor="middle" font-size="10" fill="#374151">3</text>
+
+  <!-- Table label -->
+  <text x="512" y="222" text-anchor="middle" font-size="10" font-weight="600" fill="#15803d">订单明细表</text>
+
+  <!-- Table 2: Product Info -->
+  <rect x="615" y="100" width="150" height="28" rx="4" fill="#dbeafe"/>
+  <text x="660" y="119" text-anchor="middle" font-size="10" font-weight="600" fill="#1e40af">商品ID🔑</text>
+  <text x="730" y="119" text-anchor="middle" font-size="10" font-weight="600" fill="#1e40af">商品名称</text>
+
+  <line x1="615" y1="128" x2="765" y2="128" stroke="#bfdbfe" stroke-width="1"/>
+  <text x="660" y="146" text-anchor="middle" font-size="10" fill="#374151">P01</text>
+  <text x="730" y="146" text-anchor="middle" font-size="10" fill="#374151">键盘</text>
+
+  <line x1="615" y1="155" x2="765" y2="155" stroke="#bfdbfe" stroke-width="1"/>
+  <text x="660" y="173" text-anchor="middle" font-size="10" fill="#374151">P02</text>
+  <text x="730" y="173" text-anchor="middle" font-size="10" fill="#374151">鼠标</text>
+
+  <text x="690" y="222" text-anchor="middle" font-size="10" font-weight="600" fill="#1d4ed8">商品信息表</text>
+
+  <!-- Connection line -->
+  <line x1="590" y1="165" x2="615" y2="145" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arrow2)"/>
+
+  <!-- Bottom note -->
+  <rect x="440" y="245" width="320" height="100" rx="8" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1"/>
+  <text x="600" y="268" text-anchor="middle" font-size="11" font-weight="600" fill="#15803d">修正效果</text>
+  <text x="600" y="290" text-anchor="middle" font-size="10" fill="#374151">✓ 商品名称不再重复存储</text>
+  <text x="600" y="308" text-anchor="middle" font-size="10" fill="#374151">✓ 修改商品名称只需更新一行</text>
+  <text x="600" y="326" text-anchor="middle" font-size="10" fill="#374151">✓ 消除了部分函数依赖</text>
+</svg>

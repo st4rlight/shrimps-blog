@@ -1,0 +1,149 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 430" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.12"/>
+    </filter>
+    <marker id="arrB" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#f59e0b"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="820" height="430" rx="12" fill="#f8fafc"/>
+
+  <!-- Title -->
+  <text x="410" y="35" text-anchor="middle" font-size="18" font-weight="700" fill="#1e293b">BCNF：消除主属性对候选码的依赖 — 反例 vs 修正</text>
+
+  <!-- === Left: Anti-pattern === -->
+  <g filter="url(#shadow)">
+    <rect x="15" y="55" width="350" height="365" rx="10" fill="white" stroke="#fca5a5" stroke-width="2"/>
+  </g>
+  <rect x="15" y="55" width="350" height="36" rx="10" fill="#fef2f2"/>
+  <rect x="15" y="81" width="350" height="10" fill="#fef2f2"/>
+  <text x="190" y="79" text-anchor="middle" font-size="13" font-weight="600" fill="#dc2626">❌ 满足3NF但违反BCNF：仓库管理表</text>
+
+  <!-- Table header -->
+  <rect x="30" y="100" width="320" height="28" rx="4" fill="#fee2e2"/>
+  <text x="72" y="119" text-anchor="middle" font-size="10" font-weight="600" fill="#991b1b">仓库名🔑</text>
+  <text x="148" y="119" text-anchor="middle" font-size="10" font-weight="600" fill="#991b1b">物品名🔑</text>
+  <text x="230" y="119" text-anchor="middle" font-size="10" font-weight="600" fill="#991b1b">管理员🔑</text>
+  <text x="310" y="119" text-anchor="middle" font-size="10" font-weight="600" fill="#991b1b">数量</text>
+
+  <!-- Rows -->
+  <line x1="30" y1="128" x2="350" y2="128" stroke="#fecaca" stroke-width="1"/>
+  <text x="72" y="148" text-anchor="middle" font-size="10" fill="#374151">A仓</text>
+  <text x="148" y="148" text-anchor="middle" font-size="10" fill="#374151">钢材</text>
+  <text x="230" y="148" text-anchor="middle" font-size="10" fill="#374151">张三</text>
+  <text x="310" y="148" text-anchor="middle" font-size="10" fill="#374151">100</text>
+
+  <line x1="30" y1="158" x2="350" y2="158" stroke="#fecaca" stroke-width="1"/>
+  <text x="72" y="178" text-anchor="middle" font-size="10" fill="#374151">A仓</text>
+  <text x="148" y="178" text-anchor="middle" font-size="10" fill="#374151">水泥</text>
+  <text x="230" y="178" text-anchor="middle" font-size="10" fill="#374151">张三</text>
+  <text x="310" y="178" text-anchor="middle" font-size="10" fill="#374151">200</text>
+
+  <line x1="30" y1="188" x2="350" y2="188" stroke="#fecaca" stroke-width="1"/>
+  <text x="72" y="208" text-anchor="middle" font-size="10" fill="#374151">B仓</text>
+  <text x="148" y="208" text-anchor="middle" font-size="10" fill="#374151">钢材</text>
+  <text x="230" y="208" text-anchor="middle" font-size="10" fill="#374151">李四</text>
+  <text x="310" y="208" text-anchor="middle" font-size="10" fill="#374151">50</text>
+
+  <!-- Highlight -->
+  <rect x="38" y="129" width="50" height="82" rx="3" fill="none" stroke="#ef4444" stroke-width="2" stroke-dasharray="4,3"/>
+  <rect x="198" y="129" width="65" height="82" rx="3" fill="none" stroke="#ef4444" stroke-width="2" stroke-dasharray="4,3"/>
+
+  <!-- Dependency diagram -->
+  <rect x="30" y="240" width="320" height="165" rx="8" fill="#fff7ed" stroke="#fdba74" stroke-width="1"/>
+  <text x="190" y="262" text-anchor="middle" font-size="11" font-weight="600" fill="#c2410c">BCNF 违规分析</text>
+
+  <!-- Candidate keys -->
+  <text x="45" y="285" font-size="10" fill="#374151" font-weight="600">候选码：</text>
+  <rect x="105" y="272" width="110" height="18" rx="3" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="160" y="285" text-anchor="middle" font-size="9" fill="#1d4ed8">(仓库名, 物品名)</text>
+  <rect x="225" y="272" width="110" height="18" rx="3" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="280" y="285" text-anchor="middle" font-size="9" fill="#1d4ed8">(管理员, 物品名)</text>
+
+  <!-- Key dependency -->
+  <text x="45" y="314" font-size="10" fill="#374151" font-weight="600">依赖关系：</text>
+  <rect x="55" y="322" width="55" height="20" rx="3" fill="#fef3c7" stroke="#fcd34d" stroke-width="1"/>
+  <text x="82" y="336" text-anchor="middle" font-size="9" font-weight="600" fill="#92400e">仓库名</text>
+  <text x="120" y="336" font-size="10" fill="#374151">→</text>
+  <rect x="132" y="322" width="55" height="20" rx="3" fill="#fee2e2" stroke="#fca5a5" stroke-width="1"/>
+  <text x="159" y="336" text-anchor="middle" font-size="9" font-weight="600" fill="#991b1b">管理员</text>
+
+  <!-- Problem -->
+  <text x="200" y="370" font-size="10" fill="#ef4444" font-weight="600">⚠ 仓库名 → 管理员</text>
+  <text x="200" y="388" font-size="9" fill="#ef4444">仓库名不是候选码，却决定了主属性</text>
+  <text x="200" y="400" font-size="9" fill="#ef4444">符合3NF（管理员是主属性）但违反BCNF</text>
+
+  <!-- === Arrow === -->
+  <g transform="translate(390, 215)">
+    <circle r="22" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.5"/>
+    <text x="0" y="1" text-anchor="middle" font-size="18" fill="#64748b">→</text>
+  </g>
+
+  <!-- === Right: Correct === -->
+  <g filter="url(#shadow)">
+    <rect x="430" y="55" width="375" height="365" rx="10" fill="white" stroke="#86efac" stroke-width="2"/>
+  </g>
+  <rect x="430" y="55" width="375" height="36" rx="10" fill="#f0fdf4"/>
+  <rect x="430" y="81" width="375" height="10" fill="#f0fdf4"/>
+  <text x="617" y="79" text-anchor="middle" font-size="13" font-weight="600" fill="#16a34a">✅ 满足 BCNF：拆分为两张表</text>
+
+  <!-- Table 1: Warehouse-Manager -->
+  <rect x="445" y="100" width="170" height="28" rx="4" fill="#dcfce7"/>
+  <text x="492" y="119" text-anchor="middle" font-size="10" font-weight="600" fill="#166534">仓库名🔑</text>
+  <text x="575" y="119" text-anchor="middle" font-size="10" font-weight="600" fill="#166534">管理员</text>
+
+  <line x1="445" y1="128" x2="615" y2="128" stroke="#bbf7d0" stroke-width="1"/>
+  <text x="492" y="148" text-anchor="middle" font-size="10" fill="#374151">A仓</text>
+  <text x="575" y="148" text-anchor="middle" font-size="10" fill="#374151">张三</text>
+
+  <line x1="445" y1="158" x2="615" y2="158" stroke="#bbf7d0" stroke-width="1"/>
+  <text x="492" y="178" text-anchor="middle" font-size="10" fill="#374151">B仓</text>
+  <text x="575" y="178" text-anchor="middle" font-size="10" fill="#374151">李四</text>
+
+  <text x="530" y="200" text-anchor="middle" font-size="10" font-weight="600" fill="#15803d">仓库-管理员表</text>
+
+  <!-- Table 2: Warehouse-Item-Quantity -->
+  <rect x="640" y="100" width="150" height="28" rx="4" fill="#dbeafe"/>
+  <text x="678" y="119" text-anchor="middle" font-size="10" font-weight="600" fill="#1e40af">仓库名🔑</text>
+  <text x="730" y="119" text-anchor="middle" font-size="10" font-weight="600" fill="#1e40af">物品名🔑</text>
+  <text x="773" y="119" text-anchor="middle" font-size="10" font-weight="600" fill="#1e40af">数量</text>
+
+  <line x1="640" y1="128" x2="790" y2="128" stroke="#bfdbfe" stroke-width="1"/>
+  <text x="678" y="148" text-anchor="middle" font-size="10" fill="#374151">A仓</text>
+  <text x="730" y="148" text-anchor="middle" font-size="10" fill="#374151">钢材</text>
+  <text x="773" y="148" text-anchor="middle" font-size="10" fill="#374151">100</text>
+
+  <line x1="640" y1="158" x2="790" y2="158" stroke="#bfdbfe" stroke-width="1"/>
+  <text x="678" y="178" text-anchor="middle" font-size="10" fill="#374151">A仓</text>
+  <text x="730" y="178" text-anchor="middle" font-size="10" fill="#374151">水泥</text>
+  <text x="773" y="178" text-anchor="middle" font-size="10" fill="#374151">200</text>
+
+  <line x1="640" y1="188" x2="790" y2="188" stroke="#bfdbfe" stroke-width="1"/>
+  <text x="678" y="208" text-anchor="middle" font-size="10" fill="#374151">B仓</text>
+  <text x="730" y="208" text-anchor="middle" font-size="10" fill="#374151">钢材</text>
+  <text x="773" y="208" text-anchor="middle" font-size="10" fill="#374151">50</text>
+
+  <text x="715" y="230" text-anchor="middle" font-size="10" font-weight="600" fill="#1d4ed8">仓库-物品-数量表</text>
+
+  <!-- Connection line -->
+  <line x1="615" y1="165" x2="640" y2="155" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arrB)"/>
+
+  <!-- Bottom note -->
+  <rect x="450" y="260" width="340" height="145" rx="8" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1"/>
+  <text x="620" y="282" text-anchor="middle" font-size="11" font-weight="600" fill="#15803d">3NF vs BCNF 关键区别</text>
+
+  <text x="470" y="306" font-size="10" fill="#374151">3NF：</text>
+  <text x="510" y="306" font-size="10" fill="#374151">只约束"非主属性"不能被非候选码决定</text>
+
+  <text x="470" y="326" font-size="10" fill="#374151">BCNF：</text>
+  <text x="520" y="326" font-size="10" fill="#374151">所有属性（含主属性）都不能被非候选码决定</text>
+
+  <line x1="460" y1="340" x2="780" y2="340" stroke="#bbf7d0" stroke-width="1"/>
+
+  <text x="620" y="362" text-anchor="middle" font-size="10" fill="#374151">✓ 消除了主属性之间的依赖</text>
+  <text x="620" y="382" text-anchor="middle" font-size="10" fill="#374151">✓ 所有决定因素都是候选码</text>
+  <text x="620" y="396" text-anchor="middle" font-size="10" fill="#374151">✓ 彻底消除了插入/删除异常</text>
+</svg>

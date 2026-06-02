@@ -59,6 +59,7 @@ export default defineUserConfig({
             collapsed: false,
             items: [
               'claude-code/context-compression-and-cache-analysis.md',
+              'claude-code/system-prompt-and-injection-analysis.md',
             ],
           },
           {
@@ -86,6 +87,14 @@ export default defineUserConfig({
               'rag/taotian-rag-solution.md',
             ],
           },
+          {
+            text: 'DeepAgents源码分析',
+            link: '/ai-study/',
+            collapsed: false,
+            items: [
+              'deep-agents/deep-agents-overview.md',
+            ],
+          },
         ],
       },
       {
@@ -99,6 +108,22 @@ export default defineUserConfig({
             collapsed: false,
             items: [
               'java-pickup/java-thread-synchronization.md',
+            ],
+          },
+          {
+            text: '离线数仓建设',
+            link: '/notes/',
+            collapsed: false,
+            items: [
+              'data-warehouse/warehouse-table-paradigm-and-layering.md',
+            ],
+          },
+          {
+            text: '数据库技术',
+            link: '/notes/',
+            collapsed: false,
+            items: [
+              'database/database-normal-forms.md',
             ],
           },
         ],
