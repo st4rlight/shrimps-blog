@@ -1,0 +1,148 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 440" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <linearGradient id="odsG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#94a3b8;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#64748b;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="dwdG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#34d399;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#059669;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="dwsG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2563eb;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="adsG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#c084fc;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#9333ea;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="dimG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#d97706;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.12"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/>
+    </marker>
+    <marker id="arrowDim" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#d97706"/>
+    </marker>
+    <marker id="arrowR" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#ef4444"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="440" rx="16" fill="#f8fafc"/>
+
+  <!-- Title -->
+  <text x="400" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">数仓数据流转机制</text>
+  <text x="400" y="54" text-anchor="middle" font-size="12" fill="#94a3b8">数据从源端到应用的完整流转路径与分层引用规则</text>
+
+  <!-- ===== Left: Source Column ===== -->
+  <text x="80" y="90" text-anchor="middle" font-size="11" font-weight="600" fill="#94a3b8">数据源</text>
+  <g filter="url(#shadow)">
+    <rect x="20" y="100" width="120" height="32" rx="6" fill="white" stroke="#cbd5e1" stroke-width="1"/>
+  </g>
+  <text x="80" y="121" text-anchor="middle" font-size="10" fill="#475569">业务数据库</text>
+  <g filter="url(#shadow)">
+    <rect x="20" y="140" width="120" height="32" rx="6" fill="white" stroke="#cbd5e1" stroke-width="1"/>
+  </g>
+  <text x="80" y="161" text-anchor="middle" font-size="10" fill="#475569">日志系统</text>
+  <g filter="url(#shadow)">
+    <rect x="20" y="180" width="120" height="32" rx="6" fill="white" stroke="#cbd5e1" stroke-width="1"/>
+  </g>
+  <text x="80" y="201" text-anchor="middle" font-size="10" fill="#475569">第三方 API</text>
+
+  <!-- ===== Center: Layer Flow (vertical) ===== -->
+
+  <!-- ODS -->
+  <g filter="url(#shadow)">
+    <rect x="200" y="96" width="280" height="48" rx="10" fill="white" stroke="#64748b" stroke-width="2"/>
+  </g>
+  <rect x="200" y="96" width="50" height="48" rx="10" fill="url(#odsG)"/>
+  <rect x="230" y="96" width="20" height="48" fill="url(#odsG)"/>
+  <text x="225" y="125" text-anchor="middle" font-size="13" font-weight="700" fill="white">ODS</text>
+  <text x="330" y="116" font-size="10" font-weight="600" fill="#1e293b">贴源层 · 原样同步</text>
+  <text x="330" y="133" font-size="9" fill="#64748b">不做清洗转换，保留分区与 ETL 元数据</text>
+
+  <!-- Arrow ODS → DWD -->
+  <line x1="340" y1="144" x2="340" y2="168" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- DWD -->
+  <g filter="url(#shadow)">
+    <rect x="200" y="170" width="280" height="48" rx="10" fill="white" stroke="#059669" stroke-width="2"/>
+  </g>
+  <rect x="200" y="170" width="50" height="48" rx="10" fill="url(#dwdG)"/>
+  <rect x="230" y="170" width="20" height="48" fill="url(#dwdG)"/>
+  <text x="225" y="199" text-anchor="middle" font-size="13" font-weight="700" fill="white">DWD</text>
+  <text x="330" y="190" font-size="10" font-weight="600" fill="#1e293b">明细层 · 标准化清洗</text>
+  <text x="330" y="207" font-size="9" fill="#64748b">清洗 · 标准化 · 维度退化 · 建立事实表</text>
+
+  <!-- Arrow DWD → DWS -->
+  <line x1="340" y1="218" x2="340" y2="242" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- DWS -->
+  <g filter="url(#shadow)">
+    <rect x="200" y="244" width="280" height="48" rx="10" fill="white" stroke="#2563eb" stroke-width="2"/>
+  </g>
+  <rect x="200" y="244" width="50" height="48" rx="10" fill="url(#dwsG)"/>
+  <rect x="230" y="244" width="20" height="48" fill="url(#dwsG)"/>
+  <text x="225" y="273" text-anchor="middle" font-size="13" font-weight="700" fill="white">DWS</text>
+  <text x="330" y="264" font-size="10" font-weight="600" fill="#1e293b">汇总层 · 主题域聚合</text>
+  <text x="330" y="281" font-size="9" fill="#64748b">汇总宽表 · 公共指标沉淀 · 多维下钻</text>
+
+  <!-- Arrow DWS → ADS -->
+  <line x1="340" y1="292" x2="340" y2="316" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- ADS -->
+  <g filter="url(#shadow)">
+    <rect x="200" y="318" width="280" height="48" rx="10" fill="white" stroke="#9333ea" stroke-width="2"/>
+  </g>
+  <rect x="200" y="318" width="50" height="48" rx="10" fill="url(#adsG)"/>
+  <rect x="230" y="318" width="20" height="48" fill="url(#adsG)"/>
+  <text x="225" y="347" text-anchor="middle" font-size="13" font-weight="700" fill="white">ADS</text>
+  <text x="330" y="338" font-size="10" font-weight="600" fill="#1e293b">应用层 · 面向应用场景</text>
+  <text x="330" y="355" font-size="9" fill="#64748b">报表 · 接口 · 数据服务 · 应用数据库</text>
+
+  <!-- ===== Right: DIM Layer ===== -->
+  <g filter="url(#shadow)">
+    <rect x="560" y="156" width="200" height="124" rx="10" fill="white" stroke="#d97706" stroke-width="2"/>
+  </g>
+  <rect x="560" y="156" width="200" height="30" rx="10" fill="url(#dimG)"/>
+  <rect x="560" y="172" width="200" height="14" fill="url(#dimG)"/>
+  <text x="660" y="177" text-anchor="middle" font-size="12" font-weight="700" fill="white">DIM 维度层</text>
+  <text x="580" y="210" font-size="10" fill="#92400e">• 用户维度 (dim_user_full)</text>
+  <text x="580" y="228" font-size="10" fill="#92400e">• 商品维度 (dim_sku_full)</text>
+  <text x="580" y="246" font-size="10" fill="#92400e">• 时间维度 (dim_date_full)</text>
+  <text x="580" y="264" font-size="10" fill="#92400e">• 地区维度 + SCD 处理</text>
+
+  <!-- DIM → DWD dashed arrow -->
+  <line x1="560" y1="220" x2="482" y2="198" stroke="#d97706" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrowDim)"/>
+  <!-- DIM → DWS dashed arrow -->
+  <line x1="560" y1="240" x2="482" y2="268" stroke="#d97706" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrowDim)"/>
+
+  <!-- ===== Right: Applications ===== -->
+  <text x="660" y="310" text-anchor="middle" font-size="11" font-weight="600" fill="#94a3b8">下游应用</text>
+
+  <g filter="url(#shadow)">
+    <rect x="560" y="318" width="200" height="48" rx="10" fill="white" stroke="#ef4444" stroke-width="1.5"/>
+  </g>
+  <text x="660" y="338" text-anchor="middle" font-size="11" font-weight="600" fill="#ef4444">BI 报表 · 数据服务</text>
+  <text x="660" y="356" text-anchor="middle" font-size="9" fill="#64748b">接口 API · MySQL / ClickHouse / Redis</text>
+
+  <!-- ADS → Apps arrow -->
+  <line x1="480" y1="342" x2="558" y2="342" stroke="#ef4444" stroke-width="1.5" marker-end="url(#arrowR)"/>
+
+  <!-- Source → ODS arrows -->
+  <line x1="140" y1="116" x2="198" y2="116" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="140" y1="156" x2="198" y2="126" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="140" y1="196" x2="198" y2="138" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- ===== Bottom: Reference Rules ===== -->
+  <rect x="40" y="386" width="720" height="38" rx="10" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1"/>
+  <text x="400" y="404" text-anchor="middle" font-size="11" font-weight="600" fill="#475569">分层引用规则</text>
+  <text x="400" y="420" text-anchor="middle" font-size="10" fill="#64748b">ODS ← 源端 ｜ DWD ← ODS + DIM ｜ DWS ← DWD + DIM ｜ ADS ← DWS + DIM ｜ DIM ← ODS</text>
+</svg>

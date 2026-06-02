@@ -1,0 +1,185 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 420" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <linearGradient id="srcG" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#cbd5e1;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#94a3b8;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="odsG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#94a3b8;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#64748b;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="dwdG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#34d399;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#059669;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="dimG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#d97706;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="dwsG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2563eb;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="adsG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#c084fc;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#9333ea;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="appG" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f87171;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ef4444;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.12"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/>
+    </marker>
+    <marker id="arrowDim" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#d97706"/>
+    </marker>
+    <marker id="arrowR" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#ef4444"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="840" height="420" rx="16" fill="#f8fafc"/>
+
+  <!-- Title -->
+  <text x="420" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">数仓数据流转全貌</text>
+  <text x="420" y="54" text-anchor="middle" font-size="12" fill="#94a3b8">数据源 → 数仓分层 → 下游应用的完整流转路径</text>
+
+  <!-- ===== Column Headers ===== -->
+  <text x="70" y="82" text-anchor="middle" font-size="11" font-weight="600" fill="#94a3b8">数据源</text>
+  <text x="360" y="82" text-anchor="middle" font-size="11" font-weight="600" fill="#94a3b8">数仓分层</text>
+  <text x="740" y="82" text-anchor="middle" font-size="11" font-weight="600" fill="#94a3b8">下游应用</text>
+
+  <!-- Divider lines -->
+  <line x1="160" y1="74" x2="160" y2="380" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4,4"/>
+  <line x1="600" y1="74" x2="600" y2="380" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4,4"/>
+
+  <!-- ===== Source: 业务DB ===== -->
+  <g filter="url(#shadow)">
+    <rect x="18" y="120" width="110" height="50" rx="10" fill="white" stroke="#94a3b8" stroke-width="1.5"/>
+  </g>
+  <rect x="18" y="120" width="110" height="24" rx="10" fill="url(#srcG)"/>
+  <rect x="18" y="132" width="110" height="12" fill="url(#srcG)"/>
+  <text x="73" y="137" text-anchor="middle" font-size="11" font-weight="700" fill="white">业务 DB</text>
+  <text x="73" y="158" text-anchor="middle" font-size="9" fill="#64748b">MySQL / PG</text>
+
+  <!-- ===== Source: 日志 ===== -->
+  <g filter="url(#shadow)">
+    <rect x="18" y="200" width="110" height="50" rx="10" fill="white" stroke="#94a3b8" stroke-width="1.5"/>
+  </g>
+  <rect x="18" y="200" width="110" height="24" rx="10" fill="url(#srcG)"/>
+  <rect x="18" y="212" width="110" height="12" fill="url(#srcG)"/>
+  <text x="73" y="217" text-anchor="middle" font-size="11" font-weight="700" fill="white">日志系统</text>
+  <text x="73" y="238" text-anchor="middle" font-size="9" fill="#64748b">埋点 / Nginx</text>
+
+  <!-- ===== ODS ===== -->
+  <g filter="url(#shadow)">
+    <rect x="195" y="152" width="100" height="68" rx="10" fill="white" stroke="#64748b" stroke-width="2"/>
+  </g>
+  <rect x="195" y="152" width="100" height="28" rx="10" fill="url(#odsG)"/>
+  <rect x="195" y="168" width="100" height="12" fill="url(#odsG)"/>
+  <text x="245" y="172" text-anchor="middle" font-size="14" font-weight="700" fill="white">ODS</text>
+  <text x="245" y="198" text-anchor="middle" font-size="9" fill="#64748b">贴源层</text>
+  <text x="245" y="212" text-anchor="middle" font-size="8" fill="#94a3b8">原样同步</text>
+
+  <!-- ===== DWD ===== -->
+  <g filter="url(#shadow)">
+    <rect x="330" y="152" width="100" height="68" rx="10" fill="white" stroke="#059669" stroke-width="2"/>
+  </g>
+  <rect x="330" y="152" width="100" height="28" rx="10" fill="url(#dwdG)"/>
+  <rect x="330" y="168" width="100" height="12" fill="url(#dwdG)"/>
+  <text x="380" y="172" text-anchor="middle" font-size="14" font-weight="700" fill="white">DWD</text>
+  <text x="380" y="198" text-anchor="middle" font-size="9" fill="#64748b">明细层</text>
+  <text x="380" y="212" text-anchor="middle" font-size="8" fill="#94a3b8">标准化清洗</text>
+
+  <!-- ===== DIM (below DWD) ===== -->
+  <g filter="url(#shadow)">
+    <rect x="330" y="272" width="100" height="68" rx="10" fill="white" stroke="#d97706" stroke-width="2"/>
+  </g>
+  <rect x="330" y="272" width="100" height="28" rx="10" fill="url(#dimG)"/>
+  <rect x="330" y="288" width="100" height="12" fill="url(#dimG)"/>
+  <text x="380" y="292" text-anchor="middle" font-size="14" font-weight="700" fill="white">DIM</text>
+  <text x="380" y="318" text-anchor="middle" font-size="9" fill="#92400e">维度层</text>
+  <text x="380" y="332" text-anchor="middle" font-size="8" fill="#b45309">独立管理</text>
+
+  <!-- ===== DWS ===== -->
+  <g filter="url(#shadow)">
+    <rect x="465" y="152" width="100" height="68" rx="10" fill="white" stroke="#2563eb" stroke-width="2"/>
+  </g>
+  <rect x="465" y="152" width="100" height="28" rx="10" fill="url(#dwsG)"/>
+  <rect x="465" y="168" width="100" height="12" fill="url(#dwsG)"/>
+  <text x="515" y="172" text-anchor="middle" font-size="14" font-weight="700" fill="white">DWS</text>
+  <text x="515" y="198" text-anchor="middle" font-size="9" fill="#64748b">汇总层</text>
+  <text x="515" y="212" text-anchor="middle" font-size="8" fill="#94a3b8">主题域聚合</text>
+
+  <!-- ===== ADS ===== -->
+  <g filter="url(#shadow)">
+    <rect x="195" y="328" width="370" height="0" rx="10" fill="none"/>
+  </g>
+
+  <!-- ===== Applications ===== -->
+  <g filter="url(#shadow)">
+    <rect x="640" y="110" width="170" height="46" rx="10" fill="white" stroke="#ef4444" stroke-width="1.5"/>
+  </g>
+  <text x="725" y="130" text-anchor="middle" font-size="12" font-weight="600" fill="#ef4444">BI 报表</text>
+  <text x="725" y="146" text-anchor="middle" font-size="9" fill="#64748b">数据看板 · 日报周报</text>
+
+  <g filter="url(#shadow)">
+    <rect x="640" y="174" width="170" height="46" rx="10" fill="white" stroke="#ef4444" stroke-width="1.5"/>
+  </g>
+  <text x="725" y="194" text-anchor="middle" font-size="12" font-weight="600" fill="#ef4444">数据服务</text>
+  <text x="725" y="210" text-anchor="middle" font-size="9" fill="#64748b">接口 API · 数据产品</text>
+
+  <g filter="url(#shadow)">
+    <rect x="640" y="238" width="170" height="46" rx="10" fill="white" stroke="#ef4444" stroke-width="1.5"/>
+  </g>
+  <text x="725" y="258" text-anchor="middle" font-size="12" font-weight="600" fill="#ef4444">MySQL / CK / Redis</text>
+  <text x="725" y="274" text-anchor="middle" font-size="9" fill="#64748b">应用数据库 · 实时查询</text>
+
+  <!-- ===== ADS Box (between DWS and Apps) ===== -->
+  <g filter="url(#shadow)">
+    <rect x="465" y="260" width="100" height="68" rx="10" fill="white" stroke="#9333ea" stroke-width="2"/>
+  </g>
+  <rect x="465" y="260" width="100" height="28" rx="10" fill="url(#adsG)"/>
+  <rect x="465" y="276" width="100" height="12" fill="url(#adsG)"/>
+  <text x="515" y="280" text-anchor="middle" font-size="14" font-weight="700" fill="white">ADS</text>
+  <text x="515" y="306" text-anchor="middle" font-size="9" fill="#64748b">应用层</text>
+  <text x="515" y="320" text-anchor="middle" font-size="8" fill="#94a3b8">面向应用场景</text>
+
+  <!-- ===== Flow Arrows ===== -->
+
+  <!-- 业务DB → ODS -->
+  <line x1="128" y1="145" x2="193" y2="175" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+  <!-- 日志 → ODS -->
+  <line x1="128" y1="225" x2="193" y2="200" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- ODS → DWD -->
+  <line x1="295" y1="186" x2="328" y2="186" stroke="#94a3b8" stroke-width="2.5" marker-end="url(#arrow)"/>
+
+  <!-- DWD → DWS -->
+  <line x1="430" y1="186" x2="463" y2="186" stroke="#94a3b8" stroke-width="2.5" marker-end="url(#arrow)"/>
+
+  <!-- DWS → ADS (curved) -->
+  <path d="M 515 220 L 515 258" stroke="#94a3b8" stroke-width="2.5" fill="none" marker-end="url(#arrow)"/>
+
+  <!-- ADS → BI 报表 -->
+  <line x1="565" y1="280" x2="638" y2="133" stroke="#ef4444" stroke-width="1.5" marker-end="url(#arrowR)"/>
+  <!-- ADS → 数据服务 -->
+  <line x1="565" y1="290" x2="638" y2="197" stroke="#ef4444" stroke-width="1.5" marker-end="url(#arrowR)"/>
+  <!-- ADS → MySQL/CK -->
+  <line x1="565" y1="300" x2="638" y2="261" stroke="#ef4444" stroke-width="1.5" marker-end="url(#arrowR)"/>
+
+  <!-- DIM → DWD (dashed) -->
+  <line x1="370" y1="272" x2="370" y2="222" stroke="#d97706" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrowDim)"/>
+  <!-- DIM → DWS (dashed) -->
+  <path d="M 430 300 L 458 300 Q 465 300 465 290 L 465 220" stroke="#d97706" stroke-width="1.5" stroke-dasharray="5,3" fill="none" marker-end="url(#arrowDim)"/>
+
+  <!-- ===== Bottom Rules ===== -->
+  <rect x="40" y="370" width="760" height="36" rx="10" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1"/>
+  <text x="420" y="388" text-anchor="middle" font-size="10" font-weight="600" fill="#475569">核心流转规则</text>
+  <text x="420" y="402" text-anchor="middle" font-size="9" fill="#64748b">① 数据只从上游流向下游，严禁反向依赖　② DWD是核心，所有事实数据必须经DWD标准化　③ DWS←DWD+DIM　ADS←DWS+DIM</text>
+</svg>

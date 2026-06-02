@@ -1,0 +1,103 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 480" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <linearGradient id="blueG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="greenG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#34d399;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="indigoG" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#818cf8;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#6366f1;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="3" stdDeviation="5" flood-opacity="0.15"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="480" rx="16" fill="#f8fafc"/>
+
+  <!-- Title -->
+  <text x="400" y="38" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">维度建模 vs 范式建模（3NF）</text>
+  <text x="400" y="60" text-anchor="middle" font-size="12" fill="#94a3b8">数仓建设最主流的两种核心建模范式</text>
+
+  <!-- ===== Left Card: Dimensional Modeling ===== -->
+  <g filter="url(#shadow)">
+    <rect x="30" y="80" width="340" height="340" rx="12" fill="white" stroke="#3b82f6" stroke-width="2"/>
+  </g>
+  <!-- Header -->
+  <rect x="30" y="80" width="340" height="44" rx="12" fill="url(#blueG)"/>
+  <rect x="30" y="100" width="340" height="24" fill="url(#blueG)"/>
+  <text x="200" y="108" text-anchor="middle" font-size="16" font-weight="700" fill="white">维度建模 Dimensional Modeling</text>
+
+  <!-- Subtitle -->
+  <text x="200" y="148" text-anchor="middle" font-size="11" fill="#64748b" font-weight="600">提出者：Ralph Kimball</text>
+
+  <!-- Core idea -->
+  <rect x="50" y="162" width="300" height="36" rx="8" fill="#dbeafe"/>
+  <text x="200" y="184" text-anchor="middle" font-size="12" font-weight="600" fill="#1d4ed8">围绕业务过程，事实表 + 维度表</text>
+
+  <!-- Pros -->
+  <text x="55" y="220" font-size="12" font-weight="700" fill="#1e293b">✅ 优势</text>
+  <text x="55" y="240" font-size="11" fill="#374151">• 查询性能高（JOIN 少）</text>
+  <text x="55" y="258" font-size="11" fill="#374151">• 直观易用，业务人员可自助分析</text>
+  <text x="55" y="276" font-size="11" fill="#374151">• 开发效率高，ETL 逻辑简洁</text>
+  <text x="55" y="294" font-size="11" fill="#374151">• 天然适配 OLAP 多维分析</text>
+
+  <!-- Cons -->
+  <text x="55" y="322" font-size="12" font-weight="700" fill="#1e293b">⚠️ 局限</text>
+  <text x="55" y="342" font-size="11" fill="#374151">• 维度表冗余，存储空间占用大</text>
+  <text x="55" y="360" font-size="11" fill="#374151">• 冗余数据一致性需额外保障</text>
+  <text x="55" y="378" font-size="11" fill="#374151">• 业务变更可能需要重构模型</text>
+
+  <!-- Tag -->
+  <rect x="130" y="396" width="140" height="22" rx="11" fill="#eff6ff" stroke="#93c5fd" stroke-width="1"/>
+  <text x="200" y="411" text-anchor="middle" font-size="10" font-weight="600" fill="#3b82f6">数据集市 / OLAP 分析</text>
+
+  <!-- ===== Right Card: Normalized Modeling ===== -->
+  <g filter="url(#shadow)">
+    <rect x="430" y="80" width="340" height="340" rx="12" fill="white" stroke="#10b981" stroke-width="2"/>
+  </g>
+  <!-- Header -->
+  <rect x="430" y="80" width="340" height="44" rx="12" fill="url(#greenG)"/>
+  <rect x="430" y="100" width="340" height="24" fill="url(#greenG)"/>
+  <text x="600" y="108" text-anchor="middle" font-size="16" font-weight="700" fill="white">范式建模 Normalized / 3NF</text>
+
+  <!-- Subtitle -->
+  <text x="600" y="148" text-anchor="middle" font-size="11" fill="#64748b" font-weight="600">提出者：Bill Inmon</text>
+
+  <!-- Core idea -->
+  <rect x="450" y="162" width="300" height="36" rx="8" fill="#d1fae5"/>
+  <text x="600" y="184" text-anchor="middle" font-size="12" font-weight="600" fill="#047857">按第三范式消除冗余，E-R 模型</text>
+
+  <!-- Pros -->
+  <text x="455" y="220" font-size="12" font-weight="700" fill="#1e293b">✅ 优势</text>
+  <text x="455" y="240" font-size="11" fill="#374151">• 数据冗余极小，存储利用率高</text>
+  <text x="455" y="258" font-size="11" fill="#374151">• 数据一致性强，单点维护</text>
+  <text x="455" y="276" font-size="11" fill="#374151">• 扩展性好，新增实体灵活</text>
+  <text x="455" y="294" font-size="11" fill="#374151">• 适合多源数据统一集成</text>
+
+  <!-- Cons -->
+  <text x="455" y="322" font-size="12" font-weight="700" fill="#1e293b">⚠️ 局限</text>
+  <text x="455" y="342" font-size="11" fill="#374151">• 大量 JOIN，分析查询效率极低</text>
+  <text x="455" y="360" font-size="11" fill="#374151">• 关系复杂，使用门槛高</text>
+  <text x="455" y="378" font-size="11" fill="#374151">• 不直接适配 OLAP，需额外集市层</text>
+
+  <!-- Tag -->
+  <rect x="510" y="396" width="180" height="22" rx="11" fill="#ecfdf5" stroke="#86efac" stroke-width="1"/>
+  <text x="600" y="411" text-anchor="middle" font-size="10" font-weight="600" fill="#10b981">企业级数据仓库基础层（EDW）</text>
+
+  <!-- ===== VS Circle ===== -->
+  <circle cx="400" cy="250" r="24" fill="url(#indigoG)"/>
+  <text x="400" y="256" text-anchor="middle" font-size="14" font-weight="700" fill="white">VS</text>
+
+  <!-- ===== Bottom Fusion Tip ===== -->
+  <rect x="120" y="440" width="560" height="28" rx="14" fill="#fef3c7" stroke="#fbbf24" stroke-width="1"/>
+  <text x="400" y="459" text-anchor="middle" font-size="11" fill="#92400e" font-weight="500">业界最佳实践：底层 3NF 确保一致性 + 上层维度建模确保查询性能（Kimball × Inmon 融合）</text>
+</svg>
