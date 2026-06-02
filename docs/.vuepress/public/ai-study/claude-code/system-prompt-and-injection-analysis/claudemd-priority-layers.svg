@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 580" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <linearGradient id="grayG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#94a3b8;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#64748b;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="blueG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="greenG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#34d399;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="amberG" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="violetG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#a78bfa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="indigoG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#818cf8;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#6366f1;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.12"/>
+    </filter>
+    <marker id="arrowUp" viewBox="0 0 10 10" refX="5" refY="10" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M 0 10 L 5 0 L 10 10 z" fill="#10b981"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="820" height="580" rx="14" fill="#f8fafc"/>
+
+  <!-- Title -->
+  <text x="410" y="38" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">CLAUDE.md 六层优先级</text>
+  <text x="410" y="58" text-anchor="middle" font-size="12" fill="#94a3b8">从全局管理员策略到团队共享记忆，优先级递增</text>
+
+  <!-- Priority arrow on left -->
+  <line x1="28" y1="510" x2="28" y2="100" stroke="#10b981" stroke-width="2" marker-end="url(#arrowUp)"/>
+  <text x="28" y="530" text-anchor="middle" font-size="10" fill="#64748b" transform="rotate(-90, 28, 310)">优先级递增 →</text>
+
+  <!-- L1: Managed Memory -->
+  <g filter="url(#shadow)">
+    <rect x="60" y="80" width="700" height="68" rx="10" fill="white" stroke="#64748b" stroke-width="1.5"/>
+  </g>
+  <rect x="60" y="80" width="8" height="68" rx="4" fill="url(#grayG)"/>
+  <text x="88" y="102" font-size="13" font-weight="700" fill="#475569">1. Managed Memory</text>
+  <text x="720" y="102" font-size="10" fill="#94a3b8" text-anchor="end">/etc/claude-code/CLAUDE.md</text>
+  <text x="88" y="120" font-size="11" fill="#64748b">全局管理员策略，覆盖所有用户和项目</text>
+  <text x="88" y="138" font-size="10" fill="#94a3b8">优先级最低 — 但适用于组织合规要求</text>
+
+  <!-- L2: User Memory -->
+  <g filter="url(#shadow)">
+    <rect x="60" y="160" width="700" height="68" rx="10" fill="white" stroke="#3b82f6" stroke-width="1.5"/>
+  </g>
+  <rect x="60" y="160" width="8" height="68" rx="4" fill="url(#blueG)"/>
+  <text x="88" y="182" font-size="13" font-weight="700" fill="#1d4ed8">2. User Memory</text>
+  <text x="720" y="182" font-size="10" fill="#94a3b8" text-anchor="end">~/.claude/CLAUDE.md</text>
+  <text x="88" y="200" font-size="11" fill="#64748b">用户全局指令，对所有项目生效</text>
+  <text x="88" y="218" font-size="10" fill="#94a3b8">个人偏好设置、通用编码风格</text>
+
+  <!-- L3: Project Memory -->
+  <g filter="url(#shadow)">
+    <rect x="60" y="240" width="700" height="68" rx="10" fill="white" stroke="#10b981" stroke-width="1.5"/>
+  </g>
+  <rect x="60" y="240" width="8" height="68" rx="4" fill="url(#greenG)"/>
+  <text x="88" y="262" font-size="13" font-weight="700" fill="#047857">3. Project Memory</text>
+  <text x="720" y="262" font-size="10" fill="#94a3b8" text-anchor="end">CLAUDE.md / .claude/CLAUDE.md / .claude/rules/*.md</text>
+  <text x="88" y="280" font-size="11" fill="#64748b">项目级指令，可提交到代码库，团队共享</text>
+  <text x="88" y="298" font-size="10" fill="#94a3b8">支持条件规则（frontmatter glob 匹配）</text>
+
+  <!-- L4: Local Memory -->
+  <g filter="url(#shadow)">
+    <rect x="60" y="320" width="700" height="68" rx="10" fill="white" stroke="#f59e0b" stroke-width="1.5"/>
+  </g>
+  <rect x="60" y="320" width="8" height="68" rx="4" fill="url(#amberG)"/>
+  <text x="88" y="342" font-size="13" font-weight="700" fill="#92400e">4. Local Memory</text>
+  <text x="720" y="342" font-size="10" fill="#94a3b8" text-anchor="end">CLAUDE.local.md</text>
+  <text x="88" y="360" font-size="11" fill="#64748b">本地私有指令，不提交到 Git（gitignore）</text>
+  <text x="88" y="378" font-size="10" fill="#94a3b8">个人调试技巧、临时工作流配置</text>
+
+  <!-- L5: Auto Memory -->
+  <g filter="url(#shadow)">
+    <rect x="60" y="400" width="700" height="68" rx="10" fill="white" stroke="#8b5cf6" stroke-width="1.5"/>
+  </g>
+  <rect x="60" y="400" width="8" height="68" rx="4" fill="url(#violetG)"/>
+  <text x="88" y="422" font-size="13" font-weight="700" fill="#5b21b6">5. Auto Memory</text>
+  <text x="720" y="422" font-size="10" fill="#94a3b8" text-anchor="end">MEMORY.md</text>
+  <text x="88" y="440" font-size="11" fill="#64748b">自动记忆，按会话维护，跨会话持久化</text>
+  <text x="88" y="458" font-size="10" fill="#94a3b8">模型自动记录的项目经验和偏好</text>
+
+  <!-- L6: Team Memory -->
+  <g filter="url(#shadow)">
+    <rect x="60" y="480" width="700" height="68" rx="10" fill="white" stroke="#6366f1" stroke-width="1.5"/>
+  </g>
+  <rect x="60" y="480" width="8" height="68" rx="4" fill="url(#indigoG)"/>
+  <text x="88" y="502" font-size="13" font-weight="700" fill="#4338ca">6. Team Memory</text>
+  <text x="720" y="502" font-size="10" fill="#94a3b8" text-anchor="end">团队共享记忆（跨组织同步）</text>
+  <text x="88" y="520" font-size="11" fill="#64748b">团队共享记忆，跨组织同步，使用 XML 标签包裹</text>
+  <text x="88" y="538" font-size="10" fill="#94a3b8">&lt;team-memory-content source="shared"&gt; — 优先级最高</text>
+</svg>

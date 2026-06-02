@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 560" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <linearGradient id="blueG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="greenG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#34d399;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="amberG" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="violetG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#a78bfa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="indigoG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#818cf8;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#6366f1;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.12"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="820" height="560" rx="14" fill="#f8fafc"/>
+
+  <!-- Title -->
+  <text x="410" y="38" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">Prompt 注入的五层架构</text>
+  <text x="410" y="58" text-anchor="middle" font-size="12" fill="#94a3b8">每一层在不同时机、以不同方式注入到 API 请求中</text>
+
+  <!-- L1: System Prompt -->
+  <g filter="url(#shadow)">
+    <rect x="40" y="78" width="740" height="80" rx="10" fill="white" stroke="#3b82f6" stroke-width="1.5"/>
+  </g>
+  <rect x="40" y="78" width="740" height="36" rx="10" fill="url(#blueG)"/>
+  <rect x="40" y="94" width="740" height="20" fill="url(#blueG)"/>
+  <text x="62" y="102" font-size="14" font-weight="700" fill="white">L1  System Prompt（系统提示词）</text>
+  <text x="740" y="102" font-size="11" font-weight="500" fill="white" text-anchor="end">scope: global / org / null</text>
+  <text x="62" y="130" font-size="11.5" fill="#475569">身份定义 + 行为规范 + 环境信息 + 记忆</text>
+  <text x="62" y="148" font-size="11" fill="#64748b">注入位置: API 请求的 system 字段</text>
+
+  <!-- L2: User Context -->
+  <g filter="url(#shadow)">
+    <rect x="40" y="168" width="740" height="80" rx="10" fill="white" stroke="#10b981" stroke-width="1.5"/>
+  </g>
+  <rect x="40" y="168" width="740" height="36" rx="10" fill="url(#greenG)"/>
+  <rect x="40" y="184" width="740" height="20" fill="url(#greenG)"/>
+  <text x="62" y="192" font-size="14" font-weight="700" fill="white">L2  User Context（用户上下文）</text>
+  <text x="740" y="192" font-size="11" font-weight="500" fill="white" text-anchor="end">scope: 随消息缓存</text>
+  <text x="62" y="220" font-size="11.5" fill="#475569">CLAUDE.md 指令 + 当前日期</text>
+  <text x="62" y="238" font-size="11" fill="#64748b">注入位置: 消息流的首条 user message</text>
+
+  <!-- L3: System Context -->
+  <g filter="url(#shadow)">
+    <rect x="40" y="258" width="740" height="80" rx="10" fill="white" stroke="#f59e0b" stroke-width="1.5"/>
+  </g>
+  <rect x="40" y="258" width="740" height="36" rx="10" fill="url(#amberG)"/>
+  <rect x="40" y="274" width="740" height="20" fill="url(#amberG)"/>
+  <text x="62" y="282" font-size="14" font-weight="700" fill="white">L3  System Context（系统上下文）</text>
+  <text x="740" y="282" font-size="11" font-weight="500" fill="white" text-anchor="end">scope: 随 system prompt 缓存</text>
+  <text x="62" y="310" font-size="11.5" fill="#475569">Git 状态 + Cache Breaker</text>
+  <text x="62" y="328" font-size="11" fill="#64748b">注入位置: system prompt 尾部</text>
+
+  <!-- L4: Attachments -->
+  <g filter="url(#shadow)">
+    <rect x="40" y="348" width="740" height="80" rx="10" fill="white" stroke="#8b5cf6" stroke-width="1.5"/>
+  </g>
+  <rect x="40" y="348" width="740" height="36" rx="10" fill="url(#violetG)"/>
+  <rect x="40" y="364" width="740" height="20" fill="url(#violetG)"/>
+  <text x="62" y="372" font-size="14" font-weight="700" fill="white">L4  Attachments（动态附件）</text>
+  <text x="740" y="372" font-size="11" font-weight="500" fill="white" text-anchor="end">scope: 随消息缓存</text>
+  <text x="62" y="400" font-size="11.5" fill="#475569">文件内容 + Skill + Plan + MCP + TODO + 30+ 种类型</text>
+  <text x="62" y="418" font-size="11" fill="#64748b">注入位置: 消息流中的 AttachmentMessage</text>
+
+  <!-- L5: Tools -->
+  <g filter="url(#shadow)">
+    <rect x="40" y="438" width="740" height="80" rx="10" fill="white" stroke="#6366f1" stroke-width="1.5"/>
+  </g>
+  <rect x="40" y="438" width="740" height="36" rx="10" fill="url(#indigoG)"/>
+  <rect x="40" y="454" width="740" height="20" fill="url(#indigoG)"/>
+  <text x="62" y="462" font-size="14" font-weight="700" fill="white">L5  Tools（工具声明）</text>
+  <text x="740" y="462" font-size="11" font-weight="500" fill="white" text-anchor="end">scope: global / org</text>
+  <text x="62" y="490" font-size="11.5" fill="#475569">内置工具 + MCP 工具 + Deferred Tools</text>
+  <text x="62" y="508" font-size="11" fill="#64748b">注入位置: API 请求的 tools 字段</text>
+
+  <!-- Bottom tip -->
+  <rect x="180" y="530" width="460" height="24" rx="12" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1"/>
+  <text x="410" y="546" text-anchor="middle" font-size="11" fill="#1d4ed8">💡 静态层（L1/L5）可跨组织缓存，动态层（L2-L4）随会话变化</text>
+</svg>

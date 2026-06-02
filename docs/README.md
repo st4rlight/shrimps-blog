@@ -5,7 +5,7 @@ config:
   - type: hero
     full: true
     hero:
-      tagline: <span class="hero-nowrap">平安.健康.自律.快樂.長久</span><br />(●'◡'●)<br /><br />
+      tagline: <span class="hero-nowrap">平安 . 健康 . 自律 . 快樂 . 長久</span><br />(●'◡'●)<br /><br />
       text: <span>因为上天已经带我看过正确答案的样子<br /><br />所以我依然相信愛情，但是不再相信它會降臨到我身上</span>
 ---
 
