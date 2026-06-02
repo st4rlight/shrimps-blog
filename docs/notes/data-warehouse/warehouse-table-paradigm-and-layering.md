@@ -352,6 +352,8 @@ permalink: /notes/warehouse-table-paradigm-and-layering/
 
 ### 2.5 分层设计的关键原则
 
+![数仓分层设计关键原则](/notes/data-warehouse/warehouse-table-paradigm-and-layering/warehouse-layering-principles.svg)
+
 #### 原则一：高内聚低耦合
 
 每一层做好自己该做的事，不越界：
@@ -382,3 +384,65 @@ permalink: /notes/warehouse-table-paradigm-and-layering/
 #### 原则四：适度冗余换取性能
 
 在 DWD 层通过维度退化适当冗余维度字段，在 DWS 层构建宽表合并多个指标，都是用适度的存储冗余换取查询性能和开发效率的体现。
+
+---
+
+### 2.6 数据库表命名规范
+
+统一的表命名规范是数仓治理的基础，规范的命名能够直观反映表的所属层级、业务域、数据周期等关键信息，大幅提升数据的可发现性和可维护性。
+
+#### 命名结构
+
+数仓表命名通常采用以下结构：
+
+![表命名结构示意](/notes/data-warehouse/warehouse-table-paradigm-and-layering/table_name.png)
+
+```
+{库名}.{数据分层}_{业务板块}_{数据域}_{主题}_{自定义信息}_{周期标识}{分区标识}
+```
+
+**示例：** `ad_crm.dwd_crm_performance_accounting_cost_detail_df`
+
+| 组成部分 | 示例 | 说明 |
+|---------|------|------|
+| 库名 | `ad_crm` | 广告域 CRM 库 |
+| 数据分层 | `dwd` | 明细层 |
+| 业务板块 | `crm` | CRM 业务板块 |
+| 数据域 | `performance` | 绩效数据域 |
+| 主题 | `accounting` | 核算主题 |
+| 自定义信息 | `cost_detail` | 成本明细 |
+| 周期+分区标识 | `df` | 天级全量（day full）|
+
+#### 周期标识
+
+| 标识 | 含义 | 说明 |
+|------|------|------|
+| `h` | hour | 小时级 |
+| `d` | day | 天级 |
+| `w` | week | 周级 |
+| `m` | month | 月级 |
+| `q` | quarter | 季度 |
+| `y` | year | 年级 |
+
+#### 分区标识
+
+| 标识 | 含义 | 说明 |
+|------|------|------|
+| `f` | full | 全量快照 |
+| `i` | increase | 增量数据 |
+
+**组合示例：**
+- `df` = 天级全量（day full）
+- `di` = 天级增量（day increase）
+- `mf` = 月级全量（month full）
+
+#### 命名示例
+
+| 表名 | 说明 |
+|------|------|
+| `ad_trade.dwd_trade_order_detail_di` | 广告域-交易明细层-订单明细-天级增量 |
+| `ad_user.dws_user_active_1d_df` | 广告域-用户汇总层-活跃用户1日-天级全量 |
+| `ad_common.dim_date_full_df` | 广告域-维度层-日期维度-全量 |
+| `ad_report.ads_gmv_daily_report_df` | 广告域-应用层-GMV日报-天级全量 |
+
+> **实践建议：** 命名规范建议从项目第一天就严格执行，后期修改表名的成本极高，可能涉及下游大量任务的依赖调整。

@@ -1,0 +1,137 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 520" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <linearGradient id="p1G" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="p2G" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#d97706;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="p3G" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#34d399;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#059669;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="p4G" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#c084fc;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#9333ea;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="forbiddenG" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#fca5a5;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ef4444;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="3" stdDeviation="5" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="520" rx="16" fill="#f8fafc"/>
+
+  <!-- Title -->
+  <text x="400" y="36" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">数仓分层设计关键原则</text>
+  <text x="400" y="56" text-anchor="middle" font-size="12" fill="#94a3b8">高内聚低耦合 · 避免烟囱 · 引用管控 · 适度冗余</text>
+
+  <!-- ===== Principle 1: High Cohesion Low Coupling ===== -->
+  <g filter="url(#shadow)">
+    <rect x="30" y="80" width="360" height="160" rx="12" fill="white" stroke="#3b82f6" stroke-width="2"/>
+  </g>
+  <rect x="30" y="80" width="360" height="36" rx="12" fill="url(#p1G)"/>
+  <rect x="30" y="100" width="360" height="16" fill="url(#p1G)"/>
+  <text x="210" y="104" text-anchor="middle" font-size="14" font-weight="700" fill="white">原则一：高内聚低耦合</text>
+
+  <!-- Four layer boxes -->
+  <g filter="url(#shadow)">
+    <rect x="50" y="130" width="70" height="50" rx="8" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.5"/>
+  </g>
+  <text x="85" y="150" text-anchor="middle" font-size="11" font-weight="600" fill="#64748b">ODS</text>
+  <text x="85" y="168" text-anchor="middle" font-size="9" fill="#94a3b8">只做同步</text>
+
+  <g filter="url(#shadow)">
+    <rect x="135" y="130" width="70" height="50" rx="8" fill="#f1f5f9" stroke="#059669" stroke-width="1.5"/>
+  </g>
+  <text x="170" y="150" text-anchor="middle" font-size="11" font-weight="600" fill="#059669">DWD</text>
+  <text x="170" y="168" text-anchor="middle" font-size="9" fill="#94a3b8">只做标准化</text>
+
+  <g filter="url(#shadow)">
+    <rect x="220" y="130" width="70" height="50" rx="8" fill="#f1f5f9" stroke="#2563eb" stroke-width="1.5"/>
+  </g>
+  <text x="255" y="150" text-anchor="middle" font-size="11" font-weight="600" fill="#2563eb">DWS</text>
+  <text x="255" y="168" text-anchor="middle" font-size="9" fill="#94a3b8">只做汇总</text>
+
+  <g filter="url(#shadow)">
+    <rect x="305" y="130" width="70" height="50" rx="8" fill="#f1f5f9" stroke="#9333ea" stroke-width="1.5"/>
+  </g>
+  <text x="340" y="150" text-anchor="middle" font-size="11" font-weight="600" fill="#9333ea">ADS</text>
+  <text x="340" y="168" text-anchor="middle" font-size="9" fill="#94a3b8">只做应用适配</text>
+
+  <text x="210" y="208" text-anchor="middle" font-size="10" fill="#64748b">每一层各司其职，不越界，保持清晰的职责边界</text>
+  <text x="210" y="224" text-anchor="middle" font-size="9" fill="#94a3b8">✅ 修改一层不影响其他层，降低耦合风险</text>
+
+  <!-- ===== Principle 2: Avoid Chimney Development ===== -->
+  <g filter="url(#shadow)">
+    <rect x="410" y="80" width="360" height="160" rx="12" fill="white" stroke="#d97706" stroke-width="2"/>
+  </g>
+  <rect x="410" y="80" width="360" height="36" rx="12" fill="url(#p2G)"/>
+  <rect x="410" y="100" width="360" height="16" fill="url(#p2G)"/>
+  <text x="590" y="104" text-anchor="middle" font-size="14" font-weight="700" fill="white">原则二：避免烟囱式开发</text>
+
+  <!-- Chimney illustration -->
+  <text x="590" y="132" text-anchor="middle" font-size="10" fill="#b45309" font-weight="600">❌ 烟囱链路（禁止）</text>
+  <text x="430" y="152" font-size="9" fill="#64748b">ODS ──→ ADS（直接跳过中间层）</text>
+
+  <text x="590" y="172" text-anchor="middle" font-size="10" fill="#059669" font-weight="600">✅ 正确链路</text>
+  <text x="430" y="192" font-size="9" fill="#64748b">ODS ──→ DWD ──→ DWS ──→ ADS</text>
+
+  <text x="590" y="218" text-anchor="middle" font-size="9" fill="#64748b">公共逻辑沉淀在 DWD/DWS 层，数据口径统一、可追溯</text>
+
+  <!-- ===== Principle 3: Layer Reference Control ===== -->
+  <g filter="url(#shadow)">
+    <rect x="30" y="260" width="360" height="140" rx="12" fill="white" stroke="#059669" stroke-width="2"/>
+  </g>
+  <rect x="30" y="260" width="360" height="36" rx="12" fill="url(#p3G)"/>
+  <rect x="30" y="280" width="360" height="16" fill="url(#p3G)"/>
+  <text x="210" y="284" text-anchor="middle" font-size="14" font-weight="700" fill="white">原则三：分层引用严格管控</text>
+
+  <!-- Reference table -->
+  <rect x="55" y="310" width="140" height="22" rx="6" fill="#ecfdf5"/>
+  <text x="70" y="325" font-size="10" font-weight="600" fill="#047857">ODS</text>
+  <text x="120" y="325" font-size="9" fill="#64748b">← 数据源（无上游）</text>
+
+  <rect x="205" y="310" width="165" height="22" rx="6" fill="#ecfdf5"/>
+  <text x="220" y="325" font-size="10" font-weight="600" fill="#047857">DWD</text>
+  <text x="260" y="325" font-size="9" fill="#64748b">← ODS + DIM</text>
+
+  <rect x="55" y="338" width="140" height="22" rx="6" fill="#ecfdf5"/>
+  <text x="70" y="353" font-size="10" font-weight="600" fill="#047857">DWS</text>
+  <text x="120" y="353" font-size="9" fill="#64748b">← DWD + DIM</text>
+
+  <rect x="205" y="338" width="165" height="22" rx="6" fill="#ecfdf5"/>
+  <text x="220" y="353" font-size="10" font-weight="600" fill="#047857">ADS</text>
+  <text x="260" y="353" font-size="9" fill="#64748b">← DWS + DIM</text>
+
+  <rect x="55" y="366" width="140" height="22" rx="6" fill="#fef3c7"/>
+  <text x="70" y="381" font-size="10" font-weight="600" fill="#92400e">DIM</text>
+  <text x="120" y="381" font-size="9" fill="#64748b">← ODS（独立管理）</text>
+
+  <!-- ===== Principle 4: Redundancy for Performance ===== -->
+  <g filter="url(#shadow)">
+    <rect x="410" y="260" width="360" height="140" rx="12" fill="white" stroke="#9333ea" stroke-width="2"/>
+  </g>
+  <rect x="410" y="260" width="360" height="36" rx="12" fill="url(#p4G)"/>
+  <rect x="410" y="280" width="360" height="16" fill="url(#p4G)"/>
+  <text x="590" y="284" text-anchor="middle" font-size="14" font-weight="700" fill="white">原则四：适度冗余换取性能</text>
+
+  <text x="430" y="312" font-size="10" fill="#64748b">DWD 层：维度退化，将常用维度字段冗余到事实表</text>
+  <text x="430" y="332" font-size="10" fill="#64748b">DWS 层：构建宽表，合并多个业务过程指标</text>
+
+  <rect x="430" y="350" width="320" height="36" rx="8" fill="#f3e8ff"/>
+  <text x="590" y="368" text-anchor="middle" font-size="10" font-weight="600" fill="#7c3aed">💡 用适度的存储冗余换取查询性能和开发效率</text>
+  <text x="590" y="382" text-anchor="middle" font-size="9" fill="#9333ea">反范式是数仓设计的常见手段，非设计缺陷</text>
+
+  <!-- ===== Bottom Summary ===== -->
+  <rect x="40" y="420" width="720" height="80" rx="12" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1"/>
+  <text x="400" y="445" text-anchor="middle" font-size="12" font-weight="700" fill="#1e293b">分层不是目的，解决问题才是</text>
+  <text x="400" y="468" text-anchor="middle" font-size="10" fill="#64748b">遵循四大原则，确保数仓结构清晰、数据流转有序、口径统一可追溯</text>
+  <text x="400" y="488" text-anchor="middle" font-size="9" fill="#94a3b8">不要为了分层而分层，不要为了规范而规范 —— 一切服务于业务需求和数据价值</text>
+</svg>
