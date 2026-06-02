@@ -1,0 +1,132 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 500" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <linearGradient id="blueG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="greenG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#34d399;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="amberG" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="violetG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#a78bfa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="redG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#f87171;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ef4444;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.12"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="820" height="500" rx="14" fill="#f8fafc"/>
+
+  <!-- Title -->
+  <text x="410" y="36" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">30+ 种附件按触发源分为三大类</text>
+  <text x="410" y="56" text-anchor="middle" font-size="12" fill="#94a3b8">getAttachments() 将三类并行计算，互不阻塞</text>
+
+  <!-- ============ Category 1: User Input ============ -->
+  <g filter="url(#shadow)">
+    <rect x="40" y="72" width="230" height="410" rx="10" fill="white" stroke="#3b82f6" stroke-width="1.5"/>
+  </g>
+  <rect x="40" y="72" width="230" height="32" rx="10" fill="url(#blueG)"/>
+  <rect x="40" y="84" width="230" height="20" fill="url(#blueG)"/>
+  <text x="155" y="94" text-anchor="middle" font-size="13" font-weight="700" fill="white">用户输入触发</text>
+  <text x="155" y="120" text-anchor="middle" font-size="10" fill="#64748b">userInputAttachments</text>
+  <rect x="60" y="108" width="190" height="16" rx="8" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="155" y="120" text-anchor="middle" font-size="9" font-weight="600" fill="#1d4ed8">❌ 非线程安全</text>
+
+  <rect x="58" y="140" width="194" height="28" rx="6" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1"/>
+  <text x="68" y="158" font-size="11" fill="#1d4ed8">📄 @文件内容 (new_file)</text>
+
+  <rect x="58" y="176" width="194" height="28" rx="6" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1"/>
+  <text x="68" y="194" font-size="11" fill="#1d4ed8">📂 目录列表 (directory)</text>
+
+  <rect x="58" y="212" width="194" height="28" rx="6" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1"/>
+  <text x="68" y="230" font-size="11" fill="#1d4ed8">✏️ IDE 选中代码</text>
+
+  <rect x="58" y="248" width="194" height="28" rx="6" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1"/>
+  <text x="68" y="266" font-size="11" fill="#1d4ed8">🔍 Skill 搜索结果</text>
+
+  <rect x="58" y="284" width="194" height="28" rx="6" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1"/>
+  <text x="68" y="302" font-size="11" fill="#1d4ed8">🔗 MCP 资源引用</text>
+
+  <rect x="58" y="320" width="194" height="28" rx="6" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1"/>
+  <text x="68" y="338" font-size="11" fill="#1d4ed8">🤖 Agent @提及</text>
+
+  <rect x="58" y="356" width="194" height="28" rx="6" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1"/>
+  <text x="68" y="374" font-size="11" fill="#1d4ed8">📋 PDF 引用</text>
+
+  <!-- ============ Category 2: All Thread ============ -->
+  <g filter="url(#shadow)">
+    <rect x="295" y="72" width="230" height="410" rx="10" fill="white" stroke="#10b981" stroke-width="1.5"/>
+  </g>
+  <rect x="295" y="72" width="230" height="32" rx="10" fill="url(#greenG)"/>
+  <rect x="295" y="84" width="230" height="20" fill="url(#greenG)"/>
+  <text x="410" y="94" text-anchor="middle" font-size="13" font-weight="700" fill="white">全线程可用</text>
+  <rect x="315" y="108" width="190" height="16" rx="8" fill="#d1fae5" stroke="#86efac" stroke-width="1"/>
+  <text x="410" y="120" text-anchor="middle" font-size="9" font-weight="600" fill="#047857">✅ 线程安全（子agent可用）</text>
+
+  <rect x="313" y="140" width="194" height="28" rx="6" fill="#ecfdf5" stroke="#a7f3d0" stroke-width="1"/>
+  <text x="323" y="158" font-size="11" fill="#047857">📝 嵌套 CLAUDE.md</text>
+
+  <rect x="313" y="176" width="194" height="28" rx="6" fill="#ecfdf5" stroke="#a7f3d0" stroke-width="1"/>
+  <text x="323" y="194" font-size="11" fill="#047857">🧠 记忆文件 (relevant_memories)</text>
+
+  <rect x="313" y="212" width="194" height="28" rx="6" fill="#ecfdf5" stroke="#a7f3d0" stroke-width="1"/>
+  <text x="323" y="230" font-size="11" fill="#047857">🎯 Skill 列表 + 动态 Skill</text>
+
+  <rect x="313" y="248" width="194" height="28" rx="6" fill="#ecfdf5" stroke="#a7f3d0" stroke-width="1"/>
+  <text x="323" y="266" font-size="11" fill="#047857">📋 Plan/Auto 模式状态</text>
+
+  <rect x="313" y="284" width="194" height="28" rx="6" fill="#ecfdf5" stroke="#a7f3d0" stroke-width="1"/>
+  <text x="323" y="302" font-size="11" fill="#047857">🔄 增量 Delta (MCP/Tools/Agent)</text>
+
+  <rect x="313" y="320" width="194" height="28" rx="6" fill="#ecfdf5" stroke="#a7f3d0" stroke-width="1"/>
+  <text x="323" y="338" font-size="11" fill="#047857">📅 日期变更</text>
+
+  <rect x="313" y="356" width="194" height="28" rx="6" fill="#ecfdf5" stroke="#a7f3d0" stroke-width="1"/>
+  <text x="323" y="374" font-size="11" fill="#047857">✅ TODO/Task 提醒</text>
+
+  <!-- ============ Category 3: Main Thread Only ============ -->
+  <g filter="url(#shadow)">
+    <rect x="550" y="72" width="230" height="410" rx="10" fill="white" stroke="#f59e0b" stroke-width="1.5"/>
+  </g>
+  <rect x="550" y="72" width="230" height="32" rx="10" fill="url(#amberG)"/>
+  <rect x="550" y="84" width="230" height="20" fill="url(#amberG)"/>
+  <text x="665" y="94" text-anchor="middle" font-size="13" font-weight="700" fill="white">仅主线程</text>
+  <rect x="570" y="108" width="190" height="16" rx="8" fill="#fef3c7" stroke="#fbbf24" stroke-width="1"/>
+  <text x="665" y="120" text-anchor="middle" font-size="9" font-weight="600" fill="#92400e">❌ 非线程安全</text>
+
+  <rect x="568" y="140" width="194" height="28" rx="6" fill="#fffbeb" stroke="#fde68a" stroke-width="1"/>
+  <text x="578" y="158" font-size="11" fill="#92400e">🖥️ IDE 诊断 (LSP)</text>
+
+  <rect x="568" y="176" width="194" height="28" rx="6" fill="#fffbeb" stroke="#fde68a" stroke-width="1"/>
+  <text x="578" y="194" font-size="11" fill="#92400e">📊 Token 使用情况</text>
+
+  <rect x="568" y="212" width="194" height="28" rx="6" fill="#fffbeb" stroke="#fde68a" stroke-width="1"/>
+  <text x="578" y="230" font-size="11" fill="#92400e">📁 已修改文件</text>
+
+  <rect x="568" y="248" width="194" height="28" rx="6" fill="#fffbeb" stroke="#fde68a" stroke-width="1"/>
+  <text x="578" y="266" font-size="11" fill="#92400e">🎨 输出风格</text>
+
+  <rect x="568" y="284" width="194" height="28" rx="6" fill="#fffbeb" stroke="#fde68a" stroke-width="1"/>
+  <text x="578" y="302" font-size="11" fill="#92400e">🔔 关键系统提醒</text>
+
+  <rect x="568" y="320" width="194" height="28" rx="6" fill="#fffbeb" stroke="#fde68a" stroke-width="1"/>
+  <text x="578" y="338" font-size="11" fill="#92400e">⚡ 压缩后上下文恢复</text>
+
+  <rect x="568" y="356" width="194" height="28" rx="6" fill="#fffbeb" stroke="#fde68a" stroke-width="1"/>
+  <text x="578" y="374" font-size="11" fill="#92400e">📧 团队消息/上下文</text>
+
+  <!-- Bottom tip -->
+  <rect x="150" y="486" width="520" height="10" rx="5" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1"/>
+  <text x="410" y="494" text-anchor="middle" font-size="9" fill="#1d4ed8">💡 核心设计：增量附件（Delta）避免重复声明，maybe() 保证任何附件失败都不阻塞请求</text>
+</svg>

@@ -1,0 +1,137 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 540" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <linearGradient id="blueG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="greenG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#34d399;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="amberG" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="redG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#f87171;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ef4444;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.12"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="820" height="540" rx="14" fill="#f8fafc"/>
+
+  <!-- Title -->
+  <text x="410" y="36" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">缓存分割策略</text>
+  <text x="410" y="56" text-anchor="middle" font-size="12" fill="#94a3b8">splitSysPromptPrefix() 将 system prompt 转换为带缓存作用域的 API blocks</text>
+
+  <!-- ============ Scenario 1: 有边界标记 + 全局缓存 ============ -->
+  <g filter="url(#shadow)">
+    <rect x="40" y="75" width="740" height="195" rx="10" fill="white" stroke="#3b82f6" stroke-width="1.5"/>
+  </g>
+  <rect x="40" y="75" width="740" height="30" rx="10" fill="url(#blueG)"/>
+  <rect x="40" y="85" width="740" height="20" fill="url(#blueG)"/>
+  <text x="62" y="95" font-size="13" font-weight="700" fill="white">场景 1：启用全局缓存 + 存在边界标记</text>
+
+  <!-- Input array -->
+  <text x="62" y="128" font-size="11" font-weight="600" fill="#475569">system prompt 数组:</text>
+
+  <rect x="62" y="136" width="150" height="24" rx="5" fill="#fee2e2" stroke="#fca5a5" stroke-width="1"/>
+  <text x="137" y="152" text-anchor="middle" font-size="9.5" fill="#991b1b">attribution_header</text>
+
+  <rect x="220" y="136" width="140" height="24" rx="5" fill="#fef3c7" stroke="#fbbf24" stroke-width="1"/>
+  <text x="290" y="152" text-anchor="middle" font-size="9.5" fill="#92400e">identity_prefix</text>
+
+  <rect x="368" y="136" width="140" height="24" rx="5" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="438" y="152" text-anchor="middle" font-size="9.5" fill="#1d4ed8">...static_sections</text>
+
+  <rect x="516" y="136" width="100" height="24" rx="5" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="4,2"/>
+  <text x="566" y="152" text-anchor="middle" font-size="9.5" fill="#64748b">BOUNDARY</text>
+
+  <rect x="624" y="136" width="140" height="24" rx="5" fill="#fce7f3" stroke="#f9a8d4" stroke-width="1"/>
+  <text x="694" y="152" text-anchor="middle" font-size="9.5" fill="#9d174d">...dynamic_sections</text>
+
+  <!-- Arrow down -->
+  <text x="410" y="178" text-anchor="middle" font-size="11" fill="#94a3b8">↓ splitSysPromptPrefix()</text>
+
+  <!-- Output blocks -->
+  <rect x="62" y="190" width="155" height="30" rx="6" fill="#fee2e2" stroke="#fca5a5" stroke-width="1"/>
+  <text x="139" y="209" text-anchor="middle" font-size="9.5" fill="#991b1b">attribution_header</text>
+  <rect x="63" y="210" width="153" height="12" rx="3" fill="#ef4444" opacity="0.15"/>
+  <text x="139" y="220" text-anchor="middle" font-size="8" font-weight="600" fill="#ef4444">cacheScope: null</text>
+
+  <rect x="227" y="190" width="150" height="30" rx="6" fill="#fef3c7" stroke="#fbbf24" stroke-width="1"/>
+  <text x="302" y="209" text-anchor="middle" font-size="9.5" fill="#92400e">identity_prefix</text>
+  <rect x="228" y="210" width="148" height="12" rx="3" fill="#f59e0b" opacity="0.15"/>
+  <text x="302" y="220" text-anchor="middle" font-size="8" font-weight="600" fill="#d97706">cacheScope: null</text>
+
+  <rect x="387" y="190" width="155" height="30" rx="6" fill="#dbeafe" stroke="#3b82f6" stroke-width="2"/>
+  <text x="464" y="209" text-anchor="middle" font-size="9.5" font-weight="600" fill="#1d4ed8">static_joined</text>
+  <rect x="388" y="210" width="153" height="12" rx="3" fill="#3b82f6" opacity="0.15"/>
+  <text x="464" y="220" text-anchor="middle" font-size="8" font-weight="700" fill="#2563eb">cacheScope: global ✅</text>
+
+  <rect x="552" y="190" width="210" height="30" rx="6" fill="#fce7f3" stroke="#f9a8d4" stroke-width="1"/>
+  <text x="657" y="209" text-anchor="middle" font-size="9.5" fill="#9d174d">dynamic_joined</text>
+  <rect x="553" y="210" width="208" height="12" rx="3" fill="#ec4899" opacity="0.15"/>
+  <text x="657" y="220" text-anchor="middle" font-size="8" font-weight="600" fill="#db2777">cacheScope: null</text>
+
+  <!-- ============ Scenario 2: 无边界标记 ============ -->
+  <g filter="url(#shadow)">
+    <rect x="40" y="285" width="355" height="120" rx="10" fill="white" stroke="#10b981" stroke-width="1.5"/>
+  </g>
+  <rect x="40" y="285" width="355" height="28" rx="10" fill="url(#greenG)"/>
+  <rect x="40" y="295" width="355" height="18" fill="url(#greenG)"/>
+  <text x="62" y="303" font-size="12" font-weight="700" fill="white">场景 2：全局缓存 + 无边界标记</text>
+
+  <rect x="58" y="325" width="150" height="26" rx="5" fill="#fee2e2" stroke="#fca5a5" stroke-width="1"/>
+  <text x="133" y="342" text-anchor="middle" font-size="9" fill="#991b1b">attribution_header</text>
+  <text x="133" y="360" text-anchor="middle" font-size="8" fill="#ef4444">scope: null</text>
+
+  <rect x="218" y="325" width="150" height="26" rx="5" fill="#fef3c7" stroke="#fbbf24" stroke-width="1"/>
+  <text x="293" y="342" text-anchor="middle" font-size="9" fill="#92400e">identity_prefix</text>
+  <text x="293" y="360" text-anchor="middle" font-size="8" fill="#d97706">scope: null</text>
+
+  <rect x="58" y="374" width="310" height="22" rx="5" fill="#d1fae5" stroke="#10b981" stroke-width="2"/>
+  <text x="213" y="389" text-anchor="middle" font-size="9.5" font-weight="600" fill="#047857">rest_joined — cacheScope: org ✅</text>
+
+  <!-- ============ Scenario 3: skipGlobalCache ============ -->
+  <g filter="url(#shadow)">
+    <rect x="425" y="285" width="355" height="120" rx="10" fill="white" stroke="#f59e0b" stroke-width="1.5"/>
+  </g>
+  <rect x="425" y="285" width="355" height="28" rx="10" fill="url(#amberG)"/>
+  <rect x="425" y="295" width="355" height="18" fill="url(#amberG)"/>
+  <text x="447" y="303" font-size="12" font-weight="700" fill="white">场景 3：skipGlobalCache（工具搜索）</text>
+
+  <rect x="443" y="325" width="150" height="26" rx="5" fill="#fee2e2" stroke="#fca5a5" stroke-width="1"/>
+  <text x="518" y="342" text-anchor="middle" font-size="9" fill="#991b1b">attribution_header</text>
+  <text x="518" y="360" text-anchor="middle" font-size="8" fill="#ef4444">scope: null</text>
+
+  <rect x="603" y="325" width="155" height="26" rx="5" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="680" y="342" text-anchor="middle" font-size="9" fill="#1d4ed8">identity_prefix</text>
+  <text x="680" y="360" text-anchor="middle" font-size="8" fill="#2563eb">scope: org ✅</text>
+
+  <rect x="443" y="374" width="315" height="22" rx="5" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="600" y="389" text-anchor="middle" font-size="9.5" font-weight="500" fill="#1d4ed8">rest_joined — cacheScope: org ✅</text>
+
+  <!-- ============ Identity Prefix explanation ============ -->
+  <g filter="url(#shadow)">
+    <rect x="40" y="420" width="740" height="105" rx="10" fill="white" stroke="#ef4444" stroke-width="1.5"/>
+  </g>
+  <rect x="40" y="420" width="740" height="30" rx="10" fill="url(#redG)"/>
+  <rect x="40" y="432" width="740" height="18" fill="url(#redG)"/>
+  <text x="62" y="440" font-size="13" font-weight="700" fill="white">⚠️ 为什么 Identity Prefix 不缓存？</text>
+
+  <text x="62" y="468" font-size="11.5" fill="#475569">Identity prefix 包含版本号指纹（fingerprint），每次构建都可能变化：</text>
+
+  <rect x="62" y="478" width="340" height="26" rx="5" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1"/>
+  <text x="72" y="496" font-size="11" fill="#64748b" font-family="monospace">const version = `${MACRO.VERSION}.${fingerprint}`</text>
+
+  <text x="420" y="496" font-size="11" fill="#475569">缓存它会导致版本号变化时整个缓存前缀失效</text>
+  <text x="62" y="518" font-size="10.5" fill="#64748b">因此 identity prefix 的 cacheScope 为 null，但它在缓存前缀中的位置确保后续的 static block 可以使用 global 作用域</text>
+</svg>
