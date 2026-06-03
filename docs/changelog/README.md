@@ -1,9 +1,9 @@
 ---
-title: 更新时间轴
+title: 时间轴
 icon: mdi:timeline-clock-outline
 ---
 
-# 更新时间轴
+# 时间轴
 
 > 这里记录了博客每次更新的内容，一目了然。
 

@@ -29,11 +29,11 @@ export default defineUserConfig({
     ],
     navbar: [
       { text: '首页', link: '/', icon: 'mdi:home' },
+      { text: '时间轴', link: '/changelog/', icon: 'mdi:timeline-clock-outline' },
       { text: '博客', link: '/blog/', icon: 'mdi:post-outline' },
       { text: '思考领悟', link: '/thoughts/', icon: 'mdi:lightbulb-outline' },
       { text: 'AI学习', link: '/ai-study/', icon: 'mdi:robot-outline' },
       { text: '拾遗补阙', link: '/notes/', icon: 'mdi:puzzle-outline' },
-      { text: '更新', link: '/changelog/', icon: 'mdi:timeline-clock-outline' },
       { text: '归档', link: '/blog/archives/', icon: 'mdi:archive-outline' },
       { text: '标签', link: '/blog/tags/', icon: 'mdi:tag-outline' },
       { text: '关于', link: '/about/', icon: 'mdi:account-outline' },
