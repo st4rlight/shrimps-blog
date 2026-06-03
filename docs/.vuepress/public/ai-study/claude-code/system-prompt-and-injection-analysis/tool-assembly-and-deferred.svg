@@ -1,0 +1,177 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 540" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <linearGradient id="blueG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="greenG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#34d399;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="violetG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#a78bfa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="amberG" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.12"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/>
+    </marker>
+    <marker id="arrowG" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#10b981"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="540" rx="14" fill="#f8fafc"/>
+
+  <!-- Title -->
+  <text x="400" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">工具池组装与 Deferred Tools 机制</text>
+  <text x="400" y="54" text-anchor="middle" font-size="12" fill="#94a3b8">assembleToolPool() 一次性组装 + 延迟加载应对工具爆炸</text>
+
+  <!-- ===== Top Section: Assembly Pipeline ===== -->
+  <text x="400" y="80" text-anchor="middle" font-size="13" font-weight="600" fill="#475569">工具池组装流程</text>
+
+  <!-- Step 1: Built-in tools -->
+  <g filter="url(#shadow)">
+    <rect x="40" y="94" width="220" height="68" rx="10" fill="white" stroke="#3b82f6" stroke-width="1.5"/>
+  </g>
+  <rect x="40" y="94" width="220" height="26" rx="10" fill="url(#blueG)"/>
+  <rect x="40" y="106" width="220" height="14" fill="url(#blueG)"/>
+  <text x="150" y="112" text-anchor="middle" font-size="12" font-weight="700" fill="white">① 内置工具</text>
+  <text x="55" y="136" font-size="10" fill="#374151">FileRead / FileEdit / FileWrite</text>
+  <text x="55" y="150" font-size="10" fill="#374151">Glob / Grep / Bash / Agent ...</text>
+
+  <!-- Arrow -->
+  <line x1="260" y1="128" x2="290" y2="128" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="275" y="120" text-anchor="middle" font-size="8" fill="#64748b">sort by name</text>
+
+  <!-- Step 2: MCP tools -->
+  <g filter="url(#shadow)">
+    <rect x="296" y="94" width="200" height="68" rx="10" fill="white" stroke="#8b5cf6" stroke-width="1.5"/>
+  </g>
+  <rect x="296" y="94" width="200" height="26" rx="10" fill="url(#violetG)"/>
+  <rect x="296" y="106" width="200" height="14" fill="url(#violetG)"/>
+  <text x="396" y="112" text-anchor="middle" font-size="12" font-weight="700" fill="white">② MCP 工具</text>
+  <text x="311" y="136" font-size="10" fill="#374151">按名称排序，追加在内置后</text>
+  <text x="311" y="150" font-size="10" fill="#374151">同名冲突时内置优先</text>
+
+  <!-- Arrow -->
+  <line x1="496" y1="128" x2="526" y2="128" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="511" y="120" text-anchor="middle" font-size="8" fill="#64748b">uniqBy</text>
+
+  <!-- Step 3: Final pool -->
+  <g filter="url(#shadow)">
+    <rect x="532" y="94" width="220" height="68" rx="10" fill="white" stroke="#10b981" stroke-width="1.5"/>
+  </g>
+  <rect x="532" y="94" width="220" height="26" rx="10" fill="url(#greenG)"/>
+  <rect x="532" y="106" width="220" height="14" fill="url(#greenG)"/>
+  <text x="642" y="112" text-anchor="middle" font-size="12" font-weight="700" fill="white">③ 工具池 (Tools)</text>
+  <text x="547" y="136" font-size="10" fill="#374151">缓存友好的固定顺序</text>
+  <text x="547" y="150" font-size="10" fill="#374151">排序 → 缓存 hash 稳定 → 跨用户缓存</text>
+
+  <!-- Separator -->
+  <line x1="40" y1="185" x2="760" y2="185" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="6,4"/>
+
+  <!-- ===== Bottom Section: Deferred Tools Flow ===== -->
+  <text x="400" y="210" text-anchor="middle" font-size="13" font-weight="600" fill="#475569">Deferred Tools 延迟加载流程</text>
+  <text x="400" y="226" text-anchor="middle" font-size="10" fill="#94a3b8">当 MCP 工具数量超过 token 阈值时自动启用</text>
+
+  <!-- Phase 1 -->
+  <g filter="url(#shadow)">
+    <rect x="40" y="244" width="160" height="100" rx="10" fill="white" stroke="#3b82f6" stroke-width="1.5"/>
+  </g>
+  <rect x="40" y="244" width="160" height="28" rx="10" fill="url(#blueG)"/>
+  <rect x="40" y="258" width="160" height="14" fill="url(#blueG)"/>
+  <text x="120" y="264" text-anchor="middle" font-size="12" font-weight="700" fill="white">1. 初始声明</text>
+  <text x="55" y="288" font-size="10" fill="#374151">仅核心内置工具</text>
+  <text x="55" y="304" font-size="10" fill="#374151">+ 少量 MCP 工具</text>
+  <text x="55" y="324" font-size="9" fill="#94a3b8">其余标记 defer_loading</text>
+  <text x="55" y="338" font-size="9" fill="#94a3b8">+ ToolSearchTool</text>
+
+  <!-- Arrow 1→2 -->
+  <line x1="200" y1="294" x2="228" y2="294" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Phase 2 -->
+  <g filter="url(#shadow)">
+    <rect x="234" y="244" width="160" height="100" rx="10" fill="white" stroke="#f59e0b" stroke-width="1.5"/>
+  </g>
+  <rect x="234" y="244" width="160" height="28" rx="10" fill="url(#amberG)"/>
+  <rect x="234" y="258" width="160" height="14" fill="url(#amberG)"/>
+  <text x="314" y="264" text-anchor="middle" font-size="12" font-weight="700" fill="white">2. 搜索发现</text>
+  <text x="249" y="288" font-size="10" fill="#374151">模型调用 ToolSearch</text>
+  <text x="249" y="304" font-size="10" fill="#374151">按关键词搜索工具</text>
+  <text x="249" y="324" font-size="9" fill="#94a3b8">"用到再发现"</text>
+  <text x="249" y="338" font-size="9" fill="#94a3b8">而非全量加载</text>
+
+  <!-- Arrow 2→3 -->
+  <line x1="394" y1="294" x2="422" y2="294" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Phase 3 -->
+  <g filter="url(#shadow)">
+    <rect x="428" y="244" width="160" height="100" rx="10" fill="white" stroke="#8b5cf6" stroke-width="1.5"/>
+  </g>
+  <rect x="428" y="244" width="160" height="28" rx="10" fill="url(#violetG)"/>
+  <rect x="428" y="258" width="160" height="14" fill="url(#violetG)"/>
+  <text x="508" y="264" text-anchor="middle" font-size="12" font-weight="700" fill="white">3. 增量声明</text>
+  <text x="443" y="288" font-size="10" fill="#374151">通过 delta 附件</text>
+  <text x="443" y="304" font-size="10" fill="#374151">声明新发现的工具</text>
+  <text x="443" y="324" font-size="9" fill="#94a3b8">不重写 system prompt</text>
+  <text x="443" y="338" font-size="9" fill="#94a3b8">保护缓存命中率</text>
+
+  <!-- Arrow 3→4 -->
+  <line x1="588" y1="294" x2="616" y2="294" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Phase 4 -->
+  <g filter="url(#shadow)">
+    <rect x="622" y="244" width="140" height="100" rx="10" fill="white" stroke="#10b981" stroke-width="1.5"/>
+  </g>
+  <rect x="622" y="244" width="140" height="28" rx="10" fill="url(#greenG)"/>
+  <rect x="622" y="258" width="140" height="14" fill="url(#greenG)"/>
+  <text x="692" y="264" text-anchor="middle" font-size="12" font-weight="700" fill="white">4. 逐步补全</text>
+  <text x="637" y="288" font-size="10" fill="#374151">随对话进行</text>
+  <text x="637" y="304" font-size="10" fill="#374151">按需发现更多</text>
+  <text x="637" y="324" font-size="9" fill="#94a3b8">渐进式加载</text>
+  <text x="637" y="338" font-size="9" fill="#94a3b8">节省 token</text>
+
+  <!-- Bottom summary -->
+  <rect x="80" y="370" width="640" height="60" rx="10" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1"/>
+
+  <!-- Two key benefits side by side -->
+  <g>
+    <circle cx="120" cy="390" r="10" fill="#dbeafe" stroke="#3b82f6" stroke-width="1"/>
+    <text x="120" y="394" text-anchor="middle" font-size="11" font-weight="700" fill="#3b82f6">T</text>
+    <text x="138" y="394" font-size="11" font-weight="600" fill="#1e293b">节省 Token</text>
+    <text x="138" y="410" font-size="10" fill="#64748b">50+ 工具 × 200-500 token/个 → 只加载用到的</text>
+  </g>
+  <g>
+    <circle cx="460" cy="390" r="10" fill="#d1fae5" stroke="#10b981" stroke-width="1"/>
+    <text x="460" y="394" text-anchor="middle" font-size="11" font-weight="700" fill="#10b981">C</text>
+    <text x="478" y="394" font-size="11" font-weight="600" fill="#1e293b">保护缓存</text>
+    <text x="478" y="410" font-size="10" fill="#64748b">工具 Schema 不写入 system prompt → 缓存 hash 不变</text>
+  </g>
+
+  <!-- Inner tool categories mini-map -->
+  <text x="400" y="454" text-anchor="middle" font-size="11" font-weight="600" fill="#475569">内置工具分类速览</text>
+
+  <rect x="50" y="466" width="140" height="50" rx="8" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1"/>
+  <text x="120" y="484" text-anchor="middle" font-size="11" font-weight="600" fill="#1d4ed8">文件操作</text>
+  <text x="120" y="500" text-anchor="middle" font-size="9" fill="#64748b">Read / Edit / Write / Glob / Grep</text>
+
+  <rect x="210" y="466" width="140" height="50" rx="8" fill="#ecfdf5" stroke="#a7f3d0" stroke-width="1"/>
+  <text x="280" y="484" text-anchor="middle" font-size="11" font-weight="600" fill="#047857">执行与搜索</text>
+  <text x="280" y="500" text-anchor="middle" font-size="9" fill="#64748b">Bash / WebFetch / WebSearch</text>
+
+  <rect x="370" y="466" width="140" height="50" rx="8" fill="#fef3c7" stroke="#fde68a" stroke-width="1"/>
+  <text x="440" y="484" text-anchor="middle" font-size="11" font-weight="600" fill="#92400e">任务与规划</text>
+  <text x="440" y="500" text-anchor="middle" font-size="9" fill="#64748b">Agent / TodoWrite / PlanMode</text>
+
+  <rect x="530" y="466" width="140" height="50" rx="8" fill="#ede9fe" stroke="#c4b5fd" stroke-width="1"/>
+  <text x="600" y="484" text-anchor="middle" font-size="11" font-weight="600" fill="#5b21b6">交互与集成</text>
+  <text x="600" y="500" text-anchor="middle" font-size="9" fill="#64748b">AskUser / Skill / MCP / Msg</text>
+</svg>

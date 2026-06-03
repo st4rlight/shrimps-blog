@@ -1,0 +1,200 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 560" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <linearGradient id="blueG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="greenG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#34d399;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="amberG" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="violetG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#a78bfa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="redG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#f87171;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ef4444;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.12"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/>
+    </marker>
+    <marker id="arrowG" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#10b981"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="820" height="560" rx="12" fill="#f8fafc"/>
+
+  <!-- Title -->
+  <text x="410" y="35" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">CDC + Merge 增量同步整体架构</text>
+  <text x="410" y="55" text-anchor="middle" font-size="12" fill="#94a3b8">实时 Binlog 采集 + 离线处理 Binlog 还原业务数据</text>
+
+  <!-- Layer labels -->
+  <rect x="15" y="75" width="60" height="420" rx="8" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1"/>
+  <text x="45" y="140" text-anchor="middle" font-size="11" font-weight="600" fill="#64748b" transform="rotate(-90, 45, 140)">CDC 实时采集层</text>
+  <text x="45" y="310" text-anchor="middle" font-size="11" font-weight="600" fill="#64748b" transform="rotate(-90, 45, 310)">离线处理还原层</text>
+
+  <!-- ===== Step 1: MySQL ===== -->
+  <g filter="url(#shadow)">
+    <rect x="90" y="85" width="160" height="90" rx="10" fill="white" stroke="#3b82f6" stroke-width="2"/>
+  </g>
+  <rect x="90" y="85" width="160" height="34" rx="10" fill="url(#blueG)"/>
+  <rect x="90" y="101" width="160" height="18" fill="url(#blueG)"/>
+  <text x="170" y="108" text-anchor="middle" font-size="13" font-weight="700" fill="white">MySQL Master</text>
+  <text x="170" y="138" text-anchor="middle" font-size="11" fill="#475569">Binlog (ROW 模式)</text>
+  <text x="170" y="156" text-anchor="middle" font-size="10" fill="#94a3b8">记录所有 DML/DDL 变更</text>
+
+  <!-- Arrow 1→2 -->
+  <line x1="250" y1="130" x2="290" y2="130" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="270" y="123" text-anchor="middle" font-size="9" fill="#64748b">DUMP</text>
+
+  <!-- ===== Step 2: Canal ===== -->
+  <g filter="url(#shadow)">
+    <rect x="295" y="85" width="160" height="90" rx="10" fill="white" stroke="#f59e0b" stroke-width="2"/>
+  </g>
+  <rect x="295" y="85" width="160" height="34" rx="10" fill="url(#amberG)"/>
+  <rect x="295" y="101" width="160" height="18" fill="url(#amberG)"/>
+  <text x="375" y="108" text-anchor="middle" font-size="13" font-weight="700" fill="white">Canal Server</text>
+  <text x="375" y="138" text-anchor="middle" font-size="11" fill="#475569">伪装 Slave</text>
+  <text x="375" y="156" text-anchor="middle" font-size="10" fill="#94a3b8">解析 Binlog 事件</text>
+
+  <!-- Arrow 2→3 -->
+  <line x1="455" y1="130" x2="495" y2="130" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="475" y="123" text-anchor="middle" font-size="9" fill="#64748b">分发</text>
+
+  <!-- ===== Step 3: Kafka ===== -->
+  <g filter="url(#shadow)">
+    <rect x="500" y="85" width="160" height="90" rx="10" fill="white" stroke="#8b5cf6" stroke-width="2"/>
+  </g>
+  <rect x="500" y="85" width="160" height="34" rx="10" fill="url(#violetG)"/>
+  <rect x="500" y="101" width="160" height="18" fill="url(#violetG)"/>
+  <text x="580" y="108" text-anchor="middle" font-size="13" font-weight="700" fill="white">Kafka</text>
+  <text x="580" y="138" text-anchor="middle" font-size="11" fill="#475569">按 DB 粒度分 Topic</text>
+  <text x="580" y="156" text-anchor="middle" font-size="10" fill="#94a3b8">消息缓冲与解耦</text>
+
+  <!-- Arrow 3→4 -->
+  <line x1="660" y1="130" x2="700" y2="130" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="680" y="123" text-anchor="middle" font-size="9" fill="#64748b">拉取</text>
+
+  <!-- ===== Step 4: CanalManager ===== -->
+  <g filter="url(#shadow)">
+    <rect x="705" y="85" width="100" height="90" rx="10" fill="white" stroke="#ef4444" stroke-width="1.5"/>
+  </g>
+  <rect x="705" y="85" width="100" height="34" rx="10" fill="url(#redG)"/>
+  <rect x="705" y="101" width="100" height="18" fill="url(#redG)"/>
+  <text x="755" y="108" text-anchor="middle" font-size="12" font-weight="700" fill="white">Manager</text>
+  <text x="755" y="138" text-anchor="middle" font-size="10" fill="#475569">任务分配</text>
+  <text x="755" y="153" text-anchor="middle" font-size="10" fill="#475569">监控报警</text>
+  <text x="755" y="168" text-anchor="middle" font-size="10" fill="#94a3b8">位点管理</text>
+
+  <!-- ===== Divider ===== -->
+  <line x1="90" y1="200" x2="790" y2="200" stroke="#e2e8f0" stroke-width="1.5" stroke-dasharray="6,4"/>
+  <text x="410" y="218" text-anchor="middle" font-size="11" fill="#94a3b8">▼ 离线处理阶段（T+1）</text>
+
+  <!-- ===== Step 5: Camus / Kafka2Hive ===== -->
+  <g filter="url(#shadow)">
+    <rect x="90" y="240" width="160" height="90" rx="10" fill="white" stroke="#8b5cf6" stroke-width="2"/>
+  </g>
+  <rect x="90" y="240" width="160" height="34" rx="10" fill="url(#violetG)"/>
+  <rect x="90" y="256" width="160" height="18" fill="url(#violetG)"/>
+  <text x="170" y="263" text-anchor="middle" font-size="13" font-weight="700" fill="white">Camus (K2H)</text>
+  <text x="170" y="293" text-anchor="middle" font-size="11" fill="#475569">定时拉取 Kafka</text>
+  <text x="170" y="311" text-anchor="middle" font-size="10" fill="#94a3b8">写入 HDFS + 添加分区</text>
+
+  <!-- Arrow 5→6 -->
+  <line x1="250" y1="285" x2="290" y2="285" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- ===== Step 6: Checkdone ===== -->
+  <g filter="url(#shadow)">
+    <rect x="295" y="240" width="160" height="90" rx="10" fill="white" stroke="#f59e0b" stroke-width="2"/>
+  </g>
+  <rect x="295" y="240" width="160" height="34" rx="10" fill="url(#amberG)"/>
+  <rect x="295" y="256" width="160" height="18" fill="url(#amberG)"/>
+  <text x="375" y="263" text-anchor="middle" font-size="13" font-weight="700" fill="white">Checkdone</text>
+  <text x="375" y="293" text-anchor="middle" font-size="11" fill="#475569">Binlog 位点对齐？</text>
+  <text x="375" y="311" text-anchor="middle" font-size="10" fill="#94a3b8">输出 _SUCCESS 标记</text>
+
+  <!-- Arrow 6→7 -->
+  <line x1="455" y1="285" x2="495" y2="285" stroke="#10b981" stroke-width="2" marker-end="url(#arrowG)"/>
+  <text x="475" y="278" text-anchor="middle" font-size="9" fill="#10b981">✓</text>
+
+  <!-- ===== Step 7: Hive Binlog 表 ===== -->
+  <g filter="url(#shadow)">
+    <rect x="500" y="240" width="160" height="90" rx="10" fill="white" stroke="#3b82f6" stroke-width="2"/>
+  </g>
+  <rect x="500" y="240" width="160" height="34" rx="10" fill="url(#blueG)"/>
+  <rect x="500" y="256" width="160" height="18" fill="url(#blueG)"/>
+  <text x="580" y="263" text-anchor="middle" font-size="13" font-weight="700" fill="white">Hive Binlog 表</text>
+  <text x="580" y="293" text-anchor="middle" font-size="11" fill="#475569">ods_binlog 层</text>
+  <text x="580" y="311" text-anchor="middle" font-size="10" fill="#94a3b8">按天分区存储增量</text>
+
+  <!-- Arrow 7→8 (down) -->
+  <line x1="580" y1="330" x2="580" y2="365" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- ===== Step 8: Merge ===== -->
+  <g filter="url(#shadow)">
+    <rect x="350" y="370" width="220" height="80" rx="12" fill="white" stroke="#10b981" stroke-width="2.5"/>
+  </g>
+  <rect x="350" y="370" width="220" height="34" rx="12" fill="url(#greenG)"/>
+  <rect x="350" y="388" width="220" height="16" fill="url(#greenG)"/>
+  <text x="460" y="393" text-anchor="middle" font-size="15" font-weight="700" fill="white">Merge 合并还原</text>
+  <text x="460" y="423" text-anchor="middle" font-size="11" fill="#475569">增量 Binlog + 存量全量 → 最新全量</text>
+  <text x="460" y="441" text-anchor="middle" font-size="10" fill="#94a3b8">FULL OUTER JOIN + ROW_NUMBER 去重</text>
+
+  <!-- Arrow: Binlog → Merge -->
+  <line x1="540" y1="330" x2="480" y2="365" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="520" y="342" font-size="9" fill="#64748b">增量</text>
+
+  <!-- Arrow: Full table → Merge -->
+  <g filter="url(#shadow)">
+    <rect x="90" y="370" width="160" height="80" rx="10" fill="white" stroke="#3b82f6" stroke-width="2"/>
+  </g>
+  <rect x="90" y="370" width="160" height="34" rx="10" fill="url(#blueG)"/>
+  <rect x="90" y="388" width="160" height="16" fill="url(#blueG)"/>
+  <text x="170" y="393" text-anchor="middle" font-size="13" font-weight="700" fill="white">Hive 全量表</text>
+  <text x="170" y="423" text-anchor="middle" font-size="11" fill="#475569">T-1 日存量数据</text>
+  <text x="170" y="441" text-anchor="middle" font-size="10" fill="#94a3b8">ods 层业务全量表</text>
+
+  <line x1="250" y1="410" x2="345" y2="410" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="298" y="403" text-anchor="middle" font-size="9" fill="#64748b">存量</text>
+
+  <!-- Arrow: Merge → Result -->
+  <line x1="570" y1="410" x2="660" y2="410" stroke="#10b981" stroke-width="2" marker-end="url(#arrowG)"/>
+
+  <!-- ===== Step 9: Hive 最新全量表 ===== -->
+  <g filter="url(#shadow)">
+    <rect x="665" y="370" width="130" height="80" rx="10" fill="white" stroke="#10b981" stroke-width="2"/>
+  </g>
+  <rect x="665" y="370" width="130" height="34" rx="10" fill="url(#greenG)"/>
+  <rect x="665" y="388" width="130" height="16" fill="url(#greenG)"/>
+  <text x="730" y="393" text-anchor="middle" font-size="13" font-weight="700" fill="white">最新全量</text>
+  <text x="730" y="423" text-anchor="middle" font-size="11" fill="#475569">T 日全量数据</text>
+  <text x="730" y="441" text-anchor="middle" font-size="10" fill="#94a3b8">供下游 DWD 使用</text>
+
+  <!-- Bottom tip -->
+  <rect x="160" y="480" width="500" height="28" rx="14" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1"/>
+  <text x="410" y="499" text-anchor="middle" font-size="11" fill="#15803d">💡 CDC 层保证数据采集实时性，Merge 层保证数据还原准确性</text>
+
+  <!-- Legend -->
+  <g transform="translate(90, 520)">
+    <rect width="12" height="12" rx="2" fill="url(#blueG)"/>
+    <text x="18" y="11" font-size="10" fill="#64748b">数据源/存储</text>
+    <rect x="110" width="12" height="12" rx="2" fill="url(#amberG)"/>
+    <text x="128" y="11" font-size="10" fill="#64748b">检测/中间件</text>
+    <rect x="230" width="12" height="12" rx="2" fill="url(#violetG)"/>
+    <text x="248" y="11" font-size="10" fill="#64748b">消息/传输</text>
+    <rect x="340" width="12" height="12" rx="2" fill="url(#greenG)"/>
+    <text x="358" y="11" font-size="10" fill="#64748b">合并/结果</text>
+    <rect x="450" width="12" height="12" rx="2" fill="url(#redG)"/>
+    <text x="468" y="11" font-size="10" fill="#64748b">管理/监控</text>
+  </g>
+</svg>

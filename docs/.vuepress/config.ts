@@ -33,6 +33,7 @@ export default defineUserConfig({
       { text: '思考领悟', link: '/thoughts/', icon: 'mdi:lightbulb-outline' },
       { text: 'AI学习', link: '/ai-study/', icon: 'mdi:robot-outline' },
       { text: '拾遗补阙', link: '/notes/', icon: 'mdi:puzzle-outline' },
+      { text: '更新', link: '/changelog/', icon: 'mdi:timeline-clock-outline' },
       { text: '归档', link: '/blog/archives/', icon: 'mdi:archive-outline' },
       { text: '标签', link: '/blog/tags/', icon: 'mdi:tag-outline' },
       { text: '关于', link: '/about/', icon: 'mdi:account-outline' },
@@ -116,6 +117,7 @@ export default defineUserConfig({
             collapsed: false,
             items: [
               'data-warehouse/warehouse-table-paradigm-and-layering.md',
+              'data-warehouse/mysql2hive-sync-principle.md',
             ],
           },
           {

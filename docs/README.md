@@ -46,13 +46,60 @@ config:
   </div>
 </div>
 
-## 正在发生
+## 最近更新
 
-这里会持续更新我最近在关注的内容：
+<div class="home-timeline">
 
-- VuePress 与博客系统折腾
-- 前端开发中的实践与复盘
-- 有意思的工具、想法和灵感片段
+<div class="home-timeline__item">
+  <div class="home-timeline__dot"></div>
+  <div class="home-timeline__body">
+    <span class="home-timeline__date">06-03</span>
+    <span class="home-timeline__tag home-timeline__tag--note">拾遗补阙</span>
+    <a href="/notes/mysql2hive-sync-principle/">新增《MySQL2Hive 工作原理》</a>
+  </div>
+</div>
+
+<div class="home-timeline__item">
+  <div class="home-timeline__dot"></div>
+  <div class="home-timeline__body">
+    <span class="home-timeline__date">06-02</span>
+    <span class="home-timeline__tag home-timeline__tag--note">拾遗补阙</span>
+    <a href="/notes/warehouse-table-paradigm-and-layering/">新增《数仓表建设范式与分层方案》</a>
+  </div>
+</div>
+
+<div class="home-timeline__item">
+  <div class="home-timeline__dot"></div>
+  <div class="home-timeline__body">
+    <span class="home-timeline__date">05-28</span>
+    <span class="home-timeline__tag home-timeline__tag--ai">AI学习</span>
+    <a href="/ai-study/deep-agents-overview/">新增《DeepAgents 源码分析》</a>
+  </div>
+</div>
+
+<div class="home-timeline__item">
+  <div class="home-timeline__dot"></div>
+  <div class="home-timeline__body">
+    <span class="home-timeline__date">05-25</span>
+    <span class="home-timeline__tag home-timeline__tag--ai">AI学习</span>
+    <a href="/ai-study/taotian-rag-solution/">新增《淘天 RAG 技术方案》</a>
+  </div>
+</div>
+
+<div class="home-timeline__item">
+  <div class="home-timeline__dot"></div>
+  <div class="home-timeline__body">
+    <span class="home-timeline__date">05-21</span>
+    <span class="home-timeline__tag home-timeline__tag--ai">AI学习</span>
+    <a href="/ai-study/dewu-harness-practice/">新增《得物数仓 Harness 实战》</a>
+  </div>
+</div>
+
+<div class="home-timeline__more">
+  <a href="/changelog/">查看全部更新 →</a>
+</div>
+
+</div>
 
 ## 无用但保留
 

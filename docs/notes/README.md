@@ -23,6 +23,7 @@ permalink: /notes/
 这一部分主要记录离线数仓建设中的建模方法、分层策略、设计规范等核心知识，帮助厘清数仓建设的脉络与最佳实践。
 
 - [数仓表建设范式与分层方案](./data-warehouse/warehouse-table-paradigm-and-layering.md)
+- [MySQL2Hive 工作原理](./data-warehouse/mysql2hive-sync-principle.md)
 
 ### 数据库技术
 

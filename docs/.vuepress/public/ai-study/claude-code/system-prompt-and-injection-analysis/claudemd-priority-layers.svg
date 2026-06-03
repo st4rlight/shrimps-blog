@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 580" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 420" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
   <defs>
     <linearGradient id="grayG" x1="0%" y1="0%" x2="0%" y2="100%">
       <stop offset="0%" style="stop-color:#94a3b8;stop-opacity:1" />
@@ -33,73 +33,67 @@
   </defs>
 
   <!-- Background -->
-  <rect width="820" height="580" rx="14" fill="#f8fafc"/>
+  <rect width="700" height="420" rx="14" fill="#f8fafc"/>
 
   <!-- Title -->
-  <text x="410" y="38" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">CLAUDE.md 六层优先级</text>
-  <text x="410" y="58" text-anchor="middle" font-size="12" fill="#94a3b8">从全局管理员策略到团队共享记忆，优先级递增</text>
+  <text x="350" y="36" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">CLAUDE.md 六层优先级</text>
+  <text x="350" y="56" text-anchor="middle" font-size="12" fill="#94a3b8">从全局管理员策略到团队共享记忆，优先级递增</text>
 
   <!-- Priority arrow on left -->
-  <line x1="28" y1="510" x2="28" y2="100" stroke="#10b981" stroke-width="2" marker-end="url(#arrowUp)"/>
-  <text x="28" y="530" text-anchor="middle" font-size="10" fill="#64748b" transform="rotate(-90, 28, 310)">优先级递增 →</text>
+  <line x1="24" y1="370" x2="24" y2="85" stroke="#10b981" stroke-width="2" marker-end="url(#arrowUp)"/>
+  <text x="24" y="390" text-anchor="middle" font-size="9" fill="#64748b">优先级递增</text>
 
-  <!-- L1: Managed Memory -->
+  <!-- L1: Managed -->
   <g filter="url(#shadow)">
-    <rect x="60" y="80" width="700" height="68" rx="10" fill="white" stroke="#64748b" stroke-width="1.5"/>
+    <rect x="50" y="78" width="600" height="46" rx="8" fill="white" stroke="#64748b" stroke-width="1.5"/>
   </g>
-  <rect x="60" y="80" width="8" height="68" rx="4" fill="url(#grayG)"/>
-  <text x="88" y="102" font-size="13" font-weight="700" fill="#475569">1. Managed Memory</text>
-  <text x="720" y="102" font-size="10" fill="#94a3b8" text-anchor="end">/etc/claude-code/CLAUDE.md</text>
-  <text x="88" y="120" font-size="11" fill="#64748b">全局管理员策略，覆盖所有用户和项目</text>
-  <text x="88" y="138" font-size="10" fill="#94a3b8">优先级最低 — 但适用于组织合规要求</text>
+  <rect x="50" y="78" width="6" height="46" rx="3" fill="url(#grayG)"/>
+  <text x="74" y="100" font-size="13" font-weight="700" fill="#475569">1. Managed</text>
+  <text x="630" y="100" font-size="10" fill="#94a3b8" text-anchor="end">/etc/claude-code/CLAUDE.md</text>
+  <text x="74" y="116" font-size="10" fill="#64748b">管理员策略，对所有用户和项目生效</text>
 
-  <!-- L2: User Memory -->
+  <!-- L2: User -->
   <g filter="url(#shadow)">
-    <rect x="60" y="160" width="700" height="68" rx="10" fill="white" stroke="#3b82f6" stroke-width="1.5"/>
+    <rect x="50" y="136" width="600" height="46" rx="8" fill="white" stroke="#3b82f6" stroke-width="1.5"/>
   </g>
-  <rect x="60" y="160" width="8" height="68" rx="4" fill="url(#blueG)"/>
-  <text x="88" y="182" font-size="13" font-weight="700" fill="#1d4ed8">2. User Memory</text>
-  <text x="720" y="182" font-size="10" fill="#94a3b8" text-anchor="end">~/.claude/CLAUDE.md</text>
-  <text x="88" y="200" font-size="11" fill="#64748b">用户全局指令，对所有项目生效</text>
-  <text x="88" y="218" font-size="10" fill="#94a3b8">个人偏好设置、通用编码风格</text>
+  <rect x="50" y="136" width="6" height="46" rx="3" fill="url(#blueG)"/>
+  <text x="74" y="158" font-size="13" font-weight="700" fill="#1d4ed8">2. User</text>
+  <text x="630" y="158" font-size="10" fill="#94a3b8" text-anchor="end">~/.claude/CLAUDE.md</text>
+  <text x="74" y="174" font-size="10" fill="#64748b">用户私有全局指令，对所有项目生效</text>
 
-  <!-- L3: Project Memory -->
+  <!-- L3: Project -->
   <g filter="url(#shadow)">
-    <rect x="60" y="240" width="700" height="68" rx="10" fill="white" stroke="#10b981" stroke-width="1.5"/>
+    <rect x="50" y="194" width="600" height="46" rx="8" fill="white" stroke="#10b981" stroke-width="1.5"/>
   </g>
-  <rect x="60" y="240" width="8" height="68" rx="4" fill="url(#greenG)"/>
-  <text x="88" y="262" font-size="13" font-weight="700" fill="#047857">3. Project Memory</text>
-  <text x="720" y="262" font-size="10" fill="#94a3b8" text-anchor="end">CLAUDE.md / .claude/CLAUDE.md / .claude/rules/*.md</text>
-  <text x="88" y="280" font-size="11" fill="#64748b">项目级指令，可提交到代码库，团队共享</text>
-  <text x="88" y="298" font-size="10" fill="#94a3b8">支持条件规则（frontmatter glob 匹配）</text>
+  <rect x="50" y="194" width="6" height="46" rx="3" fill="url(#greenG)"/>
+  <text x="74" y="216" font-size="13" font-weight="700" fill="#047857">3. Project</text>
+  <text x="630" y="216" font-size="10" fill="#94a3b8" text-anchor="end">CLAUDE.md / .claude/rules/*.md</text>
+  <text x="74" y="232" font-size="10" fill="#64748b">项目指令，提交到代码库；支持条件规则（glob 匹配）</text>
 
-  <!-- L4: Local Memory -->
+  <!-- L4: Local -->
   <g filter="url(#shadow)">
-    <rect x="60" y="320" width="700" height="68" rx="10" fill="white" stroke="#f59e0b" stroke-width="1.5"/>
+    <rect x="50" y="252" width="600" height="46" rx="8" fill="white" stroke="#f59e0b" stroke-width="1.5"/>
   </g>
-  <rect x="60" y="320" width="8" height="68" rx="4" fill="url(#amberG)"/>
-  <text x="88" y="342" font-size="13" font-weight="700" fill="#92400e">4. Local Memory</text>
-  <text x="720" y="342" font-size="10" fill="#94a3b8" text-anchor="end">CLAUDE.local.md</text>
-  <text x="88" y="360" font-size="11" fill="#64748b">本地私有指令，不提交到 Git（gitignore）</text>
-  <text x="88" y="378" font-size="10" fill="#94a3b8">个人调试技巧、临时工作流配置</text>
+  <rect x="50" y="252" width="6" height="46" rx="3" fill="url(#amberG)"/>
+  <text x="74" y="274" font-size="13" font-weight="700" fill="#92400e">4. Local</text>
+  <text x="630" y="274" font-size="10" fill="#94a3b8" text-anchor="end">CLAUDE.local.md</text>
+  <text x="74" y="290" font-size="10" fill="#64748b">用户私有项目指令，不提交到 Git</text>
 
-  <!-- L5: Auto Memory -->
+  <!-- L5: AutoMem -->
   <g filter="url(#shadow)">
-    <rect x="60" y="400" width="700" height="68" rx="10" fill="white" stroke="#8b5cf6" stroke-width="1.5"/>
+    <rect x="50" y="310" width="600" height="46" rx="8" fill="white" stroke="#8b5cf6" stroke-width="1.5"/>
   </g>
-  <rect x="60" y="400" width="8" height="68" rx="4" fill="url(#violetG)"/>
-  <text x="88" y="422" font-size="13" font-weight="700" fill="#5b21b6">5. Auto Memory</text>
-  <text x="720" y="422" font-size="10" fill="#94a3b8" text-anchor="end">MEMORY.md</text>
-  <text x="88" y="440" font-size="11" fill="#64748b">自动记忆，按会话维护，跨会话持久化</text>
-  <text x="88" y="458" font-size="10" fill="#94a3b8">模型自动记录的项目经验和偏好</text>
+  <rect x="50" y="310" width="6" height="46" rx="3" fill="url(#violetG)"/>
+  <text x="74" y="332" font-size="13" font-weight="700" fill="#5b21b6">5. AutoMem</text>
+  <text x="630" y="332" font-size="10" fill="#94a3b8" text-anchor="end">.claude/memory/memory.md</text>
+  <text x="74" y="348" font-size="10" fill="#64748b">自动记忆，模型自动记录的项目经验和偏好</text>
 
-  <!-- L6: Team Memory -->
+  <!-- L6: TeamMem -->
   <g filter="url(#shadow)">
-    <rect x="60" y="480" width="700" height="68" rx="10" fill="white" stroke="#6366f1" stroke-width="1.5"/>
+    <rect x="50" y="368" width="600" height="46" rx="8" fill="white" stroke="#6366f1" stroke-width="1.5"/>
   </g>
-  <rect x="60" y="480" width="8" height="68" rx="4" fill="url(#indigoG)"/>
-  <text x="88" y="502" font-size="13" font-weight="700" fill="#4338ca">6. Team Memory</text>
-  <text x="720" y="502" font-size="10" fill="#94a3b8" text-anchor="end">团队共享记忆（跨组织同步）</text>
-  <text x="88" y="520" font-size="11" fill="#64748b">团队共享记忆，跨组织同步，使用 XML 标签包裹</text>
-  <text x="88" y="538" font-size="10" fill="#94a3b8">&lt;team-memory-content source="shared"&gt; — 优先级最高</text>
+  <rect x="50" y="368" width="6" height="46" rx="3" fill="url(#indigoG)"/>
+  <text x="74" y="390" font-size="13" font-weight="700" fill="#4338ca">6. TeamMem</text>
+  <text x="630" y="390" font-size="10" fill="#94a3b8" text-anchor="end">.claude/memory/team.md</text>
+  <text x="74" y="406" font-size="10" fill="#64748b">团队共享记忆，优先级最高</text>
 </svg>

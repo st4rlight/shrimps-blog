@@ -1,0 +1,141 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 380" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <linearGradient id="blueG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="greenG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#34d399;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="amberG" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="violetG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#a78bfa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.12"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="380" rx="12" fill="#f8fafc"/>
+
+  <!-- Title -->
+  <text x="400" y="32" text-anchor="middle" font-size="18" font-weight="700" fill="#1e293b">全量 → 增量切换流程</text>
+  <text x="400" y="50" text-anchor="middle" font-size="11" fill="#94a3b8">四步完成从全量同步到增量同步的无缝切换</text>
+
+  <!-- Step 1: 准备阶段 -->
+  <g filter="url(#shadow)">
+    <rect x="30" y="68" width="170" height="115" rx="10" fill="white" stroke="#8b5cf6" stroke-width="2"/>
+  </g>
+  <rect x="30" y="68" width="170" height="32" rx="10" fill="url(#violetG)"/>
+  <rect x="30" y="84" width="170" height="16" fill="url(#violetG)"/>
+  <text x="115" y="90" text-anchor="middle" font-size="12" font-weight="700" fill="white">① 准备阶段</text>
+  <text x="45" y="120" font-size="10" fill="#475569">• Canal 部署就绪</text>
+  <text x="45" y="138" font-size="10" fill="#475569">• Kafka Topic 已创建</text>
+  <text x="45" y="156" font-size="10" fill="#475569">• Hive Binlog 表已建</text>
+  <text x="45" y="174" font-size="10" fill="#94a3b8">  确认基础设施就绪</text>
+
+  <!-- Arrow 1→2 -->
+  <line x1="200" y1="126" x2="225" y2="126" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Step 2: 全量基线 -->
+  <g filter="url(#shadow)">
+    <rect x="230" y="68" width="170" height="115" rx="10" fill="white" stroke="#3b82f6" stroke-width="2"/>
+  </g>
+  <rect x="230" y="68" width="170" height="32" rx="10" fill="url(#blueG)"/>
+  <rect x="230" y="84" width="170" height="16" fill="url(#blueG)"/>
+  <text x="315" y="90" text-anchor="middle" font-size="12" font-weight="700" fill="white">② 全量基线</text>
+  <text x="245" y="120" font-size="10" fill="#475569">• SELECT * 全量抽取</text>
+  <text x="245" y="138" font-size="10" fill="#475569">• 写入 Hive 表（T-1 基线）</text>
+  <rect x="245" y="148" width="140" height="20" rx="5" fill="#fef3c7" stroke="#fbbf24" stroke-width="1"/>
+  <text x="315" y="162" text-anchor="middle" font-size="9" font-weight="600" fill="#92400e">📌 记录 Binlog 位点</text>
+  <text x="315" y="178" text-anchor="middle" font-size="9" fill="#94a3b8">mysql-bin.000123:4567</text>
+
+  <!-- Arrow 2→3 -->
+  <line x1="400" y1="126" x2="425" y2="126" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Step 3: 增量启动 -->
+  <g filter="url(#shadow)">
+    <rect x="430" y="68" width="170" height="115" rx="10" fill="white" stroke="#10b981" stroke-width="2"/>
+  </g>
+  <rect x="430" y="68" width="170" height="32" rx="10" fill="url(#greenG)"/>
+  <rect x="430" y="84" width="170" height="16" fill="url(#greenG)"/>
+  <text x="515" y="90" text-anchor="middle" font-size="12" font-weight="700" fill="white">③ 增量启动</text>
+  <text x="445" y="120" font-size="10" fill="#475569">• Canal 从位点开始消费</text>
+  <text x="445" y="138" font-size="10" fill="#475569">• Binlog → Kafka → Hive</text>
+  <text x="445" y="156" font-size="10" fill="#475569">• 每日 Merge 合并还原</text>
+  <text x="445" y="174" font-size="10" fill="#94a3b8">  存量 + 增量 → 新全量</text>
+
+  <!-- Arrow 3→4 -->
+  <line x1="600" y1="126" x2="625" y2="126" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Step 4: 校验 -->
+  <g filter="url(#shadow)">
+    <rect x="630" y="68" width="140" height="115" rx="10" fill="white" stroke="#f59e0b" stroke-width="2"/>
+  </g>
+  <rect x="630" y="68" width="140" height="32" rx="10" fill="url(#amberG)"/>
+  <rect x="630" y="84" width="140" height="16" fill="url(#amberG)"/>
+  <text x="700" y="90" text-anchor="middle" font-size="12" font-weight="700" fill="white">④ 校验</text>
+  <text x="645" y="120" font-size="10" fill="#475569">• Hive 行数 vs MySQL</text>
+  <text x="645" y="138" font-size="10" fill="#475569">• 抽样比对字段值</text>
+  <text x="645" y="156" font-size="10" fill="#475569">• 确认数据一致</text>
+  <text x="645" y="174" font-size="10" fill="#94a3b8">  不一致则重跑</text>
+
+  <!-- ===== Bottom: Timeline ===== -->
+  <line x1="60" y1="220" x2="740" y2="220" stroke="#e2e8f0" stroke-width="3" marker-end="url(#arrow)"/>
+
+  <!-- Timeline events -->
+  <!-- T日 00:00 -->
+  <circle cx="115" cy="220" r="6" fill="url(#violetG)" stroke="white" stroke-width="2"/>
+  <text x="115" y="242" text-anchor="middle" font-size="10" font-weight="600" fill="#5b21b6">准备就绪</text>
+
+  <!-- T日 00:05 -->
+  <circle cx="315" cy="220" r="6" fill="url(#blueG)" stroke="white" stroke-width="2"/>
+  <text x="315" y="242" text-anchor="middle" font-size="10" font-weight="600" fill="#1d4ed8">全量抽取</text>
+  <text x="315" y="256" text-anchor="middle" font-size="9" fill="#94a3b8">00:05 - 02:30</text>
+
+  <!-- T日 02:30 -->
+  <circle cx="515" cy="220" r="6" fill="url(#greenG)" stroke="white" stroke-width="2"/>
+  <text x="515" y="242" text-anchor="middle" font-size="10" font-weight="600" fill="#047857">增量启动</text>
+  <text x="515" y="256" text-anchor="middle" font-size="9" fill="#94a3b8">02:30 起</text>
+
+  <!-- T+1 日 06:00 -->
+  <circle cx="700" cy="220" r="6" fill="url(#amberG)" stroke="white" stroke-width="2"/>
+  <text x="700" y="242" text-anchor="middle" font-size="10" font-weight="600" fill="#92400e">首次 Merge</text>
+  <text x="700" y="256" text-anchor="middle" font-size="9" fill="#94a3b8">T+1 06:00</text>
+
+  <!-- Timeline range labels -->
+  <rect x="90" y="270" width="250" height="22" rx="6" fill="#dbeafe" fill-opacity="0.5" stroke="#93c5fd" stroke-width="1"/>
+  <text x="215" y="285" text-anchor="middle" font-size="9" font-weight="600" fill="#1d4ed8">全量阶段</text>
+
+  <rect x="360" y="270" width="370" height="22" rx="6" fill="#d1fae5" fill-opacity="0.5" stroke="#86efac" stroke-width="1"/>
+  <text x="545" y="285" text-anchor="middle" font-size="9" font-weight="600" fill="#047857">增量阶段（持续运行）</text>
+
+  <!-- Boundary marker on timeline -->
+  <line x1="360" y1="210" x2="360" y2="230" stroke="#f59e0b" stroke-width="2.5"/>
+  <text x="360" y="206" text-anchor="middle" font-size="9" font-weight="600" fill="#f59e0b">分界线</text>
+
+  <!-- Bottom tip -->
+  <rect x="120" y="310" width="560" height="28" rx="14" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1"/>
+  <text x="400" y="329" text-anchor="middle" font-size="11" fill="#15803d">💡 全量结束后立即启动增量，校验通过后切换完成，之后每日自动 Merge</text>
+
+  <!-- Legend -->
+  <g transform="translate(30, 350)">
+    <rect width="10" height="10" rx="2" fill="url(#violetG)"/>
+    <text x="15" y="10" font-size="9" fill="#64748b">准备</text>
+    <rect x="70" width="10" height="10" rx="2" fill="url(#blueG)"/>
+    <text x="85" y="10" font-size="9" fill="#64748b">全量</text>
+    <rect x="130" width="10" height="10" rx="2" fill="url(#greenG)"/>
+    <text x="145" y="10" font-size="9" fill="#64748b">增量</text>
+    <rect x="190" width="10" height="10" rx="2" fill="url(#amberG)"/>
+    <text x="205" y="10" font-size="9" fill="#64748b">校验/Merge</text>
+  </g>
+</svg>

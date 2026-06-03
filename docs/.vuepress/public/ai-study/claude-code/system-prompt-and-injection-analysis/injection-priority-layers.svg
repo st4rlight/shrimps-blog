@@ -1,9 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 480" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 380" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
   <defs>
-    <linearGradient id="redG" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" style="stop-color:#f87171;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#ef4444;stop-opacity:1" />
-    </linearGradient>
     <linearGradient id="blueG" x1="0%" y1="0%" x2="0%" y2="100%">
       <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
       <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
@@ -16,83 +12,84 @@
       <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:1" />
       <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:1" />
     </linearGradient>
-    <linearGradient id="violetG" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" style="stop-color:#a78bfa;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
-    </linearGradient>
     <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
       <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.12"/>
     </filter>
+    <marker id="arrowR" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#ef4444"/>
+    </marker>
   </defs>
 
   <!-- Background -->
-  <rect width="820" height="480" rx="14" fill="#f8fafc"/>
+  <rect width="800" height="380" rx="14" fill="#f8fafc"/>
 
   <!-- Title -->
-  <text x="410" y="36" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">各注入源的优先级与覆盖关系</text>
-  <text x="410" y="56" text-anchor="middle" font-size="12" fill="#94a3b8">从覆盖层到工具层，五层按优先级依次叠加</text>
+  <text x="400" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">User Context 与 System Context 注入位置</text>
+  <text x="400" y="54" text-anchor="middle" font-size="12" fill="#94a3b8">分开放置，最小化缓存失效范围</text>
 
-  <!-- Layer 1: Override -->
+  <!-- ===== Left: System Prompt ===== -->
   <g filter="url(#shadow)">
-    <rect x="40" y="72" width="740" height="78" rx="10" fill="white" stroke="#ef4444" stroke-width="2"/>
+    <rect x="40" y="74" width="340" height="260" rx="10" fill="white" stroke="#3b82f6" stroke-width="1.5"/>
   </g>
-  <rect x="40" y="72" width="740" height="30" rx="10" fill="url(#redG)"/>
-  <rect x="40" y="82" width="740" height="20" fill="url(#redG)"/>
-  <text x="62" y="92" font-size="13" font-weight="700" fill="white">覆盖（Override）层</text>
-  <text x="730" y="92" font-size="10" fill="white" text-anchor="end">优先级最高</text>
+  <rect x="40" y="74" width="340" height="30" rx="10" fill="url(#blueG)"/>
+  <rect x="40" y="86" width="340" height="18" fill="url(#blueG)"/>
+  <text x="210" y="96" text-anchor="middle" font-size="13" font-weight="700" fill="white">System Prompt</text>
 
-  <text x="62" y="118" font-size="11" fill="#475569" font-weight="500">overrideSystemPrompt &gt; coordinatorPrompt &gt; agentPrompt &gt; customSystemPrompt &gt; defaultPrompt</text>
-  <text x="62" y="138" font-size="10" fill="#64748b">+ appendSystemPrompt 始终追加到最后</text>
+  <!-- Static zone -->
+  <rect x="58" y="118" width="304" height="30" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="210" y="137" text-anchor="middle" font-size="10" font-weight="600" fill="#1d4ed8">静态区（7 sections）— scope: global</text>
 
-  <!-- Arrow between layers -->
-  <text x="410" y="163" text-anchor="middle" font-size="12" fill="#94a3b8">↓</text>
+  <!-- Boundary -->
+  <rect x="58" y="154" width="304" height="16" rx="4" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4,2"/>
+  <text x="210" y="166" text-anchor="middle" font-size="8" fill="#94a3b8">DYNAMIC_BOUNDARY</text>
 
-  <!-- Layer 2: Merge -->
+  <!-- Dynamic zone -->
+  <rect x="58" y="176" width="304" height="30" rx="6" fill="#fef3c7" stroke="#fbbf24" stroke-width="1"/>
+  <text x="210" y="195" text-anchor="middle" font-size="10" fill="#92400e">动态区（10~13 sections）— scope: null</text>
+
+  <!-- System Context -->
+  <rect x="58" y="214" width="304" height="36" rx="6" fill="#fce7f3" stroke="#f9a8d4" stroke-width="1.5"/>
+  <text x="210" y="231" text-anchor="middle" font-size="10" font-weight="600" fill="#9d174d">System Context</text>
+  <text x="210" y="245" text-anchor="middle" font-size="9" fill="#db2777">Git 状态（启动时快照）</text>
+
+  <!-- Effect -->
+  <rect x="58" y="260" width="304" height="28" rx="6" fill="#d1fae5" stroke="#86efac" stroke-width="1"/>
+  <text x="210" y="278" text-anchor="middle" font-size="9" font-weight="600" fill="#047857">✅ 变化不影响静态区 global 缓存</text>
+
+  <!-- ===== Right: Messages ===== -->
   <g filter="url(#shadow)">
-    <rect x="40" y="170" width="740" height="60" rx="10" fill="white" stroke="#3b82f6" stroke-width="1.5"/>
+    <rect x="420" y="74" width="340" height="260" rx="10" fill="white" stroke="#10b981" stroke-width="1.5"/>
   </g>
-  <rect x="40" y="170" width="740" height="28" rx="10" fill="url(#blueG)"/>
-  <rect x="40" y="180" width="740" height="18" fill="url(#blueG)"/>
-  <text x="62" y="190" font-size="13" font-weight="700" fill="white">合并（Merge）层</text>
+  <rect x="420" y="74" width="340" height="30" rx="10" fill="url(#greenG)"/>
+  <rect x="420" y="86" width="340" height="18" fill="url(#greenG)"/>
+  <text x="590" y="96" text-anchor="middle" font-size="13" font-weight="700" fill="white">Messages（消息流）</text>
 
-  <text x="62" y="214" font-size="11" fill="#475569">systemPrompt + systemContext → fullSystemPrompt</text>
+  <!-- User Context -->
+  <rect x="438" y="118" width="304" height="36" rx="6" fill="#d1fae5" stroke="#86efac" stroke-width="1.5"/>
+  <text x="590" y="135" text-anchor="middle" font-size="10" font-weight="600" fill="#047857">User Context</text>
+  <text x="590" y="149" text-anchor="middle" font-size="9" fill="#059669">&lt;system-reminder&gt; CLAUDE.md + 日期 &lt;/system-reminder&gt;</text>
 
-  <!-- Arrow -->
-  <text x="410" y="243" text-anchor="middle" font-size="12" fill="#94a3b8">↓</text>
+  <!-- User message -->
+  <rect x="438" y="162" width="304" height="24" rx="6" fill="#ecfdf5" stroke="#a7f3d0" stroke-width="1"/>
+  <text x="590" y="178" text-anchor="middle" font-size="9" fill="#374151">用户原始消息</text>
 
-  <!-- Layer 3: Prepend -->
-  <g filter="url(#shadow)">
-    <rect x="40" y="250" width="740" height="60" rx="10" fill="white" stroke="#10b981" stroke-width="1.5"/>
-  </g>
-  <rect x="40" y="250" width="740" height="28" rx="10" fill="url(#greenG)"/>
-  <rect x="40" y="260" width="740" height="18" fill="url(#greenG)"/>
-  <text x="62" y="270" font-size="13" font-weight="700" fill="white">前置（Prepend）层</text>
+  <!-- Attachments -->
+  <rect x="438" y="192" width="304" height="24" rx="6" fill="#fef3c7" stroke="#fbbf24" stroke-width="1"/>
+  <text x="590" y="208" text-anchor="middle" font-size="9" fill="#92400e">Attachments（@文件 · 诊断 · TODO · delta）</text>
 
-  <text x="62" y="294" font-size="11" fill="#475569">userContext → 首条 user message（CLAUDE.md + 当前日期）</text>
+  <!-- More -->
+  <text x="590" y="234" text-anchor="middle" font-size="9" fill="#94a3b8">assistant / user / ...</text>
 
-  <!-- Arrow -->
-  <text x="410" y="323" text-anchor="middle" font-size="12" fill="#94a3b8">↓</text>
+  <!-- Effect -->
+  <rect x="438" y="248" width="304" height="28" rx="6" fill="#d1fae5" stroke="#86efac" stroke-width="1"/>
+  <text x="590" y="266" text-anchor="middle" font-size="9" font-weight="600" fill="#047857">✅ 变化不影响 system prompt 缓存</text>
 
-  <!-- Layer 4: Attachment -->
-  <g filter="url(#shadow)">
-    <rect x="40" y="330" width="740" height="60" rx="10" fill="white" stroke="#f59e0b" stroke-width="1.5"/>
-  </g>
-  <rect x="40" y="330" width="740" height="28" rx="10" fill="url(#amberG)"/>
-  <rect x="40" y="340" width="740" height="18" fill="url(#amberG)"/>
-  <text x="62" y="350" font-size="13" font-weight="700" fill="white">附件（Attachment）层</text>
+  <!-- Sub-agent optimization -->
+  <rect x="438" y="284" width="304" height="36" rx="6" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1"/>
+  <text x="590" y="300" text-anchor="middle" font-size="9" font-weight="600" fill="#64748b">子 Agent 优化</text>
+  <text x="590" y="314" text-anchor="middle" font-size="8.5" fill="#94a3b8">Explore/Plan 只读子 Agent 跳过 CLAUDE.md 注入</text>
 
-  <text x="62" y="374" font-size="11" fill="#475569">30+ 种附件 → AttachmentMessages，与用户消息交替插入</text>
-
-  <!-- Arrow -->
-  <text x="410" y="403" text-anchor="middle" font-size="12" fill="#94a3b8">↓</text>
-
-  <!-- Layer 5: Tools -->
-  <g filter="url(#shadow)">
-    <rect x="40" y="410" width="740" height="60" rx="10" fill="white" stroke="#8b5cf6" stroke-width="1.5"/>
-  </g>
-  <rect x="40" y="410" width="740" height="28" rx="10" fill="url(#violetG)"/>
-  <rect x="40" y="420" width="740" height="18" fill="url(#violetG)"/>
-  <text x="62" y="430" font-size="13" font-weight="700" fill="white">工具（Tools）层</text>
-
-  <text x="62" y="454" font-size="11" fill="#475569">builtInTools + mcpTools → assembleToolPool | deferred tools → delta attachments</text>
+  <!-- ===== Bottom: Why not swap? ===== -->
+  <rect x="100" y="348" width="600" height="24" rx="12" fill="#fef3c7" stroke="#fbbf24" stroke-width="1"/>
+  <text x="400" y="364" text-anchor="middle" font-size="10" fill="#92400e">💡 反过来放？CLAUDE.md 放 system prompt → 修改后重建缓存代价高；Git 放消息流 → user message 缓存前缀失效范围更大</text>
 </svg>

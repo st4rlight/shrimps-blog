@@ -1,0 +1,164 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 480" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <linearGradient id="blueG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="greenG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#34d399;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="amberG" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="redG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#f87171;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ef4444;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.12"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/>
+    </marker>
+    <marker id="arrowG" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#10b981"/>
+    </marker>
+    <marker id="arrowR" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#ef4444"/>
+    </marker>
+    <marker id="arrowY" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#f59e0b"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="480" rx="12" fill="#f8fafc"/>
+
+  <!-- Title -->
+  <text x="400" y="35" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">Merge 还原机制</text>
+  <text x="400" y="55" text-anchor="middle" font-size="12" fill="#94a3b8">增量 Binlog 与存量数据合并，还原业务表最新状态</text>
+
+  <!-- ===== Top: T-1 全量数据 ===== -->
+  <g filter="url(#shadow)">
+    <rect x="50" y="75" width="300" height="130" rx="10" fill="white" stroke="#3b82f6" stroke-width="2"/>
+  </g>
+  <rect x="50" y="75" width="300" height="34" rx="10" fill="url(#blueG)"/>
+  <rect x="50" y="91" width="300" height="18" fill="url(#blueG)"/>
+  <text x="200" y="97" text-anchor="middle" font-size="13" font-weight="700" fill="white">Hive 存量全量表（T-1 日）</text>
+
+  <!-- Table header -->
+  <rect x="60" y="115" width="280" height="20" rx="4" fill="#f1f5f9"/>
+  <text x="90" y="130" text-anchor="middle" font-size="10" font-weight="600" fill="#64748b">id</text>
+  <text x="150" y="130" text-anchor="middle" font-size="10" font-weight="600" fill="#64748b">user_id</text>
+  <text x="220" y="130" text-anchor="middle" font-size="10" font-weight="600" fill="#64748b">amount</text>
+  <text x="295" y="130" text-anchor="middle" font-size="10" font-weight="600" fill="#64748b">status</text>
+  <!-- Row 1 -->
+  <text x="90" y="155" text-anchor="middle" font-size="10" fill="#475569">1</text>
+  <text x="150" y="155" text-anchor="middle" font-size="10" fill="#475569">1001</text>
+  <text x="220" y="155" text-anchor="middle" font-size="10" fill="#475569">99.00</text>
+  <text x="295" y="155" text-anchor="middle" font-size="10" fill="#475569">已支付</text>
+  <!-- Row 2 -->
+  <text x="90" y="173" text-anchor="middle" font-size="10" fill="#475569">2</text>
+  <text x="150" y="173" text-anchor="middle" font-size="10" fill="#475569">1002</text>
+  <text x="220" y="173" text-anchor="middle" font-size="10" fill="#475569">199.00</text>
+  <text x="295" y="173" text-anchor="middle" font-size="10" fill="#f59e0b" font-weight="600">待支付</text>
+  <!-- Row 3 -->
+  <text x="90" y="191" text-anchor="middle" font-size="10" fill="#475569">3</text>
+  <text x="150" y="191" text-anchor="middle" font-size="10" fill="#475569">1003</text>
+  <text x="220" y="191" text-anchor="middle" font-size="10" fill="#475569">50.00</text>
+  <text x="295" y="191" text-anchor="middle" font-size="10" fill="#ef4444" font-weight="600">已发货</text>
+
+  <!-- Plus sign -->
+  <circle cx="400" cy="140" r="20" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="400" y="146" text-anchor="middle" font-size="22" font-weight="700" fill="#94a3b8">+</text>
+
+  <!-- ===== Top Right: T 日 Binlog ===== -->
+  <g filter="url(#shadow)">
+    <rect x="450" y="75" width="300" height="130" rx="10" fill="white" stroke="#f59e0b" stroke-width="2"/>
+  </g>
+  <rect x="450" y="75" width="300" height="34" rx="10" fill="url(#amberG)"/>
+  <rect x="450" y="91" width="300" height="18" fill="url(#amberG)"/>
+  <text x="600" y="97" text-anchor="middle" font-size="13" font-weight="700" fill="white">Binlog 增量事件（T 日）</text>
+
+  <!-- Binlog table -->
+  <rect x="460" y="115" width="280" height="20" rx="4" fill="#fef3c7"/>
+  <text x="490" y="130" text-anchor="middle" font-size="10" font-weight="600" fill="#64748b">op</text>
+  <text x="545" y="130" text-anchor="middle" font-size="10" font-weight="600" fill="#64748b">id</text>
+  <text x="630" y="130" text-anchor="middle" font-size="10" font-weight="600" fill="#64748b">after</text>
+  <!-- Row U -->
+  <rect x="460" y="137" width="30" height="18" rx="4" fill="#dbeafe"/>
+  <text x="490" y="149" text-anchor="middle" font-size="10" font-weight="600" fill="#3b82f6">U</text>
+  <text x="545" y="149" text-anchor="middle" font-size="10" fill="#475569">2</text>
+  <text x="630" y="149" text-anchor="middle" font-size="9" fill="#475569">1002, 199, 已支付</text>
+  <!-- Row I -->
+  <rect x="460" y="157" width="30" height="18" rx="4" fill="#d1fae5"/>
+  <text x="490" y="169" text-anchor="middle" font-size="10" font-weight="600" fill="#10b981">I</text>
+  <text x="545" y="169" text-anchor="middle" font-size="10" fill="#475569">4</text>
+  <text x="630" y="169" text-anchor="middle" font-size="9" fill="#475569">1004, 88, 待支付</text>
+  <!-- Row D -->
+  <rect x="460" y="177" width="30" height="18" rx="4" fill="#fee2e2"/>
+  <text x="490" y="189" text-anchor="middle" font-size="10" font-weight="600" fill="#ef4444">D</text>
+  <text x="545" y="189" text-anchor="middle" font-size="10" fill="#475569">3</text>
+  <text x="630" y="189" text-anchor="middle" font-size="9" fill="#475569">1003, 50, 已发货</text>
+
+  <!-- Arrows down to Merge -->
+  <line x1="200" y1="205" x2="200" y2="245" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="600" y1="205" x2="600" y2="245" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="170" y="228" font-size="9" fill="#64748b">FULL OUTER JOIN</text>
+  <text x="560" y="228" font-size="9" fill="#64748b">ROW_NUMBER 去重</text>
+
+  <!-- ===== Middle: Merge process ===== -->
+  <g filter="url(#shadow)">
+    <rect x="150" y="250" width="500" height="60" rx="12" fill="white" stroke="#10b981" stroke-width="2.5"/>
+  </g>
+  <rect x="150" y="250" width="500" height="28" rx="12" fill="url(#greenG)"/>
+  <rect x="150" y="265" width="500" height="13" fill="url(#greenG)"/>
+  <text x="400" y="270" text-anchor="middle" font-size="15" font-weight="700" fill="white">Merge 合并还原</text>
+  
+  <!-- Merge rules inline -->
+  <text x="210" y="296" font-size="10" fill="#475569">INSERT → 插入新行</text>
+  <text x="350" y="296" font-size="10" fill="#475569">UPDATE → 覆盖旧值</text>
+  <text x="490" y="296" font-size="10" fill="#475569">DELETE → 移除行</text>
+
+  <!-- Arrow down to result -->
+  <line x1="400" y1="310" x2="400" y2="345" stroke="#10b981" stroke-width="2" marker-end="url(#arrowG)"/>
+
+  <!-- ===== Bottom: T 日全量结果 ===== -->
+  <g filter="url(#shadow)">
+    <rect x="150" y="350" width="500" height="100" rx="10" fill="white" stroke="#10b981" stroke-width="2"/>
+  </g>
+  <rect x="150" y="350" width="500" height="34" rx="10" fill="url(#greenG)"/>
+  <rect x="150" y="366" width="500" height="18" fill="url(#greenG)"/>
+  <text x="400" y="372" text-anchor="middle" font-size="13" font-weight="700" fill="white">Hive 最新全量表（T 日）</text>
+
+  <!-- Result table header -->
+  <rect x="170" y="390" width="460" height="20" rx="4" fill="#f0fdf4"/>
+  <text x="215" y="405" text-anchor="middle" font-size="10" font-weight="600" fill="#64748b">id</text>
+  <text x="295" y="405" text-anchor="middle" font-size="10" font-weight="600" fill="#64748b">user_id</text>
+  <text x="380" y="405" text-anchor="middle" font-size="10" font-weight="600" fill="#64748b">amount</text>
+  <text x="480" y="405" text-anchor="middle" font-size="10" font-weight="600" fill="#64748b">status</text>
+  <text x="570" y="405" text-anchor="middle" font-size="10" font-weight="600" fill="#64748b">来源</text>
+
+  <!-- Result row 1: unchanged -->
+  <text x="215" y="425" text-anchor="middle" font-size="10" fill="#475569">1</text>
+  <text x="295" y="425" text-anchor="middle" font-size="10" fill="#475569">1001</text>
+  <text x="380" y="425" text-anchor="middle" font-size="10" fill="#475569">99.00</text>
+  <text x="480" y="425" text-anchor="middle" font-size="10" fill="#475569">已支付</text>
+  <text x="570" y="425" text-anchor="middle" font-size="9" fill="#94a3b8">存量</text>
+
+  <!-- Result row 2: updated -->
+  <text x="215" y="443" text-anchor="middle" font-size="10" fill="#3b82f6" font-weight="600">2</text>
+  <text x="295" y="443" text-anchor="middle" font-size="10" fill="#3b82f6" font-weight="600">1002</text>
+  <text x="380" y="443" text-anchor="middle" font-size="10" fill="#3b82f6" font-weight="600">199.00</text>
+  <text x="480" y="443" text-anchor="middle" font-size="10" fill="#3b82f6" font-weight="600">已支付</text>
+  <text x="570" y="443" text-anchor="middle" font-size="9" fill="#3b82f6">UPDATE</text>
+
+  <!-- Result row 3: inserted -->
+  <text x="215" y="443" text-anchor="middle" font-size="10" fill="#10b981" font-weight="600" dx="0" dy="18">4</text>
+  <text x="295" y="461" text-anchor="middle" font-size="10" fill="#10b981" font-weight="600">1004</text>
+  <text x="380" y="461" text-anchor="middle" font-size="10" fill="#10b981" font-weight="600">88.00</text>
+  <text x="480" y="461" text-anchor="middle" font-size="10" fill="#10b981" font-weight="600">待支付</text>
+  <text x="570" y="461" text-anchor="middle" font-size="9" fill="#10b981">INSERT</text>
+</svg>
