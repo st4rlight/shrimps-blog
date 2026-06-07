@@ -30,34 +30,26 @@ export default defineUserConfig({
     navbar: [
       { text: '首页', link: '/', icon: 'mdi:home' },
       { text: '时间轴', link: '/changelog/', icon: 'mdi:timeline-clock-outline' },
-      { text: '博客', link: '/blog/', icon: 'mdi:post-outline' },
+      { text: '存卿偶寄', link: '/blog/', icon: 'mdi:feather' },
       { text: '思考领悟', link: '/thoughts/', icon: 'mdi:lightbulb-outline' },
       { text: 'AI学习', link: '/ai-study/', icon: 'mdi:robot-outline' },
+      { text: 'AI源码', link: '/ai-source/', icon: 'mdi:code-braces' },
       { text: '拾遗补阙', link: '/notes/', icon: 'mdi:puzzle-outline' },
-      { text: '归档', link: '/blog/archives/', icon: 'mdi:archive-outline' },
-      { text: '标签', link: '/blog/tags/', icon: 'mdi:tag-outline' },
+      // { text: '归档', link: '/blog/archives/', icon: 'mdi:archive-outline' },
+      // { text: '标签', link: '/blog/tags/', icon: 'mdi:tag-outline' },
       { text: '关于', link: '/about/', icon: 'mdi:account-outline' },
     ],
     collections: [
       {
         type: 'post',
         dir: 'blog',
-        title: '博客',
+        title: '存卿偶寄',
       },
       {
         type: 'doc',
         dir: 'ai-study',
         title: 'AI学习',
         sidebar: [
-          {
-            text: 'ClaudeCode分析',
-            link: '/ai-study/',
-            collapsed: false,
-            items: [
-              'claude-code/context-compression-and-cache-analysis.md',
-              'claude-code/system-prompt-and-injection-analysis.md',
-            ],
-          },
           {
             text: 'SDD规范驱动开发',
             link: '/ai-study/',
@@ -68,7 +60,7 @@ export default defineUserConfig({
             ],
           },
           {
-            text: 'Harness',
+            text: 'Harness Engineering',
             link: '/ai-study/',
             collapsed: false,
             items: [
@@ -83,12 +75,36 @@ export default defineUserConfig({
               'rag/taotian-rag-solution.md',
             ],
           },
+        ],
+      },
+      {
+        type: 'doc',
+        dir: 'ai-source',
+        title: 'AI源码',
+        sidebar: [
+          {
+            text: 'ClaudeCode源码分析',
+            link: '/ai-source/',
+            collapsed: false,
+            items: [
+              'claude-code/context-compression-and-cache-analysis.md',
+              'claude-code/system-prompt-and-injection-analysis.md',
+            ],
+          },
           {
             text: 'DeepAgents源码分析',
-            link: '/ai-study/',
+            link: '/ai-source/',
             collapsed: false,
             items: [
               'deep-agents/deep-agents-overview.md',
+            ],
+          },
+          {
+            text: 'OpenClaw源码分析',
+            link: '/ai-source/',
+            collapsed: false,
+            items: [
+              'open-claw/open-claw-overview.md',
             ],
           },
         ],
