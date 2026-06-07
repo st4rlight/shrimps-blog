@@ -45,11 +45,6 @@ export default defineUserConfig({
         title: '博客',
       },
       {
-        type: 'post',
-        dir: 'thoughts',
-        title: '思考领悟',
-      },
-      {
         type: 'doc',
         dir: 'ai-study',
         title: 'AI学习',

@@ -589,3 +589,331 @@ a.timeline-entry__link:hover {
     padding: 10px 14px;
   }
 }
+
+/* ==================== 思考领悟 · 朋友圈风格左右交替时间轴 ==================== */
+
+.moments-timeline {
+  position: relative;
+  margin: 32px 0 16px;
+}
+
+/* 中轴线 */
+.moments-timeline::before {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 2px;
+  height: 100%;
+  content: '';
+  background: linear-gradient(
+    180deg,
+    rgb(139 92 246 / 24%) 0%,
+    rgb(139 92 246 / 10%) 50%,
+    rgb(139 92 246 / 24%) 100%
+  );
+  border-radius: 1px;
+  transform: translateX(-50%);
+}
+
+/* 每条朋友圈条目 */
+.moment-item {
+  position: relative;
+  display: flex;
+  width: 100%;
+  margin-bottom: 36px;
+}
+
+.moment-item:last-child {
+  margin-bottom: 0;
+}
+
+/* 连接器：包含圆点 + 连接线 */
+.moment-connector {
+  position: absolute;
+  left: 50%;
+  top: 24px;
+  transform: translateX(-50%);
+  z-index: 2;
+}
+
+.moment-dot {
+  width: 14px;
+  height: 14px;
+  background: #fff;
+  border: 3px solid #8b5cf6;
+  border-radius: 50%;
+  box-shadow: 0 0 0 4px rgb(139 92 246 / 10%);
+  transition: all 0.3s;
+}
+
+.moment-item:hover .moment-dot {
+  background: #8b5cf6;
+  box-shadow: 0 0 0 6px rgb(139 92 246 / 15%);
+}
+
+/* 左侧条目 */
+.moment-item--left {
+  justify-content: flex-start;
+  padding-right: calc(50% + 32px);
+}
+
+.moment-item--left .moment-card {
+  margin-right: 0;
+}
+
+/* 右侧条目 */
+.moment-item--right {
+  justify-content: flex-end;
+  padding-left: calc(50% + 32px);
+}
+
+.moment-item--right .moment-card {
+  margin-left: 0;
+}
+
+/* 卡片 */
+.moment-card {
+  position: relative;
+  width: 100%;
+  padding: 20px 22px 18px;
+  background: rgb(255 255 255 / 75%);
+  border: 1px solid rgb(148 163 184 / 10%);
+  border-radius: 18px;
+  box-shadow: 0 8px 28px rgb(15 23 42 / 5%);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.moment-card:hover {
+  border-color: rgb(139 92 246 / 16%);
+  box-shadow: 0 12px 36px rgb(15 23 42 / 8%);
+  transform: translateY(-2px);
+}
+
+/* 卡片箭头 —— 指向中轴线 */
+.moment-item--left .moment-card::after {
+  position: absolute;
+  top: 26px;
+  right: -8px;
+  width: 14px;
+  height: 14px;
+  content: '';
+  background: rgb(255 255 255 / 75%);
+  border: 1px solid rgb(148 163 184 / 10%);
+  border-left: none;
+  border-bottom: none;
+  transform: rotate(45deg);
+  transition: border-color 0.3s;
+}
+
+.moment-item--left .moment-card:hover::after {
+  border-color: rgb(139 92 246 / 16%);
+}
+
+.moment-item--right .moment-card::after {
+  position: absolute;
+  top: 26px;
+  left: -8px;
+  width: 14px;
+  height: 14px;
+  content: '';
+  background: rgb(255 255 255 / 75%);
+  border: 1px solid rgb(148 163 184 / 10%);
+  border-right: none;
+  border-top: none;
+  transform: rotate(45deg);
+  transition: border-color 0.3s;
+}
+
+.moment-item--right .moment-card:hover::after {
+  border-color: rgb(139 92 246 / 16%);
+}
+
+/* 卡片头部 */
+.moment-card__header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.moment-card__date {
+  font-size: 13px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: #64748b;
+  letter-spacing: 0.02em;
+}
+
+.moment-card__tag {
+  padding: 2px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 10px;
+  letter-spacing: 0.04em;
+}
+
+.moment-card__tag--reflection {
+  color: #db2777;
+  background: rgb(236 72 153 / 10%);
+}
+
+.moment-card__tag--growth {
+  color: #0d9488;
+  background: rgb(20 184 166 / 10%);
+}
+
+.moment-card__tag--insight {
+  color: #b45309;
+  background: rgb(245 158 11 / 12%);
+}
+
+.moment-card__ai {
+  padding: 2px 10px;
+  font-size: 10px;
+  font-weight: 600;
+  border-radius: 10px;
+  letter-spacing: 0.04em;
+  color: #7c3aed;
+  background: rgb(139 92 246 / 10%);
+  border: 1px solid rgb(139 92 246 / 18%);
+}
+
+/* 卡片内容 */
+.moment-card__body {
+  font-size: 14.5px;
+  line-height: 1.8;
+  color: #334155;
+}
+
+.moment-card__body p {
+  margin: 0 0 10px;
+}
+
+.moment-card__body p:last-child {
+  margin-bottom: 0;
+}
+
+.moment-card__body ul,
+.moment-card__body ol {
+  margin: 6px 0 10px;
+  padding-left: 20px;
+}
+
+.moment-card__body li {
+  margin-bottom: 4px;
+  line-height: 1.75;
+}
+
+.moment-card__body strong {
+  color: #0f172a;
+  font-weight: 600;
+}
+
+/* 图片区域 */
+.moment-card__images {
+  margin-top: 14px;
+  display: grid;
+  gap: 6px;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.moment-card__images img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+  transition: transform 0.3s;
+  cursor: pointer;
+}
+
+.moment-card__images img:hover {
+  transform: scale(1.02);
+}
+
+/* 单张图 */
+.moment-card__images--single {
+  grid-template-columns: 1fr;
+  max-height: 280px;
+}
+
+.moment-card__images--single img {
+  max-height: 280px;
+}
+
+/* 两张图 */
+.moment-card__images--double {
+  grid-template-columns: repeat(2, 1fr);
+  max-height: 220px;
+}
+
+.moment-card__images--double img {
+  aspect-ratio: 1 / 1;
+}
+
+/* 三张图 */
+.moment-card__images--triple {
+  grid-template-columns: repeat(3, 1fr);
+  max-height: 200px;
+}
+
+.moment-card__images--triple img {
+  aspect-ratio: 1 / 1;
+}
+
+/* ==================== 思考领悟 · 移动端适配 ==================== */
+
+@media (max-width: 768px) {
+  .moments-timeline::before {
+    left: 20px;
+  }
+
+  .moment-item,
+  .moment-item--left,
+  .moment-item--right {
+    padding-right: 0;
+    padding-left: 48px;
+    justify-content: flex-start;
+  }
+
+  .moment-connector {
+    left: 20px;
+    transform: translateX(-50%);
+  }
+
+  /* 移动端统一左侧排列，箭头朝左 */
+  .moment-item--left .moment-card::after,
+  .moment-item--right .moment-card::after {
+    top: 26px;
+    left: -8px;
+    right: auto;
+    border: 1px solid rgb(148 163 184 / 10%);
+    border-right: none;
+    border-top: none;
+    transform: rotate(45deg);
+  }
+
+  .moment-item--left .moment-card:hover::after,
+  .moment-item--right .moment-card:hover::after {
+    border-color: rgb(139 92 246 / 16%);
+  }
+
+  .moment-card {
+    padding: 16px 18px 14px;
+    border-radius: 14px;
+  }
+
+  .moment-card__images--single {
+    max-height: 200px;
+  }
+
+  .moment-card__images--single img {
+    max-height: 200px;
+  }
+
+  .moment-card__images--triple {
+    grid-template-columns: repeat(3, 1fr);
+    max-height: 150px;
+  }
+}
