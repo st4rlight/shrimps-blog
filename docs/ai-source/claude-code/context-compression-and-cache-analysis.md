@@ -6,7 +6,7 @@ tags:
   - Prompt Cache
 excerpt: 从六层压缩防线、缓存保护体系到具体源码路径，系统分析 Claude Code 如何在压缩上下文时尽量保住缓存命中率。
 createTime: 2026/05/17 15:07:14
-permalink: /ai-study/claude-code-context-compression-and-cache-analysis/
+permalink: /ai-source/claude-code-context-compression-and-cache-analysis/
 ---
 
 # Claude Code 上下文压缩机制与缓存命中率深度分析
@@ -151,17 +151,17 @@ const { isAtBlockingLimit } = calculateTokenWarningState(
 
 ### 3.1 Time-Based Microcompact（时间触发微压缩）
 
-#### 工作原理
+#### 3.1.1 工作原理
 
 Anthropic 服务端的 prompt cache 有 TTL（5 分钟短期 / 1 小时长期）。当距离最后一个 assistant 消息超过 `gapThresholdMinutes`（默认 60 分钟）时，cache **必然已过期**，全量重写在即。此时提前清空旧工具结果，可以**缩小重写体积**。
 
-#### 压缩策略
+#### 3.1.2 压缩策略
 
 - **如何确定压缩内容**：检测最后一个 assistant 消息的时间戳，如果 `now - timestamp > gapThresholdMinutes`，触发。选择所有"可压缩工具"（COMPACTABLE_TOOLS）的结果，但保留最近 `keepRecent`（默认 5）个
 - **如何执行压缩**：将工具结果 content 替换为占位文本 `[Old tool result content cleared]`
 - **是否调用模型**：**否**
 
-#### 可压缩工具列表
+#### 3.1.3 可压缩工具列表
 
 ```typescript
 // src/services/compact/microCompact.ts
@@ -177,7 +177,7 @@ const COMPACTABLE_TOOLS = new Set<string>([
 ])
 ```
 
-#### 配置
+#### 3.1.4 配置
 
 ```typescript
 // src/services/compact/timeBasedMCConfig.ts
@@ -188,7 +188,7 @@ const TIME_BASED_MC_CONFIG_DEFAULTS: TimeBasedMCConfig = {
 }
 ```
 
-#### 对缓存命中率的影响
+#### 3.1.5 对缓存命中率的影响
 
 | 维度 | 影响 |
 |------|------|
@@ -196,7 +196,7 @@ const TIME_BASED_MC_CONFIG_DEFAULTS: TimeBasedMCConfig = {
 | 缓存消息体 | ✅ 无影响 — cache 本身已过期 |
 | 整体影响 | 🟢 **零** — 反而减少 cache 重建时的 token 数 |
 
-#### 缓存应对
+#### 3.1.6 缓存应对
 
 这是**唯一对缓存完全无损**的压缩方式。清除后：
 
@@ -207,7 +207,7 @@ const TIME_BASED_MC_CONFIG_DEFAULTS: TimeBasedMCConfig = {
 
 ### 3.2 Cached Microcompact（缓存编辑微压缩）
 
-#### 工作原理
+#### 3.2.1 工作原理
 
 这是**最精巧也最缓存友好**的压缩机制。利用 Anthropic 的 **cache editing API**，**不修改本地消息内容**，而是在 API 请求层附加 `cache_reference` 和 `cache_edits` 指令，告诉服务端"从缓存中删除这些 tool_use 的内容"。
 
@@ -220,7 +220,7 @@ cache_edit: 删除 msg1, msg2 的 tool_result
                                                         ↑ msg3 及之后仍然 cache hit!
 ```
 
-#### 压缩策略
+#### 3.2.2 压缩策略
 
 - **如何确定压缩内容**：
   1. 每轮遍历消息，收集所有"可压缩工具"的 tool_use ID
@@ -237,7 +237,7 @@ cache_edit: 删除 msg1, msg2 的 tool_result
 
 - **是否调用模型**：**否** — 纯客户端构造 API 参数
 
-#### API 层实现
+#### 3.2.3 API 层实现
 
 ```typescript
 // src/services/api/claude.ts:3052-3210
@@ -269,7 +269,7 @@ function addCacheBreakpoints(..., useCachedMC, newCacheEdits, pinnedEdits, ...) 
 }
 ```
 
-#### cache_reference 的工作机制
+#### 3.2.4 cache_reference 的工作机制
 
 `cache_reference` 是实现缓存编辑的关键。服务端需要它来定位缓存中的条目：
 
@@ -278,7 +278,7 @@ function addCacheBreakpoints(..., useCachedMC, newCacheEdits, pinnedEdits, ...) 
 3. `cache_edits` 中的 `delete` 操作引用同一 ID，告诉服务端"清除这个 ID 对应的缓存内容"
 4. 这样，**缓存前缀（system + tools + 早期消息）仍然完整命中**，只有被标记删除的条目的内容被清空
 
-#### Pinned Edits 的持久化
+#### 3.2.5 Pinned Edits 的持久化
 
 被确认的 cache_edits 必须**在后续每次请求中重新发送**，否则服务端会恢复被删除的内容：
 
@@ -294,7 +294,7 @@ for (const pinned of pinnedEdits ?? []) {
 
 同时系统还会**去重**：同一 `cache_reference` 不会被多次删除（`seenDeleteRefs` Set）。
 
-#### 对缓存命中率的影响
+#### 3.2.6 对缓存命中率的影响
 
 | 维度 | 影响 |
 |------|------|
@@ -302,11 +302,11 @@ for (const pinned of pinnedEdits ?? []) {
 | 缓存消息体 | ⚠️ 被编辑部分降级 — 删除的 tool_result 从 cache_read 变为 cache_creation |
 | 整体影响 | 🟡 **低** — 只有被删除的条目产生 cache miss，前缀完整保留 |
 
-#### 缓存应对
+#### 3.2.7 缓存应对
 
 调用 `notifyCacheDeletion(querySource)` 标记 `cacheDeletionsPending = true`，当下一轮 API 响应中 `cache_read_input_tokens` 下降时，不会误报为 cache break。
 
-#### 限制
+#### 3.2.8 限制
 
 - 仅支持特定模型（`isModelSupportedForCacheEditing`）
 - 仅在主线程执行（`isMainThreadSource`），子 agent 不注册
@@ -316,11 +316,11 @@ for (const pinned of pinnedEdits ?? []) {
 
 ### 3.3 Legacy Microcompact（遗留微压缩）
 
-#### 工作原理
+#### 3.3.1 工作原理
 
 直接修改本地消息内容，将旧工具结果替换为占位文本。
 
-#### 当前状态
+#### 3.3.2 当前状态
 
 **已移除**。源码注释：
 
@@ -412,7 +412,7 @@ export function getAutoCompactThreshold(model: string): number {
 
 ### 5.2 两条路径
 
-#### 5.2.1 Session Memory Compact（会话记忆压缩）
+#### Session Memory Compact（会话记忆压缩）
 
 **优先路径**。利用后台持续维护的 session memory 文件（`SESSIONS.md` 等），直接作为摘要。
 
@@ -457,7 +457,7 @@ export function adjustIndexToPreserveAPIInvariants(
 }
 ```
 
-**对缓存命中率的影响**：
+#### SM Compact 对缓存命中率的影响
 
 | 维度 | 影响 |
 |------|------|
@@ -465,7 +465,7 @@ export function adjustIndexToPreserveAPIInvariants(
 | 缓存消息体 | ❌ 远期被摘要替代 |
 | 整体影响 | 🟠 **中** — 比全量压缩好，但仍改变消息前缀 |
 
-#### 5.2.2 Legacy Compact（Forked Agent 总结）
+#### Legacy Compact（Forked Agent 总结）
 
 **兜底路径**。当 Session Memory 不可用或失败时使用。
 
@@ -614,7 +614,7 @@ export type RecompactionInfo = {
 
 系统追踪压缩是否形成链式循环（压缩后立即又触发压缩），以及距上次压缩经过了多少轮。`willRetriggerNextTurn` 标志预测压缩结果是否会在下一轮立即再次触发压缩。
 
-**对缓存命中率的影响**：
+#### Legacy Compact 对缓存命中率的影响
 
 | 维度 | 影响 |
 |------|------|

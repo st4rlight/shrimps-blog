@@ -1,0 +1,230 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 540" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <linearGradient id="blueG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="greenG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#34d399;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="amberG" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="violetG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#a78bfa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="redG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#f87171;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ef4444;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.12"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="820" height="540" rx="14" fill="#f8fafc"/>
+
+  <!-- Title -->
+  <text x="410" y="34" text-anchor="middle" font-size="18" font-weight="700" fill="#1e293b">OpenClaw 插件 / 扩展 / Skill 体系总览</text>
+  <text x="410" y="52" text-anchor="middle" font-size="11" fill="#94a3b8">Manifest-First + Lazy Activation — 100+ 扩展的统一管理</text>
+
+  <!-- Left: Plugin 6-stage pipeline -->
+  <text x="210" y="78" text-anchor="middle" font-size="13" font-weight="700" fill="#1e293b">插件加载 6 阶段</text>
+
+  <!-- Stage 1: Discovery -->
+  <g filter="url(#shadow)">
+    <rect x="40" y="90" width="340" height="42" rx="8" fill="white" stroke="#6366f1" stroke-width="1.5"/>
+  </g>
+  <rect x="42" y="92" width="24" height="38" rx="4" fill="#eef2ff"/>
+  <text x="54" y="115" text-anchor="middle" font-size="10" font-weight="700" fill="#6366f1">1</text>
+  <text x="80" y="108" font-size="11" font-weight="600" fill="#1e293b">发现 — discoverOpenClawPlugins()</text>
+  <text x="80" y="124" font-size="9" fill="#94a3b8">五源扫描：Bundled · Workspace · Global · Package · Dev Source</text>
+
+  <!-- Arrow -->
+  <line x1="210" y1="132" x2="210" y2="140" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Stage 2: Manifest -->
+  <g filter="url(#shadow)">
+    <rect x="40" y="142" width="340" height="42" rx="8" fill="white" stroke="#3b82f6" stroke-width="1.5"/>
+  </g>
+  <rect x="42" y="144" width="24" height="38" rx="4" fill="#dbeafe"/>
+  <text x="54" y="167" text-anchor="middle" font-size="10" font-weight="700" fill="#3b82f6">2</text>
+  <text x="80" y="160" font-size="11" font-weight="600" fill="#1e293b">清单 — loadPluginManifestRegistry()</text>
+  <text x="80" y="176" font-size="9" fill="#94a3b8">验证 openclaw.plugin.json · 构建来源索引 ProvenanceIndex</text>
+
+  <!-- Arrow -->
+  <line x1="210" y1="184" x2="210" y2="192" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Stage 3: Provenance -->
+  <g filter="url(#shadow)">
+    <rect x="40" y="194" width="340" height="42" rx="8" fill="white" stroke="#3b82f6" stroke-width="1.5"/>
+  </g>
+  <rect x="42" y="196" width="24" height="38" rx="4" fill="#dbeafe"/>
+  <text x="54" y="219" text-anchor="middle" font-size="10" font-weight="700" fill="#3b82f6">3</text>
+  <text x="80" y="212" font-size="11" font-weight="600" fill="#1e293b">来源索引 — buildProvenanceIndex()</text>
+  <text x="80" y="228" font-size="9" fill="#94a3b8">诊断 / 冲突解决 / 安全审计</text>
+
+  <!-- Arrow -->
+  <line x1="210" y1="236" x2="210" y2="244" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Stage 4: Activation Plan -->
+  <g filter="url(#shadow)">
+    <rect x="40" y="246" width="340" height="42" rx="8" fill="white" stroke="#10b981" stroke-width="1.5"/>
+  </g>
+  <rect x="42" y="248" width="24" height="38" rx="4" fill="#d1fae5"/>
+  <text x="54" y="271" text-anchor="middle" font-size="10" font-weight="700" fill="#10b981">4</text>
+  <text x="80" y="264" font-size="11" font-weight="600" fill="#1e293b">激活规划 — ActivationPlan</text>
+  <text x="80" y="280" font-size="9" fill="#94a3b8">onStartup / onCommands / onEvents — Lazy Activation</text>
+
+  <!-- Arrow -->
+  <line x1="210" y1="288" x2="210" y2="296" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Stage 5: Code Loading -->
+  <g filter="url(#shadow)">
+    <rect x="40" y="298" width="340" height="42" rx="8" fill="white" stroke="#f59e0b" stroke-width="1.5"/>
+  </g>
+  <rect x="42" y="300" width="24" height="38" rx="4" fill="#fef3c7"/>
+  <text x="54" y="323" text-anchor="middle" font-size="10" font-weight="700" fill="#92400e">5</text>
+  <text x="80" y="316" font-size="11" font-weight="600" fill="#1e293b">代码加载 — loadOpenClawPlugins()</text>
+  <text x="80" y="332" font-size="9" fill="#94a3b8">specifier + exportName 懒加载 · 模块缓存 · 路径安全检查</text>
+
+  <!-- Arrow -->
+  <line x1="210" y1="340" x2="210" y2="348" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Stage 6: Register -->
+  <g filter="url(#shadow)">
+    <rect x="40" y="350" width="340" height="42" rx="8" fill="white" stroke="#8b5cf6" stroke-width="1.5"/>
+  </g>
+  <rect x="42" y="352" width="24" height="38" rx="4" fill="#ede9fe"/>
+  <text x="54" y="375" text-anchor="middle" font-size="10" font-weight="700" fill="#8b5cf6">6</text>
+  <text x="80" y="368" font-size="11" font-weight="600" fill="#1e293b">注册 — register(api) / activate(api)</text>
+  <text x="80" y="384" font-size="9" fill="#94a3b8">60+ api.register* 方法 · Plugin Registry 六大注册表</text>
+
+  <!-- Right: Plugin Types -->
+  <text x="620" y="78" text-anchor="middle" font-size="13" font-weight="700" fill="#1e293b">扩展类型（100+）</text>
+
+  <!-- Channel -->
+  <g filter="url(#shadow)">
+    <rect x="430" y="90" width="170" height="50" rx="8" fill="white" stroke="#ef4444" stroke-width="1.5"/>
+  </g>
+  <rect x="430" y="90" width="170" height="22" rx="8" fill="#fee2e2"/>
+  <rect x="430" y="100" width="170" height="12" fill="#fee2e2"/>
+  <text x="515" y="106" text-anchor="middle" font-size="10" font-weight="700" fill="#991b1b">Channel × ~25</text>
+  <text x="515" y="128" text-anchor="middle" font-size="9" fill="#64748b">whatsapp · telegram · feishu</text>
+
+  <!-- Provider -->
+  <g filter="url(#shadow)">
+    <rect x="620" y="90" width="170" height="50" rx="8" fill="white" stroke="#8b5cf6" stroke-width="1.5"/>
+  </g>
+  <rect x="620" y="90" width="170" height="22" rx="8" fill="#ede9fe"/>
+  <rect x="620" y="100" width="170" height="12" fill="#ede9fe"/>
+  <text x="705" y="106" text-anchor="middle" font-size="10" font-weight="700" fill="#5b21b6">Provider × ~30</text>
+  <text x="705" y="128" text-anchor="middle" font-size="9" fill="#64748b">openai · anthropic · ollama</text>
+
+  <!-- Memory -->
+  <g filter="url(#shadow)">
+    <rect x="430" y="152" width="170" height="50" rx="8" fill="white" stroke="#f59e0b" stroke-width="1.5"/>
+  </g>
+  <rect x="430" y="152" width="170" height="22" rx="8" fill="#fef3c7"/>
+  <rect x="430" y="162" width="170" height="12" fill="#fef3c7"/>
+  <text x="515" y="168" text-anchor="middle" font-size="10" font-weight="700" fill="#92400e">Memory × ~5</text>
+  <text x="515" y="190" text-anchor="middle" font-size="9" fill="#64748b">core · lancedb · wiki · active</text>
+
+  <!-- Media -->
+  <g filter="url(#shadow)">
+    <rect x="620" y="152" width="170" height="50" rx="8" fill="white" stroke="#3b82f6" stroke-width="1.5"/>
+  </g>
+  <rect x="620" y="152" width="170" height="22" rx="8" fill="#dbeafe"/>
+  <rect x="620" y="162" width="170" height="12" fill="#dbeafe"/>
+  <text x="705" y="168" text-anchor="middle" font-size="10" font-weight="700" fill="#1d4ed8">Media × ~8</text>
+  <text x="705" y="190" text-anchor="middle" font-size="9" fill="#64748b">image · video · music</text>
+
+  <!-- Tool -->
+  <g filter="url(#shadow)">
+    <rect x="430" y="214" width="170" height="50" rx="8" fill="white" stroke="#10b981" stroke-width="1.5"/>
+  </g>
+  <rect x="430" y="214" width="170" height="22" rx="8" fill="#d1fae5"/>
+  <rect x="430" y="224" width="170" height="12" fill="#d1fae5"/>
+  <text x="515" y="230" text-anchor="middle" font-size="10" font-weight="700" fill="#047857">Tool × ~10</text>
+  <text x="515" y="252" text-anchor="middle" font-size="9" fill="#64748b">browser · diffs · canvas</text>
+
+  <!-- Other -->
+  <g filter="url(#shadow)">
+    <rect x="620" y="214" width="170" height="50" rx="8" fill="white" stroke="#64748b" stroke-width="1.5"/>
+  </g>
+  <rect x="620" y="214" width="170" height="22" rx="8" fill="#f1f5f9"/>
+  <rect x="620" y="224" width="170" height="12" fill="#f1f5f9"/>
+  <text x="705" y="230" text-anchor="middle" font-size="10" font-weight="700" fill="#475569">Other × ~20+</text>
+  <text x="705" y="252" text-anchor="middle" font-size="9" fill="#64748b">voice · diagnostic · policy</text>
+
+  <!-- Plugin vs Skill -->
+  <text x="620" y="290" text-anchor="middle" font-size="13" font-weight="700" fill="#1e293b">Plugin vs Skill</text>
+
+  <!-- Plugin card -->
+  <g filter="url(#shadow)">
+    <rect x="430" y="302" width="170" height="108" rx="10" fill="white" stroke="#3b82f6" stroke-width="2"/>
+  </g>
+  <rect x="430" y="302" width="170" height="28" rx="10" fill="url(#blueG)"/>
+  <rect x="430" y="316" width="170" height="14" fill="url(#blueG)"/>
+  <text x="515" y="320" text-anchor="middle" font-size="12" font-weight="700" fill="white">Plugin</text>
+  <text x="445" y="348" font-size="9" fill="#475569">● 接外部系统（飞书 API）</text>
+  <text x="445" y="362" font-size="9" fill="#475569">● npm 包或 bundled</text>
+  <text x="445" y="376" font-size="9" fill="#475569">● register(api) 注册</text>
+  <text x="445" y="390" font-size="9" fill="#475569">● 完整 Plugin API 60+</text>
+  <text x="445" y="404" font-size="9" fill="#475569">● TypeScript 代码</text>
+
+  <!-- VS circle -->
+  <circle cx="610" cy="356" r="16" fill="#fef3c7" stroke="#fbbf24" stroke-width="2"/>
+  <text x="610" y="360" text-anchor="middle" font-size="9" font-weight="700" fill="#92400e">VS</text>
+
+  <!-- Skill card -->
+  <g filter="url(#shadow)">
+    <rect x="628" y="302" width="170" height="108" rx="10" fill="white" stroke="#10b981" stroke-width="2"/>
+  </g>
+  <rect x="628" y="302" width="170" height="28" rx="10" fill="url(#greenG)"/>
+  <rect x="628" y="316" width="170" height="14" fill="url(#greenG)"/>
+  <text x="713" y="320" text-anchor="middle" font-size="12" font-weight="700" fill="white">Skill</text>
+  <text x="643" y="348" font-size="9" fill="#475569">● 接提示工程（"用工具做X"）</text>
+  <text x="643" y="362" font-size="9" fill="#475569">● bundled only（内置）</text>
+  <text x="643" y="376" font-size="9" fill="#475569">● frontmatter + 目录约定</text>
+  <text x="643" y="390" font-size="9" fill="#475569">● 有限工具 + 命令</text>
+  <text x="643" y="404" font-size="9" fill="#475569">● Markdown（不写 TS）</text>
+
+  <!-- Three key constraints -->
+  <text x="410" y="438" text-anchor="middle" font-size="13" font-weight="700" fill="#1e293b">三个关键约束</text>
+
+  <g filter="url(#shadow)">
+    <rect x="40" y="450" width="230" height="56" rx="10" fill="white" stroke="#6366f1" stroke-width="1.5"/>
+  </g>
+  <rect x="40" y="450" width="230" height="24" rx="10" fill="#eef2ff" stroke="#c7d2fe" stroke-width="1"/>
+  <text x="155" y="466" text-anchor="middle" font-size="10" font-weight="600" fill="#6366f1">Manifest-First</text>
+  <text x="155" y="488" text-anchor="middle" font-size="9" fill="#64748b">零代码发现 — 不 import 插件代码</text>
+  <text x="155" y="500" text-anchor="middle" font-size="9" fill="#64748b">就能列出可用扩展</text>
+
+  <g filter="url(#shadow)">
+    <rect x="295" y="450" width="230" height="56" rx="10" fill="white" stroke="#10b981" stroke-width="1.5"/>
+  </g>
+  <rect x="295" y="450" width="230" height="24" rx="10" fill="#d1fae5" stroke="#86efac" stroke-width="1"/>
+  <text x="410" y="466" text-anchor="middle" font-size="10" font-weight="600" fill="#047857">Lazy Activation</text>
+  <text x="410" y="488" text-anchor="middle" font-size="9" fill="#64748b">发现和激活保持懒加载</text>
+  <text x="410" y="500" text-anchor="middle" font-size="9" fill="#64748b">冷启动优先</text>
+
+  <g filter="url(#shadow)">
+    <rect x="550" y="450" width="230" height="56" rx="10" fill="white" stroke="#ef4444" stroke-width="1.5"/>
+  </g>
+  <rect x="550" y="450" width="230" height="24" rx="10" fill="#fee2e2" stroke="#fca5a5" stroke-width="1"/>
+  <text x="665" y="466" text-anchor="middle" font-size="10" font-weight="600" fill="#991b1b">No Backdoors</text>
+  <text x="665" y="488" text-anchor="middle" font-size="9" fill="#64748b">Bundled 插件不能用 External</text>
+  <text x="665" y="500" text-anchor="middle" font-size="9" fill="#64748b">插件不能用的私有通道</text>
+
+  <!-- Bottom tip -->
+  <rect x="170" y="516" width="480" height="20" rx="10" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1"/>
+  <text x="410" y="530" text-anchor="middle" font-size="10" fill="#15803d">💡 Plugin 接外部系统，Skill 接提示工程 — 分层不是替代</text>
+</svg>

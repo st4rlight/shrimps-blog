@@ -1,0 +1,165 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <linearGradient id="indigoG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#818cf8;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#6366f1;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="blueG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="greenG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#34d399;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.12"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="400" rx="12" fill="#f8fafc"/>
+
+  <!-- Title -->
+  <text x="400" y="32" text-anchor="middle" font-size="18" font-weight="700" fill="#1e293b">CLI 三层入口漏斗</text>
+  <text x="400" y="50" text-anchor="middle" font-size="11" fill="#94a3b8">渐进式模块加载 — 最常用的路径最快</text>
+
+  <!-- Funnel shape (decorative) -->
+  <path d="M 280,70 L 520,70 L 480,100 L 320,100 Z" fill="#eef2ff" stroke="#c7d2fe" stroke-width="1"/>
+  <path d="M 300,100 L 500,100 L 440,140 L 360,140 Z" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <path d="M 340,140 L 460,140 L 430,180 L 370,180 Z" fill="#d1fae5" stroke="#86efac" stroke-width="1"/>
+
+  <!-- Layer 1: openclaw.mjs -->
+  <g filter="url(#shadow)">
+    <rect x="40" y="68" width="220" height="96" rx="10" fill="white" stroke="#6366f1" stroke-width="2"/>
+  </g>
+  <rect x="40" y="68" width="220" height="30" rx="10" fill="url(#indigoG)"/>
+  <rect x="40" y="84" width="220" height="14" fill="url(#indigoG)"/>
+  <text x="150" y="88" text-anchor="middle" font-size="12" font-weight="700" fill="white">第一层：openclaw.mjs</text>
+  <text x="150" y="114" text-anchor="middle" font-size="10" font-weight="600" fill="#475569">极薄包装</text>
+  <text x="150" y="130" text-anchor="middle" font-size="9" fill="#64748b">仅 import "./dist/entry.js"</text>
+  <text x="150" y="146" text-anchor="middle" font-size="9" fill="#94a3b8">确保 npm bin 入口可寻址</text>
+
+  <!-- Arrow 1→2 -->
+  <line x1="260" y1="116" x2="290" y2="116" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Layer 2: entry.ts -->
+  <g filter="url(#shadow)">
+    <rect x="290" y="68" width="240" height="96" rx="10" fill="white" stroke="#3b82f6" stroke-width="2"/>
+  </g>
+  <rect x="290" y="68" width="240" height="30" rx="10" fill="url(#blueG)"/>
+  <rect x="290" y="84" width="240" height="14" fill="url(#blueG)"/>
+  <text x="410" y="88" text-anchor="middle" font-size="12" font-weight="700" fill="white">第二层：entry.ts</text>
+  <text x="410" y="114" text-anchor="middle" font-size="10" font-weight="600" fill="#475569">守卫 + 快速路径</text>
+  <text x="410" y="130" text-anchor="middle" font-size="9" fill="#64748b">isMainModule 守卫、编译缓存</text>
+  <text x="410" y="146" text-anchor="middle" font-size="9" fill="#94a3b8">版本/帮助/预计算文本快速路径</text>
+
+  <!-- Arrow 2→3 -->
+  <line x1="530" y1="116" x2="560" y2="116" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Layer 3: run-main.ts -->
+  <g filter="url(#shadow)">
+    <rect x="560" y="68" width="200" height="96" rx="10" fill="white" stroke="#10b981" stroke-width="2"/>
+  </g>
+  <rect x="560" y="68" width="200" height="30" rx="10" fill="url(#greenG)"/>
+  <rect x="560" y="84" width="200" height="14" fill="url(#greenG)"/>
+  <text x="660" y="88" text-anchor="middle" font-size="12" font-weight="700" fill="white">第三层：run-main.ts</text>
+  <text x="660" y="114" text-anchor="middle" font-size="10" font-weight="600" fill="#475569">8 阶段完整流水线</text>
+  <text x="660" y="130" text-anchor="middle" font-size="9" fill="#64748b">完整 Commander 程序</text>
+  <text x="660" y="146" text-anchor="middle" font-size="9" fill="#94a3b8">插件注册、路由分派</text>
+
+  <!-- Fast paths (right side) -->
+  <text x="400" y="195" text-anchor="middle" font-size="12" font-weight="700" fill="#1e293b">快速路径层级</text>
+
+  <!-- Fast path 1: Zero-module -->
+  <g filter="url(#shadow)">
+    <rect x="40" y="210" width="160" height="52" rx="8" fill="white" stroke="#6366f1" stroke-width="1.5"/>
+  </g>
+  <rect x="40" y="210" width="160" height="24" rx="8" fill="#eef2ff" stroke="#c7d2fe" stroke-width="1"/>
+  <text x="120" y="226" text-anchor="middle" font-size="10" font-weight="600" fill="#6366f1">零模块加载</text>
+  <text x="120" y="248" text-anchor="middle" font-size="9" fill="#64748b">--version / 预计算帮助</text>
+
+  <!-- Arrow -->
+  <line x1="200" y1="236" x2="220" y2="236" stroke="#94a3b8" stroke-width="1" marker-end="url(#arrow)"/>
+
+  <!-- Fast path 2: 1-2 modules -->
+  <g filter="url(#shadow)">
+    <rect x="222" y="210" width="160" height="52" rx="8" fill="white" stroke="#3b82f6" stroke-width="1.5"/>
+  </g>
+  <rect x="222" y="210" width="160" height="24" rx="8" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="302" y="226" text-anchor="middle" font-size="10" font-weight="600" fill="#3b82f6">1-2 模块加载</text>
+  <text x="302" y="248" text-anchor="middle" font-size="9" fill="#64748b">动态帮助文本</text>
+
+  <!-- Arrow -->
+  <line x1="382" y1="236" x2="402" y2="236" stroke="#94a3b8" stroke-width="1" marker-end="url(#arrow)"/>
+
+  <!-- Fast path 3: 5-6 modules -->
+  <g filter="url(#shadow)">
+    <rect x="404" y="210" width="160" height="52" rx="8" fill="white" stroke="#10b981" stroke-width="1.5"/>
+  </g>
+  <rect x="404" y="210" width="160" height="24" rx="8" fill="#d1fae5" stroke="#86efac" stroke-width="1"/>
+  <text x="484" y="226" text-anchor="middle" font-size="10" font-weight="600" fill="#10b981">5-6 模块加载</text>
+  <text x="484" y="248" text-anchor="middle" font-size="9" fill="#64748b">Gateway Run 快速路径</text>
+
+  <!-- Arrow -->
+  <line x1="564" y1="236" x2="584" y2="236" stroke="#94a3b8" stroke-width="1" marker-end="url(#arrow)"/>
+
+  <!-- Fast path 4: 20+ modules -->
+  <g filter="url(#shadow)">
+    <rect x="586" y="210" width="174" height="52" rx="8" fill="white" stroke="#f59e0b" stroke-width="1.5"/>
+  </g>
+  <rect x="586" y="210" width="174" height="24" rx="8" fill="#fef3c7" stroke="#fbbf24" stroke-width="1"/>
+  <text x="673" y="226" text-anchor="middle" font-size="10" font-weight="600" fill="#92400e">20+ 模块加载</text>
+  <text x="673" y="248" text-anchor="middle" font-size="9" fill="#64748b">完整 Commander 程序</text>
+
+  <!-- 8-stage pipeline -->
+  <text x="400" y="292" text-anchor="middle" font-size="12" font-weight="700" fill="#1e293b">run-main.ts 8 阶段流水线</text>
+
+  <!-- Stage boxes -->
+  <g>
+    <rect x="30" y="305" width="85" height="32" rx="6" fill="#eef2ff" stroke="#c7d2fe" stroke-width="1"/>
+    <text x="72" y="325" text-anchor="middle" font-size="9" font-weight="500" fill="#6366f1">① argv 解析</text>
+  </g>
+  <line x1="115" y1="321" x2="125" y2="321" stroke="#94a3b8" stroke-width="1" marker-end="url(#arrow)"/>
+  <g>
+    <rect x="127" y="305" width="85" height="32" rx="6" fill="#eef2ff" stroke="#c7d2fe" stroke-width="1"/>
+    <text x="169" y="325" text-anchor="middle" font-size="9" font-weight="500" fill="#6366f1">② 环境初始化</text>
+  </g>
+  <line x1="212" y1="321" x2="222" y2="321" stroke="#94a3b8" stroke-width="1" marker-end="url(#arrow)"/>
+  <g>
+    <rect x="224" y="305" width="85" height="32" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+    <text x="266" y="325" text-anchor="middle" font-size="9" font-weight="500" fill="#3b82f6">③ 代理管理</text>
+  </g>
+  <line x1="309" y1="321" x2="319" y2="321" stroke="#94a3b8" stroke-width="1" marker-end="url(#arrow)"/>
+  <g>
+    <rect x="321" y="305" width="85" height="32" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+    <text x="363" y="325" text-anchor="middle" font-size="9" font-weight="500" fill="#3b82f6">④ 快速路径</text>
+  </g>
+  <line x1="406" y1="321" x2="416" y2="321" stroke="#94a3b8" stroke-width="1" marker-end="url(#arrow)"/>
+  <g>
+    <rect x="418" y="305" width="85" height="32" rx="6" fill="#d1fae5" stroke="#86efac" stroke-width="1"/>
+    <text x="460" y="325" text-anchor="middle" font-size="9" font-weight="500" fill="#047857">⑤ Crestodian</text>
+  </g>
+  <line x1="503" y1="321" x2="513" y2="321" stroke="#94a3b8" stroke-width="1" marker-end="url(#arrow)"/>
+  <g>
+    <rect x="515" y="305" width="85" height="32" rx="6" fill="#d1fae5" stroke="#86efac" stroke-width="1"/>
+    <text x="557" y="325" text-anchor="middle" font-size="9" font-weight="500" fill="#047857">⑥ GW Run FP</text>
+  </g>
+  <line x1="600" y1="321" x2="610" y2="321" stroke="#94a3b8" stroke-width="1" marker-end="url(#arrow)"/>
+  <g>
+    <rect x="612" y="305" width="75" height="32" rx="6" fill="#fef3c7" stroke="#fbbf24" stroke-width="1"/>
+    <text x="649" y="325" text-anchor="middle" font-size="9" font-weight="500" fill="#92400e">⑦ 路由分派</text>
+  </g>
+  <line x1="687" y1="321" x2="697" y2="321" stroke="#94a3b8" stroke-width="1" marker-end="url(#arrow)"/>
+  <g>
+    <rect x="699" y="305" width="75" height="32" rx="6" fill="#fef3c7" stroke="#fbbf24" stroke-width="1"/>
+    <text x="736" y="325" text-anchor="middle" font-size="9" font-weight="500" fill="#92400e">⑧ Commander</text>
+  </g>
+
+  <!-- Bottom tip -->
+  <rect x="140" y="355" width="520" height="26" rx="13" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1"/>
+  <text x="400" y="372" text-anchor="middle" font-size="11" fill="#15803d">💡 99% 的 CLI 调用走不到第三层 — isMainModule 守卫防止双重 runCli</text>
+</svg>

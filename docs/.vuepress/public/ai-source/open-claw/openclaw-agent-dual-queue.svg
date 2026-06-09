@@ -1,0 +1,155 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 420" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <linearGradient id="blueG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="greenG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#34d399;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="amberG" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="violetG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#a78bfa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.12"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="420" rx="12" fill="#f8fafc"/>
+
+  <!-- Title -->
+  <text x="400" y="30" text-anchor="middle" font-size="18" font-weight="700" fill="#1e293b">双重队列 + 5 Lane 并发控制</text>
+  <text x="400" y="48" text-anchor="middle" font-size="11" fill="#94a3b8">两层正交控制 — 按会话身份串行 + 按工作类型分 Lane</text>
+
+  <!-- Inbound requests -->
+  <text x="400" y="72" text-anchor="middle" font-size="11" font-weight="600" fill="#475569">入站请求</text>
+  <g>
+    <rect x="120" y="78" width="80" height="22" rx="4" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+    <text x="160" y="93" text-anchor="middle" font-size="9" fill="#1d4ed8">飞书用户A</text>
+  </g>
+  <g>
+    <rect x="220" y="78" width="80" height="22" rx="4" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+    <text x="260" y="93" text-anchor="middle" font-size="9" fill="#1d4ed8">Telegram B</text>
+  </g>
+  <g>
+    <rect x="320" y="78" width="80" height="22" rx="4" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+    <text x="360" y="93" text-anchor="middle" font-size="9" fill="#1d4ed8">Cron 任务</text>
+  </g>
+  <g>
+    <rect x="420" y="78" width="80" height="22" rx="4" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+    <text x="460" y="93" text-anchor="middle" font-size="9" fill="#1d4ed8">飞书用户A</text>
+  </g>
+  <g>
+    <rect x="520" y="78" width="80" height="22" rx="4" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+    <text x="560" y="93" text-anchor="middle" font-size="9" fill="#1d4ed8">子 Agent</text>
+  </g>
+  <g>
+    <rect x="620" y="78" width="80" height="22" rx="4" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+    <text x="660" y="93" text-anchor="middle" font-size="9" fill="#1d4ed8">Telegram B</text>
+  </g>
+
+  <!-- Arrow down -->
+  <line x1="400" y1="100" x2="400" y2="116" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Layer 1: Session Queue -->
+  <g filter="url(#shadow)">
+    <rect x="40" y="118" width="720" height="120" rx="10" fill="white" stroke="#3b82f6" stroke-width="2"/>
+  </g>
+  <rect x="40" y="118" width="720" height="28" rx="10" fill="url(#blueG)"/>
+  <rect x="40" y="132" width="720" height="14" fill="url(#blueG)"/>
+  <text x="60" y="137" font-size="12" font-weight="700" fill="white">Session 队列 — 按会话身份串行（同 sessionKey 请求不并发）</text>
+
+  <!-- Session A queue -->
+  <text x="60" y="168" font-size="10" font-weight="600" fill="#1e293b">Session A (飞书:main)</text>
+  <rect x="60" y="175" width="60" height="20" rx="4" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="90" y="189" text-anchor="middle" font-size="8" fill="#1d4ed8">请求1</text>
+  <rect x="125" y="175" width="60" height="20" rx="4" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="155" y="189" text-anchor="middle" font-size="8" fill="#1d4ed8">请求4</text>
+  <text x="195" y="189" font-size="8" fill="#94a3b8">→ 串行执行</text>
+
+  <!-- Session B queue -->
+  <text x="260" y="168" font-size="10" font-weight="600" fill="#1e293b">Session B (tg:main)</text>
+  <rect x="260" y="175" width="60" height="20" rx="4" fill="#d1fae5" stroke="#86efac" stroke-width="1"/>
+  <text x="290" y="189" text-anchor="middle" font-size="8" fill="#047857">请求2</text>
+  <rect x="325" y="175" width="60" height="20" rx="4" fill="#d1fae5" stroke="#86efac" stroke-width="1"/>
+  <text x="355" y="189" text-anchor="middle" font-size="8" fill="#047857">请求6</text>
+  <text x="395" y="189" font-size="8" fill="#94a3b8">→ 串行执行</text>
+
+  <!-- Session C queue -->
+  <text x="460" y="168" font-size="10" font-weight="600" fill="#1e293b">Session C (cron)</text>
+  <rect x="460" y="175" width="60" height="20" rx="4" fill="#fef3c7" stroke="#fbbf24" stroke-width="1"/>
+  <text x="490" y="189" text-anchor="middle" font-size="8" fill="#92400e">请求3</text>
+  <text x="530" y="189" font-size="8" fill="#94a3b8">→ 独立执行</text>
+
+  <!-- Session D queue -->
+  <text x="580" y="168" font-size="10" font-weight="600" fill="#1e293b">Session D (sub)</text>
+  <rect x="580" y="175" width="60" height="20" rx="4" fill="#ede9fe" stroke="#c4b5fd" stroke-width="1"/>
+  <text x="610" y="189" text-anchor="middle" font-size="8" fill="#5b21b6">请求5</text>
+  <text x="650" y="189" font-size="8" fill="#94a3b8">→ 独立执行</text>
+
+  <!-- Key insight -->
+  <rect x="60" y="204" width="690" height="24" rx="6" fill="#eff6ff"/>
+  <text x="405" y="220" text-anchor="middle" font-size="9" fill="#3b82f6">Session A 的请求1 和 Session B 的请求2 → 可以并发执行（不同 session）</text>
+
+  <!-- Arrow down -->
+  <line x1="400" y1="238" x2="400" y2="258" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Layer 2: Lane Control -->
+  <g filter="url(#shadow)">
+    <rect x="40" y="260" width="720" height="100" rx="10" fill="white" stroke="#10b981" stroke-width="2"/>
+  </g>
+  <rect x="40" y="260" width="720" height="28" rx="10" fill="url(#greenG)"/>
+  <rect x="40" y="274" width="720" height="14" fill="url(#greenG)"/>
+  <text x="60" y="279" font-size="12" font-weight="700" fill="white">Lane 并发控制 — 按工作类型分 Lane（跨 Lane 互不阻塞）</text>
+
+  <!-- 5 Lanes -->
+  <rect x="55" y="298" width="120" height="28" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="115" y="316" text-anchor="middle" font-size="9" font-weight="600" fill="#1d4ed8">Main Lane</text>
+  <text x="115" y="330" font-size="8" fill="#94a3b8">maxConcurrent</text>
+
+  <rect x="190" y="298" width="120" height="28" rx="6" fill="#fef3c7" stroke="#fbbf24" stroke-width="1"/>
+  <text x="250" y="316" text-anchor="middle" font-size="9" font-weight="600" fill="#92400e">Cron Lane</text>
+  <text x="250" y="330" font-size="8" fill="#94a3b8">maxConcurrentRuns</text>
+
+  <rect x="325" y="298" width="130" height="28" rx="6" fill="#fef3c7" stroke="#fbbf24" stroke-width="1"/>
+  <text x="390" y="316" text-anchor="middle" font-size="9" font-weight="600" fill="#92400e">CronNested Lane</text>
+  <text x="390" y="330" font-size="8" fill="#94a3b8">嵌套 LLM 调用</text>
+
+  <rect x="470" y="298" width="120" height="28" rx="6" fill="#ede9fe" stroke="#c4b5fd" stroke-width="1"/>
+  <text x="530" y="316" text-anchor="middle" font-size="9" font-weight="600" fill="#5b21b6">Subagent Lane</text>
+  <text x="530" y="330" font-size="8" fill="#94a3b8">subagent.maxConcurrent</text>
+
+  <rect x="605" y="298" width="120" height="28" rx="6" fill="#d1fae5" stroke="#86efac" stroke-width="1"/>
+  <text x="665" y="316" text-anchor="middle" font-size="9" font-weight="600" fill="#047857">Nested Lane</text>
+  <text x="665" y="330" font-size="8" fill="#94a3b8">嵌套执行</text>
+
+  <!-- Key insight lane -->
+  <rect x="55" y="340" width="695" height="16" rx="4" fill="#f0fdf4"/>
+  <text x="402" y="352" text-anchor="middle" font-size="8" fill="#047857">同一 Lane 内串行化，跨 Lane 互不阻塞 — 与 Session 队列是正交的两层控制</text>
+
+  <!-- Failover + Fallback box -->
+  <text x="400" y="382" text-anchor="middle" font-size="12" font-weight="700" fill="#1e293b">Failover + Fallback 策略</text>
+
+  <rect x="60" y="390" width="200" height="22" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="160" y="405" text-anchor="middle" font-size="9" fill="#1d4ed8">主 Profile → 下一个 Profile</text>
+
+  <text x="270" y="405" font-size="10" fill="#94a3b8">→</text>
+
+  <rect x="285" y="390" width="200" height="22" rx="6" fill="#fef3c7" stroke="#fbbf24" stroke-width="1"/>
+  <text x="385" y="405" text-anchor="middle" font-size="9" fill="#92400e">Fallback 模型</text>
+
+  <text x="495" y="405" font-size="10" fill="#94a3b8">→</text>
+
+  <rect x="510" y="390" width="240" height="22" rx="6" fill="#d1fae5" stroke="#86efac" stroke-width="1"/>
+  <text x="630" y="405" text-anchor="middle" font-size="9" fill="#047857">5min 探测主模型恢复</text>
+</svg>

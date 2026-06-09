@@ -7,7 +7,7 @@ tags:
   - 源码分析
 excerpt: 从五层注入架构、CLAUDE.md 加载机制、动态附件注入到缓存策略，系统分析 Claude Code 如何组装、注入和缓存 System Prompt。
 createTime: 2026/06/01 20:00:00
-permalink: /ai-study/claude-code-system-prompt-and-injection-analysis/
+permalink: /ai-source/claude-code-system-prompt-and-injection-analysis/
 ---
 
 # Claude Code System Prompt 内容与注入机制深度分析

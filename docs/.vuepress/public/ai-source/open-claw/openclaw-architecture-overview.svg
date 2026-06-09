@@ -1,0 +1,116 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 560" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <linearGradient id="blueG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="greenG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#34d399;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="amberG" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="redG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#f87171;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ef4444;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="violetG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#a78bfa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="indigoG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#818cf8;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#6366f1;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.12"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="820" height="560" rx="14" fill="#f8fafc"/>
+
+  <!-- Title -->
+  <text x="410" y="38" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">OpenClaw 六层架构总览</text>
+  <text x="410" y="58" text-anchor="middle" font-size="12" fill="#94a3b8">Layer 1 → Layer 6：上层依赖下层，下层不感知上层</text>
+
+  <!-- Layer 1: 启动 & CLI 入口 -->
+  <g filter="url(#shadow)">
+    <rect x="40" y="78" width="740" height="58" rx="10" fill="white" stroke="#6366f1" stroke-width="2"/>
+  </g>
+  <rect x="40" y="78" width="740" height="28" rx="10" fill="url(#indigoG)"/>
+  <rect x="40" y="92" width="740" height="14" fill="url(#indigoG)"/>
+  <text x="410" y="97" text-anchor="middle" font-size="13" font-weight="700" fill="white">Layer 1 — 启动 &amp; CLI 入口</text>
+  <text x="410" y="124" text-anchor="middle" font-size="11" fill="#475569">src/entry.ts · src/cli · src/bootstrap — 三层入口漏斗、8 阶段流水线、isMainModule 守卫</text>
+
+  <!-- Arrow 1→2 -->
+  <line x1="410" y1="136" x2="410" y2="148" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4,3"/>
+
+  <!-- Layer 2: Gateway 控制面 -->
+  <g filter="url(#shadow)">
+    <rect x="40" y="148" width="740" height="58" rx="10" fill="white" stroke="#3b82f6" stroke-width="2"/>
+  </g>
+  <rect x="40" y="148" width="740" height="28" rx="10" fill="url(#blueG)"/>
+  <rect x="40" y="162" width="740" height="14" fill="url(#blueG)"/>
+  <text x="410" y="167" text-anchor="middle" font-size="13" font-weight="700" fill="white">Layer 2 — Gateway 控制面</text>
+  <text x="410" y="194" text-anchor="middle" font-size="11" fill="#475569">src/gateway · src/daemon — 消息总线、WS 线协议、四层认证、方法注册表、配置热重载</text>
+
+  <!-- Arrow 2→3 -->
+  <line x1="410" y1="206" x2="410" y2="218" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4,3"/>
+
+  <!-- Layer 3: Agent & Session -->
+  <g filter="url(#shadow)">
+    <rect x="40" y="218" width="740" height="58" rx="10" fill="white" stroke="#10b981" stroke-width="2"/>
+  </g>
+  <rect x="40" y="218" width="740" height="28" rx="10" fill="url(#greenG)"/>
+  <rect x="40" y="232" width="740" height="14" fill="url(#greenG)"/>
+  <text x="410" y="237" text-anchor="middle" font-size="13" font-weight="700" fill="white">Layer 3 — Agent &amp; Session 模型</text>
+  <text x="410" y="264" text-anchor="middle" font-size="11" fill="#475569">src/agents · src/sessions · src/routing — Agent Loop、双重队列、Failover、Compaction、Session 路由</text>
+
+  <!-- Arrow 3→4 -->
+  <line x1="410" y1="276" x2="410" y2="288" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4,3"/>
+
+  <!-- Layer 4: Context Engine & 记忆 -->
+  <g filter="url(#shadow)">
+    <rect x="40" y="288" width="740" height="58" rx="10" fill="white" stroke="#f59e0b" stroke-width="2"/>
+  </g>
+  <rect x="40" y="288" width="740" height="28" rx="10" fill="url(#amberG)"/>
+  <rect x="40" y="302" width="740" height="14" fill="url(#amberG)"/>
+  <text x="410" y="307" text-anchor="middle" font-size="13" font-weight="700" fill="white">Layer 4 — Context Engine &amp; 记忆</text>
+  <text x="410" y="334" text-anchor="middle" font-size="11" fill="#475569">src/context-engine · extensions/memory-* — 可插拔引擎、检疫代理、记忆插件、Dreaming</text>
+
+  <!-- Arrow 4→5 -->
+  <line x1="410" y1="346" x2="410" y2="358" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4,3"/>
+
+  <!-- Layer 5: 插件 / 扩展 / Skill -->
+  <g filter="url(#shadow)">
+    <rect x="40" y="358" width="740" height="58" rx="10" fill="white" stroke="#8b5cf6" stroke-width="2"/>
+  </g>
+  <rect x="40" y="358" width="740" height="28" rx="10" fill="url(#violetG)"/>
+  <rect x="40" y="372" width="740" height="14" fill="url(#violetG)"/>
+  <text x="410" y="377" text-anchor="middle" font-size="13" font-weight="700" fill="white">Layer 5 — 插件 / 扩展 / Skill</text>
+  <text x="410" y="404" text-anchor="middle" font-size="11" fill="#475569">src/plugins · src/plugin-sdk · extensions/ — Manifest-First、60+ Plugin API、五源扫描、Skill 体系</text>
+
+  <!-- Arrow 5→6 -->
+  <line x1="410" y1="416" x2="410" y2="428" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4,3"/>
+
+  <!-- Layer 6: Channel & 端侧设备 -->
+  <g filter="url(#shadow)">
+    <rect x="40" y="428" width="740" height="58" rx="10" fill="white" stroke="#ef4444" stroke-width="2"/>
+  </g>
+  <rect x="40" y="428" width="740" height="28" rx="10" fill="url(#redG)"/>
+  <rect x="40" y="442" width="740" height="14" fill="url(#redG)"/>
+  <text x="410" y="447" text-anchor="middle" font-size="13" font-weight="700" fill="white">Layer 6 — Channel &amp; 端侧设备</text>
+  <text x="410" y="474" text-anchor="middle" font-size="11" fill="#475569">src/channels · extensions/{whatsapp,telegram,feishu} · apps/{macos,ios,android} — Channel 抽象、Node 设备模型</text>
+
+  <!-- Dependency arrow (right side) -->
+  <line x1="795" y1="136" x2="795" y2="428" stroke="#94a3b8" stroke-width="1.5"/>
+  <polygon points="795,428 790,418 800,418" fill="#94a3b8"/>
+  <text x="798" y="290" text-anchor="start" font-size="10" fill="#94a3b8" transform="rotate(90,798,290)">依赖方向</text>
+
+  <!-- Bottom tip -->
+  <rect x="170" y="504" width="480" height="26" rx="13" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1"/>
+  <text x="410" y="521" text-anchor="middle" font-size="11" fill="#15803d">💡 Gateway 是"总线 + 协议解释器"，Agent 在 Gateway 进程内执行，插件通过 SDK 边界与核心交互</text>
+</svg>

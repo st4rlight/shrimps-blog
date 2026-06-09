@@ -1,0 +1,129 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 460" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <linearGradient id="blueG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="redG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#f87171;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ef4444;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="amberG" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="greenG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#34d399;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="violetG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#a78bfa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.12"/>
+    </filter>
+    <marker id="arrowR" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#ef4444"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="820" height="460" rx="14" fill="#f8fafc"/>
+
+  <!-- Title -->
+  <text x="410" y="32" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">纵深防御架构</text>
+  <text x="410" y="52" text-anchor="middle" font-size="12" fill="#94a3b8">Managed Agents 四层安全体系——任一层被突破，攻击者也无法达到最终目标</text>
+
+  <!-- ===== Attacker Arrow ===== -->
+  <g>
+    <rect x="340" y="68" width="140" height="28" rx="14" fill="url(#redG)"/>
+    <text x="410" y="87" text-anchor="middle" font-size="12" font-weight="600" fill="white">⚠ 攻击者</text>
+    <line x1="410" y1="96" x2="410" y2="115" stroke="#ef4444" stroke-width="2" marker-end="url(#arrowR)"/>
+  </g>
+
+  <!-- ===== Layer 1: Sandbox Isolation ===== -->
+  <g filter="url(#shadow)">
+    <rect x="60" y="118" width="700" height="65" rx="10" fill="white" stroke="#3b82f6" stroke-width="2"/>
+  </g>
+  <rect x="60" y="118" width="700" height="28" rx="10" fill="url(#blueG)"/>
+  <rect x="60" y="136" width="700" height="10" fill="url(#blueG)"/>
+  <text x="80" y="138" font-size="13" font-weight="700" fill="white">🛡️ 第一层：沙盒隔离</text>
+  <text x="80" y="166" font-size="11" fill="#475569">进程隔离</text>
+  <circle cx="140" cy="163" r="2" fill="#94a3b8"/>
+  <text x="150" y="166" font-size="11" fill="#475569">文件系统隔离</text>
+  <circle cx="230" cy="163" r="2" fill="#94a3b8"/>
+  <text x="240" y="166" font-size="11" fill="#475569">网络白名单</text>
+  <circle cx="310" cy="163" r="2" fill="#94a3b8"/>
+  <text x="320" y="166" font-size="11" fill="#475569">资源硬上限</text>
+
+  <!-- Arrow down -->
+  <line x1="410" y1="183" x2="410" y2="198" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arrowR)"/>
+  <text x="435" y="195" font-size="9" fill="#ef4444" font-weight="500">突破</text>
+
+  <!-- ===== Layer 2: Credential Management ===== -->
+  <g filter="url(#shadow)">
+    <rect x="60" y="200" width="700" height="65" rx="10" fill="white" stroke="#8b5cf6" stroke-width="2"/>
+  </g>
+  <rect x="60" y="200" width="700" height="28" rx="10" fill="url(#violetG)"/>
+  <rect x="60" y="218" width="700" height="10" fill="url(#violetG)"/>
+  <text x="80" y="220" font-size="13" font-weight="700" fill="white">🔑 第二层：MCP代理凭证管理（核心创新）</text>
+
+  <!-- Sub-diagram: Traditional vs Managed -->
+  <text x="120" y="250" font-size="10" fill="#ef4444" font-weight="600">❌ 传统：</text>
+  <text x="180" y="250" font-size="10" fill="#64748b">沙盒 ←包含凭证→ 外部API（凭证可被窃取）</text>
+  <text x="480" y="250" font-size="10" fill="#10b981" font-weight="600">✅ Managed Agents：</text>
+  <text x="610" y="250" font-size="10" fill="#64748b">沙盒 → MCP代理 → 外部API</text>
+  <text x="610" y="260" font-size="9" fill="#94a3b8">凭证从不进入沙盒</text>
+
+  <!-- Arrow down -->
+  <line x1="410" y1="265" x2="410" y2="280" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arrowR)"/>
+  <text x="435" y="277" font-size="9" fill="#ef4444" font-weight="500">突破</text>
+
+  <!-- ===== Layer 3: Session Audit ===== -->
+  <g filter="url(#shadow)">
+    <rect x="60" y="282" width="700" height="55" rx="10" fill="white" stroke="#f59e0b" stroke-width="2"/>
+  </g>
+  <rect x="60" y="282" width="700" height="28" rx="10" fill="url(#amberG)"/>
+  <rect x="60" y="300" width="700" height="10" fill="url(#amberG)"/>
+  <text x="80" y="302" font-size="13" font-weight="700" fill="#92400e">📋 第三层：Session审计能力</text>
+  <text x="80" y="326" font-size="11" fill="#475569">操作可追溯</text>
+  <circle cx="140" cy="323" r="2" fill="#94a3b8"/>
+  <text x="150" y="326" font-size="11" fill="#475569">异常可检测</text>
+  <circle cx="230" cy="323" r="2" fill="#94a3b8"/>
+  <text x="240" y="326" font-size="11" fill="#475569">事件可响应</text>
+  <circle cx="310" cy="323" r="2" fill="#94a3b8"/>
+  <text x="320" y="326" font-size="11" fill="#475569">合规可证明</text>
+
+  <!-- Arrow down -->
+  <line x1="410" y1="337" x2="410" y2="352" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arrowR)"/>
+  <text x="435" y="349" font-size="9" fill="#ef4444" font-weight="500">突破</text>
+
+  <!-- ===== Layer 4: Harness Security Policy ===== -->
+  <g filter="url(#shadow)">
+    <rect x="60" y="354" width="700" height="55" rx="10" fill="white" stroke="#10b981" stroke-width="2"/>
+  </g>
+  <rect x="60" y="354" width="700" height="28" rx="10" fill="url(#greenG)"/>
+  <rect x="60" y="372" width="700" height="10" fill="url(#greenG)"/>
+  <text x="80" y="374" font-size="13" font-weight="700" fill="white">⚙️ 第四层：Harness安全策略</text>
+  <text x="80" y="398" font-size="11" fill="#475569">工具白名单</text>
+  <circle cx="140" cy="395" r="2" fill="#94a3b8"/>
+  <text x="150" y="398" font-size="11" fill="#475569">输入验证</text>
+  <circle cx="210" cy="395" r="2" fill="#94a3b8"/>
+  <text x="220" y="398" font-size="11" fill="#475569">输出过滤</text>
+  <circle cx="280" cy="395" r="2" fill="#94a3b8"/>
+  <text x="290" y="398" font-size="11" fill="#475569">关键操作人工审核</text>
+
+  <!-- Blocked indicator -->
+  <line x1="410" y1="409" x2="410" y2="422" stroke="#10b981" stroke-width="2.5"/>
+  <line x1="395" y1="422" x2="425" y2="422" stroke="#10b981" stroke-width="2.5"/>
+  <text x="410" y="440" text-anchor="middle" font-size="11" font-weight="600" fill="#10b981">✅ 攻击被阻断</text>
+
+  <!-- Right side annotation -->
+  <text x="790" y="155" text-anchor="end" font-size="9" fill="#94a3b8" transform="rotate(-90,790,155)">外层防线</text>
+  <text x="790" y="390" text-anchor="end" font-size="9" fill="#94a3b8" transform="rotate(-90,790,390)">内层防线</text>
+
+  <!-- Bottom tip -->
+  <rect x="180" y="446" width="460" height="12" rx="6" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="0.5"/>
+  <text x="410" y="455" text-anchor="middle" font-size="9" fill="#15803d">凭证与执行环境分离是纵深防御的核心——解耦架构的直接安全产物</text>
+</svg>

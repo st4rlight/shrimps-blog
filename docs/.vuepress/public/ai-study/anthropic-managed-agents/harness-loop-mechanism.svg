@@ -1,0 +1,154 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 400" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <linearGradient id="blueG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="greenG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#34d399;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="amberG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="violetG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#a78bfa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.12"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/>
+    </marker>
+    <marker id="arrowB" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#3b82f6"/>
+    </marker>
+    <marker id="arrowG" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#10b981"/>
+    </marker>
+    <marker id="arrowA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#f59e0b"/>
+    </marker>
+    <marker id="arrowV" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#8b5cf6"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="820" height="400" rx="14" fill="#f8fafc"/>
+
+  <!-- Title -->
+  <text x="410" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">Harness 控制循环</text>
+  <text x="410" y="54" text-anchor="middle" font-size="12" fill="#94a3b8">Agent 与外部世界的交互循环</text>
+
+  <!-- ===== Step 1: User Input ===== -->
+  <g filter="url(#shadow)">
+    <rect x="30" y="90" width="140" height="55" rx="10" fill="white" stroke="#f59e0b" stroke-width="2"/>
+  </g>
+  <rect x="30" y="90" width="140" height="22" rx="10" fill="url(#amberG)"/>
+  <rect x="30" y="102" width="140" height="10" fill="url(#amberG)"/>
+  <text x="100" y="106" text-anchor="middle" font-size="11" font-weight="600" fill="white">① 用户输入</text>
+  <text x="100" y="128" text-anchor="middle" font-size="10" fill="#64748b">系统提示 + 上下文</text>
+
+  <!-- Arrow 1→2 -->
+  <line x1="170" y1="117" x2="208" y2="117" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrowA)"/>
+
+  <!-- ===== Step 2: Build Prompt ===== -->
+  <g filter="url(#shadow)">
+    <rect x="215" y="90" width="140" height="55" rx="10" fill="white" stroke="#3b82f6" stroke-width="2"/>
+  </g>
+  <rect x="215" y="90" width="140" height="22" rx="10" fill="url(#blueG)"/>
+  <rect x="215" y="102" width="140" height="10" fill="url(#blueG)"/>
+  <text x="285" y="106" text-anchor="middle" font-size="11" font-weight="600" fill="white">② 构建提示词</text>
+  <text x="285" y="128" text-anchor="middle" font-size="10" fill="#64748b">历史 + 当前输入</text>
+
+  <!-- Arrow 2→3 -->
+  <line x1="355" y1="117" x2="393" y2="117" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrowB)"/>
+
+  <!-- ===== Step 3: Call LLM ===== -->
+  <g filter="url(#shadow)">
+    <rect x="400" y="80" width="150" height="75" rx="10" fill="white" stroke="#3b82f6" stroke-width="2.5"/>
+  </g>
+  <rect x="400" y="80" width="150" height="24" rx="10" fill="url(#blueG)"/>
+  <rect x="400" y="94" width="150" height="10" fill="url(#blueG)"/>
+  <text x="475" y="98" text-anchor="middle" font-size="12" font-weight="700" fill="white">③ 调用 LLM</text>
+  <text x="475" y="122" text-anchor="middle" font-size="10" fill="#1d4ed8" font-weight="600">Claude 推理</text>
+  <text x="475" y="140" text-anchor="middle" font-size="9" fill="#94a3b8">概率性输出</text>
+
+  <!-- Arrow 3→4 -->
+  <line x1="550" y1="117" x2="588" y2="117" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrowB)"/>
+
+  <!-- ===== Step 4: Parse Response ===== -->
+  <g filter="url(#shadow)">
+    <rect x="595" y="90" width="140" height="55" rx="10" fill="white" stroke="#8b5cf6" stroke-width="2"/>
+  </g>
+  <rect x="595" y="90" width="140" height="22" rx="10" fill="url(#violetG)"/>
+  <rect x="595" y="102" width="140" height="10" fill="url(#violetG)"/>
+  <text x="665" y="106" text-anchor="middle" font-size="11" font-weight="600" fill="white">④ 解析响应</text>
+  <text x="665" y="128" text-anchor="middle" font-size="10" fill="#64748b">识别工具调用</text>
+
+  <!-- Arrow 4→5 (down) -->
+  <line x1="665" y1="145" x2="665" y2="188" stroke="#8b5cf6" stroke-width="2" marker-end="url(#arrowV)"/>
+
+  <!-- ===== Step 5: Execute Tool ===== -->
+  <g filter="url(#shadow)">
+    <rect x="575" y="195" width="180" height="55" rx="10" fill="white" stroke="#10b981" stroke-width="2.5"/>
+  </g>
+  <rect x="575" y="195" width="180" height="22" rx="10" fill="url(#greenG)"/>
+  <rect x="575" y="207" width="180" height="10" fill="url(#greenG)"/>
+  <text x="665" y="211" text-anchor="middle" font-size="12" font-weight="700" fill="white">⑤ execute 工具</text>
+  <text x="665" y="235" text-anchor="middle" font-size="10" fill="#64748b">沙盒执行 → string result</text>
+
+  <!-- Arrow 5→6 (left) -->
+  <line x1="575" y1="222" x2="460" y2="222" stroke="#10b981" stroke-width="2" marker-end="url(#arrowG)"/>
+
+  <!-- ===== Step 6: Feedback to LLM ===== -->
+  <g filter="url(#shadow)">
+    <rect x="320" y="195" width="140" height="55" rx="10" fill="white" stroke="#10b981" stroke-width="2"/>
+  </g>
+  <rect x="320" y="195" width="140" height="22" rx="10" fill="url(#greenG)"/>
+  <rect x="320" y="207" width="140" height="10" fill="url(#greenG)"/>
+  <text x="390" y="211" text-anchor="middle" font-size="11" font-weight="600" fill="white">⑥ 结果反馈</text>
+  <text x="390" y="235" text-anchor="middle" font-size="10" fill="#64748b">工具结果 → LLM</text>
+
+  <!-- Loop arrow: 6 back to 3 -->
+  <line x1="390" y1="195" x2="390" y2="170" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <line x1="390" y1="170" x2="475" y2="170" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <line x1="475" y1="170" x2="475" y2="155" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrow)"/>
+  <text x="430" y="166" text-anchor="middle" font-size="9" fill="#94a3b8">重复 ③-⑥</text>
+
+  <!-- ===== Decision: Task Complete? ===== -->
+  <!-- Diamond at bottom center -->
+  <g filter="url(#shadow)">
+    <polygon points="410,290 490,320 410,350 330,320" fill="white" stroke="#f59e0b" stroke-width="2"/>
+  </g>
+  <text x="410" y="324" text-anchor="middle" font-size="11" font-weight="600" fill="#92400e">任务完成?</text>
+
+  <!-- Arrow from Step 3 area down to diamond (simplified) -->
+  <line x1="475" y1="155" x2="475" y2="170" stroke="none"/>
+  <!-- Connecting line from feedback area to diamond -->
+  <line x1="390" y1="250" x2="400" y2="288" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- No branch: back to step 3 -->
+  <line x1="330" y1="320" x2="260" y2="320" stroke="#94a3b8" stroke-width="1.5"/>
+  <line x1="260" y1="320" x2="260" y2="222" stroke="#94a3b8" stroke-width="1.5"/>
+  <line x1="260" y1="222" x2="315" y2="222" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="248" y="310" text-anchor="end" font-size="10" font-weight="600" fill="#ef4444">否</text>
+
+  <!-- Yes branch: to Session -->
+  <line x1="490" y1="320" x2="560" y2="320" stroke="#10b981" stroke-width="1.5" marker-end="url(#arrowG)"/>
+  <text x="518" y="314" text-anchor="middle" font-size="10" font-weight="600" fill="#10b981">是</text>
+
+  <!-- ===== Final: Persist to Session ===== -->
+  <g filter="url(#shadow)">
+    <rect x="567" y="300" width="150" height="42" rx="8" fill="white" stroke="#f59e0b" stroke-width="2"/>
+  </g>
+  <text x="642" y="320" text-anchor="middle" font-size="11" font-weight="600" fill="#92400e">写入 Session</text>
+  <text x="642" y="334" text-anchor="middle" font-size="9" fill="#94a3b8">事件持久化</text>
+
+  <!-- Bottom tip -->
+  <rect x="170" y="372" width="480" height="22" rx="11" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1"/>
+  <text x="410" y="387" text-anchor="middle" font-size="10" fill="#64748b">循环 ③-⑥ 直到任务完成 —— Harness 编码的是"模型做不到什么"的假设</text>
+</svg>

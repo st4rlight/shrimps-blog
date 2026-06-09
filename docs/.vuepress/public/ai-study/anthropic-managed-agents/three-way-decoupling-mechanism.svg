@@ -1,0 +1,123 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 420" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <!-- Gradients -->
+    <linearGradient id="blueG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="greenG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#34d399;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="amberG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="violetG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#a78bfa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
+    </linearGradient>
+    <!-- Shadow -->
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.12"/>
+    </filter>
+    <!-- Arrows -->
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/>
+    </marker>
+    <marker id="arrowBlue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#3b82f6"/>
+    </marker>
+    <marker id="arrowGreen" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#10b981"/>
+    </marker>
+    <marker id="arrowViolet" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#8b5cf6"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="820" height="420" rx="14" fill="#f8fafc"/>
+
+  <!-- Title -->
+  <text x="410" y="36" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">Brain-Hands-Session 三元解耦架构</text>
+  <text x="410" y="56" text-anchor="middle" font-size="12" fill="#94a3b8">Decoupling the Brain from the Hands</text>
+
+  <!-- ===== Brain Card ===== -->
+  <g filter="url(#shadow)">
+    <rect x="40" y="85" width="220" height="140" rx="12" fill="white" stroke="#3b82f6" stroke-width="2"/>
+  </g>
+  <rect x="40" y="85" width="220" height="38" rx="12" fill="url(#blueG)"/>
+  <rect x="40" y="105" width="220" height="18" fill="url(#blueG)"/>
+  <text x="150" y="110" text-anchor="middle" font-size="16" font-weight="700" fill="white">Brain</text>
+  <text x="150" y="148" text-anchor="middle" font-size="12" fill="#1d4ed8" font-weight="600">推理 · 决策 · 编排</text>
+  <text x="150" y="170" text-anchor="middle" font-size="11" fill="#64748b">Claude LLM + Harness</text>
+  <text x="150" y="192" text-anchor="middle" font-size="10" fill="#94a3b8">无状态，可随意替换</text>
+  <!-- Brain icon hint -->
+  <circle cx="78" cy="155" r="12" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="78" y="159" text-anchor="middle" font-size="13" fill="#3b82f6">🧠</text>
+
+  <!-- ===== Hands Card ===== -->
+  <g filter="url(#shadow)">
+    <rect x="560" y="85" width="220" height="140" rx="12" fill="white" stroke="#10b981" stroke-width="2"/>
+  </g>
+  <rect x="560" y="85" width="220" height="38" rx="12" fill="url(#greenG)"/>
+  <rect x="560" y="105" width="220" height="18" fill="url(#greenG)"/>
+  <text x="670" y="110" text-anchor="middle" font-size="16" font-weight="700" fill="white">Hands</text>
+  <text x="670" y="148" text-anchor="middle" font-size="12" fill="#047857" font-weight="600">执行 · 沙盒化 · 可丢弃</text>
+  <text x="670" y="170" text-anchor="middle" font-size="11" fill="#64748b">容器化沙盒环境</text>
+  <text x="670" y="192" text-anchor="middle" font-size="10" fill="#94a3b8">按需创建，用完即弃</text>
+  <!-- Hands icon hint -->
+  <circle cx="598" cy="155" r="12" fill="#d1fae5" stroke="#86efac" stroke-width="1"/>
+  <text x="598" y="159" text-anchor="middle" font-size="13" fill="#10b981">🤚</text>
+
+  <!-- ===== Session Card ===== -->
+  <g filter="url(#shadow)">
+    <rect x="40" y="280" width="220" height="110" rx="12" fill="white" stroke="#f59e0b" stroke-width="2"/>
+  </g>
+  <rect x="40" y="280" width="220" height="38" rx="12" fill="url(#amberG)"/>
+  <rect x="40" y="300" width="220" height="18" fill="url(#amberG)"/>
+  <text x="150" y="305" text-anchor="middle" font-size="16" font-weight="700" fill="white">Session</text>
+  <text x="150" y="340" text-anchor="middle" font-size="12" fill="#92400e" font-weight="600">持久化事件日志</text>
+  <text x="150" y="362" text-anchor="middle" font-size="11" fill="#64748b">Append-only，唯一真相来源</text>
+  <!-- Session icon hint -->
+  <circle cx="78" cy="348" r="12" fill="#fef3c7" stroke="#fbbf24" stroke-width="1"/>
+  <text x="78" y="352" text-anchor="middle" font-size="13" fill="#f59e0b">📜</text>
+
+  <!-- ===== MCP Proxy Card ===== -->
+  <g filter="url(#shadow)">
+    <rect x="560" y="280" width="220" height="110" rx="12" fill="white" stroke="#8b5cf6" stroke-width="2"/>
+  </g>
+  <rect x="560" y="280" width="220" height="38" rx="12" fill="url(#violetG)"/>
+  <rect x="560" y="300" width="220" height="18" fill="url(#violetG)"/>
+  <text x="670" y="305" text-anchor="middle" font-size="16" font-weight="700" fill="white">MCP Proxy</text>
+  <text x="670" y="340" text-anchor="middle" font-size="12" fill="#5b21b6" font-weight="600">凭证代理 · 安全边界</text>
+  <text x="670" y="362" text-anchor="middle" font-size="11" fill="#64748b">凭证永不进入沙盒</text>
+  <!-- MCP icon hint -->
+  <circle cx="598" cy="348" r="12" fill="#ede9fe" stroke="#c4b5fd" stroke-width="1"/>
+  <text x="598" y="352" text-anchor="middle" font-size="13" fill="#8b5cf6">🔐</text>
+
+  <!-- ===== Arrows: Brain → Hands (execute) ===== -->
+  <line x1="260" y1="130" x2="555" y2="130" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrowBlue)"/>
+  <rect x="330" y="118" width="160" height="22" rx="4" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="410" y="133" text-anchor="middle" font-size="11" font-weight="500" fill="#1d4ed8">execute(name, input)</text>
+
+  <!-- ===== Arrows: Hands → Brain (result) ===== -->
+  <line x1="560" y1="175" x2="265" y2="175" stroke="#10b981" stroke-width="2" stroke-dasharray="6,3" marker-end="url(#arrowGreen)"/>
+  <rect x="350" y="163" width="120" height="22" rx="4" fill="#d1fae5" stroke="#86efac" stroke-width="1"/>
+  <text x="410" y="178" text-anchor="middle" font-size="11" font-weight="500" fill="#047857">string result</text>
+
+  <!-- ===== Arrows: Brain → Session (getEvents) ===== -->
+  <line x1="150" y1="225" x2="150" y2="275" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="165" y="235" width="140" height="22" rx="4" fill="#fef3c7" stroke="#fbbf24" stroke-width="1"/>
+  <text x="235" y="250" text-anchor="middle" font-size="11" font-weight="500" fill="#92400e">getEvents(filter)</text>
+
+  <!-- ===== Arrows: Hands ↔ MCP Proxy ===== -->
+  <line x1="670" y1="225" x2="670" y2="275" stroke="#8b5cf6" stroke-width="2" marker-end="url(#arrowViolet)"/>
+  <rect x="690" y="237" width="80" height="22" rx="4" fill="#ede9fe" stroke="#c4b5fd" stroke-width="1"/>
+  <text x="730" y="252" text-anchor="middle" font-size="11" font-weight="500" fill="#5b21b6">MCP 协议</text>
+
+  <!-- ===== Bottom tip ===== -->
+  <rect x="170" y="398" width="480" height="20" rx="10" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1"/>
+  <text x="410" y="412" text-anchor="middle" font-size="10" fill="#64748b">每个组件独立伸缩、独立故障恢复、独立演进 —— Agent 从"宠物"变为"牛群"</text>
+</svg>

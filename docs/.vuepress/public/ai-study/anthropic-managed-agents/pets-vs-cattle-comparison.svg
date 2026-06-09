@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 440" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <linearGradient id="redG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#f87171;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ef4444;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="greenG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#34d399;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.12"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="820" height="440" rx="14" fill="#f8fafc"/>
+
+  <!-- Title -->
+  <text x="410" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">从"宠物"到"牛群"：Agent 基础设施的范式转变</text>
+  <text x="410" y="54" text-anchor="middle" font-size="12" fill="#94a3b8">解耦架构如何打破三重绑定</text>
+
+  <!-- ===== Left: Pets (Anti-pattern) ===== -->
+  <g filter="url(#shadow)">
+    <rect x="30" y="75" width="360" height="340" rx="12" fill="white" stroke="#ef4444" stroke-width="2"/>
+  </g>
+  <rect x="30" y="75" width="360" height="40" rx="12" fill="url(#redG)"/>
+  <rect x="30" y="95" width="360" height="20" fill="url(#redG)"/>
+  <text x="210" y="101" text-anchor="middle" font-size="16" font-weight="700" fill="white">❌ 宠物模式（Pets）</text>
+  <text x="210" y="140" text-anchor="middle" font-size="12" fill="#991b1b" font-weight="600">三重绑定：Harness + 沙盒 + 会话状态</text>
+
+  <!-- Pets: Binding 1 -->
+  <rect x="55" y="158" width="310" height="58" rx="8" fill="#fee2e2" stroke="#fca5a5" stroke-width="1"/>
+  <text x="70" y="177" font-size="11" font-weight="600" fill="#991b1b">绑定一：Harness ↔ 会话</text>
+  <text x="70" y="195" font-size="10" fill="#64748b">Harness 崩溃 = 会话丢失</text>
+  <text x="70" y="209" font-size="10" fill="#64748b">升级 = 中断，迁移 = 噩梦</text>
+
+  <!-- Pets: Binding 2 -->
+  <rect x="55" y="226" width="310" height="58" rx="8" fill="#fee2e2" stroke="#fca5a5" stroke-width="1"/>
+  <text x="70" y="245" font-size="11" font-weight="600" fill="#991b1b">绑定二：沙盒 ↔ Harness</text>
+  <text x="70" y="263" font-size="10" fill="#64748b">沙盒无法独立伸缩</text>
+  <text x="70" y="277" font-size="10" fill="#64748b">沙盒故障拖垮整个 Harness</text>
+
+  <!-- Pets: Binding 3 -->
+  <rect x="55" y="294" width="310" height="58" rx="8" fill="#fee2e2" stroke="#fca5a5" stroke-width="1"/>
+  <text x="70" y="313" font-size="11" font-weight="600" fill="#991b1b">绑定三：状态散落各处</text>
+  <text x="70" y="331" font-size="10" fill="#64748b">无统一真相来源</text>
+  <text x="70" y="345" font-size="10" fill="#64748b">故障恢复、状态同步异常复杂</text>
+
+  <!-- Pets: Result -->
+  <rect x="80" y="368" width="260" height="30" rx="6" fill="#991b1b"/>
+  <text x="210" y="388" text-anchor="middle" font-size="11" font-weight="600" fill="white">精心照料，死亡不可挽回</text>
+
+  <!-- ===== VS Circle ===== -->
+  <circle cx="410" cy="245" r="24" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+  <text x="410" y="251" text-anchor="middle" font-size="13" font-weight="700" fill="#475569">VS</text>
+
+  <!-- ===== Right: Cattle (Correct) ===== -->
+  <g filter="url(#shadow)">
+    <rect x="430" y="75" width="360" height="340" rx="12" fill="white" stroke="#10b981" stroke-width="2"/>
+  </g>
+  <rect x="430" y="75" width="360" height="40" rx="12" fill="url(#greenG)"/>
+  <rect x="430" y="95" width="360" height="20" fill="url(#greenG)"/>
+  <text x="610" y="101" text-anchor="middle" font-size="16" font-weight="700" fill="white">✅ 牛群模式（Cattle）</text>
+  <text x="610" y="140" text-anchor="middle" font-size="12" fill="#047857" font-weight="600">三元解耦：Brain + Hands + Session</text>
+
+  <!-- Cattle: Decouple 1 -->
+  <rect x="455" y="158" width="310" height="58" rx="8" fill="#dcfce7" stroke="#86efac" stroke-width="1"/>
+  <text x="470" y="177" font-size="11" font-weight="600" fill="#047857">解耦一：Harness 无状态化</text>
+  <text x="470" y="195" font-size="10" fill="#64748b">任何实例可服务任何会话</text>
+  <text x="470" y="209" font-size="10" fill="#64748b">随意创建、销毁、水平扩展</text>
+
+  <!-- Cattle: Decouple 2 -->
+  <rect x="455" y="226" width="310" height="58" rx="8" fill="#dcfce7" stroke="#86efac" stroke-width="1"/>
+  <text x="470" y="245" font-size="11" font-weight="600" fill="#047857">解耦二：沙盒完全独立</text>
+  <text x="470" y="263" font-size="10" fill="#64748b">按需创建，用完即弃</text>
+  <text x="470" y="277" font-size="10" fill="#64748b">故障隔离，弹性伸缩</text>
+
+  <!-- Cattle: Decouple 3 -->
+  <rect x="455" y="294" width="310" height="58" rx="8" fill="#dcfce7" stroke="#86efac" stroke-width="1"/>
+  <text x="470" y="313" font-size="11" font-weight="600" fill="#047857">解耦三：Session 唯一真相来源</text>
+  <text x="470" y="331" font-size="10" fill="#64748b">完整可恢复、操作可追溯</text>
+  <text x="470" y="345" font-size="10" fill="#64748b">状态边界清晰</text>
+
+  <!-- Cattle: Result -->
+  <rect x="480" y="368" width="260" height="30" rx="6" fill="#047857"/>
+  <text x="610" y="388" text-anchor="middle" font-size="11" font-weight="600" fill="white">可替换、可扩展、可恢复</text>
+
+  <!-- Bottom tip -->
+  <rect x="150" y="420" width="520" height="18" rx="9" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1"/>
+  <text x="410" y="433" text-anchor="middle" font-size="10" fill="#64748b">解耦使每个组件独立伸缩、独立故障恢复、独立演进</text>
+</svg>

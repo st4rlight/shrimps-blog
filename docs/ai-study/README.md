@@ -25,6 +25,12 @@ permalink: /ai-study/
 
 - [得物数仓Harness实战](./harness/dewu-harness-practice.md)
 
+### AI Infra演进
+
+这一部分主要记录 `AI Agent` 基础设施架构的演进趋势、核心设计理念与工程实践。
+
+- [Anthropic Managed Agents解析](./ai-infra/anthropic-managed-agents.md)
+
 ### RAG技术学习
 
 这一部分主要记录 `RAG`（检索增强生成）相关的技术方案、实践总结和评估方法。

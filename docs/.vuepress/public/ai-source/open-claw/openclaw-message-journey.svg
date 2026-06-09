@@ -1,0 +1,221 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 420" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <linearGradient id="blueG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="greenG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#34d399;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="amberG" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="violetG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#a78bfa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="indigoG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#818cf8;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#6366f1;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.12"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/>
+    </marker>
+    <marker id="arrowG" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#10b981"/>
+    </marker>
+    <marker id="arrowB" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#3b82f6"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="420" rx="12" fill="#f8fafc"/>
+
+  <!-- Title -->
+  <text x="400" y="32" text-anchor="middle" font-size="18" font-weight="700" fill="#1e293b">一条消息的完整旅程</text>
+  <text x="400" y="50" text-anchor="middle" font-size="11" fill="#94a3b8">以"飞书群里 @机器人 发一句话"为例 — 从入站到出站共 12 步</text>
+
+  <!-- Row 1: Inbound (steps 1-4) -->
+  <!-- Step 1: Feishu Event -->
+  <g filter="url(#shadow)">
+    <rect x="25" y="72" width="165" height="70" rx="10" fill="white" stroke="#ef4444" stroke-width="1.5"/>
+  </g>
+  <rect x="25" y="72" width="165" height="26" rx="10" fill="url(#amberG)"/>
+  <rect x="25" y="86" width="165" height="12" fill="url(#amberG)"/>
+  <text x="107" y="90" text-anchor="middle" font-size="11" font-weight="700" fill="white">① 飞书事件</text>
+  <text x="107" y="112" text-anchor="middle" font-size="10" fill="#475569">extensions/feishu/</text>
+  <text x="107" y="126" text-anchor="middle" font-size="9" fill="#94a3b8">WebSocket / Webhook</text>
+
+  <!-- Arrow 1→2 -->
+  <line x1="190" y1="107" x2="210" y2="107" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Step 2: Channel 翻译 -->
+  <g filter="url(#shadow)">
+    <rect x="212" y="72" width="165" height="70" rx="10" fill="white" stroke="#ef4444" stroke-width="1.5"/>
+  </g>
+  <rect x="212" y="72" width="165" height="26" rx="10" fill="url(#amberG)"/>
+  <rect x="212" y="86" width="165" height="12" fill="url(#amberG)"/>
+  <text x="294" y="90" text-anchor="middle" font-size="11" font-weight="700" fill="white">② Channel 翻译</text>
+  <text x="294" y="112" text-anchor="middle" font-size="10" fill="#475569">InboundEvent</text>
+  <text x="294" y="126" text-anchor="middle" font-size="9" fill="#94a3b8">去重 / 防抖 / 顺序队列</text>
+
+  <!-- Arrow 2→3 -->
+  <line x1="377" y1="107" x2="397" y2="107" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Step 3: 路由解析 -->
+  <g filter="url(#shadow)">
+    <rect x="399" y="72" width="165" height="70" rx="10" fill="white" stroke="#10b981" stroke-width="1.5"/>
+  </g>
+  <rect x="399" y="72" width="165" height="26" rx="10" fill="url(#greenG)"/>
+  <rect x="399" y="86" width="165" height="12" fill="url(#greenG)"/>
+  <text x="481" y="90" text-anchor="middle" font-size="11" font-weight="700" fill="white">③ 路由解析</text>
+  <text x="481" y="112" text-anchor="middle" font-size="10" fill="#475569">resolveAgentRoute()</text>
+  <text x="481" y="126" text-anchor="middle" font-size="9" fill="#94a3b8">agentId + sessionKey</text>
+
+  <!-- Arrow 3→4 -->
+  <line x1="564" y1="107" x2="584" y2="107" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Step 4: Chat Run -->
+  <g filter="url(#shadow)">
+    <rect x="586" y="72" width="190" height="70" rx="10" fill="white" stroke="#3b82f6" stroke-width="1.5"/>
+  </g>
+  <rect x="586" y="72" width="190" height="26" rx="10" fill="url(#blueG)"/>
+  <rect x="586" y="86" width="190" height="12" fill="url(#blueG)"/>
+  <text x="681" y="90" text-anchor="middle" font-size="11" font-weight="700" fill="white">④ Gateway 创建 Chat Run</text>
+  <text x="681" y="112" text-anchor="middle" font-size="10" fill="#475569">server-chat.ts</text>
+  <text x="681" y="126" text-anchor="middle" font-size="9" fill="#94a3b8">Agent Loop 入口</text>
+
+  <!-- Arrow row1→row2 -->
+  <line x1="681" y1="142" x2="681" y2="168" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Row 2: Agent Execution (steps 5-8) -->
+  <!-- Step 5: Agent Loop -->
+  <g filter="url(#shadow)">
+    <rect x="586" y="170" width="190" height="70" rx="10" fill="white" stroke="#10b981" stroke-width="1.5"/>
+  </g>
+  <rect x="586" y="170" width="190" height="26" rx="10" fill="url(#greenG)"/>
+  <rect x="586" y="184" width="190" height="12" fill="url(#greenG)"/>
+  <text x="681" y="188" text-anchor="middle" font-size="11" font-weight="700" fill="white">⑤ Agent Loop 执行</text>
+  <text x="681" y="210" text-anchor="middle" font-size="10" fill="#475569">runEmbeddedAgent()</text>
+  <text x="681" y="224" text-anchor="middle" font-size="9" fill="#94a3b8">while(true) 主循环</text>
+
+  <!-- Arrow 5→6 -->
+  <line x1="586" y1="205" x2="564" y2="205" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Step 6: Context Engine -->
+  <g filter="url(#shadow)">
+    <rect x="399" y="170" width="165" height="70" rx="10" fill="white" stroke="#f59e0b" stroke-width="1.5"/>
+  </g>
+  <rect x="399" y="170" width="165" height="26" rx="10" fill="url(#amberG)"/>
+  <rect x="399" y="184" width="165" height="12" fill="url(#amberG)"/>
+  <text x="481" y="188" text-anchor="middle" font-size="11" font-weight="700" fill="white">⑥ Context Engine</text>
+  <text x="481" y="210" text-anchor="middle" font-size="10" fill="#475569">assemble() 组装上下文</text>
+  <text x="481" y="224" text-anchor="middle" font-size="9" fill="#94a3b8">记忆召回 + Prompt</text>
+
+  <!-- Arrow 6→7 -->
+  <line x1="399" y1="205" x2="377" y2="205" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Step 7: LLM 调用 -->
+  <g filter="url(#shadow)">
+    <rect x="212" y="170" width="165" height="70" rx="10" fill="white" stroke="#8b5cf6" stroke-width="1.5"/>
+  </g>
+  <rect x="212" y="170" width="165" height="26" rx="10" fill="url(#violetG)"/>
+  <rect x="212" y="184" width="165" height="12" fill="url(#violetG)"/>
+  <text x="294" y="188" text-anchor="middle" font-size="11" font-weight="700" fill="white">⑦ LLM 调用</text>
+  <text x="294" y="210" text-anchor="middle" font-size="10" fill="#475569">Provider 插件</text>
+  <text x="294" y="224" text-anchor="middle" font-size="9" fill="#94a3b8">OpenAI / Anthropic / ...</text>
+
+  <!-- Arrow 7→8 -->
+  <line x1="212" y1="205" x2="190" y2="205" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Step 8: 工具执行 -->
+  <g filter="url(#shadow)">
+    <rect x="25" y="170" width="165" height="70" rx="10" fill="white" stroke="#6366f1" stroke-width="1.5"/>
+  </g>
+  <rect x="25" y="170" width="165" height="26" rx="10" fill="url(#indigoG)"/>
+  <rect x="25" y="184" width="165" height="12" fill="url(#indigoG)"/>
+  <text x="107" y="188" text-anchor="middle" font-size="11" font-weight="700" fill="white">⑧ 工具执行</text>
+  <text x="107" y="210" text-anchor="middle" font-size="10" fill="#475569">bash / browser / message</text>
+  <text x="107" y="224" text-anchor="middle" font-size="9" fill="#94a3b8">可能循环回 ⑥</text>
+
+  <!-- Arrow row2→row3 (loop back indicator) -->
+  <path d="M 25,205 L 15,205 L 15,260 L 107,260 L 107,278" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4,3" fill="none"/>
+  <text x="18" y="255" font-size="8" fill="#94a3b8">循环</text>
+
+  <!-- Arrow row2→row3 -->
+  <line x1="107" y1="240" x2="107" y2="278" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Row 3: Outbound (steps 9-12) -->
+  <!-- Step 9: 结果回传 -->
+  <g filter="url(#shadow)">
+    <rect x="25" y="280" width="165" height="70" rx="10" fill="white" stroke="#10b981" stroke-width="1.5"/>
+  </g>
+  <rect x="25" y="280" width="165" height="26" rx="10" fill="url(#greenG)"/>
+  <rect x="25" y="294" width="165" height="12" fill="url(#greenG)"/>
+  <text x="107" y="298" text-anchor="middle" font-size="11" font-weight="700" fill="white">⑨ 流式结果回传</text>
+  <text x="107" y="320" text-anchor="middle" font-size="10" fill="#475569">Gateway → Client</text>
+  <text x="107" y="334" text-anchor="middle" font-size="9" fill="#94a3b8">event 推送</text>
+
+  <!-- Arrow 9→10 -->
+  <line x1="190" y1="315" x2="210" y2="315" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Step 10: Channel Outbound -->
+  <g filter="url(#shadow)">
+    <rect x="212" y="280" width="165" height="70" rx="10" fill="white" stroke="#ef4444" stroke-width="1.5"/>
+  </g>
+  <rect x="212" y="280" width="165" height="26" rx="10" fill="url(#amberG)"/>
+  <rect x="212" y="294" width="165" height="12" fill="url(#amberG)"/>
+  <text x="294" y="298" text-anchor="middle" font-size="11" font-weight="700" fill="white">⑩ Channel 出站</text>
+  <text x="294" y="320" text-anchor="middle" font-size="10" fill="#475569">Outbound Adapter</text>
+  <text x="294" y="334" text-anchor="middle" font-size="9" fill="#94a3b8">渲染模式选择</text>
+
+  <!-- Arrow 10→11 -->
+  <line x1="377" y1="315" x2="397" y2="315" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Step 11: Feishu API -->
+  <g filter="url(#shadow)">
+    <rect x="399" y="280" width="165" height="70" rx="10" fill="white" stroke="#ef4444" stroke-width="1.5"/>
+  </g>
+  <rect x="399" y="280" width="165" height="26" rx="10" fill="url(#amberG)"/>
+  <rect x="399" y="294" width="165" height="12" fill="url(#amberG)"/>
+  <text x="481" y="298" text-anchor="middle" font-size="11" font-weight="700" fill="white">⑪ 飞书 API 投递</text>
+  <text x="481" y="320" text-anchor="middle" font-size="10" fill="#475569">im.message.create/reply</text>
+  <text x="481" y="334" text-anchor="middle" font-size="9" fill="#94a3b8">降级：撤回 → 直接发送</text>
+
+  <!-- Arrow 11→12 -->
+  <line x1="564" y1="315" x2="584" y2="315" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Step 12: AfterTurn -->
+  <g filter="url(#shadow)">
+    <rect x="586" y="280" width="190" height="70" rx="10" fill="white" stroke="#f59e0b" stroke-width="1.5"/>
+  </g>
+  <rect x="586" y="280" width="190" height="26" rx="10" fill="url(#amberG)"/>
+  <rect x="586" y="294" width="190" height="12" fill="url(#amberG)"/>
+  <text x="681" y="298" text-anchor="middle" font-size="11" font-weight="700" fill="white">⑫ AfterTurn 维护</text>
+  <text x="681" y="320" text-anchor="middle" font-size="10" fill="#475569">Context Engine afterTurn()</text>
+  <text x="681" y="334" text-anchor="middle" font-size="9" fill="#94a3b8">需要时触发 Compaction</text>
+
+  <!-- Layer labels -->
+  <rect x="25" y="370" width="8" height="8" rx="2" fill="#f59e0b"/>
+  <text x="38" y="378" font-size="9" fill="#64748b">Layer 6 (Channel)</text>
+  <rect x="130" y="370" width="8" height="8" rx="2" fill="#10b981"/>
+  <text x="143" y="378" font-size="9" fill="#64748b">Layer 3 (Agent/Session)</text>
+  <rect x="270" y="370" width="8" height="8" rx="2" fill="#8b5cf6"/>
+  <text x="283" y="378" font-size="9" fill="#64748b">Layer 5 (Provider)</text>
+  <rect x="380" y="370" width="8" height="8" rx="2" fill="#3b82f6"/>
+  <text x="393" y="378" font-size="9" fill="#64748b">Layer 2 (Gateway)</text>
+  <rect x="490" y="370" width="8" height="8" rx="2" fill="#6366f1"/>
+  <text x="503" y="378" font-size="9" fill="#64748b">Layer 1 (Tools)</text>
+  <rect x="590" y="370" width="8" height="8" rx="2" fill="#f59e0b"/>
+  <text x="603" y="378" font-size="9" fill="#64748b">Layer 4 (Context Engine)</text>
+
+  <!-- Bottom tip -->
+  <rect x="180" y="393" width="440" height="22" rx="11" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1"/>
+  <text x="400" y="408" text-anchor="middle" font-size="10" fill="#15803d">💡 步骤 ⑥⑦⑧ 可能循环多次，直到 LLM 返回无工具调用的文本</text>
+</svg>

@@ -68,6 +68,14 @@ export default defineUserConfig({
             ],
           },
           {
+            text: 'AI Infra演进',
+            link: '/ai-study/',
+            collapsed: false,
+            items: [
+              'ai-infra/anthropic-managed-agents.md',
+            ],
+          },
+          {
             text: 'RAG技术学习',
             link: '/ai-study/',
             collapsed: false,
@@ -105,6 +113,14 @@ export default defineUserConfig({
             collapsed: false,
             items: [
               'open-claw/open-claw-overview.md',
+              'open-claw/openclaw-architecture-analysis.md',
+              'open-claw/openclaw-cli-startup-architecture.md',
+              'open-claw/openclaw-plugin-skill-architecture.md',
+              'open-claw/openclaw-gateway-architecture.md',
+              'open-claw/openclaw-agent-session-architecture.md',
+              'open-claw/openclaw-context-engine-architecture.md',
+              'open-claw/openclaw-channel-architecture.md',
+              'open-claw/openclaw-node-device-architecture.md',
             ],
           },
         ],
