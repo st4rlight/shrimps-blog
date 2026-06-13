@@ -6,7 +6,7 @@ tags:
   - 源码分析
 excerpt: DeepAgents 源码分析系列，从架构设计、核心模块到关键机制的系统性拆解，深入理解多 Agent 框架的设计哲学与实现细节。
 createTime: 2026/06/01 10:00:00
-permalink: /ai-study/deep-agents-overview/
+permalink: /ai-source/deep-agents-overview/
 ---
 
 # DeepAgents 源码分析总览
