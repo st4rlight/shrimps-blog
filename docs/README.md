@@ -6,7 +6,7 @@ config:
     full: true
     hero:
       tagline: <span class="hero-nowrap">平安 . 健康 . 自律 . 快樂 . 長久</span><br />(●'◡'●)<br /><br />
-      text: <span>无需长虑，所有事与愿违都是另有安排<br /><br />“潺潺流水终于穿过群山一座座，好像多年之后你依然执着”</span>
+      text: <span>所有事与愿违都是另有安排<br /><br />“我不管他们说多少至理名言，我除了你没有第二志愿”</span>
 ---
 
 欢迎来到我的个人博客。
@@ -53,6 +53,33 @@ config:
 <div class="home-timeline__item">
   <div class="home-timeline__dot"></div>
   <div class="home-timeline__body">
+    <span class="home-timeline__date">06-08</span>
+    <span class="home-timeline__tag home-timeline__tag--ai">AI学习</span>
+    <a href="/ai-study/anthropic-managed-agents/">新增《Anthropic Managed Agents解析》</a>
+  </div>
+</div>
+
+<div class="home-timeline__item">
+  <div class="home-timeline__dot"></div>
+  <div class="home-timeline__body">
+    <span class="home-timeline__date">06-08</span>
+    <span class="home-timeline__tag home-timeline__tag--ai">AI源码</span>
+    <a href="/ai-source/openclaw-architecture-analysis/">新增《OpenClaw 架构分层设计深度解析》</a>
+  </div>
+</div>
+
+<div class="home-timeline__item">
+  <div class="home-timeline__dot"></div>
+  <div class="home-timeline__body">
+    <span class="home-timeline__date">06-07</span>
+    <span class="home-timeline__tag home-timeline__tag--ai">AI源码</span>
+    <a href="/ai-source/open-claw-overview/">新增《OpenClaw 源码分析总览》</a>
+  </div>
+</div>
+
+<div class="home-timeline__item">
+  <div class="home-timeline__dot"></div>
+  <div class="home-timeline__body">
     <span class="home-timeline__date">06-03</span>
     <span class="home-timeline__tag home-timeline__tag--note">拾遗补阙</span>
     <a href="/notes/mysql2hive-sync-principle/">新增《MySQL2Hive 工作原理》</a>
@@ -65,33 +92,6 @@ config:
     <span class="home-timeline__date">06-02</span>
     <span class="home-timeline__tag home-timeline__tag--note">拾遗补阙</span>
     <a href="/notes/warehouse-table-paradigm-and-layering/">新增《数仓表建设范式与分层方案》</a>
-  </div>
-</div>
-
-<div class="home-timeline__item">
-  <div class="home-timeline__dot"></div>
-  <div class="home-timeline__body">
-    <span class="home-timeline__date">05-28</span>
-    <span class="home-timeline__tag home-timeline__tag--ai">AI学习</span>
-    <a href="/ai-study/deep-agents-overview/">新增《DeepAgents 源码分析》</a>
-  </div>
-</div>
-
-<div class="home-timeline__item">
-  <div class="home-timeline__dot"></div>
-  <div class="home-timeline__body">
-    <span class="home-timeline__date">05-25</span>
-    <span class="home-timeline__tag home-timeline__tag--ai">AI学习</span>
-    <a href="/ai-study/taotian-rag-solution/">新增《淘天 RAG 技术方案》</a>
-  </div>
-</div>
-
-<div class="home-timeline__item">
-  <div class="home-timeline__dot"></div>
-  <div class="home-timeline__body">
-    <span class="home-timeline__date">05-21</span>
-    <span class="home-timeline__tag home-timeline__tag--ai">AI学习</span>
-    <a href="/ai-study/dewu-harness-practice/">新增《得物数仓 Harness 实战》</a>
   </div>
 </div>
 

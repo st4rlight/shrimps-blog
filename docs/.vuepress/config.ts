@@ -30,20 +30,27 @@ export default defineUserConfig({
     navbar: [
       { text: '首页', link: '/', icon: 'mdi:home' },
       { text: '时间轴', link: '/changelog/', icon: 'mdi:timeline-clock-outline' },
-      { text: '存卿偶寄', link: '/blog/', icon: 'mdi:feather' },
+      // { text: '存卿偶寄', link: '/blog/', icon: 'mdi:feather' },
       { text: '思考领悟', link: '/thoughts/', icon: 'mdi:lightbulb-outline' },
       { text: 'AI学习', link: '/ai-study/', icon: 'mdi:robot-outline' },
       { text: 'AI源码', link: '/ai-source/', icon: 'mdi:code-braces' },
+      { text: 'AI客服系统', link: '/ai-cs/', icon: 'mdi:headset' },
       { text: '拾遗补阙', link: '/notes/', icon: 'mdi:puzzle-outline' },
       // { text: '归档', link: '/blog/archives/', icon: 'mdi:archive-outline' },
       // { text: '标签', link: '/blog/tags/', icon: 'mdi:tag-outline' },
       { text: '关于', link: '/about/', icon: 'mdi:account-outline' },
     ],
     collections: [
+      // {
+      //   type: 'post',
+      //   dir: 'blog',
+      //   title: '存卿偶寄',
+      // },
       {
-        type: 'post',
-        dir: 'blog',
-        title: '存卿偶寄',
+        type: 'doc',
+        dir: 'ai-cs',
+        title: 'AI客服系统',
+        sidebar: [],
       },
       {
         type: 'doc',

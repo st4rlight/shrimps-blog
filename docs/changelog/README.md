@@ -20,6 +20,88 @@ icon: mdi:timeline-clock-outline
 <div class="timeline-item">
   <div class="timeline-item__dot"></div>
   <div class="timeline-item__content">
+    <div class="timeline-item__date">6 月 29 日</div>
+    <div class="timeline-item__entries">
+      <div class="timeline-entry">
+        <span class="timeline-entry__tag timeline-entry__tag--ai">AI客服系统</span>
+        <a class="timeline-entry__link" href="/ai-cs/">新增「AI客服系统」模块</a>
+        <span class="timeline-entry__desc">—— AI 客服领域的技术方案与工程实践</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="timeline-item">
+  <div class="timeline-item__dot"></div>
+  <div class="timeline-item__content">
+    <div class="timeline-item__date">6 月 8 日</div>
+    <div class="timeline-item__entries">
+      <div class="timeline-entry">
+        <span class="timeline-entry__tag timeline-entry__tag--ai">AI学习</span>
+        <a class="timeline-entry__link" href="/ai-study/anthropic-managed-agents/">新增《Anthropic Managed Agents解析》</a>
+        <span class="timeline-entry__desc">—— Brain-Hands-Session 三元解耦与安全架构</span>
+      </div>
+      <div class="timeline-entry">
+        <span class="timeline-entry__tag timeline-entry__tag--ai">AI源码</span>
+        <a class="timeline-entry__link" href="/ai-source/openclaw-architecture-analysis/">新增《OpenClaw 架构分层设计深度解析》</a>
+        <span class="timeline-entry__desc">—— 六层架构全局观与关键设计权衡</span>
+      </div>
+      <div class="timeline-entry">
+        <span class="timeline-entry__tag timeline-entry__tag--ai">AI源码</span>
+        <a class="timeline-entry__link" href="/ai-source/openclaw-gateway-architecture/">新增《OpenClaw Gateway 控制面深度解析》</a>
+        <span class="timeline-entry__desc">—— 消息总线、线协议与运行时编排</span>
+      </div>
+      <div class="timeline-entry">
+        <span class="timeline-entry__tag timeline-entry__tag--ai">AI源码</span>
+        <a class="timeline-entry__link" href="/ai-source/openclaw-agent-session-architecture/">新增《OpenClaw Agent & Session 模型深度解析》</a>
+        <span class="timeline-entry__desc">—— Agent Loop、双重队列与 Failover 策略</span>
+      </div>
+      <div class="timeline-entry">
+        <span class="timeline-entry__tag timeline-entry__tag--ai">AI源码</span>
+        <a class="timeline-entry__link" href="/ai-source/openclaw-channel-architecture/">新增《OpenClaw Channel 架构深度解析》</a>
+        <span class="timeline-entry__desc">—— 核心抽象与 Feishu 插件实现</span>
+      </div>
+      <div class="timeline-entry">
+        <span class="timeline-entry__tag timeline-entry__tag--ai">AI源码</span>
+        <a class="timeline-entry__link" href="/ai-source/openclaw-context-engine-architecture/">新增《OpenClaw Context Engine & 记忆系统深度解析》</a>
+        <span class="timeline-entry__desc">—— 可插拔上下文引擎与 Dreaming 机制</span>
+      </div>
+      <div class="timeline-entry">
+        <span class="timeline-entry__tag timeline-entry__tag--ai">AI源码</span>
+        <a class="timeline-entry__link" href="/ai-source/openclaw-plugin-skill-architecture/">新增《OpenClaw 插件 / 扩展 / Skill 体系深度解析》</a>
+        <span class="timeline-entry__desc">—— Manifest-First 设计与 Hook 执行模型</span>
+      </div>
+      <div class="timeline-entry">
+        <span class="timeline-entry__tag timeline-entry__tag--ai">AI源码</span>
+        <a class="timeline-entry__link" href="/ai-source/openclaw-node-device-architecture/">新增《OpenClaw Node & 端侧设备模型深度解析》</a>
+        <span class="timeline-entry__desc">—— 设备节点模型与 system.run 审批策略</span>
+      </div>
+      <div class="timeline-entry">
+        <span class="timeline-entry__tag timeline-entry__tag--ai">AI源码</span>
+        <a class="timeline-entry__link" href="/ai-source/openclaw-cli-startup-architecture/">新增《OpenClaw 启动与 CLI 入口架构深度分析》</a>
+        <span class="timeline-entry__desc">—— 三层入口漏斗与 Daemon 服务管理</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="timeline-item">
+  <div class="timeline-item__dot"></div>
+  <div class="timeline-item__content">
+    <div class="timeline-item__date">6 月 7 日</div>
+    <div class="timeline-item__entries">
+      <div class="timeline-entry">
+        <span class="timeline-entry__tag timeline-entry__tag--ai">AI源码</span>
+        <a class="timeline-entry__link" href="/ai-source/open-claw-overview/">新增《OpenClaw 源码分析总览》</a>
+        <span class="timeline-entry__desc">—— 六层架构概览与系列文章导航</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="timeline-item">
+  <div class="timeline-item__dot"></div>
+  <div class="timeline-item__content">
     <div class="timeline-item__date">6 月 3 日</div>
     <div class="timeline-item__entries">
       <div class="timeline-entry">
