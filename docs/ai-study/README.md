@@ -37,6 +37,13 @@ permalink: /ai-study/
 
 - [淘天RAG方案](./rag/taotian-rag-solution.md)
 
+### AI周边生态
+
+这一部分主要记录 AI Agent 生态中各类开放协议与标准的学习笔记，包括交互协议、生成式 UI 协议等。
+
+- [AG-UI学习笔记](./ai-ecosystem/ag-ui-study-notes.md)
+- [A2UI学习笔记](./ai-ecosystem/a2ui-study-notes.md)
+
 ## 后续计划
 
 后面如果继续新增 AI 相关内容，我会按专题继续往下整理，比如：
@@ -44,4 +51,5 @@ permalink: /ai-study/
 - `Superpowers` 的常用技能与工作流
 - `Harness` 的更多场景实践
 - `RAG` 的更多技术方案与评估实践
+- `AI周边生态` 的更多协议与标准（如 MCP、A2A 深入分析）
 - 其他 AI 编程工具的实践记录

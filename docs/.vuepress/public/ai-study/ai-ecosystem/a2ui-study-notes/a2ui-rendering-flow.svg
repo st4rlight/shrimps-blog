@@ -1,0 +1,186 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 580" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <linearGradient id="blueG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="greenG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#34d399;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="amberG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="violetG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#a78bfa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.12"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/>
+    </marker>
+    <marker id="arrowB" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#3b82f6"/>
+    </marker>
+    <marker id="arrowG" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#10b981"/>
+    </marker>
+    <marker id="arrowV" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#8b5cf6"/>
+    </marker>
+    <marker id="arrowA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#f59e0b"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="820" height="580" rx="14" fill="#f8fafc"/>
+
+  <!-- Title -->
+  <text x="410" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">A2UI 渲染流程机制</text>
+  <text x="410" y="54" text-anchor="middle" font-size="12" fill="#94a3b8">从用户输入到原生 UI 渲染的完整流程</text>
+
+  <!-- ===== Step 1: User Input ===== -->
+  <g filter="url(#shadow)">
+    <rect x="40" y="80" width="150" height="55" rx="10" fill="white" stroke="#f59e0b" stroke-width="2"/>
+  </g>
+  <rect x="40" y="80" width="150" height="22" rx="10" fill="url(#amberG)"/>
+  <rect x="40" y="92" width="150" height="10" fill="url(#amberG)"/>
+  <text x="115" y="96" text-anchor="middle" font-size="11" font-weight="700" fill="white">1. 用户输入</text>
+  <text x="115" y="120" text-anchor="middle" font-size="9" fill="#64748b">"帮我找纽约的中餐厅"</text>
+
+  <line x1="190" y1="107" x2="228" y2="107" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrowA)"/>
+
+  <!-- ===== Step 2: JSON-RPC Send ===== -->
+  <g filter="url(#shadow)">
+    <rect x="230" y="80" width="160" height="55" rx="10" fill="white" stroke="#3b82f6" stroke-width="2"/>
+  </g>
+  <rect x="230" y="80" width="160" height="22" rx="10" fill="url(#blueG)"/>
+  <rect x="230" y="92" width="160" height="10" fill="url(#blueG)"/>
+  <text x="310" y="96" text-anchor="middle" font-size="11" font-weight="700" fill="white">2. message/send</text>
+  <text x="310" y="120" text-anchor="middle" font-size="9" fill="#64748b">JSON-RPC 2.0 封装</text>
+
+  <line x1="390" y1="107" x2="428" y2="107" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrowB)"/>
+
+  <!-- ===== Step 3: Agent Processing ===== -->
+  <g filter="url(#shadow)">
+    <rect x="430" y="70" width="170" height="75" rx="10" fill="white" stroke="#3b82f6" stroke-width="2.5"/>
+  </g>
+  <rect x="430" y="70" width="170" height="24" rx="10" fill="url(#blueG)"/>
+  <rect x="430" y="84" width="170" height="10" fill="url(#blueG)"/>
+  <text x="515" y="88" text-anchor="middle" font-size="12" font-weight="700" fill="white">3. Agent 处理</text>
+  <text x="515" y="112" text-anchor="middle" font-size="10" fill="#1d4ed8" font-weight="600">LLM 推理 + 工具调用</text>
+  <text x="515" y="128" text-anchor="middle" font-size="9" fill="#64748b">生成 UI 组件描述 JSON</text>
+
+  <line x1="600" y1="107" x2="638" y2="107" stroke="#8b5cf6" stroke-width="2" marker-end="url(#arrowV)"/>
+
+  <!-- ===== Step 4: JSON Blueprint ===== -->
+  <g filter="url(#shadow)">
+    <rect x="640" y="70" width="160" height="75" rx="10" fill="white" stroke="#8b5cf6" stroke-width="2.5"/>
+  </g>
+  <rect x="640" y="70" width="160" height="24" rx="10" fill="url(#violetG)"/>
+  <rect x="640" y="84" width="160" height="10" fill="url(#violetG)"/>
+  <text x="720" y="88" text-anchor="middle" font-size="12" font-weight="700" fill="white">4. JSON 蓝图</text>
+  <text x="720" y="112" text-anchor="middle" font-size="9" fill="#64748b">beginRendering</text>
+  <text x="720" y="126" text-anchor="middle" font-size="9" fill="#64748b">surfaceUpdate + components</text>
+
+  <!-- ===== Step 4 detail: JSON Code Block ===== -->
+  <g filter="url(#shadow)">
+    <rect x="430" y="165" width="370" height="120" rx="10" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+  </g>
+  <text x="615" y="185" text-anchor="middle" font-size="9" font-weight="600" fill="#94a3b8">// A2UI JSON 蓝图示例</text>
+  <text x="445" y="202" font-size="8" fill="#60a5fa" font-family="monospace">{ "beginRendering": { "surfaceId": "r1", "root": "c1" }</text>
+  <text x="445" y="216" font-size="8" fill="#60a5fa" font-family="monospace">, "surfaceUpdate":</text>
+  <text x="445" y="230" font-size="8" fill="#60a5fa" font-family="monospace">  { "surfaceId": "r1"</text>
+  <text x="445" y="244" font-size="8" fill="#60a5fa" font-family="monospace">  , "components": [</text>
+  <text x="445" y="258" font-size="8" fill="#34d399" font-family="monospace">    { "id":"c1", "type":"Card", "children":["c2","c3"] }</text>
+  <text x="445" y="272" font-size="8" fill="#34d399" font-family="monospace">    { "id":"c2", "type":"Text", "text":"5家中餐厅" }</text>
+  <text x="470" y="272" font-size="8" fill="#34d399" font-family="monospace"></text>
+  <text x="445" y="280" font-size="8" fill="#34d399" font-family="monospace">    { "id":"c3", "type":"Button", "label":"筛选" } ] } }</text>
+
+  <!-- Arrow from Step 4 down to JSON detail -->
+  <line x1="720" y1="145" x2="720" y2="163" stroke="#8b5cf6" stroke-width="1.5" marker-end="url(#arrowV)"/>
+
+  <!-- ===== Step 5: Transport to Client ===== -->
+  <line x1="615" y1="285" x2="615" y2="310" stroke="#94a3b8" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arrow)"/>
+
+  <g filter="url(#shadow)">
+    <rect x="500" y="315" width="230" height="50" rx="10" fill="white" stroke="#94a3b8" stroke-width="2"/>
+  </g>
+  <rect x="500" y="315" width="230" height="22" rx="10" fill="#e2e8f0"/>
+  <rect x="500" y="327" width="230" height="10" fill="#e2e8f0"/>
+  <text x="615" y="331" text-anchor="middle" font-size="11" font-weight="700" fill="#475569">5. 传输到客户端</text>
+  <text x="615" y="355" text-anchor="middle" font-size="9" fill="#64748b">SSE / WebSocket / A2A / AG-UI</text>
+
+  <!-- ===== Step 6: A2UI Renderer ===== -->
+  <line x1="615" y1="365" x2="615" y2="390" stroke="#10b981" stroke-width="2" marker-end="url(#arrowG)"/>
+
+  <g filter="url(#shadow)">
+    <rect x="470" y="395" width="290" height="60" rx="10" fill="white" stroke="#10b981" stroke-width="2.5"/>
+  </g>
+  <rect x="470" y="395" width="290" height="24" rx="10" fill="url(#greenG)"/>
+  <rect x="470" y="409" width="290" height="10" fill="url(#greenG)"/>
+  <text x="615" y="413" text-anchor="middle" font-size="12" font-weight="700" fill="white">6. A2UI Renderer 解析</text>
+  <text x="615" y="438" text-anchor="middle" font-size="10" fill="#64748b">扁平化列表 → 构建组件树 → 映射原生组件</text>
+  <text x="615" y="450" text-anchor="middle" font-size="9" fill="#94a3b8">支持增量更新：add / update / remove</text>
+
+  <!-- ===== Step 7: Native Render ===== -->
+  <line x1="615" y1="455" x2="615" y2="478" stroke="#10b981" stroke-width="2" marker-end="url(#arrowG)"/>
+
+  <g filter="url(#shadow)">
+    <rect x="470" y="483" width="290" height="55" rx="10" fill="white" stroke="#10b981" stroke-width="2"/>
+  </g>
+  <rect x="470" y="483" width="290" height="22" rx="10" fill="url(#greenG)"/>
+  <rect x="470" y="495" width="290" height="10" fill="url(#greenG)"/>
+  <text x="615" y="499" text-anchor="middle" font-size="11" font-weight="700" fill="white">7. 原生 UI 渲染</text>
+  <text x="615" y="523" text-anchor="middle" font-size="9" fill="#64748b">React 组件 / Flutter Widget / Lit Web Component</text>
+
+  <!-- ===== Left side: Incremental Update Flow ===== -->
+  <text x="170" y="200" text-anchor="middle" font-size="13" font-weight="700" fill="#1e293b">增量更新流程</text>
+  <text x="170" y="218" text-anchor="middle" font-size="10" fill="#94a3b8">Agent 逐次修改界面，无需全量重传</text>
+
+  <!-- Initial state -->
+  <g filter="url(#shadow)">
+    <rect x="50" y="235" width="240" height="50" rx="8" fill="white" stroke="#3b82f6" stroke-width="1.5"/>
+  </g>
+  <rect x="50" y="235" width="240" height="20" rx="8" fill="#dbeafe"/>
+  <text x="170" y="250" text-anchor="middle" font-size="10" font-weight="600" fill="#1d4ed8">初始：beginRendering + surfaceUpdate</text>
+  <text x="170" y="272" text-anchor="middle" font-size="9" fill="#64748b">创建 Surface，渲染 Card + Text + Button</text>
+
+  <line x1="170" y1="285" x2="170" y2="300" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Update 1: Add component -->
+  <g filter="url(#shadow)">
+    <rect x="50" y="305" width="240" height="50" rx="8" fill="white" stroke="#10b981" stroke-width="1.5"/>
+  </g>
+  <rect x="50" y="305" width="240" height="20" rx="8" fill="#d1fae5"/>
+  <text x="170" y="320" text-anchor="middle" font-size="10" font-weight="600" fill="#047857">增量：surfaceUpdate (add)</text>
+  <text x="170" y="342" text-anchor="middle" font-size="9" fill="#64748b">新增一个 Select 组件（菜系筛选）</text>
+
+  <line x1="170" y1="355" x2="170" y2="370" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Update 2: Modify component -->
+  <g filter="url(#shadow)">
+    <rect x="50" y="375" width="240" height="50" rx="8" fill="white" stroke="#f59e0b" stroke-width="1.5"/>
+  </g>
+  <rect x="50" y="375" width="240" height="20" rx="8" fill="#fef3c7"/>
+  <text x="170" y="390" text-anchor="middle" font-size="10" font-weight="600" fill="#92400e">增量：surfaceUpdate (update)</text>
+  <text x="170" y="412" text-anchor="middle" font-size="9" fill="#64748b">修改 Text 内容为"找到 5 家餐厅"</text>
+
+  <line x1="170" y1="425" x2="170" y2="440" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Update 3: Remove component -->
+  <g filter="url(#shadow)">
+    <rect x="50" y="445" width="240" height="50" rx="8" fill="white" stroke="#ef4444" stroke-width="1.5"/>
+  </g>
+  <rect x="50" y="445" width="240" height="20" rx="8" fill="#fee2e2"/>
+  <text x="170" y="460" text-anchor="middle" font-size="10" font-weight="600" fill="#991b1b">增量：surfaceUpdate (remove)</text>
+  <text x="170" y="482" text-anchor="middle" font-size="9" fill="#64748b">移除加载动画 Spinner</text>
+
+  <!-- ===== Bottom tip ===== -->
+  <rect x="100" y="545" width="620" height="26" rx="13" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1"/>
+  <text x="410" y="562" text-anchor="middle" font-size="11" fill="#64748b">扁平化邻接表结构：组件以列表存储，通过 parentId/childrenId 引用 — 支持细粒度增量更新</text>
+</svg>

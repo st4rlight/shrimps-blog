@@ -1,0 +1,120 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 560" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <linearGradient id="blueG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="greenG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#34d399;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="amberG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="violetG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#a78bfa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.12"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/>
+    </marker>
+    <marker id="arrowB" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#3b82f6"/>
+    </marker>
+    <marker id="arrowG" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#10b981"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="820" height="560" rx="14" fill="#f8fafc"/>
+
+  <!-- Title -->
+  <text x="410" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">AG-UI vs A2UI 对比</text>
+  <text x="410" y="54" text-anchor="middle" font-size="12" fill="#94a3b8">交互协议 vs 生成式 UI 协议 — 互补而非竞争</text>
+
+  <!-- ===== VS Circle ===== -->
+  <circle cx="410" cy="120" r="28" fill="white" stroke="#e2e8f0" stroke-width="3" filter="url(#shadow)"/>
+  <text x="410" y="127" text-anchor="middle" font-size="16" font-weight="700" fill="#475569">VS</text>
+
+  <!-- ===== Left: AG-UI ===== -->
+  <g filter="url(#shadow)">
+    <rect x="30" y="80" width="360" height="400" rx="12" fill="white" stroke="#3b82f6" stroke-width="2"/>
+  </g>
+  <rect x="30" y="80" width="360" height="40" rx="12" fill="url(#blueG)"/>
+  <rect x="30" y="104" width="360" height="16" fill="url(#blueG)"/>
+  <text x="210" y="108" text-anchor="middle" font-size="16" font-weight="700" fill="white">AG-UI</text>
+  <text x="210" y="142" text-anchor="middle" font-size="11" fill="#1d4ed8" font-weight="600">Agent-User Interaction Protocol</text>
+
+  <!-- Tag -->
+  <rect x="100" y="155" width="220" height="24" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="210" y="172" text-anchor="middle" font-size="10" font-weight="600" fill="#1d4ed8">交互协议 — "怎么通信"</text>
+
+  <!-- Key properties -->
+  <text x="50" y="205" font-size="11" font-weight="700" fill="#475569">核心定位</text>
+  <text x="50" y="224" font-size="10" fill="#64748b">标准化 Agent 与前端的双向通信</text>
+
+  <text x="50" y="250" font-size="11" font-weight="700" fill="#475569">通信方式</text>
+  <text x="50" y="269" font-size="10" fill="#64748b">事件流（SSE / WebSocket）</text>
+
+  <text x="50" y="295" font-size="11" font-weight="700" fill="#475569">数据格式</text>
+  <text x="50" y="314" font-size="10" fill="#64748b">结构化事件（16+ 种事件类型）</text>
+
+  <text x="50" y="340" font-size="11" font-weight="700" fill="#475569">关注点</text>
+  <text x="50" y="359" font-size="10" fill="#64748b">流式输出 · 状态同步 · 人工干预</text>
+  <text x="50" y="375" font-size="10" fill="#64748b">工具调用编排 · 生命周期管理</text>
+
+  <text x="50" y="401" font-size="11" font-weight="700" fill="#475569">发起方</text>
+  <text x="50" y="420" font-size="10" fill="#64748b">Agent → 前端（推送事件流）</text>
+  <text x="50" y="436" font-size="10" fill="#64748b">前端 → Agent（中断/审批/回复）</text>
+
+  <text x="50" y="462" font-size="11" font-weight="700" fill="#475569">出品方</text>
+  <text x="50" y="481" font-size="10" fill="#64748b">CopilotKit（2025.05）</text>
+
+  <!-- ===== Right: A2UI ===== -->
+  <g filter="url(#shadow)">
+    <rect x="430" y="80" width="360" height="400" rx="12" fill="white" stroke="#10b981" stroke-width="2"/>
+  </g>
+  <rect x="430" y="80" width="360" height="40" rx="12" fill="url(#greenG)"/>
+  <rect x="430" y="104" width="360" height="16" fill="url(#greenG)"/>
+  <text x="610" y="108" text-anchor="middle" font-size="16" font-weight="700" fill="white">A2UI</text>
+  <text x="610" y="142" text-anchor="middle" font-size="11" fill="#047857" font-weight="600">Agent-to-User Interface</text>
+
+  <!-- Tag -->
+  <rect x="500" y="155" width="220" height="24" rx="6" fill="#d1fae5" stroke="#86efac" stroke-width="1"/>
+  <text x="610" y="172" text-anchor="middle" font-size="10" font-weight="600" fill="#047857">UI 协议 — "画什么界面"</text>
+
+  <!-- Key properties -->
+  <text x="450" y="205" font-size="11" font-weight="700" fill="#475569">核心定位</text>
+  <text x="450" y="224" font-size="10" fill="#64748b">Agent 生成声明式 UI 组件描述</text>
+
+  <text x="450" y="250" font-size="11" font-weight="700" fill="#475569">通信方式</text>
+  <text x="450" y="269" font-size="10" fill="#64748b">不绑定传输（A2A/AG-UI/SSE/WS）</text>
+
+  <text x="450" y="295" font-size="11" font-weight="700" fill="#475569">数据格式</text>
+  <text x="450" y="314" font-size="10" fill="#64748b">声明式 JSON 蓝图（组件列表）</text>
+
+  <text x="450" y="340" font-size="11" font-weight="700" fill="#475569">关注点</text>
+  <text x="450" y="359" font-size="10" fill="#64748b">UI 生成 · 跨平台渲染 · 安全隔离</text>
+  <text x="450" y="375" font-size="10" fill="#64748b">增量更新 · 原生组件映射</text>
+
+  <text x="450" y="401" font-size="11" font-weight="700" fill="#475569">发起方</text>
+  <text x="450" y="420" font-size="10" fill="#64748b">Agent → 前端（推送 UI 蓝图）</text>
+  <text x="450" y="436" font-size="10" fill="#64748b">前端渲染 + 用户交互回调</text>
+
+  <text x="450" y="462" font-size="11" font-weight="700" fill="#475569">出品方</text>
+  <text x="450" y="481" font-size="10" fill="#64748b">Google（2025，v0.9）</text>
+
+  <!-- ===== Bottom: Synergy Section ===== -->
+  <g filter="url(#shadow)">
+    <rect x="60" y="500" width="700" height="48" rx="10" fill="#fef3c7" stroke="#fbbf24" stroke-width="2"/>
+  </g>
+  <rect x="60" y="500" width="700" height="20" rx="10" fill="url(#amberG)"/>
+  <rect x="60" y="510" width="700" height="10" fill="url(#amberG)"/>
+  <text x="410" y="515" text-anchor="middle" font-size="12" font-weight="700" fill="white">协同使用</text>
+  <text x="410" y="538" text-anchor="middle" font-size="11" fill="#92400e">AG-UI 负责事件流通信通道，A2UI 负责通过该通道传输 UI 蓝图 — 两者可以无缝配合</text>
+</svg>

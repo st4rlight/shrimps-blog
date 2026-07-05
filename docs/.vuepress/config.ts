@@ -90,6 +90,15 @@ export default defineUserConfig({
               'rag/taotian-rag-solution.md',
             ],
           },
+          {
+            text: 'AI周边生态',
+            link: '/ai-study/',
+            collapsed: false,
+            items: [
+              'ai-ecosystem/ag-ui-study-notes.md',
+              'ai-ecosystem/a2ui-study-notes.md',
+            ],
+          },
         ],
       },
       {

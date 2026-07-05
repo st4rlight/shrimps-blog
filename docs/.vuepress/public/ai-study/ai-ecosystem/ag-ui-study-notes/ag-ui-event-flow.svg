@@ -1,0 +1,186 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 540" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <linearGradient id="blueG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="greenG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#34d399;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="amberG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="violetG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#a78bfa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.12"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/>
+    </marker>
+    <marker id="arrowB" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#3b82f6"/>
+    </marker>
+    <marker id="arrowG" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#10b981"/>
+    </marker>
+    <marker id="arrowA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#f59e0b"/>
+    </marker>
+    <marker id="arrowV" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#8b5cf6"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="820" height="540" rx="14" fill="#f8fafc"/>
+
+  <!-- Title -->
+  <text x="410" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">AG-UI 事件流机制</text>
+  <text x="410" y="54" text-anchor="middle" font-size="12" fill="#94a3b8">Start-Content-End 模式 与 Snapshot-Delta 模式</text>
+
+  <!-- ===== Left Column: Start-Content-End Pattern ===== -->
+  <text x="210" y="82" text-anchor="middle" font-size="14" font-weight="700" fill="#1e293b">Start-Content-End 模式</text>
+  <text x="210" y="100" text-anchor="middle" font-size="10" fill="#94a3b8">用于流式文本消息和工具调用</text>
+
+  <!-- Timeline line -->
+  <line x1="210" y1="120" x2="210" y2="470" stroke="#dbeafe" stroke-width="3" stroke-dasharray="4,4"/>
+
+  <!-- Event 1: RUN_STARTED -->
+  <g filter="url(#shadow)">
+    <rect x="70" y="120" width="280" height="44" rx="10" fill="white" stroke="#3b82f6" stroke-width="2"/>
+  </g>
+  <rect x="70" y="120" width="280" height="20" rx="10" fill="url(#blueG)"/>
+  <rect x="70" y="132" width="280" height="8" fill="url(#blueG)"/>
+  <text x="210" y="135" text-anchor="middle" font-size="10" font-weight="700" fill="white">RUN_STARTED</text>
+  <text x="210" y="156" text-anchor="middle" font-size="9" fill="#64748b">Agent 运行开始，ThreadId + RunId</text>
+  <circle cx="210" cy="120" r="5" fill="#3b82f6"/>
+
+  <!-- Arrow down -->
+  <line x1="210" y1="164" x2="210" y2="188" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Event 2: TEXT_MESSAGE_START -->
+  <g filter="url(#shadow)">
+    <rect x="70" y="192" width="280" height="44" rx="10" fill="white" stroke="#10b981" stroke-width="2"/>
+  </g>
+  <rect x="70" y="192" width="280" height="20" rx="10" fill="url(#greenG)"/>
+  <rect x="70" y="204" width="280" height="8" fill="url(#greenG)"/>
+  <text x="210" y="207" text-anchor="middle" font-size="10" font-weight="700" fill="white">TEXT_MESSAGE_START</text>
+  <text x="210" y="228" text-anchor="middle" font-size="9" fill="#64748b">消息开始，分配 MessageId</text>
+  <circle cx="210" cy="192" r="5" fill="#10b981"/>
+
+  <!-- Arrow down -->
+  <line x1="210" y1="236" x2="210" y2="260" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Event 3: TEXT_MESSAGE_CONTENT (repeated) -->
+  <g filter="url(#shadow)">
+    <rect x="70" y="264" width="280" height="44" rx="10" fill="white" stroke="#10b981" stroke-width="2"/>
+  </g>
+  <rect x="70" y="264" width="280" height="20" rx="10" fill="url(#greenG)"/>
+  <rect x="70" y="276" width="280" height="8" fill="url(#greenG)"/>
+  <text x="210" y="279" text-anchor="middle" font-size="10" font-weight="700" fill="white">TEXT_MESSAGE_CONTENT</text>
+  <text x="210" y="300" text-anchor="middle" font-size="9" fill="#64748b">逐 token 流式输出 "Hello" " Wor" "ld"</text>
+  <circle cx="210" cy="264" r="5" fill="#10b981"/>
+
+  <!-- Loop indicator -->
+  <path d="M 210 308 Q 260 318 260 300 Q 260 284 210 294" stroke="#10b981" stroke-width="1.5" fill="none" stroke-dasharray="3,2" marker-end="url(#arrowG)"/>
+  <text x="278" y="304" font-size="8" fill="#10b981">重复</text>
+
+  <!-- Arrow down -->
+  <line x1="210" y1="308" x2="210" y2="332" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Event 4: TEXT_MESSAGE_END -->
+  <g filter="url(#shadow)">
+    <rect x="70" y="336" width="280" height="44" rx="10" fill="white" stroke="#10b981" stroke-width="2"/>
+  </g>
+  <rect x="70" y="336" width="280" height="20" rx="10" fill="url(#greenG)"/>
+  <rect x="70" y="348" width="280" height="8" fill="url(#greenG)"/>
+  <text x="210" y="351" text-anchor="middle" font-size="10" font-weight="700" fill="white">TEXT_MESSAGE_END</text>
+  <text x="210" y="372" text-anchor="middle" font-size="9" fill="#64748b">消息结束</text>
+  <circle cx="210" cy="336" r="5" fill="#10b981"/>
+
+  <!-- Arrow down -->
+  <line x1="210" y1="380" x2="210" y2="404" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Event 5: TOOL_CALL (Start→Args→End) -->
+  <g filter="url(#shadow)">
+    <rect x="70" y="408" width="280" height="44" rx="10" fill="white" stroke="#8b5cf6" stroke-width="2"/>
+  </g>
+  <rect x="70" y="408" width="280" height="20" rx="10" fill="url(#violetG)"/>
+  <rect x="70" y="420" width="280" height="8" fill="url(#violetG)"/>
+  <text x="210" y="423" text-anchor="middle" font-size="10" font-weight="700" fill="white">TOOL_CALL_START → ARGS → END</text>
+  <text x="210" y="444" text-anchor="middle" font-size="9" fill="#64748b">工具调用（同样遵循 Start-Content-End）</text>
+  <circle cx="210" cy="408" r="5" fill="#8b5cf6"/>
+
+  <!-- ===== Right Column: Snapshot-Delta Pattern ===== -->
+  <text x="610" y="82" text-anchor="middle" font-size="14" font-weight="700" fill="#1e293b">Snapshot-Delta 模式</text>
+  <text x="610" y="100" text-anchor="middle" font-size="10" fill="#94a3b8">用于 Agent 与 UI 间的状态同步</text>
+
+  <!-- Timeline line -->
+  <line x1="610" y1="120" x2="610" y2="470" stroke="#fef3c7" stroke-width="3" stroke-dasharray="4,4"/>
+
+  <!-- Event 1: STATE_SNAPSHOT (initial) -->
+  <g filter="url(#shadow)">
+    <rect x="470" y="120" width="280" height="60" rx="10" fill="white" stroke="#f59e0b" stroke-width="2"/>
+  </g>
+  <rect x="470" y="120" width="280" height="22" rx="10" fill="url(#amberG)"/>
+  <rect x="470" y="134" width="280" height="8" fill="url(#amberG)"/>
+  <text x="610" y="137" text-anchor="middle" font-size="10" font-weight="700" fill="white">STATE_SNAPSHOT</text>
+  <text x="610" y="160" text-anchor="middle" font-size="9" fill="#64748b">{ items: [], loading: true }</text>
+  <text x="610" y="174" text-anchor="middle" font-size="8" fill="#94a3b8">完整快照 —— 初始全量状态</text>
+  <circle cx="610" cy="120" r="5" fill="#f59e0b"/>
+
+  <!-- Arrow down -->
+  <line x1="610" y1="180" x2="610" y2="208" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Event 2: STATE_DELTA 1 -->
+  <g filter="url(#shadow)">
+    <rect x="470" y="212" width="280" height="60" rx="10" fill="white" stroke="#f59e0b" stroke-width="2"/>
+  </g>
+  <rect x="470" y="212" width="280" height="22" rx="10" fill="url(#amberG)"/>
+  <rect x="470" y="226" width="280" height="8" fill="url(#amberG)"/>
+  <text x="610" y="229" text-anchor="middle" font-size="10" font-weight="700" fill="white">STATE_DELTA</text>
+  <text x="610" y="252" text-anchor="middle" font-size="9" fill="#64748b">[ { op: "add", path: "/items/0", value: "Apple" } ]</text>
+  <text x="610" y="266" text-anchor="middle" font-size="8" fill="#94a3b8">增量更新 —— JSON Patch</text>
+  <circle cx="610" cy="212" r="5" fill="#f59e0b"/>
+
+  <!-- Arrow down -->
+  <line x1="610" y1="272" x2="610" y2="300" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Event 3: STATE_DELTA 2 -->
+  <g filter="url(#shadow)">
+    <rect x="470" y="304" width="280" height="60" rx="10" fill="white" stroke="#f59e0b" stroke-width="2"/>
+  </g>
+  <rect x="470" y="304" width="280" height="22" rx="10" fill="url(#amberG)"/>
+  <rect x="470" y="318" width="280" height="8" fill="url(#amberG)"/>
+  <text x="610" y="321" text-anchor="middle" font-size="10" font-weight="700" fill="white">STATE_DELTA</text>
+  <text x="610" y="344" text-anchor="middle" font-size="9" fill="#64748b">[ { op: "add", path: "/items/1", value: "Banana" } ]</text>
+  <text x="610" y="358" text-anchor="middle" font-size="8" fill="#94a3b8">再次增量更新</text>
+  <circle cx="610" cy="304" r="5" fill="#f59e0b"/>
+
+  <!-- Arrow down -->
+  <line x1="610" y1="364" x2="610" y2="392" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Event 4: STATE_DELTA 3 (update) -->
+  <g filter="url(#shadow)">
+    <rect x="470" y="396" width="280" height="60" rx="10" fill="white" stroke="#f59e0b" stroke-width="2"/>
+  </g>
+  <rect x="470" y="396" width="280" height="22" rx="10" fill="url(#amberG)"/>
+  <rect x="470" y="410" width="280" height="8" fill="url(#amberG)"/>
+  <text x="610" y="413" text-anchor="middle" font-size="10" font-weight="700" fill="white">STATE_DELTA</text>
+  <text x="610" y="436" text-anchor="middle" font-size="9" fill="#64748b">[ { op: "replace", path: "/loading", value: false } ]</text>
+  <text x="610" y="450" text-anchor="middle" font-size="8" fill="#94a3b8">修改字段值</text>
+  <circle cx="610" cy="396" r="5" fill="#f59e0b"/>
+
+  <!-- ===== Divider line ===== -->
+  <line x1="410" y1="80" x2="410" y2="470" stroke="#e2e8f0" stroke-width="2" stroke-dasharray="6,4"/>
+
+  <!-- ===== Bottom tip ===== -->
+  <rect x="100" y="490" width="620" height="38" rx="13" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1"/>
+  <text x="410" y="507" text-anchor="middle" font-size="11" fill="#64748b">💡 Start-Content-End：先发 Start，再逐段发 Content，最后发 End —— 流式但不丢序</text>
+  <text x="410" y="522" text-anchor="middle" font-size="11" fill="#64748b">Snapshot-Delta：先全量快照建基线，后续只传 JSON Patch 增量 —— 省带宽、不重传</text>
+</svg>
