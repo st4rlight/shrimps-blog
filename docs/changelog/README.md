@@ -11,6 +11,31 @@ icon: mdi:timeline-clock-outline
 
 <div class="changelog-timeline">
 
+<!-- ==================== 2026 年 7 月 ==================== -->
+
+<div class="timeline-month">
+  <div class="timeline-month__marker">2026 年 7 月</div>
+</div>
+
+<div class="timeline-item">
+  <div class="timeline-item__dot"></div>
+  <div class="timeline-item__content">
+    <div class="timeline-item__date">7 月 5 日</div>
+    <div class="timeline-item__entries">
+      <div class="timeline-entry">
+        <span class="timeline-entry__tag timeline-entry__tag--ai">AI学习</span>
+        <a class="timeline-entry__link" href="/ai-study/ag-ui-study-notes/">新增《AG-UI 学习笔记》</a>
+        <span class="timeline-entry__desc">—— Agent 与前端双向通信的轻量协议</span>
+      </div>
+      <div class="timeline-entry">
+        <span class="timeline-entry__tag timeline-entry__tag--ai">AI学习</span>
+        <a class="timeline-entry__link" href="/ai-study/a2ui-study-notes/">新增《A2UI 学习笔记》</a>
+        <span class="timeline-entry__desc">—— Google 声明式 UI 协议与原生渲染机制</span>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ==================== 2026 年 6 月 ==================== -->
 
 <div class="timeline-month">
@@ -136,6 +161,20 @@ icon: mdi:timeline-clock-outline
 <div class="timeline-item">
   <div class="timeline-item__dot"></div>
   <div class="timeline-item__content">
+    <div class="timeline-item__date">5 月 31 日</div>
+    <div class="timeline-item__entries">
+      <div class="timeline-entry">
+        <span class="timeline-entry__tag timeline-entry__tag--ai">AI学习</span>
+        <a class="timeline-entry__link" href="/ai-study/openspec-guide/">新增《OpenSpec 实战指南》</a>
+        <span class="timeline-entry__desc">—— 面向 AI 编码助手的规范驱动开发框架</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="timeline-item">
+  <div class="timeline-item__dot"></div>
+  <div class="timeline-item__content">
     <div class="timeline-item__date">5 月 28 日</div>
     <div class="timeline-item__entries">
       <div class="timeline-entry">
@@ -184,6 +223,25 @@ icon: mdi:timeline-clock-outline
         <span class="timeline-entry__tag timeline-entry__tag--ai">AI学习</span>
         <a class="timeline-entry__link" href="/ai-study/system-prompt-and-injection-analysis/">更新《Claude Code 系统提示词与注入分析》</a>
         <span class="timeline-entry__desc">—— 补充 Tool Assembly 和 Deferred Tool 机制</span>
+      </div>
+      <div class="timeline-entry">
+        <span class="timeline-entry__tag timeline-entry__tag--thought">思考领悟</span>
+        <a class="timeline-entry__link" href="/thoughts/a4puatid/">新增《持续思考的意义》</a>
+        <span class="timeline-entry__desc">—— 停下来想一想，也是一种进步</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="timeline-item">
+  <div class="timeline-item__dot"></div>
+  <div class="timeline-item__content">
+    <div class="timeline-item__date">5 月 19 日</div>
+    <div class="timeline-item__entries">
+      <div class="timeline-entry">
+        <span class="timeline-entry__tag timeline-entry__tag--ai">AI学习</span>
+        <a class="timeline-entry__link" href="/ai-study/superpowers-guide/">新增《Superpowers 使用技巧》</a>
+        <span class="timeline-entry__desc">—— Claude Code 的 skill 系统与工程流程</span>
       </div>
     </div>
   </div>

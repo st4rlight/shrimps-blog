@@ -91,20 +91,246 @@ AG-UI 不绑定特定传输协议，支持多种通道：
 
 ### 3.3 Human-in-the-Loop（人机协同）
 
-这是 AG-UI 最核心的能力之一。在传统 Agent 应用中，一旦任务启动，用户只能等待结果。而 AG-UI 允许用户在 Agent 执行过程中：
+这是 AG-UI 最核心的能力之一。在传统 Agent 应用中，一旦任务启动，用户只能等待结果。AG-UI 通过**中断感知的运行生命周期**（interrupt-aware run lifecycle）实现了更强大的人机协同。
 
-- **中断**：暂停当前执行
-- **审批**：对工具调用结果进行确认或拒绝
-- **修改**：调整 Agent 的执行参数
-- **回复**：在 `input-required` 状态下提供额外信息
+#### 中断与恢复机制
 
-实现机制是：Agent 在需要人工干预时发出 `STEP_STARTED` 事件并进入等待状态，前端展示交互 UI，用户操作后通过 AG-UI Client 发回结果，Agent 从断点继续执行。
+当 Agent 需要人工介入时（如审批敏感操作、请求结构化输入、等待策略决策），它不会简单地暂停等待，而是通过 `RUN_FINISHED` 事件携带 `outcome` 字段来声明中断：
+
+```text
+Agent 运行中
+  → RUN_FINISHED { outcome: { type: "interrupt", interrupts: [...] } }
+     ← Agent 暂停，等待用户响应
+
+用户操作后
+  → 新的 RunAgentInput { resume: [...] }
+     ← Agent 从断点继续执行
+```
+
+每个中断对象（Interrupt）包含以下字段：
+
+| 字段 | 说明 |
+|------|------|
+| `id` | 中断的唯一标识，用于关联恢复请求 |
+| `reason` | 中断原因分类（如 `tool_call`、`input_required`） |
+| `message` | 人类可读的提示文本，通用 UI 回退内容 |
+| `toolCallId` | 绑定到之前的 `TOOL_CALL_*` 序列（工具审批场景） |
+| `responseSchema` | 期望的恢复数据的 JSON Schema |
+| `expiresAt` | 可选的 ISO-8601 过期时间，过期后恢复会产生 `RUN_ERROR` |
+| `metadata` | 自由格式的框架特定数据 |
+
+#### 恢复（Resume）
+
+用户响应后，前端发起新的运行，在 `RunAgentInput` 中携带 `resume` 数组：
+
+```typescript
+type ResumeEntry = {
+  interruptId: string        // 对应中断的 id
+  status: "resolved" | "cancelled"  // resolved=已响应，cancelled=已放弃
+  payload?: any              // resolved 时的响应数据，按 responseSchema 校验
+}
+```
+
+- **resolved**：用户已响应。`payload` 携带响应内容，拒绝也通过 payload 表达（如 `{ approved: false }`），而非单独的状态
+- **cancelled**：用户放弃，不提供有效输入，`payload` 应省略
+
+#### 中断契约规则
+
+1. **同线程**：恢复请求必须使用与中断运行相同的 `threadId`
+2. **覆盖所有中断**：单次 `resume` 数组必须处理被中断运行中的**所有**开放中断，不支持部分恢复
+3. **待处理中断阻塞新输入**：如果线程有未解决的中断，任何新的 `RunAgentInput` 必须包含 `resume` 来处理它们
+4. **幂等性**：相同 `(threadId, interruptId, status, payload)` 的恢复可以安全重放
+5. **Payload 校验**：如果中断声明了 `responseSchema`，`payload` 必须通过校验
+
+#### 工具审批与参数编辑
+
+最常见的 HITL 场景是工具调用审批。Agent 在发起 `sendEmail` 等敏感工具调用后中断，等待用户确认：
+
+```json
+{
+  "outcome": {
+    "type": "interrupt",
+    "interrupts": [{
+      "id": "int-abc123",
+      "reason": "tool_call",
+      "message": "确认发送邮件给 a@b.com？",
+      "toolCallId": "tc-001",
+      "responseSchema": {
+        "type": "object",
+        "properties": {
+          "approved": { "type": "boolean" },
+          "editedArgs": { "type": "object", "description": "工具参数的完整替换，非合并" }
+        },
+        "required": ["approved"]
+      }
+    }]
+  }
+}
+```
+
+`editedArgs` 是工具参数的**完整替换**而非部分合并。它在 schema 中的存在是客户端可以提供编辑 UI 的能力信号。Agent 还可以通过 Capabilities 声明 `approveWithEdits: true` 来表示支持参数编辑。
 
 ### 3.4 Frontend-Defined 工具
 
 AG-UI 引入了一个独特的机制：**前端定义的工具**。并非所有工具都需要在 Agent 后端执行——有些操作（如打开文件选择器、获取地理位置、操作 DOM）天然属于前端能力。
 
 AG-UI 允许在前端注册工具定义，Agent 调用这些工具时，请求会通过事件流转发到前端执行，结果再回传给 Agent。这大大扩展了 Agent 的能力边界。
+
+#### Tool 结构定义
+
+每个工具遵循统一的结构：
+
+```typescript
+interface Tool {
+  name: string          // 工具名称，唯一标识
+  description: string   // 工具描述，帮助 Agent 理解何时使用
+  parameters: {         // JSON Schema 定义的参数结构
+    type: "object"
+    properties: { ... }
+    required: string[]
+  }
+}
+```
+
+`parameters` 字段使用 [JSON Schema](https://json-schema.org/) 定义工具接受的参数结构。这个 schema 同时被 Agent（用于生成有效的工具调用）和前端（用于校验和解析工具参数）使用。
+
+#### 工具调用流程
+
+```text
+1. 前端定义工具 → 通过 RunAgentInput.tools 传递给 Agent
+2. Agent 决定调用工具 → 发出 TOOL_CALL_START / TOOL_CALL_ARGS / TOOL_CALL_END
+3. 前端执行工具（如果是前端工具）→ 或 Agent 后端执行
+4. 工具结果作为 ToolMessage 加入对话历史 → Agent 继续推理
+```
+
+工具执行后，结果以 `ToolMessage` 的形式返回给 Agent：
+
+```typescript
+{
+  id: "result-789",
+  role: "tool",
+  content: "true",           // 工具结果字符串
+  toolCallId: "tool-123"     // 引用原始工具调用
+}
+```
+
+### 3.5 RunAgentInput：Client → Agent 的输入
+
+前面讲的都是 Agent → 前端方向的事件流。反方向——前端 → Agent——通过 `RunAgentInput` 完成。这是前端启动 Agent 运行时发送的完整输入 payload：
+
+```typescript
+interface RunAgentInput {
+  threadId: string        // 会话线程 ID，贯穿同一对话的所有运行
+  runId: string           // 本次运行的唯一 ID
+  parentRunId?: string    // 父运行 ID，用于分支/时间旅行
+  state: any              // 共享状态对象
+  messages: Message[]     // 完整对话历史
+  tools: Tool[]           // 前端定义的工具列表
+  context: Context[]      // 额外上下文信息
+  forwardedProps: any     // 透传属性
+  resume?: ResumeEntry[]  // 恢复中断运行（HITL）
+}
+```
+
+| 字段 | 说明 |
+|------|------|
+| `threadId` | 会话线程标识。同一对话的多次运行共享同一 `threadId`，Agent 据此维护对话上下文 |
+| `runId` | 单次运行的唯一标识。Agent 在 `RUN_STARTED` 事件中回传此 ID，后续所有事件都关联到它 |
+| `parentRunId` | 可选的父运行 ID。用于分支和时间旅行——创建一个基于先前运行的分支，类似 git 的 append-only 日志 |
+| `state` | 共享状态对象。Agent 可以通过 `STATE_SNAPSHOT` / `STATE_DELTA` 事件更新它 |
+| `messages` | 完整的对话消息历史，包含 user / assistant / system / tool / developer / activity / reasoning 等角色 |
+| `tools` | 前端定义的工具列表。Agent 在运行中可以调用这些工具，调用请求通过事件流转发到前端执行 |
+| `context` | 额外的上下文信息数组，为 Agent 提供补充描述 |
+| `forwardedProps` | 透传属性，用于向 Agent 传递框架特定的自定义数据 |
+| `resume` | 可选的中断恢复数组。当 Agent 之前以 `outcome: interrupt` 结束时，前端通过此字段提交用户的响应 |
+
+核心执行接口很简单：
+
+```typescript
+// 核心协议抽象：运行 Agent 并接收事件流
+type RunAgent = (input: RunAgentInput) => Observable<BaseEvent>
+```
+
+前端调用 `agent.runAgent(input)` 发起运行，返回一个事件流的 Observable。Agent 处理输入并以 `RUN_STARTED` 开始、`RUN_FINISHED` 或 `RUN_ERROR` 结束的事件流作为响应。
+
+### 3.6 消息类型系统
+
+`RunAgentInput.messages` 中的每条消息都遵循统一的 `BaseMessage` 接口，并通过 `role` 字段区分类型：
+
+```typescript
+interface BaseMessage {
+  id: string              // 消息唯一标识
+  role: string            // 发送者角色
+  content?: string        // 可选的文本内容
+  name?: string           // 可选的发送者名称
+  encryptedContent?: string  // 可选的加密内容，用于隐私保护的状态延续
+}
+```
+
+`role` 可以是 `user`、`assistant`、`system`、`tool`、`developer`、`activity` 或 `reasoning`。
+
+::: tip encryptedContent 的用途
+`encryptedContent` 支持隐私保护工作流——敏感内容（如推理链）可以跨轮次传递而不暴露原始内容。这对于零数据保留（ZDR）合规和 `store:false` 场景特别有用。
+:::
+
+#### 主要消息类型
+
+| 类型 | role | 说明 |
+|------|------|------|
+| **UserMessage** | `user` | 用户消息，`content` 支持纯文本或多模态内容（图片、音频、视频、文档） |
+| **AssistantMessage** | `assistant` | AI 助手回复，可包含文本内容和工具调用 |
+| **SystemMessage** | `system` | 系统指令或上下文 |
+| **ToolMessage** | `tool` | 工具执行结果，通过 `toolCallId` 关联到原始工具调用 |
+| **DeveloperMessage** | `developer` | 开发者级别的指令 |
+| **ReasoningMessage** | `reasoning` | 推理过程消息（思维链） |
+
+#### 多模态输入
+
+`UserMessage` 的 `content` 可以是纯文本，也可以是多模态内容数组：
+
+```typescript
+type InputContent =
+  | TextInputContent      // 纯文本
+  | ImageInputContent     // 图片（URL 或 Base64）
+  | AudioInputContent     // 音频
+  | VideoInputContent     // 视频
+  | DocumentInputContent  // 文档
+```
+
+这种设计让传统纯文本输入和富媒体负载在同一个消息结构中共存。
+
+### 3.7 能力声明（Capabilities）
+
+Agent 可以在运行时声明自己支持哪些能力，前端据此做功能适配和特性开关：
+
+```typescript
+interface AgentCapabilities {
+  identity?: IdentityCapabilities         // 身份信息（名称、版本、描述）
+  transport?: TransportCapabilities       // 支持的传输方式
+  state?: StateCapabilities               // 状态管理能力
+  multiAgent?: MultiAgentCapabilities     // 多 Agent 协作
+  reasoning?: ReasoningCapabilities       // 推理可见性
+  multimodal?: MultimodalCapabilities     // 多模态输入/输出
+  execution?: ExecutionCapabilities       // 执行控制（沙箱、超时、迭代上限）
+  humanInTheLoop?: HumanInTheLoopCapabilities  // 人机协同
+  custom?: Record<string, unknown>        // 自定义能力扩展
+}
+```
+
+其中 `HumanInTheLoopCapabilities` 与 3.3 节的中断机制直接相关：
+
+```typescript
+interface HumanInTheLoopCapabilities {
+  supported?: boolean       // 是否支持任何形式的人机协同
+  approvals?: boolean       // 是否支持敏感操作审批
+  interventions?: boolean   // 是否支持中途干预和修改计划
+  feedback?: boolean        // 是否支持用户反馈（点赞/纠正）
+  interrupts?: boolean      // 是否参与 AG-UI 中断协议
+  approveWithEdits?: boolean // 工具审批是否接受 editedArgs
+}
+```
+
+前端可以根据能力声明做条件渲染——只有 Agent 声明了 `approvals: true` 才显示审批 UI，只有声明了 `interrupts: true` 才启用中断恢复流程。
 
 ## 四、事件系统
 
@@ -114,12 +340,14 @@ AG-UI 允许在前端注册工具定义，Agent 调用这些工具时，请求�
 
 | 事件类别 | 代表事件 | 说明 |
 |---------|---------|------|
-| 生命周期事件 | `RUN_STARTED`、`RUN_FINISHED`、`RUN_ERROR`、`STEP_STARTED`、`STEP_FINISHED` | 监控 Agent 运行进度 |
-| 文本消息事件 | `TEXT_MESSAGE_START`、`TEXT_MESSAGE_CONTENT`、`TEXT_MESSAGE_END` | 处理流式文本内容 |
-| 工具调用事件 | `TOOL_CALL_START`、`TOOL_CALL_ARGS`、`TOOL_CALL_END` | 管理工具执行流程 |
-| 状态管理事件 | `STATE_SNAPSHOT`、`STATE_DELTA` | Agent 与 UI 间状态同步 |
-| 活动事件 | `ACTIVITY_*` | 表示正在进行的活动进度 |
-| 自定义事件 | 用户定义 | 支持扩展 |
+| 生命周期事件 | `RUN_STARTED`、`RUN_FINISHED`、`RUN_ERROR`、`STEP_STARTED`、`STEP_FINISHED` | 监控 Agent 运行进度。`RUN_FINISHED` 可携带 `outcome` 声明成功或中断 |
+| 文本消息事件 | `TEXT_MESSAGE_START`、`TEXT_MESSAGE_CONTENT`、`TEXT_MESSAGE_END`、`TEXT_MESSAGE_CHUNK` | 处理流式文本内容。`CHUNK` 是便捷事件，自动展开为 Start→Content→End |
+| 工具调用事件 | `TOOL_CALL_START`、`TOOL_CALL_ARGS`、`TOOL_CALL_END`、`TOOL_CALL_RESULT`、`TOOL_CALL_CHUNK` | 管理工具执行流程。`RESULT` 携带工具执行结果，`CHUNK` 是便捷事件 |
+| 状态管理事件 | `STATE_SNAPSHOT`、`STATE_DELTA`、`MESSAGES_SNAPSHOT` | Agent 与 UI 间状态同步。`MESSAGES_SNAPSHOT` 提供完整对话历史 |
+| 推理事件 | `REASONING_START`、`REASONING_MESSAGE_*`、`REASONING_END`、`REASONING_ENCRYPTED_VALUE` | 展示 Agent 内部推理过程，支持加密推理项跨轮次传递 |
+| 活动事件 | `ACTIVITY_SNAPSHOT`、`ACTIVITY_DELTA` | 表示正在进行的活动进度 |
+| 原始事件 | `RAW` | 透传底层协议的原始事件，用于调试和溯源 |
+| 自定义事件 | `CUSTOM` | 支持扩展，携带自定义 `name` 和 `value` |
 
 ### 4.2 两种核心事件模式
 
@@ -204,8 +432,8 @@ AG-UI 的所有具体事件类型都在 `BaseEvent` 的基础上扩展自身特�
 BaseEvent
   ├── LifecycleEvent          生命周期事件
   │     + threadId, runId, stepId?
-  │     ├── RUN_STARTED
-  │     ├── RUN_FINISHED
+  │     ├── RUN_STARTED     (+ parentRunId?, input?)
+  │     ├── RUN_FINISHED    (+ outcome?, result?)
   │     ├── RUN_ERROR
   │     ├── STEP_STARTED
   │     └── STEP_FINISHED
@@ -214,19 +442,43 @@ BaseEvent
   │     + threadId, runId, messageId
   │     ├── TEXT_MESSAGE_START    (+ role)
   │     ├── TEXT_MESSAGE_CONTENT  (+ content)
-  │     └── TEXT_MESSAGE_END
+  │     ├── TEXT_MESSAGE_END
+  │     └── TEXT_MESSAGE_CHUNK     (+ delta, 可选便捷事件)
   │
   ├── ToolCallEvent           工具调用事件
   │     + threadId, runId, toolCallId
-  │     ├── TOOL_CALL_START  (+ toolName, parentStepId?)
-  │     ├── TOOL_CALL_ARGS   (+ delta)
-  │     └── TOOL_CALL_END    (+ result?)
+  │     ├── TOOL_CALL_START   (+ toolName, parentMessageId?)
+  │     ├── TOOL_CALL_ARGS    (+ delta)
+  │     ├── TOOL_CALL_END
+  │     ├── TOOL_CALL_RESULT  (+ messageId, content, role)
+  │     └── TOOL_CALL_CHUNK   (+ delta, 可选便捷事件)
   │
   ├── StateSnapshotEvent      状态快照事件
   │     + threadId, runId, snapshot
   │
   ├── StateDeltaEvent         状态增量事件
   │     + threadId, runId, delta (RFC 6902 patch 数组)
+  │
+  ├── MessagesSnapshotEvent   消息历史快照事件
+  │     + threadId, runId, messages (完整对话历史)
+  │
+  ├── ReasoningEvent          推理事件
+  │     + threadId, runId, messageId
+  │     ├── REASONING_START
+  │     ├── REASONING_MESSAGE_START
+  │     ├── REASONING_MESSAGE_CONTENT  (+ delta)
+  │     ├── REASONING_MESSAGE_END
+  │     ├── REASONING_MESSAGE_CHUNK     (+ delta, 可选便捷事件)
+  │     ├── REASONING_END
+  │     └── REASONING_ENCRYPTED_VALUE   (+ value, 加密推理项)
+  │
+  ├── ActivityEvent           活动事件
+  │     + threadId, runId
+  │     ├── ACTIVITY_SNAPSHOT  (+ activity)
+  │     └── ACTIVITY_DELTA    (+ delta)
+  │
+  ├── RawEvent                原始事件
+  │     + threadId, runId, source?, data?
   │
   └── CustomEvent             自定义事件
         + threadId, runId, name, value?
@@ -297,9 +549,14 @@ TOOL_CALL_START  { toolCallId: "tc-1", toolName: "search_web" }
 TOOL_CALL_ARGS   { toolCallId: "tc-1", delta: '{"query":"AI' }
 TOOL_CALL_ARGS   { toolCallId: "tc-1", delta: ' protocols"}' }
 TOOL_CALL_END    { toolCallId: "tc-1" }
+TOOL_CALL_RESULT { toolCallId: "tc-1", content: "AI protocols are..." }
 ```
 
-前端可以在 `TOOL_CALL_START` 时显示"正在搜索..."的 UI，在 `TOOL_CALL_END` 时更新为完成状态。如果工具需要人工审批，Agent 可以在 `TOOL_CALL_START` 后暂停，等待前端返回审批结果。
+前端可以在 `TOOL_CALL_START` 时显示"正在搜索..."的 UI，在 `TOOL_CALL_END` 时更新为完成状态，`TOOL_CALL_RESULT` 则携带工具执行的实际结果。如果工具需要人工审批，Agent 可以通过中断机制（3.3 节）暂停等待用户确认。
+
+::: tip 便捷事件 TOOL_CALL_CHUNK
+`TOOL_CALL_CHUNK` 是一个便捷事件，客户端流转换器会自动将其展开为标准的 Start→Args→End 三部曲。首个 chunk 必须包含 `toolCallId` 和 `toolCallName`，后续 chunk 只需 `delta`。`TEXT_MESSAGE_CHUNK` 同理。
+:::
 
 ### 5.3 状态同步
 
@@ -309,20 +566,68 @@ AG-UI 的状态同步能力让 Agent 和 UI 始终保持一致：
 - 初始通过 `STATE_SNAPSHOT` 全量推送给前端
 - 后续每次状态变化，通过 `STATE_DELTA` 发送 JSON Patch
 - 前端应用 patch 后，UI 自动更新
+- `MESSAGES_SNAPSHOT` 可用于同步完整对话历史（如页面刷新后恢复）
 
 这种机制特别适合：代码编辑器、数据表格、多步表单等需要实时同步大型状态的场景。
 
-### 5.4 生命周期管理
+### 5.4 生命周期管理与中断
 
 生命周期事件让前端能够追踪 Agent 的完整执行过程：
 
 | 事件 | 触发时机 | 前端典型响应 |
 |------|---------|------------|
-| `RUN_STARTED` | Agent 开始执行 | 显示加载状态 |
+| `RUN_STARTED` | Agent 开始执行（携带 `threadId`、`runId`） | 显示加载状态 |
 | `STEP_STARTED` | 某一步骤开始 | 更新进度指示器 |
 | `STEP_FINISHED` | 某一步骤完成 | 更新进度 |
 | `RUN_ERROR` | 执行出错 | 显示错误信息 |
-| `RUN_FINISHED` | Agent 执行完成 | 移除加载状态 |
+| `RUN_FINISHED` | Agent 执行完成 | 移除加载状态，检查 `outcome` |
+
+`RUN_STARTED` 和 `RUN_FINISHED`（或 `RUN_ERROR`）是**必须**的，构成 Agent 运行的边界。`RUN_STARTED` 还可携带 `parentRunId`（分支/时间旅行）和 `input`（本次运行的输入 payload）。
+
+`RUN_FINISHED` 的 `outcome` 字段是中断感知生命周期的核心：
+
+- `outcome: { type: "success" }` — 正常完成
+- `outcome: { type: "interrupt", interrupts: [...] }` — 暂停等待人工输入
+- 省略 `outcome` — 传统生产者，视为正常完成
+
+### 5.5 推理过程可见性
+
+AG-UI 支持将 Agent 的内部推理过程（思维链）通过事件流暴露给前端：
+
+```text
+REASONING_START           ← 推理开始
+  REASONING_MESSAGE_START     ← 推理消息开始
+    REASONING_MESSAGE_CONTENT  ← 逐段推送推理内容
+    REASONING_MESSAGE_CONTENT  ← "因此，可以推断..."
+  REASONING_MESSAGE_END       ← 推理消息结束
+REASONING_END             ← 推理结束
+```
+
+推理事件遵循与文本消息相同的 Start-Content-End 模式，前端可以折叠展示或单独显示推理过程。
+
+`REASONING_ENCRYPTED_VALUE` 事件支持加密推理项的跨轮次传递——在 `store:false` 或零数据保留（ZDR）场景下，推理内容可以加密形式在轮次间传递而不暴露原始内容。这与消息的 `encryptedContent` 字段配合使用。
+
+::: warning 旧版 THINKING 事件
+早期的 `THINKING_START`、`THINKING_END`、`THINKING_TEXT_MESSAGE_*` 事件已被标记为废弃，将在 1.0.0 版本移除。新项目应使用 `REASONING_*` 系列事件。
+:::
+
+### 5.6 人机协同（Human-in-the-Loop）
+
+基于 3.3 节介绍的中断机制，AG-UI 的 HITL 工作流如下：
+
+```text
+1. Agent 运行中需要人工介入
+2. Agent 发出 RUN_FINISHED { outcome: { type: "interrupt", interrupts: [...] } }
+3. 前端根据 interrupts 展示交互 UI（审批对话框、表单等）
+4. 用户操作后，前端发起新运行：RunAgentInput { resume: [...] }
+5. Agent 收到 resume，从断点继续执行
+```
+
+常见场景：
+
+- **工具调用审批**：Agent 提议发送邮件 → 中断等待确认 → 用户批准/拒绝 → Agent 继续/取消
+- **结构化输入请求**：Agent 需要用户提供表季报表数据 → 中断并附带 `responseSchema` → 用户填写表单 → Agent 继续
+- **参数编辑**：Agent 提议工具调用 → 中断并接受 `editedArgs` → 用户修改参数 → Agent 用修改后的参数执行
 
 ## 六、实战：如何使用 AG-UI
 
@@ -416,7 +721,7 @@ AG-UI 发布时即获得主流框架的官方集成支持：
 
 ### 8.1 合理使用事件类型
 
-不要把所有信息都塞进 `TEXT_MESSAGE_CONTENT`。对于结构化数据，优先使用 `STATE_DELTA` 同步状态；对于工具调用进度，使用 `TOOL_CALL_*` 事件；对于自定义数据，使用自定义事件。
+不要把所有信息都塞进 `TEXT_MESSAGE_CONTENT`。对于结构化数据，优先使用 `STATE_DELTA` 同步状态；对于工具调用进度，使用 `TOOL_CALL_*` 事件；对于推理过程，使用 `REASONING_*` 事件；对于自定义数据，使用 `CUSTOM` 事件。`MESSAGES_SNAPSHOT` 用于页面刷新等需要恢复完整对话历史的场景。
 
 ### 8.2 状态同步的粒度控制
 
@@ -424,13 +729,22 @@ AG-UI 发布时即获得主流框架的官方集成支持：
 
 ### 8.3 Human-in-the-Loop 的边界
 
-不是所有工具调用都需要人工审批。建议只对**不可逆操作**（如删除数据、发送邮件、执行支付）启用审批，其他操作让 Agent 自主执行，避免过度打断用户体验。
+不是所有工具调用都需要人工审批。建议只对**不可逆操作**（如删除数据、发送邮件、执行支付）启用中断审批，其他操作让 Agent 自主执行，避免过度打断用户体验。同时注意：
+
+- 恢复（resume）必须覆盖**所有**开放中断，不支持部分恢复
+- 如果中断声明了 `responseSchema`，前端必须校验用户输入
+- 善用 `approveWithEdits` 能力，让用户可以修改工具参数而非只能批准/拒绝
+- 过期的中断（`expiresAt`）不应尝试恢复，应重新发起运行
 
 ### 8.4 错误处理
 
-始终监听 `RUN_ERROR` 事件。Agent 执行可能因为 LLM 超时、工具异常、上下文溢出等原因失败，前端需要提供友好的错误提示和重试机制。
+始终监听 `RUN_ERROR` 事件。Agent 执行可能因为 LLM 超时、工具异常、上下文溢出、中断过期等原因失败，前端需要提供友好的错误提示和重试机制。
 
-### 8.5 传输层选择
+### 8.5 能力声明与降级
+
+前端应根据 Agent 的 `Capabilities` 做特性开关。如果 Agent 未声明 `interrupts: true`，不应启用中断恢复流程；如果未声明 `reasoning`，不应显示推理面板。`custom` 字段可以携带框架特定的能力信息。
+
+### 8.6 传输层选择
 
 - 默认用 SSE：简单可靠，适合大多数场景
 - 需要频繁前端→Agent 交互时用 WebSocket
@@ -444,7 +758,9 @@ AG-UI 填补了 Agent 协议栈的最后一块空白——Agent 与用户之间�
 
 - **标准化**：统一了 Agent 与前端的通信方式，消除框架适配成本
 - **事件驱动**：基于事件流的架构天然支持流式输出和实时交互
-- **双向通信**：不仅 Agent 推送给前端，用户也能在执行过程中干预
+- **双向通信**：`RunAgentInput` 携带完整上下文发往 Agent，事件流推送结果回前端
+- **中断感知**：通过 `RUN_FINISHED` 的 `outcome: interrupt` 机制实现可靠的人机协同
+- **能力声明**：Agent 运行时声明能力，前端按需启用功能
 - **框架无关**：后端可自由替换 Agent 框架，前端无感知
 
 如果说 MCP 让 Agent 有了"手"（调用工具），A2A 让 Agent 有了"伙伴"（协作），那 AG-UI 让 Agent 有了"脸"（面向用户）。三者协同，构成了完整的 Agent 协议生态。
