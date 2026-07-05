@@ -29,7 +29,8 @@ permalink: /ai-study/
 
 这一部分主要记录 `AI Agent` 基础设施架构的演进趋势、核心设计理念与工程实践。
 
-- [Anthropic Managed Agents解析](./ai-infra/anthropic-managed-agents.md)
+- [Managed Agents解析](./ai-infra/anthropic-managed-agents.md)
+- [Loop Engineering解析](./ai-infra/loop-engineering.md)
 
 ### RAG技术学习
 

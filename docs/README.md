@@ -82,7 +82,7 @@ config:
   <div class="home-timeline__body">
     <span class="home-timeline__date">06-08</span>
     <span class="home-timeline__tag home-timeline__tag--ai">AI学习</span>
-    <a href="/ai-study/anthropic-managed-agents/">新增《Anthropic Managed Agents解析》</a>
+    <a href="/ai-study/anthropic-managed-agents/">新增《Managed Agents解析》</a>
   </div>
 </div>
 

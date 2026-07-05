@@ -1,20 +1,20 @@
 ---
-title: Anthropic Managed Agents解析
+title: Managed Agents解析
 tags:
   - Managed Agents
   - MCP
   - Harness
   - Agent架构
   - Anthropic
-excerpt: 深入解析 Anthropic Managed Agents 的架构设计——"大脑-双手-会话"三元解耦如何将 Agent 从单体"宠物"变为可规模化部署的"牛群"，以及 MCP 协议、Harness 工程与安全架构的核心实现要点。
+excerpt: 深入解析 Managed Agents 的架构设计——"大脑-双手-会话"三元解耦如何将 Agent 从单体"宠物"变为可规模化部署的"牛群"，以及 MCP 协议、Harness 工程与安全架构的核心实现要点。
 createTime: 2026/06/08 10:00:00
 permalink: /ai-study/anthropic-managed-agents/
 ---
 
-# Anthropic Managed Agents解析
+# Managed Agents解析
 
 > 参考资料：
-> - Anthropic 技术博客《Scaling Managed Agents: Decoupling the brain from the hands》（2026.04.09，作者：Lance Martin, Gabe Cemaj, Michael Cohen）
+> - Anthropic 技术博客《Scaling Managed Agents: Decoupling the brain from the hands》（2026.04.09）
 
 ## 一、从Claude Code到Managed Agents
 
@@ -36,7 +36,7 @@ permalink: /ai-study/anthropic-managed-agents/
 
 ### 1.2 Managed Agents能力全景
 
-2026年4月，Anthropic发布Managed Agents，这是一套可组合的API，用于构建和部署云托管的AI Agent。与市面上的Agent框架不同，Anthropic卖的核心不是框架，而是**Harness（Agent编排引擎）**——一个经过调优的编排循环，自动处理工具调用决策、上下文管理、错误恢复，并且随模型能力升级自动演进。
+2026年4月，Anthropic发布Managed Agents，这是一套可组合的API，用于构建和部署云托管的AI Agent。与市面上的Agent框架不同，Managed Agents的核心不是编排框架，而是**Harness（Agent编排引擎）**——一个经过调优的编排循环，自动处理工具调用决策、上下文管理、错误恢复，并且随模型能力升级自动演进。
 
 Managed Agents提供六大核心能力：
 
@@ -59,7 +59,7 @@ Managed Agents提供六大核心能力：
 
 这一架构使得每个组件都可以独立伸缩、独立故障恢复、独立演进——Agent从"宠物"变成了"牛群"（Cattle）：只有编号没有名字，出现故障直接替换而非修复，配置完全自动化且可复制。
 
-这个比喻最早由Bill Baker在2012年提出，用以描述服务器管理的两种范式：宠物模式——每台服务器有名字，出故障时修复而非替换，配置独特且手工维护；牛群模式——服务器只有编号，故障时直接替换，配置完全自动化且可复制。云计算的演进史本质上就是这场"宠物到牛群"的迁移——AWS EC2、Kubernetes、Serverless等技术的普及，让"牛群模式"成为现代基础设施的默认选择。Managed Agents把同样的范式带到了Agent基础设施。
+这个比喻最早由微软工程师Bill Baker在2012年左右提出，用以描述服务器管理的两种范式：宠物模式——每台服务器有名字，出故障时修复而非替换，配置独特且手工维护；牛群模式——服务器只有编号，故障时直接替换，配置完全自动化且可复制。云计算的演进史本质上就是这场"宠物到牛群"的迁移——AWS EC2、Kubernetes、Serverless等技术的普及，让"牛群模式"成为现代基础设施的默认选择。Managed Agents把同样的范式带到了Agent基础设施。
 
 ## 二、核心架构：Brain-Hands-Session三元解耦
 
@@ -103,9 +103,9 @@ Harness是Brain的工程载体，负责实现LLM与外部世界的交互循环�
 6. 将工具执行结果反馈给LLM
 7. 重复步骤3-6，直到任务完成
 
-Harness的设计空间其实很广阔——Claude Code是一个优秀的Harness实现，但绝不是唯一选择。不同场景需要不同的策略：有的需要更强的自主性，有的需要更严格的人类监督，有的需要特定的安全策略。解耦的价值就在于此：**Brain的推理能力不变，但Harness可以根据场景灵活替换**。
+Harness的设计空间其实很广阔——Claude Code是一个优秀的Harness实现，但绝不是唯一选择。不同场景需要不同的策略：有的需要更强的自主性，有的需要更严格的人类监督，有的需要特定的安全策略。**解耦的价值就在于此：Brain的推理能力不变，但Harness可以根据场景灵活替换**。
 
-但这里有一个容易被忽略的问题：**Harness编码的是"模型做不到什么"的假设，而这些假设会过时**。一个具体例子：Sonnet 4.5在接近上下文限制时会提前收工（Anthropic内部称之为"context anxiety"），为此他们在Harness里加了上下文重置来应对。但换到Opus 4.5之后，这个行为消失了，重置反而变成了多余的负担。这正是解耦的意义——当模型能力演进时，Harness可以独立更新，而不需要重建整个系统。
+但这里有一个容易被忽略的问题：**Harness编码的是"模型做不到什么"的假设，而这些假设会过时**。一个具体例子：早期的Sonnet模型在接近上下文限制时会提前收工（Anthropic内部称之为"context anxiety"），为此他们在Harness里加了上下文重置来应对。但换到更新的Opus模型之后，这个行为消失了，重置反而变成了多余的负担。这正是解耦的意义——当模型能力演进时，Harness可以独立更新，而不需要重建整个系统。
 
 ### 2.2 Hands：无状态的执行环境
 
@@ -115,7 +115,7 @@ Hands是Agent的"执行肢体"，负责实际运行代码、编辑文件、调�
 - **故障隔离**：单个沙盒崩溃不影响其他组件
 - **安全边界**：天然隔离层，限制攻击影响范围
 
-沙盒与Brain之间通过**MCP（Model Context Protocol）协议**通信。MCP是Anthropic于2024年11月开源的协议标准，现已成为AI Agent领域的事实标准。敏感凭证不存储在沙盒中，而是由独立的MCP代理负责获取和管理——沙盒中的代码只能通过MCP代理发起请求，无法直接接触令牌。
+沙盒与Brain之间通过**MCP（Model Context Protocol）协议**通信。MCP是Anthropic于2024年11月25日开源的协议标准，现已成为AI Agent领域的事实标准。敏感凭证不存储在沙盒中，而是由独立的MCP代理负责获取和管理——沙盒中的代码只能通过MCP代理发起请求，无法直接接触令牌。
 
 具体的安全实践值得展开：**Git令牌在初始化时写入本地remote，Agent不经手**——沙盒中的代码可以执行git push/pull，但令牌已经预置在git配置中，Agent代码从不直接读写令牌。**OAuth令牌存储在安全保管库（Vault）中，通过MCP代理调用**——当Agent需要访问外部API时，MCP代理从Vault获取令牌、发起请求、返回结果，令牌本身从不暴露给沙盒。这种"凭证永不进入执行环境"的设计，使得安全边界因解耦而变得干净利落——在耦合架构中，Claude生成的不可信代码和敏感凭证共处同一个容器，提示词注入可以直接窃取凭证；解耦后，凭证永远不在沙盒里，攻击面被大幅收窄。
 
@@ -169,7 +169,7 @@ getEvents(filter) → Event[]
 
 从分布式系统的角度看，Managed Agents与Event Sourcing（事件溯源）模式有很强的同构关系：**session是append-only event log（事实来源），context window是从事件流投影出的临时视图**。
 
-这解释了为什么context compaction（上下文压缩）只是projection策略——当Context Window快满时，Harness对事件进行摘要、截断，但这只是投影出一个适合当前窗口的视图，原始事件仍完整保留在session中。就像数据库的物化视图可以刷新重建，但底层表数据不能丢。"上下文被压缩"不等于"历史被删除"。
+这解释了为什么context compaction（上下文压缩）只是一种projection策略——当Context Window快满时，Harness对事件进行摘要、截断，但这只是投影出一个适合当前窗口的视图，原始事件仍完整保留在session中。就像数据库的物化视图可以刷新重建，但底层表数据不能丢。**"上下文被压缩"不等于"历史被删除"**。
 
 与传统durable workflow（如Temporal）的关键差异在于：传统workflow要求replay确定性，而LLM推理天然是概率性的。因此恢复时不是重跑过去的推理，而是重放已固化的历史事实，只在新的决策边界继续调用模型。
 
@@ -343,7 +343,7 @@ Managed Agents：  沙盒 → MCP代理（获取凭证）→ 执行调用
 
 **局限四：长期记忆不足**
 
-Session面向短期会话，跨会话的知识积累和个性化能力需要扩展。
+Session面向短期会话设计，跨会话的知识积累和个性化能力尚未提供。Agent完成一个会话后，其经验无法自动沉淀到下一个会话，更无法跨用户、跨任务复用。
 
 ### 5.3 演进方向
 
@@ -437,4 +437,4 @@ Managed Agents的架构设计，本质上是在回答三个问题：
 
 **产品经理**：识别可以Agent化的工作流程，设计人类在回路的交互模式；建立Agent成功的度量指标，规划能力的渐进式开放。
 
-正如Claude Code创作者Boris Cherny所言：**AI Agent将重塑几乎所有基于计算机的工作**。编程的本质将从"写代码"转向"指导AI写代码"，技能要求将从语法细节转向架构设计，从调试技巧转向评估能力。开发者需要拥抱变化、持续学习，同时保持批判性思维——AI会犯错，人类需要保持判断能力。
+正如Claude Code负责人Boris Cherny所展示的实践那样：**AI Agent正在重塑软件开发的工作方式**。编程的本质正从"写代码"转向"指导AI写代码"，技能要求从语法细节转向架构设计，从调试技巧转向评估能力。开发者需要拥抱变化、持续学习，同时保持批判性思维——AI会犯错，人类需要保持判断能力。

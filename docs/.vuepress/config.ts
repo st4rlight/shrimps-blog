@@ -80,6 +80,7 @@ export default defineUserConfig({
             collapsed: false,
             items: [
               'ai-infra/anthropic-managed-agents.md',
+              'ai-infra/loop-engineering.md',
             ],
           },
           {

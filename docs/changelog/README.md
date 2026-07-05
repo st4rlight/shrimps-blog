@@ -63,7 +63,7 @@ icon: mdi:timeline-clock-outline
     <div class="timeline-item__entries">
       <div class="timeline-entry">
         <span class="timeline-entry__tag timeline-entry__tag--ai">AI学习</span>
-        <a class="timeline-entry__link" href="/ai-study/anthropic-managed-agents/">新增《Anthropic Managed Agents解析》</a>
+        <a class="timeline-entry__link" href="/ai-study/anthropic-managed-agents/">新增《Managed Agents解析》</a>
         <span class="timeline-entry__desc">—— Brain-Hands-Session 三元解耦与安全架构</span>
       </div>
       <div class="timeline-entry">
