@@ -1,0 +1,134 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 460" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <linearGradient id="blueG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="violetG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#a78bfa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="greenG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#34d399;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.12"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/>
+    </marker>
+    <marker id="arrowG" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#10b981"/>
+    </marker>
+    <marker id="arrowB" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#3b82f6"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="820" height="460" rx="16" fill="#f8fafc"/>
+
+  <!-- Title -->
+  <text x="410" y="38" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">Actor 模型核心概念总览</text>
+  <text x="410" y="60" text-anchor="middle" font-size="12" fill="#94a3b8">每个 Actor 是一个独立并发原语：私有状态 + 消息邮箱 + 异步通信</text>
+
+  <!-- ===== Center: Main Actor ===== -->
+  <g filter="url(#shadow)">
+    <rect x="290" y="95" width="240" height="250" rx="12" fill="white" stroke="#3b82f6" stroke-width="2"/>
+  </g>
+  <rect x="290" y="95" width="240" height="44" rx="12" fill="url(#blueG)"/>
+  <rect x="290" y="119" width="240" height="20" fill="url(#blueG)"/>
+  <text x="410" y="123" text-anchor="middle" font-size="16" font-weight="700" fill="white">Actor</text>
+
+  <!-- Private State box -->
+  <rect x="310" y="155" width="200" height="40" rx="8" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="410" y="172" text-anchor="middle" font-size="12" font-weight="600" fill="#1e293b">私有状态 (Private State)</text>
+  <text x="410" y="187" text-anchor="middle" font-size="10" fill="#64748b">外部无法直接访问 · 无需锁保护</text>
+
+  <!-- Mailbox -->
+  <rect x="310" y="208" width="200" height="48" rx="8" fill="#eff6ff" stroke="#93c5fd" stroke-width="1"/>
+  <text x="410" y="225" text-anchor="middle" font-size="12" font-weight="600" fill="#1d4ed8">Mailbox（邮箱）</text>
+  <g transform="translate(330, 234)">
+    <rect x="0" y="0" width="24" height="16" rx="3" fill="#3b82f6" opacity="0.7"/>
+    <rect x="28" y="0" width="24" height="16" rx="3" fill="#3b82f6" opacity="0.5"/>
+    <rect x="56" y="0" width="24" height="16" rx="3" fill="#3b82f6" opacity="0.35"/>
+    <rect x="84" y="0" width="24" height="16" rx="3" fill="#3b82f6" opacity="0.2"/>
+    <rect x="112" y="0" width="24" height="16" rx="3" fill="#cbd5e1"/>
+  </g>
+  <text x="410" y="266" text-anchor="middle" font-size="9" fill="#94a3b8">FIFO 队列 · 一次只处理一条消息</text>
+
+  <!-- Three abilities -->
+  <text x="410" y="288" text-anchor="middle" font-size="11" font-weight="600" fill="#475569">三大能力</text>
+  <g transform="translate(310, 296)">
+    <rect x="0" y="0" width="62" height="36" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+    <text x="31" y="15" text-anchor="middle" font-size="9" font-weight="600" fill="#1d4ed8">接收消息</text>
+    <text x="31" y="28" text-anchor="middle" font-size="8" fill="#3b82f6">处理状态</text>
+  </g>
+  <g transform="translate(379, 296)">
+    <rect x="0" y="0" width="62" height="36" rx="6" fill="#ede9fe" stroke="#c4b5fd" stroke-width="1"/>
+    <text x="31" y="15" text-anchor="middle" font-size="9" font-weight="600" fill="#5b21b6">创建子 Actor</text>
+    <text x="31" y="28" text-anchor="middle" font-size="8" fill="#8b5cf6">形成层级</text>
+  </g>
+  <g transform="translate(448, 296)">
+    <rect x="0" y="0" width="62" height="36" rx="6" fill="#d1fae5" stroke="#86efac" stroke-width="1"/>
+    <text x="31" y="15" text-anchor="middle" font-size="9" font-weight="600" fill="#047857">发送消息</text>
+    <text x="31" y="28" text-anchor="middle" font-size="8" fill="#10b981">异步不阻塞</text>
+  </g>
+
+  <!-- ===== Left: Sender Actor ===== -->
+  <g filter="url(#shadow)">
+    <rect x="40" y="150" width="150" height="80" rx="12" fill="white" stroke="#8b5cf6" stroke-width="2"/>
+  </g>
+  <rect x="40" y="150" width="150" height="32" rx="12" fill="url(#violetG)"/>
+  <rect x="40" y="166" width="150" height="16" fill="url(#violetG)"/>
+  <text x="115" y="170" text-anchor="middle" font-size="13" font-weight="700" fill="white">Actor A（发送方）</text>
+  <text x="115" y="205" text-anchor="middle" font-size="10" fill="#64748b">通过 ActorRef 发送</text>
+  <text x="115" y="220" text-anchor="middle" font-size="10" fill="#64748b">异步消息</text>
+
+  <!-- Arrow from A to center -->
+  <line x1="190" y1="190" x2="280" y2="190" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="235" y="183" text-anchor="middle" font-size="9" fill="#64748b">tell / ask</text>
+
+  <!-- ===== Right: Receiver Actor ===== -->
+  <g filter="url(#shadow)">
+    <rect x="630" y="150" width="150" height="80" rx="12" fill="white" stroke="#10b981" stroke-width="2"/>
+  </g>
+  <rect x="630" y="150" width="150" height="32" rx="12" fill="url(#greenG)"/>
+  <rect x="630" y="166" width="150" height="16" fill="url(#greenG)"/>
+  <text x="705" y="170" text-anchor="middle" font-size="13" font-weight="700" fill="white">Actor B（接收方）</text>
+  <text x="705" y="205" text-anchor="middle" font-size="10" fill="#64748b">位置透明</text>
+  <text x="705" y="220" text-anchor="middle" font-size="10" fill="#64748b">本地 / 远程无感</text>
+
+  <!-- Arrow from center to B -->
+  <line x1="540" y1="190" x2="620" y2="190" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="580" y="183" text-anchor="middle" font-size="9" fill="#64748b">! message</text>
+
+  <!-- ===== Bottom: Child Actors ===== -->
+  <g filter="url(#shadow)">
+    <rect x="310" y="375" width="60" height="50" rx="8" fill="white" stroke="#8b5cf6" stroke-width="1.5"/>
+  </g>
+  <text x="340" y="397" text-anchor="middle" font-size="10" font-weight="600" fill="#5b21b6">Child A</text>
+  <text x="340" y="412" text-anchor="middle" font-size="8" fill="#94a3b8">子 Actor</text>
+
+  <g filter="url(#shadow)">
+    <rect x="380" y="375" width="60" height="50" rx="8" fill="white" stroke="#8b5cf6" stroke-width="1.5"/>
+  </g>
+  <text x="410" y="397" text-anchor="middle" font-size="10" font-weight="600" fill="#5b21b6">Child B</text>
+  <text x="410" y="412" text-anchor="middle" font-size="8" fill="#94a3b8">子 Actor</text>
+
+  <g filter="url(#shadow)">
+    <rect x="450" y="375" width="60" height="50" rx="8" fill="white" stroke="#8b5cf6" stroke-width="1.5"/>
+  </g>
+  <text x="480" y="397" text-anchor="middle" font-size="10" font-weight="600" fill="#5b21b6">Child C</text>
+  <text x="480" y="412" text-anchor="middle" font-size="8" fill="#94a3b8">子 Actor</text>
+
+  <!-- Arrows from Actor to children -->
+  <line x1="370" y1="345" x2="340" y2="370" stroke="#a78bfa" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="410" y1="345" x2="410" y2="370" stroke="#a78bfa" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="450" y1="345" x2="480" y2="370" stroke="#a78bfa" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Bottom tip -->
+  <rect x="170" y="438" width="480" height="20" rx="10" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1"/>
+  <text x="410" y="452" text-anchor="middle" font-size="10" fill="#15803d">💡 Actor 之间不共享状态，只通过异步消息通信，天然避免竞态条件</text>
+</svg>

@@ -50,7 +50,17 @@ export default defineUserConfig({
         type: 'doc',
         dir: 'ai-cs',
         title: 'AI客服系统',
-        sidebar: [],
+        sidebar: [
+          {
+            text: '周边生态工具',
+            link: '/ai-cs/',
+            collapsed: false,
+            items: [
+              'ecosystem-tools/akka-introduction.md',
+              'ecosystem-tools/qlexpress-study-notes.md',
+            ],
+          },
+        ],
       },
       {
         type: 'doc',

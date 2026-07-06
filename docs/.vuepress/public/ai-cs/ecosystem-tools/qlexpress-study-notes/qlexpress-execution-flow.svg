@@ -1,0 +1,159 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 420" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <linearGradient id="blueG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="violetG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#a78bfa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="greenG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#34d399;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.12"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="820" height="420" rx="16" fill="#f8fafc"/>
+
+  <!-- Title -->
+  <text x="410" y="38" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">QLExpress 执行流程</text>
+  <text x="410" y="60" text-anchor="middle" font-size="12" fill="#94a3b8">表达式字符串 → 词法分析 → 语法分析 → 指令缓存 → 虚拟机执行</text>
+
+  <!-- ===== Phase 1: Lexer ===== -->
+  <g filter="url(#shadow)">
+    <rect x="30" y="85" width="220" height="200" rx="12" fill="white" stroke="#3b82f6" stroke-width="2"/>
+  </g>
+  <rect x="30" y="85" width="220" height="40" rx="12" fill="url(#blueG)"/>
+  <rect x="30" y="105" width="220" height="20" fill="url(#blueG)"/>
+  <text x="140" y="110" text-anchor="middle" font-size="15" font-weight="700" fill="white">1. 词法分析 (Lexer)</text>
+
+  <!-- Input -->
+  <rect x="50" y="140" width="180" height="28" rx="6" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="140" y="158" text-anchor="middle" font-size="11" font-family="monospace" fill="#1e293b">"a + b * 2"</text>
+
+  <!-- Arrow down -->
+  <line x1="140" y1="170" x2="140" y2="185" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Token stream -->
+  <g transform="translate(50, 190)">
+    <rect x="0" y="0" width="38" height="24" rx="4" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+    <text x="19" y="16" text-anchor="middle" font-size="9" font-family="monospace" fill="#1d4ed8">ID:a</text>
+    <rect x="44" y="0" width="30" height="24" rx="4" fill="#fef3c7" stroke="#fbbf24" stroke-width="1"/>
+    <text x="59" y="16" text-anchor="middle" font-size="10" fill="#92400e">+</text>
+    <rect x="80" y="0" width="38" height="24" rx="4" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+    <text x="99" y="16" text-anchor="middle" font-size="9" font-family="monospace" fill="#1d4ed8">ID:b</text>
+    <rect x="124" y="0" width="30" height="24" rx="4" fill="#fef3c7" stroke="#fbbf24" stroke-width="1"/>
+    <text x="139" y="16" text-anchor="middle" font-size="10" fill="#92400e">*</text>
+    <rect x="160" y="0" width="46" height="24" rx="4" fill="#d1fae5" stroke="#86efac" stroke-width="1"/>
+    <text x="183" y="16" text-anchor="middle" font-size="9" font-family="monospace" fill="#047857">NUM:2</text>
+  </g>
+  <text x="140" y="230" text-anchor="middle" font-size="9" fill="#64748b">Token 流</text>
+  <rect x="50" y="242" width="180" height="32" rx="6" fill="#eff6ff"/>
+  <text x="140" y="262" text-anchor="middle" font-size="10" fill="#3b82f6">字符流 → Token 序列</text>
+
+  <!-- Arrow between phase 1 and 2 -->
+  <line x1="250" y1="185" x2="290" y2="185" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- ===== Phase 2: Parser ===== -->
+  <g filter="url(#shadow)">
+    <rect x="300" y="85" width="220" height="200" rx="12" fill="white" stroke="#8b5cf6" stroke-width="2"/>
+  </g>
+  <rect x="300" y="85" width="220" height="40" rx="12" fill="url(#violetG)"/>
+  <rect x="300" y="105" width="220" height="20" fill="url(#violetG)"/>
+  <text x="410" y="110" text-anchor="middle" font-size="15" font-weight="700" fill="white">2. 语法分析 (Parser)</text>
+
+  <!-- AST visualization -->
+  <text x="410" y="145" text-anchor="middle" font-size="10" fill="#64748b">构建抽象语法树 (AST)</text>
+
+  <!-- AST tree -->
+  <g transform="translate(360, 155)">
+    <!-- Root: + -->
+    <circle cx="50" cy="15" r="16" fill="#c4b5fd" stroke="#8b5cf6" stroke-width="1.5"/>
+    <text x="50" y="19" text-anchor="middle" font-size="11" font-weight="700" fill="#5b21b6">+</text>
+    <!-- Left: a -->
+    <line x1="44" y1="28" x2="20" y2="55" stroke="#c4b5fd" stroke-width="1.5"/>
+    <circle cx="15" cy="62" r="12" fill="#dbeafe" stroke="#3b82f6" stroke-width="1"/>
+    <text x="15" y="65" text-anchor="middle" font-size="9" fill="#1d4ed8">a</text>
+    <!-- Right: * -->
+    <line x1="56" y1="28" x2="85" y2="55" stroke="#c4b5fd" stroke-width="1.5"/>
+    <circle cx="90" cy="62" r="16" fill="#fde68a" stroke="#f59e0b" stroke-width="1.5"/>
+    <text x="90" y="66" text-anchor="middle" font-size="11" font-weight="700" fill="#92400e">*</text>
+    <!-- * children -->
+    <line x1="84" y1="75" x2="70" y2="98" stroke="#fde68a" stroke-width="1.5"/>
+    <circle cx="65" cy="105" r="12" fill="#dbeafe" stroke="#3b82f6" stroke-width="1"/>
+    <text x="65" y="108" text-anchor="middle" font-size="9" fill="#1d4ed8">b</text>
+    <line x1="96" y1="75" x2="110" y2="98" stroke="#fde68a" stroke-width="1.5"/>
+    <circle cx="115" cy="105" r="12" fill="#d1fae5" stroke="#10b981" stroke-width="1"/>
+    <text x="115" y="108" text-anchor="middle" font-size="9" fill="#047857">2</text>
+  </g>
+
+  <!-- Cache box -->
+  <rect x="320" y="242" width="180" height="32" rx="6" fill="#ede9fe"/>
+  <text x="410" y="262" text-anchor="middle" font-size="10" fill="#8b5cf6">AST 编译缓存（isCache=true）</text>
+
+  <!-- Arrow between phase 2 and 3 -->
+  <line x1="520" y1="185" x2="560" y2="185" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- ===== Phase 3: Execution ===== -->
+  <g filter="url(#shadow)">
+    <rect x="570" y="85" width="220" height="200" rx="12" fill="white" stroke="#10b981" stroke-width="2"/>
+  </g>
+  <rect x="570" y="85" width="220" height="40" rx="12" fill="url(#greenG)"/>
+  <rect x="570" y="105" width="220" height="20" fill="url(#greenG)"/>
+  <text x="680" y="110" text-anchor="middle" font-size="15" font-weight="700" fill="white">3. 指令执行 (VM)</text>
+
+  <!-- Instructions -->
+  <g transform="translate(590, 140)">
+    <rect x="0" y="0" width="80" height="20" rx="4" fill="#d1fae5" stroke="#86efac" stroke-width="1"/>
+    <text x="40" y="14" text-anchor="middle" font-size="9" font-family="monospace" fill="#047857">LOAD_VAR a</text>
+    <rect x="0" y="26" width="80" height="20" rx="4" fill="#d1fae5" stroke="#86efac" stroke-width="1"/>
+    <text x="40" y="40" text-anchor="middle" font-size="9" font-family="monospace" fill="#047857">LOAD_VAR b</text>
+    <rect x="0" y="52" width="80" height="20" rx="4" fill="#d1fae5" stroke="#86efac" stroke-width="1"/>
+    <text x="40" y="66" text-anchor="middle" font-size="9" font-family="monospace" fill="#047857">LOAD_CONST 2</text>
+    <rect x="0" y="78" width="80" height="20" rx="4" fill="#fef3c7" stroke="#fbbf24" stroke-width="1"/>
+    <text x="40" y="92" text-anchor="middle" font-size="9" font-family="monospace" fill="#92400e">MUL</text>
+    <rect x="0" y="104" width="80" height="20" rx="4" fill="#fef3c7" stroke="#fbbf24" stroke-width="1"/>
+    <text x="40" y="118" text-anchor="middle" font-size="9" font-family="monospace" fill="#92400e">ADD</text>
+  </g>
+
+  <!-- Context input -->
+  <g transform="translate(690, 140)">
+    <rect x="0" y="0" width="80" height="55" rx="6" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+    <text x="40" y="16" text-anchor="middle" font-size="9" font-weight="600" fill="#475569">Context</text>
+    <text x="40" y="30" text-anchor="middle" font-size="8" font-family="monospace" fill="#64748b">a = 10</text>
+    <text x="40" y="44" text-anchor="middle" font-size="8" font-family="monospace" fill="#64748b">b = 20</text>
+  </g>
+
+  <!-- Result -->
+  <rect x="590" y="242" width="180" height="32" rx="6" fill="#ecfdf5"/>
+  <text x="680" y="262" text-anchor="middle" font-size="10" fill="#047857">结果: 10 + 20 × 2 = 50 ✓</text>
+
+  <!-- ===== Bottom: Cache flow ===== -->
+  <line x1="30" y1="310" x2="790" y2="310" stroke="#e2e8f0" stroke-width="1"/>
+
+  <text x="410" y="332" text-anchor="middle" font-size="13" font-weight="600" fill="#475569">编译缓存机制</text>
+
+  <g transform="translate(100, 345)">
+    <rect x="0" y="0" width="260" height="32" rx="8" fill="#fef3c7" stroke="#fbbf24" stroke-width="1"/>
+    <text x="130" y="20" text-anchor="middle" font-size="10" fill="#92400e">首次执行：解析 + 编译 AST + 缓存 + 执行</text>
+  </g>
+
+  <line x1="360" y1="361" x2="400" y2="361" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <g transform="translate(420, 345)">
+    <rect x="0" y="0" width="300" height="32" rx="8" fill="#d1fae5" stroke="#86efac" stroke-width="1"/>
+    <text x="150" y="20" text-anchor="middle" font-size="10" fill="#047857">后续执行：命中缓存 → 跳过解析 → 直接执行</text>
+  </g>
+
+  <!-- Bottom tip -->
+  <rect x="150" y="392" width="520" height="22" rx="11" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1"/>
+  <text x="410" y="407" text-anchor="middle" font-size="10" fill="#15803d">💡 保持表达式模板固定、变量通过 Context 传入，才能命中编译缓存</text>
+</svg>

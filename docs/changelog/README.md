@@ -20,6 +20,25 @@ icon: mdi:timeline-clock-outline
 <div class="timeline-item">
   <div class="timeline-item__dot"></div>
   <div class="timeline-item__content">
+    <div class="timeline-item__date">7 月 7 日</div>
+    <div class="timeline-item__entries">
+      <div class="timeline-entry">
+        <span class="timeline-entry__tag timeline-entry__tag--ai">AI客服系统</span>
+        <a class="timeline-entry__link" href="/ai-cs/akka-introduction/">新增《Akka高并发系统介绍》</a>
+        <span class="timeline-entry__desc">—— 基于 Actor 模型的高并发分布式框架入门</span>
+      </div>
+      <div class="timeline-entry">
+        <span class="timeline-entry__tag timeline-entry__tag--ai">AI客服系统</span>
+        <a class="timeline-entry__link" href="/ai-cs/qlexpress-study-notes/">新增《QLExpress表达式引擎学习笔记》</a>
+        <span class="timeline-entry__desc">—— 阿里轻量级表达式引擎的语法、机制与客服场景实践</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="timeline-item">
+  <div class="timeline-item__dot"></div>
+  <div class="timeline-item__content">
     <div class="timeline-item__date">7 月 5 日</div>
     <div class="timeline-item__entries">
       <div class="timeline-entry">
