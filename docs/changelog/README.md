@@ -24,13 +24,18 @@ icon: mdi:timeline-clock-outline
     <div class="timeline-item__entries">
       <div class="timeline-entry">
         <span class="timeline-entry__tag timeline-entry__tag--ai">AI客服系统</span>
+        <a class="timeline-entry__link" href="/ai-cs/fsm-introduction/">新增《有限状态机FSM》</a>
+        <span class="timeline-entry__desc">—— FSM三要素、DFA/NFA分类、四种实现方式、主流框架对比与基于策略模式的轻量级状态机实战</span>
+      </div>
+      <div class="timeline-entry">
+        <span class="timeline-entry__tag timeline-entry__tag--ai">AI客服系统</span>
         <a class="timeline-entry__link" href="/ai-cs/flow-orchestration-engine/">新增《Flow流程编排引擎》</a>
         <span class="timeline-entry__desc">—— LiteFlow 与 CompileFlow 两大流程编排引擎的设计与实践</span>
       </div>
       <div class="timeline-entry">
         <span class="timeline-entry__tag timeline-entry__tag--ai">AI客服系统</span>
         <a class="timeline-entry__link" href="/ai-cs/flowlong-analysis/">新增《BPM审批流引擎》</a>
-        <span class="timeline-entry__desc">—— 极简审批工作流引擎，JSON定义流程、MyBatis-Plus持久化、零BPMN依赖</span>
+        <span class="timeline-entry__desc">—— BPM审批流引擎完整概念体系与FlowLong飞龙工作流引擎实战</span>
       </div>
       <div class="timeline-entry">
         <span class="timeline-entry__tag timeline-entry__tag--ai">AI客服系统</span>

@@ -1,0 +1,152 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 540" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <linearGradient id="blueG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="greenG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#34d399;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="amberG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="violetG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#a78bfa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.12"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto" preserveAspectRatio="xMidYMid meet">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/>
+    </marker>
+    <marker id="arrowB" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto" preserveAspectRatio="xMidYMid meet">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#3b82f6"/>
+    </marker>
+  </defs>
+
+  <!-- ===== Background ===== -->
+  <rect width="820" height="540" rx="12" fill="#f8fafc"/>
+
+  <!-- ===== Title ===== -->
+  <text x="410" y="35" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">有限状态机核心概念总览</text>
+  <text x="410" y="55" text-anchor="middle" font-size="12" fill="#94a3b8">三要素 + 辅助概念 + 状态流转示意</text>
+
+  <!-- ===== Top: Three Core Elements ===== -->
+  <!-- State Card -->
+  <g filter="url(#shadow)">
+    <rect x="30" y="80" width="240" height="90" rx="10" fill="white" stroke="#3b82f6" stroke-width="2"/>
+  </g>
+  <rect x="30" y="80" width="240" height="32" rx="10" fill="url(#blueG)"/>
+  <rect x="30" y="92" width="240" height="20" fill="url(#blueG)"/>
+  <text x="150" y="101" text-anchor="middle" font-size="14" font-weight="700" fill="white">State（状态）</text>
+  <text x="150" y="130" text-anchor="middle" font-size="11" fill="#475569">对象在生命周期中的一个稳定阶段</text>
+  <text x="150" y="148" text-anchor="middle" font-size="10" fill="#64748b">例：IDLE、ACTIVE、CLOSED</text>
+
+  <!-- Event Card -->
+  <g filter="url(#shadow)">
+    <rect x="290" y="80" width="240" height="90" rx="10" fill="white" stroke="#10b981" stroke-width="2"/>
+  </g>
+  <rect x="290" y="80" width="240" height="32" rx="10" fill="url(#greenG)"/>
+  <rect x="290" y="92" width="240" height="20" fill="url(#greenG)"/>
+  <text x="410" y="101" text-anchor="middle" font-size="14" font-weight="700" fill="white">Event（事件）</text>
+  <text x="410" y="130" text-anchor="middle" font-size="11" fill="#475569">触发状态变化的外部输入</text>
+  <text x="410" y="148" text-anchor="middle" font-size="10" fill="#64748b">例：USER_MESSAGE、TIMEOUT</text>
+
+  <!-- Transition Card -->
+  <g filter="url(#shadow)">
+    <rect x="550" y="80" width="240" height="90" rx="10" fill="white" stroke="#f59e0b" stroke-width="2"/>
+  </g>
+  <rect x="550" y="80" width="240" height="32" rx="10" fill="url(#amberG)"/>
+  <rect x="550" y="92" width="240" height="20" fill="url(#amberG)"/>
+  <text x="670" y="101" text-anchor="middle" font-size="14" font-weight="700" fill="white">Transition（转换）</text>
+  <text x="670" y="130" text-anchor="middle" font-size="11" fill="#475569">从一个状态到另一个状态的映射</text>
+  <text x="670" y="148" text-anchor="middle" font-size="10" fill="#64748b">例：IDLE + USER_MESSAGE → ACTIVE</text>
+
+  <!-- Arrows between top cards -->
+  <line x1="270" y1="125" x2="286" y2="125" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="530" y1="125" x2="546" y2="125" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- ===== Middle: Auxiliary Concepts ===== -->
+  <text x="410" y="200" text-anchor="middle" font-size="13" font-weight="600" fill="#475569">辅助概念</text>
+
+  <!-- Action -->
+  <rect x="40" y="215" width="175" height="55" rx="8" fill="#ede9fe" stroke="#c4b5fd" stroke-width="1"/>
+  <text x="127" y="237" text-anchor="middle" font-size="12" font-weight="600" fill="#5b21b6">Action（动作）</text>
+  <text x="127" y="255" text-anchor="middle" font-size="10" fill="#64748b">转换时执行的副作用</text>
+
+  <!-- Guard -->
+  <rect x="232" y="215" width="175" height="55" rx="8" fill="#fef3c7" stroke="#fbbf24" stroke-width="1"/>
+  <text x="319" y="237" text-anchor="middle" font-size="12" font-weight="600" fill="#92400e">Guard（守卫条件）</text>
+  <text x="319" y="255" text-anchor="middle" font-size="10" fill="#64748b">转换的前置条件判断</text>
+
+  <!-- Initial State -->
+  <rect x="424" y="215" width="175" height="55" rx="8" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="511" y="237" text-anchor="middle" font-size="12" font-weight="600" fill="#1d4ed8">Initial State（初始状态）</text>
+  <text x="511" y="255" text-anchor="middle" font-size="10" fill="#64748b">状态机的起点</text>
+
+  <!-- Final State -->
+  <rect x="616" y="215" width="175" height="55" rx="8" fill="#fee2e2" stroke="#fca5a5" stroke-width="1"/>
+  <text x="703" y="237" text-anchor="middle" font-size="12" font-weight="600" fill="#991b1b">Final State（终态）</text>
+  <text x="703" y="255" text-anchor="middle" font-size="10" fill="#64748b">到达后不再转换</text>
+
+  <!-- ===== Bottom: State Transition Diagram ===== -->
+  <text x="410" y="305" text-anchor="middle" font-size="13" font-weight="600" fill="#475569">状态转换示例：客服会话</text>
+
+  <!-- IDLE (initial) -->
+  <circle cx="130" cy="370" r="8" fill="none" stroke="#6366f1" stroke-width="2"/>
+  <line x1="138" y1="370" x2="165" y2="370" stroke="#6366f1" stroke-width="2" marker-end="url(#arrow)"/>
+  <g filter="url(#shadow)">
+    <rect x="170" y="350" width="100" height="40" rx="20" fill="#dbeafe" stroke="#3b82f6" stroke-width="2"/>
+  </g>
+  <text x="220" y="375" text-anchor="middle" font-size="13" font-weight="600" fill="#1d4ed8">IDLE</text>
+
+  <!-- Arrow: IDLE -> ACTIVE -->
+  <line x1="270" y1="370" x2="336" y2="370" stroke="#3b82f6" stroke-width="1.5" marker-end="url(#arrowB)"/>
+  <text x="303" y="362" text-anchor="middle" font-size="9" fill="#3b82f6">USER_MESSAGE</text>
+
+  <!-- ACTIVE -->
+  <g filter="url(#shadow)">
+    <rect x="340" y="350" width="100" height="40" rx="20" fill="#d1fae5" stroke="#10b981" stroke-width="2"/>
+  </g>
+  <text x="390" y="375" text-anchor="middle" font-size="13" font-weight="600" fill="#047857">ACTIVE</text>
+
+  <!-- Arrow: ACTIVE -> AWAY -->
+  <line x1="440" y1="370" x2="506" y2="370" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="473" y="362" text-anchor="middle" font-size="9" fill="#64748b">USER_AWAY</text>
+
+  <!-- AWAY -->
+  <g filter="url(#shadow)">
+    <rect x="510" y="350" width="100" height="40" rx="20" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+  </g>
+  <text x="560" y="375" text-anchor="middle" font-size="13" font-weight="600" fill="#92400e">AWAY</text>
+
+  <!-- Arrow: AWAY -> ACTIVE (return, curved back) -->
+  <path d="M 560 350 L 560 325 L 390 325 L 390 350" stroke="#94a3b8" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
+  <text x="475" y="318" text-anchor="middle" font-size="9" fill="#64748b">USER_RETURN</text>
+
+  <!-- CLOSED (final) -->
+  <g filter="url(#shadow)">
+    <rect x="680" y="350" width="100" height="40" rx="20" fill="#fee2e2" stroke="#ef4444" stroke-width="2"/>
+  </g>
+  <circle cx="730" cy="370" r="6" fill="#ef4444"/>
+  <text x="730" y="375" text-anchor="middle" font-size="13" font-weight="600" fill="#991b1b">CLOSED</text>
+
+  <!-- Arrow: ACTIVE -> CLOSED -->
+  <path d="M 390 390 L 390 430 L 730 430 L 730 394" stroke="#94a3b8" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
+  <text x="560" y="425" text-anchor="middle" font-size="9" fill="#64748b">TIMEOUT / END_SESSION</text>
+
+  <!-- Arrow: AWAY -> CLOSED -->
+  <path d="M 560 390 L 560 415 L 710 415 L 710 394" stroke="#94a3b8" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
+  <text x="635" y="410" text-anchor="middle" font-size="9" fill="#64748b">TIMEOUT</text>
+
+  <!-- Arrow: IDLE -> CLOSED -->
+  <path d="M 220 390 L 220 445 L 750 445 L 750 394" stroke="#94a3b8" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
+  <text x="485" y="440" text-anchor="middle" font-size="9" fill="#64748b">END_SESSION</text>
+
+  <!-- ===== Bottom tip ===== -->
+  <rect x="180" y="500" width="460" height="26" rx="13" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1"/>
+  <text x="410" y="517" text-anchor="middle" font-size="11" fill="#15803d">💡 状态机在任意时刻恰好处于一个状态，非法转换被自动拒绝</text>
+</svg>

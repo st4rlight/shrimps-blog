@@ -69,6 +69,7 @@ export default defineUserConfig({
             collapsed: false,
             items: [
               'ecosystem-tools/akka-introduction.md',
+              'ecosystem-tools/fsm-introduction.md',
             ],
           },
           {

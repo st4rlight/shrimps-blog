@@ -55,6 +55,15 @@ config:
   <div class="home-timeline__body">
     <span class="home-timeline__date">07-11</span>
     <span class="home-timeline__tag home-timeline__tag--ai">AI客服系统</span>
+    <a href="/ai-cs/fsm-introduction/">新增《有限状态机FSM》</a>
+  </div>
+</div>
+
+<div class="home-timeline__item">
+  <div class="home-timeline__dot"></div>
+  <div class="home-timeline__body">
+    <span class="home-timeline__date">07-11</span>
+    <span class="home-timeline__tag home-timeline__tag--ai">AI客服系统</span>
     <a href="/ai-cs/akka-introduction/">更新《Akka高并发系统介绍》</a>
   </div>
 </div>

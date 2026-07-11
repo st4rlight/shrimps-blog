@@ -1,25 +1,25 @@
 ---
 title: BPM审批流引擎
 tags:
-  - FlowLong
+  - BPM
   - 审批流引擎
   - 工作流
-  - 工作流引擎
+  - FlowLong
   - 客服系统
-excerpt: FlowLong 是一款极轻量级的审批工作流引擎，以 JSON 定义流程、MyBatis-Plus 持久化、零 BPMN 依赖为核心理念，专注解决"审批"这一最高频的业务流程场景。本文从审批流引擎的基本概念出发，系统梳理 FlowLong 的流程定义、节点类型、审批操作、运行机制与实战用法，并结合 AI 客服系统场景探讨其落地实践。
+excerpt: BPM 审批流引擎是解决"人工任务怎么流转"的核心基础设施。本文从 BPM 系统的基本概念出发，系统介绍审批流引擎的架构模型、分支路由、审批模式与中国式审批操作，最后以 FlowLong 飞龙工作流引擎为例，结合官方文档深入剖析其 JSON 流程定义、核心 API 与运行机制，并探讨在 AI 客服系统中的落地实践。
 createTime: 2026/07/11 18:00:00
 permalink: /ai-cs/flowlong-analysis/
 ---
 
 # BPM审批流引擎
 
-> 当你的业务需要"人参与决策"——比如客服工单需要主管审批、投诉升级需要多级确认、退款申请需要财务复核——你需要的不再是流程编排引擎，而是一个**审批流引擎**。FlowLong 就是一款专为审批场景而生的极简工作流引擎，用 JSON 定义流程、以 MyBatis-Plus 持久化，无需 BPMN 2.0 的复杂性，5 分钟即可上手。
+> 当你的业务需要"人参与决策"——比如客服工单需要主管审批、投诉升级需要多级确认、退款申请需要财务复核——你需要的不再是流程编排引擎，而是一个 **BPM 审批流引擎**。本文将从 BPM 系统的完整概念体系出发，讲清楚审批流引擎的架构模型、分支路由、审批模式与中国式审批特色，最后以 FlowLong 飞龙工作流引擎为例，深入其具体实现。
 
 [[TOC]]
 
 ---
 
-## 一、什么是审批流引擎
+## 一、什么是 BPM 审批流引擎
 
 ### 1.1 问题背景
 
@@ -101,12 +101,12 @@ public class TicketService {
 | **扩展困难** | 驳回、转办、加签等操作需要大量定制代码 |
 | **并发问题** | 多人会签场景下，审批状态管理极易出错 |
 
-### 1.2 审批流引擎的解决思路
+### 1.2 BPM 的解决思路
 
-审批流引擎的核心思想是：**把审批流程从业务代码中抽离出来，用流程定义描述审批节点、审批人和流转规则，由引擎负责任务分配、状态流转和历史记录**。
+BPM（Business Process Management，业务流程管理）的核心思想是：**把审批流程从业务代码中抽离出来，用流程定义描述审批节点、审批人和流转规则，由引擎负责任务分配、状态流转和历史记录**。
 
 ```jsonc
-// FlowLong 方式：审批流程是数据，不是代码
+// BPM 方式：审批流程是数据，不是代码
 {
   "flowName": "客服工单审批",
   "flowNodes": [
@@ -133,10 +133,9 @@ public class TicketService {
 
 ```java
 // 业务代码只需调用引擎 API，完全不关心流转逻辑
-Long instanceId = runtimeService.start(processId, ticket.getId().toString(),
-    createUser, variables);
+flowLongEngine.startInstanceById(processId, flowCreator, args);
 // 审批人办理任务
-taskService.complete(taskId, approverId, "同意，退款金额核对无误");
+flowLongEngine.executeTask(taskId, flowCreator, args);
 ```
 
 这样带来的好处：
@@ -144,451 +143,234 @@ taskService.complete(taskId, approverId, "同意，退款金额核对无误");
 - **流程与代码解耦**：审批流程存储在数据库，修改不需要重新发版
 - **流程可视化**：JSON 定义即流程图，运营和产品都能理解
 - **完整审批轨迹**：引擎自动记录每一步审批历史
-- **丰富审批操作**：驳回、转办、委派、加签等开箱即用
+- **丰富审批操作**：驳回、转办、委派、加签、减签等开箱即用
 - **状态管理可靠**：引擎负责并发控制和状态一致性
 
-### 1.3 审批流引擎 vs 工作流引擎 vs 流程编排引擎
+### 1.3 BPM 的发展历程
 
-在前面的文章中，我们已经介绍了[表达式引擎](/ai-cs/qlexpress-study-notes/)和[流程编排引擎](/ai-cs/flow-orchestration-engine/)。审批流引擎在技术栈中处于一个独特的位置——它比流程编排引擎更重（有持久化、有人工任务），比通用工作流引擎更轻（不需要 BPMN 2.0 的复杂性）。
+BPM 并不是一个新概念，它的发展经历了几个阶段：
 
-| 维度 | 表达式引擎 | 流程编排引擎 | 审批流引擎 | 工作流引擎 |
+```text
+┌─────────────┐    ┌──────────────┐    ┌───────────────┐    ┌──────────────┐
+│  1990s      │    │  2000s       │    │  2010s        │    │  2020s       │
+│  工作流系统   │ →  │  BPMN 2.0    │ →  │  云原生 BPM   │ →  │  轻量审批引擎  │
+│  (邮件驱动)  │    │  标准化       │    │  (微服务化)    │    │  (JSON/低代码) │
+└─────────────┘    └──────────────┘    └───────────────┘    └──────────────┘
+```
+
+| 阶段 | 代表产品 | 特点 |
+|------|---------|------|
+| **早期工作流** | Lotus Notes、Exchange | 邮件驱动，简单状态流转 |
+| **BPMN 标准化** | jBPM、Activiti、Flowable | BPMN 2.0 XML 标准，功能完整但复杂 |
+| **云原生 BPM** | Camunda Cloud、Zeebe | 微服务架构，云原生部署 |
+| **轻量审批引擎** | FlowLong、SnakerFlow | JSON 定义，专注审批场景，极简轻量 |
+
+### 1.4 BPM 系统的核心概念
+
+要理解 BPM 审批流引擎，需要先弄清楚三个核心概念——**模型、实例、任务**。整个框架都围绕这三个概念执行操作。
+
+#### 流程模型（Process Model）
+
+流程模型是对业务流程的抽象和描述，定义了流程中的各个环节、参与者和流转规则。在传统 BPM 引擎中用 BPMN 2.0 XML 描述，在轻量引擎（如 FlowLong）中用 JSON 描述。
+
+流程模型的组成要素：
+
+| 要素 | 说明 | 示例 |
+|------|------|------|
+| **节点（Node）** | 流程中的一个环节，分为条件节点和任务节点 | 审批节点、抄送节点、条件节点 |
+| **连线（Transition）** | 节点之间的流转关系 | 主管审批 → 总监审批 |
+| **参与者（Participant）** | 执行任务的人员、角色或部门 | 指定用户、角色、部门 |
+| **分支（Branch）** | 流程的分叉与汇聚，传统 BPM 称为"网关" | 条件分支、并行分支 |
+
+#### 流程实例（Process Instance）
+
+流程实例是根据流程模型启动的具体执行实体。当一个业务流程被启动时，就会生成一个对应的流程实例，代表了流程的一次具体执行过程。
+
+| 关键信息 | 说明 |
+|---------|------|
+| **流程定义引用** | 实例基于哪个流程模型启动 |
+| **流程状态** | 审批中、审批通过、审批拒绝、撤销、超时、终止 |
+| **执行路径** | 流程执行经过的节点和路径 |
+| **流程变量** | 执行过程中传递的数据，如 `days`、`amount` |
+| **参与者信息** | 每个节点的负责人、执行者 |
+| **业务关联** | 通过 `businessKey` 关联外部业务数据 |
+
+#### 流程任务（Task）
+
+流程任务是流程实例中需要由参与者完成的具体工作。它是业务流程中的具体执行单元。
+
+| 特点 | 说明 |
+|------|------|
+| **责任人指派** | 每个任务被指派给特定的人员、角色或部门 |
+| **执行条件** | 只有满足条件才能执行（如前序任务完成） |
+| **执行结果** | 任务有明确的完成状态：完成、拒绝、撤销、超时、终止 |
+| **任务流转** | 任务完成后触发下一个任务的创建 |
+| **通知提醒** | 系统通知责任人有新任务或提醒截止时间 |
+
+### 1.5 BPM 审批流引擎 vs 工作流引擎 vs 流程编排引擎
+
+在前面的文章中，我们已经介绍了[表达式引擎](/ai-cs/qlexpress-study-notes/)和[Flow流程编排引擎](/ai-cs/flow-orchestration-engine/)。BPM 审批流引擎在技术栈中处于一个独特的位置——它比流程编排引擎更重（有持久化、有人工任务），比通用工作流引擎更轻（不需要 BPMN 2.0 的全套复杂性）。
+
+| 维度 | 表达式引擎 | 流程编排引擎 | BPM 审批流引擎 | 通用工作流引擎 |
 |------|----------|------------|-----------|-----------|
 | **核心能力** | 单条表达式求值 | 多步骤自动编排 | 人工审批任务流转 | 完整 BPM 流程管理 |
 | **人工任务** | 不支持 | 不支持 | **核心能力** | 核心能力 |
 | **状态持久化** | 无 | 通常无 | **数据库持久化** | 数据库持久化 |
 | **流程描述** | 表达式字符串 | DSL（XML/JSON/YML） | **JSON** | BPMN 2.0 XML |
-| **典型代表** | QLExpress、Aviator | LiteFlow、CompileFlow | **FlowLong** | Activiti、Flowable |
+| **典型代表** | QLExpress、Aviator | LiteFlow、CompileFlow | **FlowLong** | Activiti、Flowable、Camunda |
 | **复杂度** | 极低 | 低 | **低~中** | 高 |
 | **学习曲线** | 极低 | 低 | **低** | 高 |
 | **适用场景** | 条件判断、计算 | 业务步骤编排 | 审批、工单流转 | 复杂企业级流程 |
 
 ::: tip 四者的关系
-**表达式引擎**解决"一个条件怎么判断"；**流程编排引擎**解决"多个步骤怎么协调"；**审批流引擎**解决"人工任务怎么流转"；**工作流引擎**解决"长周期复杂流程怎么治理"。四者互补，覆盖了从简单到复杂的完整流程管理需求。
+**表达式引擎**解决"一个条件怎么判断"；**流程编排引擎**解决"多个步骤怎么协调"；**BPM 审批流引擎**解决"人工任务怎么流转"；**通用工作流引擎**解决"长周期复杂流程怎么治理"。四者互补，覆盖了从简单到复杂的完整流程管理需求。
 :::
 
 ![四种流程引擎核心差异对比](/ai-cs/flow-orchestration/flowlong-analysis/engine-type-comparison.svg)
 
-### 1.4 主流审批流/工作流引擎对比
-
-| 引擎 | 出品方 | 流程描述 | 依赖大小 | 特点 |
-|------|--------|---------|---------|------|
-| **FlowLong** | aizuda | JSON | ~1MB | 极简轻量，专注审批场景，MyBatis-Plus 生态 |
-| **Activiti** | Alfresco | BPMN 2.0 XML | ~30MB+ | 功能完整，国际标准，社区成熟 |
-| **Flowable** | Flowable | BPMN 2.0 XML | ~30MB+ | Activiti 分支，功能更丰富，支持 CMMN/DMN |
-| **Camunda** | Camunda | BPMN 2.0 XML | ~40MB+ | 企业级流程引擎，监控能力强 |
-| **SnakerFlow** | snakerflow | XML | ~5MB | 国产轻量工作流，类 Activiti 设计 |
-
-本文聚焦于 **FlowLong**——它代表了"极简审批流"范式，用最小的代价解决最高频的审批需求。如果你的系统只需要审批功能，不需要 BPMN 2.0 的全套复杂性，FlowLong 是 JVM 生态中最值得考虑的选择。
-
 ---
 
-## 二、FlowLong 简介
+## 二、BPM 系统的架构模型
 
-### 2.1 项目背景
+### 2.1 整体架构
 
-FlowLong 由 aizuda 团队开发并开源，与 MyBatis-Plus 同源生态。它的设计初衷很简单：**Activiti 太重，手写太累，需要一个刚刚好的审批流引擎**。
-
-在真实业务中，90% 的流程需求其实就是"审批"——请假审批、报销审批、工单审批、合同审批。这些场景的共同特征是：**有人工参与的节点、需要持久化任务状态、需要记录审批历史**。但对于这些场景，引入 Activiti/Flowable 这种重量级工作流引擎往往是大材小用——BPMN 2.0 的复杂性、大量不必要的表结构、陡峭的学习曲线，都增加了项目的维护成本。
-
-FlowLong 的设计理念是：**用 JSON 描述流程，用 MyBatis-Plus 持久化，用最少的代码完成最多的审批场景**。它不追求 BPMN 2.0 标准兼容，不追求覆盖所有 BPM 场景，而是专注于把"审批"这件事做到极致简单。
-
-### 2.2 核心特性
-
-| 特性 | 说明 |
-|------|------|
-| **极简轻量** | 核心 JAR 仅约 1MB，依赖极少，零 BPMN 知识要求 |
-| **JSON 流程定义** | 用 JSON 描述流程，无需 BPMN 2.0 XML，直观易读 |
-| **丰富审批操作** | 同意、驳回、转办、委派、加签、减签、撤回，开箱即用 |
-| **多种审批模式** | 串行审批、并行审批、会签（全票通过）、或签（任一通过） |
-| **条件路由** | 条件节点支持表达式动态路由，按业务变量选择分支 |
-| **抄送通知** | 原生支持抄送节点，审批结果自动通知相关人员 |
-| **MyBatis-Plus 持久化** | 基于 MyBatis-Plus，数据库操作透明可追踪 |
-| **Spring Boot 集成** | 提供 Starter，自动配置，即引即用 |
-| **审批历史追溯** | 完整记录每一步审批操作，支持查询和审计 |
-| **动态审批人** | 支持在运行时动态指定审批人，通过变量表达式 `${var}` 解析 |
-| **流程版本管理** | 支持流程定义多版本，新版本不影响进行中的实例 |
-
-### 2.3 Maven 依赖
-
-```xml
-<dependency>
-    <groupId>com.aizuda</groupId>
-    <artifactId>flowlong-spring-boot-starter</artifactId>
-    <version>1.0.9</version>
-</dependency>
-```
-
-::: tip 版本说明
-FlowLong 的 `groupId` 为 `com.aizuda`，`artifactId` 为 `flowlong-spring-boot-starter`（Spring Boot 项目）。如需使用 MyBatis-Plus 数据访问层，确保项目中已引入 MyBatis-Plus 依赖。环境要求 JDK 8+、Spring Boot 2.x/3.x。
-:::
-
-::: warning API 版本声明
-本文基于 FlowLong 1.0.x 版本撰写，API 接口和配置项可能随版本更新而变化。示例中的类名、方法签名、JSON 字段等请以[官方文档](https://flowlong.com/)为准。在升级版本前，建议查阅官方 Changelog 确认兼容性变更。
-:::
-
-```yaml
-# application.yml 最简配置
-flowlong:
-  # 数据库表前缀（默认 flw_）
-  table-prefix: flw_
-  # 是否自动建表（开发环境推荐 true）
-  auto-create-table: true
-```
-
-### 2.4 数据库表结构
-
-FlowLong 的持久化层基于 MyBatis-Plus，核心表结构如下：
-
-| 表名 | 说明 | 核心字段 |
-|------|------|---------|
-| `flw_process` | 流程定义 | `id`、`flow_name`、`flow_json`（JSON 定义）、`version` |
-| `flw_instance` | 流程实例 | `id`、`process_id`、`business_id`（业务关联）、`create_time` |
-| `flw_task` | 待办任务 | `id`、`instance_id`、`node_code`、`node_name`、`assignee`（审批人） |
-| `flw_his_instance` | 历史实例 | 记录已完成或已取消的流程实例 |
-| `flw_his_task` | 历史任务 | 记录每个已办理的任务及其审批意见 |
-| `flw_recruit_task` | 加签任务 | 记录加签产生的临时任务 |
-| `flw_copy_task` | 抄送任务 | 记录抄送通知信息 |
+一个典型的 BPM 审批流引擎采用分层架构设计，各层职责清晰：
 
 ```text
-┌──────────────┐     ┌──────────────┐     ┌──────────────┐
-│  flw_process  │     │ flw_instance  │     │   flw_task    │
-│  (流程定义)    │────→│  (流程实例)    │────→│  (待办任务)    │
-└──────────────┘     └──────┬───────┘     └──────┬───────┘
-                            │                     │
-                     ┌──────▼───────┐     ┌──────▼───────┐
-                     │flw_his_instance│    │ flw_his_task  │
-                     │  (历史实例)    │     │  (历史任务)    │
-                     └──────────────┘     └──────────────┘
-
-    ┌──────────────────┐     ┌──────────────────┐
-    │ flw_recruit_task  │     │  flw_copy_task   │
-    │  (加签任务)        │     │  (抄送任务)       │
-    └──────────────────┘     └──────────────────┘
+┌─────────────────────────────────────────────────────┐
+│                    业务层                              │
+│         LeaveService / TicketService / ...            │
+└──────────────────────┬──────────────────────────────┘
+                       │ 调用
+┌──────────────────────▼──────────────────────────────┐
+│                  流程引擎（Engine）                     │
+│              （引擎入口 / 统一调度）                     │
+├──────────┬──────────┬──────────┬─────────────────────┤
+│ Process  │ Runtime  │  Query   │     Task            │
+│ Service  │ Service  │ Service  │     Service         │
+│ (流程定义) │ (流程实例) │ (查询服务) │   (任务管理)        │
+├──────────┴──────────┴──────────┴─────────────────────┤
+│              数据访问层（Data Access）                   │
+│              ORM Mapper / CRUD                        │
+├───────────────────────────────────────────────────────┤
+│                  数据库（Database）                     │
+│  流程定义表 / 流程实例表 / 任务表 / 历史表 / 参与者表     │
+└───────────────────────────────────────────────────────┘
 ```
 
-::: tip 自动建表
-开发环境可通过 `flowlong.auto-create-table=true` 自动创建所有表。生产环境建议使用 Flyway/Liquibase 管理表结构变更。
+| 层级 | 职责 | 说明 |
+|------|------|------|
+| **引擎入口** | 统一调度，门面模式 | 核心类，获取各种服务 |
+| **流程定义服务** | 流程的部署、卸载、版本管理 | `ProcessService` |
+| **运行时服务** | 流程实例的启动、终止、模型获取 | `RuntimeService` |
+| **查询服务** | 查询活动任务、历史任务、参与者 | `QueryService` |
+| **任务服务** | 任务的审批、驳回、转办、委派、加签 | `TaskService` |
+| **数据访问层** | 基于 ORM 的 CRUD | MyBatis-Plus / JPA |
+
+### 2.2 流程定义与建模
+
+流程定义是 BPM 的起始——所有工作流业务的展开都依赖于流程模型的定义。不同引擎对流程定义的描述方式不同：
+
+| 方式 | 引擎 | 格式 | 特点 |
+|------|------|------|------|
+| **BPMN 2.0 XML** | Activiti、Flowable、Camunda | XML | 国际标准，功能强大但复杂 |
+| **JSON** | FlowLong | JSON | 简洁直观，易于生成和解析 |
+| **DSL** | LiteFlow | XML/EL/YML/JSON | 编排优先，灵活多变 |
+
+传统 BPM 引擎采用 BPMN 2.0 标准，包含泳道、网关、连线、补偿、信号、活动、数据对象等复杂概念。而轻量审批引擎（如 FlowLong）化繁为简，**只有节点这一种概念**，节点分为条件节点和任务节点，其中任务节点包含审批任务、定时器任务、触发器任务、子流程任务等。
+
+### 2.3 流程实例的生命周期
+
+流程实例从启动到结束，经历一系列状态变化：
+
+```text
+┌──────────┐     ┌──────────┐     ┌──────────────┐
+│  审批中   │────→│ 审批通过  │     │  暂存待审    │
+│ (running) │     │(approved)│     │ (pending)    │
+└────┬─────┘     └──────────┘     └──────┬───────┘
+     │                                   │ 重新提交
+     ├────→ ┌──────────┐                 │
+     │      │ 审批拒绝  │                 │
+     │      │(rejected)│                 │
+     │      └──────────┘                 │
+     │                                   │
+     ├────→ ┌──────────┐                 │
+     │      │ 撤销审批  │                 │
+     │      │ (revoked)│                 │
+     │      └──────────┘                 │
+     │                                   │
+     ├────→ ┌──────────┐                 │
+     │      │ 超时结束  │                 │
+     │      │ (timeout)│                 │
+     │      └──────────┘                 │
+     │                                   │
+     └────→ ┌──────────┐                 │
+            │ 强制终止  │                 │
+            │(terminated)│                │
+            └──────────┘                 │
+```
+
+| 状态 | 说明 | 触发条件 |
+|------|------|---------|
+| **审批中** | 流程正在执行，有待办任务 | 流程启动 |
+| **审批通过** | 所有审批节点完成 | 最后一个审批节点同意 |
+| **审批拒绝** | 审批被拒绝且终止流程 | 审批人拒绝 + 终止策略 |
+| **撤销审批** | 发起人主动撤销 | 发起人操作 |
+| **超时结束** | 超过期望完成时间 | 定时任务检测 |
+| **强制终止** | 管理员强制结束 | 管理操作 |
+
+### 2.4 任务分配与参与者模型
+
+BPM 系统通过参与者模型来确定"谁来审批"。参与者可以是具体用户、角色或部门：
+
+| 参与者类型 | 说明 | 适用场景 |
+|-----------|------|---------|
+| **指定用户** | 明确指定某人为审批人 | 直接上级审批 |
+| **指定角色** | 指定某个角色的人审批 | 风控审核角色 |
+| **指定部门** | 指定某个部门的人审批 | 财务部门会签 |
+| **动态变量** | 运行时通过变量解析审批人 | `${manager_id}` |
+| **分组策略** | 角色/部门分组，支持认领或全员参与 | 公共任务认领 |
+
+参与者还可以支持更复杂的模式：
+
+- **代理**：A 指定代理人 B，B 完成任务后 A 和 B 都能查到
+- **认领**：公共任务由角色/部门中某人主动认领
+- **离职转办**：A 所有参与任务批量转给 B
+
+### 2.5 持久化与历史追溯
+
+BPM 系统的持久化设计是其可靠性的基石。核心数据分为**运行时数据**和**历史数据**两部分：
+
+| 数据类型 | 说明 | 表（以 FlowLong 为例） |
+|---------|------|---------------------|
+| **流程定义** | 存储流程模型 JSON/XML | `flw_process` |
+| **流程实例** | 正在运行的实例 | `flw_instance` |
+| **活动任务** | 当前待办任务 | `flw_task` |
+| **任务参与者** | 当前任务的参与者关联 | `flw_task_actor` |
+| **历史实例** | 已完成的实例记录 | `flw_his_instance` |
+| **历史任务** | 已办理的任务及其审批意见 | `flw_his_task` |
+| **历史参与者** | 历史任务的参与者记录 | `flw_his_task_actor` |
+
+::: tip 运行时与历史分离
+运行时数据和历史数据分离是 BPM 引擎的通用设计：运行时表只存储当前活动数据，保证查询性能；历史表记录完整轨迹，支持审计和追溯。当流程实例完成后，数据从运行时表迁移到历史表。
 :::
 
 ---
 
-## 三、快速上手
+## 三、BPM 系统的分支与路由
 
-### 3.1 流程定义（JSON 格式）
-
-FlowLong 使用 JSON 描述流程定义，相比 BPMN 2.0 XML 更加简洁直观：
-
-```json
-{
-  "flowName": "请假审批流程",
-  "flowNodes": [
-    {
-      "nodeType": 0,
-      "nodeCode": "start",
-      "nodeName": "开始",
-      "nextNodeCode": "manager_approval"
-    },
-    {
-      "nodeType": 1,
-      "nodeCode": "manager_approval",
-      "nodeName": "主管审批",
-      "permissionList": [
-        { "type": 0, "handler": "${manager_id}" }
-      ],
-      "nextNodeCode": "check_days"
-    },
-    {
-      "nodeType": 4,
-      "nodeCode": "check_days",
-      "nodeName": "天数判断",
-      "conditionList": [
-        { "nodeCode": "director_approval", "expression": "days > 3" },
-        { "nodeCode": "cc_hr", "expression": "days <= 3" }
-      ]
-    },
-    {
-      "nodeType": 1,
-      "nodeCode": "director_approval",
-      "nodeName": "总监审批",
-      "permissionList": [
-        { "type": 0, "handler": "${director_id}" }
-      ],
-      "nextNodeCode": "cc_hr"
-    },
-    {
-      "nodeType": 2,
-      "nodeCode": "cc_hr",
-      "nodeName": "抄送HR",
-      "permissionList": [
-        { "type": 0, "handler": "${hr_id}" }
-      ],
-      "nextNodeCode": "end"
-    },
-    {
-      "nodeType": 3,
-      "nodeCode": "end",
-      "nodeName": "结束"
-    }
-  ]
-}
-```
-
-这个 JSON 定义了一个完整的请假审批流程：**开始 → 主管审批 → 条件判断（>3天走总监审批）→ 抄送HR → 结束**。看 JSON 就能理解流程全貌，无需可视化设计器。
-
-### 3.2 启动流程
-
-```java
-@Service
-public class LeaveService {
-
-    @Autowired
-    private ProcessService processService;
-
-    @Autowired
-    private RuntimeService runtimeService;
-
-    @Autowired
-    private TaskService taskService;
-
-    /**
-     * 发起请假申请
-     */
-    public Long submitLeave(LeaveRequest request) {
-        // 1. 部署流程定义（通常在系统初始化时完成，这里仅为演示）
-        Long processId = processService.deploy(loadFlowJson("leave-approval.json"));
-
-        // 2. 准备流程变量（用于条件判断和审批人解析）
-        Map<String, Object> variables = new HashMap<>();
-        variables.put("days", request.getDays());
-        variables.put("manager_id", request.getManagerId());
-        variables.put("director_id", request.getDirectorId());
-        variables.put("hr_id", request.getHrId());
-
-        // 3. 启动流程实例
-        //    businessId 关联业务数据（如请假单ID）
-        //    createUser 为发起人信息
-        FlowLongUser createUser = FlowLongUser.of(
-            request.getApplicantId(),
-            request.getApplicantName()
-        );
-
-        Long instanceId = runtimeService.start(
-            processId,
-            request.getLeaveId().toString(),  // businessId
-            createUser,
-            variables
-        );
-
-        return instanceId;
-    }
-}
-```
-
-### 3.3 办理任务
-
-```java
-/**
- * 审批人办理任务
- */
-public void approve(Long taskId, Long approverId, String comment) {
-    // 查询待办任务
-    FlowLongTask task = taskService.getById(taskId);
-
-    // 验证审批人身份
-    if (!String.valueOf(approverId).equals(task.getAssignee())) {
-        throw new RuntimeException("无权审批此任务");
-    }
-
-    // 办理任务（同意）
-    taskService.complete(taskId, approverId, comment);
-    // 引擎自动：关闭当前任务 → 创建历史记录 → 解析下一节点 → 创建新任务
-}
-
-/**
- * 驳回任务
- */
-public void reject(Long taskId, Long approverId, String comment) {
-    // 驳回到发起人重新提交
-    taskService.reject(taskId, approverId, comment);
-}
-
-/**
- * 查询我的待办
- */
-public List<FlowLongTask> myTasks(Long userId) {
-    return taskService.listByUserId(userId);
-}
-```
-
-### 3.4 完整示例
-
-将上面的步骤串联起来，一个完整的请假审批流程如下：
-
-```java
-@Service
-public class LeaveApprovalDemo {
-
-    @Autowired
-    private LeaveService leaveService;
-
-    @Autowired
-    private TaskService taskService;
-
-    @Autowired
-    private HistoryService historyService;
-
-    public void demo() {
-        // ========== 1. 发起请假 ==========
-        LeaveRequest request = new LeaveRequest();
-        request.setLeaveId(1001L);
-        request.setApplicantId(2001L);
-        request.setApplicantName("张三");
-        request.setDays(5);  // 请假5天，需要总监审批
-        request.setManagerId(3001L);
-        request.setDirectorId(4001L);
-        request.setHrId(5001L);
-
-        Long instanceId = leaveService.submitLeave(request);
-        System.out.println("流程已启动，实例ID: " + instanceId);
-
-        // ========== 2. 主管审批 ==========
-        List<FlowLongTask> managerTasks = taskService.listByUserId(3001L);
-        FlowLongTask managerTask = managerTasks.get(0);
-        taskService.complete(managerTask.getId(), 3001L, "同意，注意交接工作");
-        // 引擎自动流转到条件判断 → days=5 > 3 → 总监审批节点
-
-        // ========== 3. 总监审批 ==========
-        List<FlowLongTask> directorTasks = taskService.listByUserId(4001L);
-        FlowLongTask directorTask = directorTasks.get(0);
-        taskService.complete(directorTask.getId(), 4001L, "同意");
-        // 引擎自动流转到抄送HR → 结束
-
-        // ========== 4. 查看审批历史 ==========
-        List<FlowLongHisTask> history = historyService.listByInstanceId(instanceId);
-        for (FlowLongHisTask hisTask : history) {
-            System.out.printf("节点: %s, 审批人: %s, 意见: %s, 时间: %s%n",
-                hisTask.getNodeName(),
-                hisTask.getApproverName(),
-                hisTask.getComment(),
-                hisTask.getCompleteTime());
-        }
-        // 输出:
-        // 节点: 主管审批, 审批人: 3001, 意见: 同意，注意交接工作, 时间: ...
-        // 节点: 总监审批, 审批人: 4001, 意见: 同意, 时间: ...
-    }
-}
-```
-
-三步搞定：**定义流程 JSON → 启动流程 → 办理任务**。业务代码只关心业务数据，审批流转完全由引擎驱动。
-
----
-
-## 四、流程定义与节点类型
-
-### 4.1 JSON 流程定义格式
-
-FlowLong 的 JSON 流程定义由两部分组成：流程元信息 + 节点列表。
-
-```jsonc
-{
-  "flowName": "流程名称",
-  "version": "1.0.0",          // 可选，版本号
-  "flowNodes": [                // 节点列表
-    {
-      "nodeType": 0,            // 节点类型（0=开始, 1=审批, 2=抄送, 3=结束, 4=条件）
-      "nodeCode": "唯一标识",
-      "nodeName": "显示名称",
-      "nextNodeCode": "下一节点",  // 非条件节点的下一节点
-      "permissionList": [],      // 审批人列表（审批/抄送节点）
-      "conditionList": [],       // 条件分支（条件节点）
-      "nodeRatio": null          // 会签比例（可选）
-    }
-  ]
-}
-```
-
-| 字段 | 类型 | 说明 |
-|------|------|------|
-| `flowName` | String | 流程名称 |
-| `version` | String | 流程版本号 |
-| `flowNodes` | Array | 节点列表 |
-| `nodeType` | int | 节点类型：0=开始，1=审批，2=抄送，3=结束，4=条件 |
-| `nodeCode` | String | 节点唯一编码 |
-| `nodeName` | String | 节点显示名称 |
-| `nextNodeCode` | String | 下一节点编码（非条件节点使用） |
-| `permissionList` | Array | 审批人/抄送人列表 |
-| `conditionList` | Array | 条件分支列表（条件节点使用） |
-| `nodeRatio` | Float | 会签比例，如 `1.0` 表示全票通过，`0.5` 表示半数通过 |
-
-### 4.2 节点类型详解
+分支（Branch）是 BPM 系统中控制流程走向的核心机制。传统 BPM 引擎（如 Flowable）称之为"网关"（Gateway），在轻量引擎（如 FlowLong）中被简化为条件节点。FlowLong 支持四种分支类型：
 
 ![FlowLong五种节点类型总览](/ai-cs/flow-orchestration/flowlong-analysis/flowlong-node-types-overview.svg)
 
-FlowLong 支持五种节点类型，覆盖了审批流的核心场景：
+### 3.1 条件分支（排他分支）
 
-#### 开始节点（nodeType = 0）
+> 排他分支用于在流程中实现决策，即根据条件选择**一个**分支执行。也用于处理异常情况，将流程路由到特定的异常处理分支。
 
-流程入口，每个流程有且仅有一个开始节点。
+**特点**：当流程执行到排他分支时，所有分支都会进行条件判断，但只会选择第一个条件为 `true` 的分支执行。按 JSON 中定义的顺序匹配。
 
-```json
-{
-  "nodeType": 0,
-  "nodeCode": "start",
-  "nodeName": "开始",
-  "nextNodeCode": "first_approval"
-}
-```
-
-#### 审批节点（nodeType = 1）
-
-最核心的节点类型，表示需要人工审批的环节。
-
-```json
-{
-  "nodeType": 1,
-  "nodeCode": "manager_approval",
-  "nodeName": "主管审批",
-  "permissionList": [
-    { "type": 0, "handler": "${manager_id}" }
-  ],
-  "nextNodeCode": "next_node",
-  "nodeRatio": null  // null=单人审批，1.0=会签（全票），0.5=半数通过
-}
-```
-
-#### 抄送节点（nodeType = 2）
-
-仅通知，不需要审批。任务自动完成，仅记录抄送信息。
-
-```json
-{
-  "nodeType": 2,
-  "nodeCode": "cc_hr",
-  "nodeName": "抄送HR",
-  "permissionList": [
-    { "type": 0, "handler": "${hr_id}" }
-  ],
-  "nextNodeCode": "end"
-}
-```
-
-#### 结束节点（nodeType = 3）
-
-流程出口，表示流程正常结束。
-
-```json
-{
-  "nodeType": 3,
-  "nodeCode": "end",
-  "nodeName": "结束"
-}
-```
-
-#### 条件节点（nodeType = 4）
-
-根据表达式动态选择下一个执行节点，类似 `switch-case`。
-
-```json
+```jsonc
+// 条件分支示例：根据金额选择审批路径
 {
   "nodeType": 4,
   "nodeCode": "check_amount",
@@ -596,88 +378,73 @@ FlowLong 支持五种节点类型，覆盖了审批流的核心场景：
   "conditionList": [
     { "nodeCode": "director_approval", "expression": "amount > 10000" },
     { "nodeCode": "manager_approval", "expression": "amount > 1000" },
-    { "nodeCode": "end", "expression": "amount <= 1000" }
+    { "nodeCode": "end", "expression": "default" }
   ]
 }
 ```
 
-::: tip 条件匹配规则
-条件节点的 `conditionList` 按顺序匹配，第一个满足 `expression` 的分支会被执行。如果所有条件都不满足，流程会报错——建议最后一个条件使用 `default` 或恒真表达式作为兜底。
-:::
+**应用场景**：流程决策点，根据条件选择不同的执行路径。
 
-### 4.3 审批人设置
+### 3.2 并行分支
 
-`permissionList` 定义了每个审批/抄送节点的处理人：
+> 并行分支允许将流程分成多条分支，也可以把多条分支汇聚到一起（fork/join）。
 
-```jsonc
-"permissionList": [
-  {
-    "type": 0,                    // 审批人类型
-    "handler": "${manager_id}"     // 审批人标识
-  }
-]
+**特点**：
+- **不解析条件**：即使顺序流中定义了条件，也会被忽略
+- **数量无需平衡**：进入和出去的分支数量可以不同
+- **同时执行**：所有分支同时激活
+
+```text
+并行分支：
+         ┌─ 主管审批 ─┐
+开始 ────┤             ├─→ 汇聚 ──→ 下一节点
+         └─ 财务审批 ─┘
+         （同时创建任务，全部完成后才继续）
 ```
 
-| `type` 值 | 含义 | `handler` 格式 | 示例 |
-|-----------|------|---------------|------|
-| 0 | 指定用户 | 用户ID 或 `${变量名}` | `"1001"` 或 `"${manager_id}"` |
-| 1 | 指定角色 | 角色标识 | `"role_manager"` |
-| 2 | 指定部门 | 部门ID | `"dept_001"` |
+**应用场景**：并行执行多个相互独立的任务，提高执行效率。
 
-::: tip 动态审批人
-`handler` 字段支持 `${变量名}` 语法，在流程启动时通过 `variables` 传入实际值。这样可以根据业务上下文动态指定审批人——比如根据工单的部门归属，动态解析出对应部门的主管。
-:::
+### 3.3 包容分支
 
-```java
-// 启动流程时传入动态审批人
-Map<String, Object> variables = new HashMap<>();
-variables.put("manager_id", deptService.getManagerId(ticket.getDeptId()));
-variables.put("director_id", deptService.getDirectorId());
+> 包容分支可以看做是排他分支和并行分支的结合体。它允许基于条件选择**多条**分支执行，但如果没有任何一个分支满足条件，则可以选择默认分支。
 
-runtimeService.start(processId, businessId, createUser, variables);
-```
+**特点**：
+- **解析条件**：所有外出顺序流都会进行条件判断
+- **并行执行**：所有条件为 `true` 的分支都会并行执行
+- **选择性等待**：汇聚时只等待被选中执行的分支
 
-### 4.4 条件表达式
+**应用场景**：当多个任务有不同的执行条件时，实现灵活的流程控制。特别适用于需要会签的任务场景。
 
-条件节点的 `expression` 支持简单的表达式语法：
+### 3.4 路由分支
 
-```json
-"conditionList": [
-  { "nodeCode": "director_approval", "expression": "amount > 10000 && category == 'refund'" },
-  { "nodeCode": "manager_approval", "expression": "amount > 1000" },
-  { "nodeCode": "end", "expression": "default" }
-]
-```
+> 路由分支用于解决线性模型不支持回路流转的问题，根据条件选择重定向到指定节点。
 
-| 表达式 | 说明 |
-|--------|------|
-| `amount > 10000` | 数值比较 |
-| `category == 'refund'` | 字符串相等判断 |
-| `days > 3 && urgency == 'high'` | 逻辑与 |
-| `type == 'A' \|\| type == 'B'` | 逻辑或 |
-| `default` | 兜底条件，恒真 |
+**特点**：根据条件组自动重定向到指定节点，支持"环形审批"。
 
-表达式中的变量名对应启动流程时传入的 `variables` Map 中的 key。
+**应用场景**：常用于流程中需要重新复审的情况，可配置条件指定退回节点。
 
-::: tip 与 QLExpress 的配合
-FlowLong 的条件表达式语法相对简单，适用于基本的条件路由。如果需要更复杂的条件判断逻辑，可以在业务层使用 [QLExpress4](/ai-cs/qlexpress-study-notes/) 预先计算结果，再将结果作为变量传入 FlowLong 的条件节点。
-:::
+### 3.5 四种分支对比
+
+| 分支类型 | 定义与功能 | 特点 | 应用场景 |
+|------|-------------------------|-----------------------------------|-------------------|
+| **条件分支** | 根据条件选择一个分支执行 | 只选择一个 `true` 的分支执行，按定义顺序 | 流程决策点，处理异常情况 |
+| **并行分支** | 将流程分成多条分支或汇聚多条分支 | 不解析条件，数量无需平衡 | 并行执行多个任务，提高执行效率 |
+| **包容分支** | 结合排它分支和并行分支的功能 | 解析条件，并行执行所有 `true` 的分支 | 灵活控制流程，适用于会签等任务场景 |
+| **路由分支** | 根据条件选择一个分支执行 | 重定向到指定节点 | 根据条件复审，退回指定节点 |
 
 ---
 
-## 五、审批操作详解
+## 四、BPM 系统的审批模式
 
-### 5.1 串行审批与并行审批
+### 4.1 串行审批与并行审批
 
 ![串行审批vs并行审批对比](/ai-cs/flow-orchestration/flowlong-analysis/serial-vs-parallel-comparison.svg)
 
-FlowLong 通过 `permissionList` 的配置方式区分串行和并行审批：
-
-#### 串行审批
+#### 串行审批（顺序会签）
 
 多个审批人按顺序依次审批，前一个审批完成后才轮到下一个：
 
-```json
+```jsonc
 {
   "nodeType": 1,
   "nodeCode": "serial_approval",
@@ -697,11 +464,11 @@ FlowLong 通过 `permissionList` 的配置方式区分串行和并行审批：
   （依次创建任务，前一个完成才创建下一个）
 ```
 
-#### 并行审批
+#### 并行审批（并行会签）
 
 多个审批人同时收到任务，各自独立审批：
 
-```json
+```jsonc
 {
   "nodeType": 1,
   "nodeCode": "parallel_approval",
@@ -710,7 +477,7 @@ FlowLong 通过 `permissionList` 的配置方式区分串行和并行审批：
     { "type": 0, "handler": "${manager_id}" },
     { "type": 0, "handler": "${finance_id}" }
   ],
-  "nodeRatio": 1.0,
+  "nodeRatio": 1.0,  // 全票通过
   "nextNodeCode": "end"
 }
 ```
@@ -727,18 +494,17 @@ FlowLong 通过 `permissionList` 的配置方式区分串行和并行审批：
 |------|---------|---------|
 | **任务创建** | 逐个创建 | 同时创建 |
 | **审批效率** | 低（排队等待） | 高（并行处理） |
-| **`nodeRatio`** | 不设置 | 设置（如 `1.0` 全票通过） |
 | **适用场景** | 有层级关系的审批 | 同级并行审核、会签 |
 
-### 5.2 会签与或签
+### 4.2 会签、或签与票签
 
-会签和或签是并行审批的两种特殊模式，通过 `nodeRatio` 字段控制：
+这三种模式通过 `nodeRatio`（会签比例）或权重来控制：
 
-| 模式 | `nodeRatio` | 含义 | 示例 |
-|------|------------|------|------|
-| **会签** | `1.0` | 全部同意才通过 | 三人审批，三人都同意才流转 |
-| **或签** | `0` | 任一同意即通过 | 三人审批，任何一人同意即流转 |
-| **比例签** | `0.5` | 达到比例即通过 | 五人审批，三人（60%）同意即通过 |
+| 模式 | 控制方式 | 含义 | 示例 |
+|------|---------|------|------|
+| **会签** | `nodeRatio = 1.0` | 全部同意才通过 | 三人审批，三人都同意才流转 |
+| **或签** | `nodeRatio = 0` | 任一同意即通过 | 三人审批，任何一人同意即流转 |
+| **票签** | 权重 `weight` | 投票权重比例 > 50% 即通过 | A 权重 3、B 权重 2、C 权重 1，A+B = 5/6 > 50% 通过 |
 
 ```jsonc
 // 会签示例：三人全票通过
@@ -770,39 +536,41 @@ FlowLong 通过 `permissionList` 的配置方式区分串行和并行审批：
 }
 ```
 
-::: tip 会签的内部机制
-当 `nodeRatio` 设置后，引擎会同时为所有审批人创建任务。每次有人完成审批时，引擎检查已通过的比例是否达到 `nodeRatio`。达到则关闭所有剩余任务并流转到下一节点；如果有人驳回，则直接终止整组任务。
+::: tip 票签的权重机制
+票签任务中，`flw_task_actor` 表的 `weight` 字段记录不同处理人员的分量比例。当投票权重比例大于 50% 时就能进入下一个节点。这与会签的全票通过不同——票签允许部分人不同意，只要权重够就行。
 :::
 
-### 5.3 驳回
+### 4.3 驳回与驳回策略
 
-驳回是审批流中最常见的操作之一。FlowLong 支持驳回至发起人重新提交：
+驳回是审批流中最常见的操作之一。成熟的 BPM 引擎支持灵活的驳回策略：
 
-```java
-// 驳回当前任务，流程回到发起人
-taskService.reject(taskId, approverId, "信息不完整，请补充后重新提交");
+| 驳回策略 | 说明 | 适用场景 |
+|---------|------|---------|
+| **驳回到发起人** | 流程回到发起人重新提交 | 信息不完整，需要补充 |
+| **驳回到上一节点** | 回到上一个审批节点 | 上一步审批有问题 |
+| **驳回到指定节点** | 跳转到任意指定节点 | 跳过某些节点重新审批 |
+| **终止审批流程** | 直接终止流程 | 完全不可接受的申请 |
 
-// 驳回后的流程状态：
-// 1. 当前任务关闭，记录到历史
-// 2. 流程实例状态变为"驳回"
-// 3. 发起人收到重新提交的通知
-// 4. 发起人修改后重新提交，流程从第一个审批节点重新开始
-```
+驳回后重新审批的执行策略：
 
-驳回后重新提交的流转机制：
+| 重新审批策略 | 说明 |
+|------------|------|
+| **继续执行** | 从驳回节点继续往下执行 |
+| **回到上一个节点** | 退回驳回节点重新审批 |
 
 ```text
 正常流程：  开始 → 主管审批 → 总监审批 → 结束
-驳回流程：  开始 → 主管审批 ✗（驳回）
+驳回流程：  开始 → 主管审批 ✗（驳回到发起人）
                     ↓
                发起人修改 → 重新提交 → 主管审批 → 总监审批 → 结束
+
+驳回到上一节点：
+  开始 → 主管审批 → 总监审批 ✗（驳回到上一节点）
+                           ↓
+                      主管审批 → 总监审批 → 结束
 ```
 
-::: warning 驳回的范围
-FlowLong 默认的驳回行为是回到发起人重新提交。如果业务需要"驳回至上一个审批节点"而非回到发起人，需要在业务层自定义驳回逻辑。
-:::
-
-### 5.4 转办与委派
+### 4.4 转办与委派
 
 转办和委派都是将任务交给他人处理，但语义不同：
 
@@ -810,16 +578,8 @@ FlowLong 默认的驳回行为是回到发起人重新提交。如果业务需�
 |------|------|---------|---------|
 | **转办** | 我不审批了，换人来审 | 转办后任务归属被转办人 | 审批人不在/不合适 |
 | **委派** | 我请人帮忙先审，最终还是要我确认 | 委派人审批后任务回到委派人 | 请上级/专家协助预审 |
-
-```java
-// 转办：把任务转给其他人审批
-// 转办后，原审批人不再参与此任务
-taskService.transfer(taskId, currentUserId, targetUserId, "我不负责此领域，转给技术主管");
-
-// 委派：请他人帮忙预审，预审后任务回到自己手中
-// 委派人完成预审后，任务重新分配给原审批人
-taskService.delegate(taskId, currentUserId, targetUserId, "请法务先审核合同条款");
-```
+| **代理** | A 指定代理人 B，B 完成后 A 和 B 都能查到 | 代理人完成任务后原处理人也能查看 | 授权代理审批 |
+| **离职转办** | A 所有参与任务批量转给 B | 全部任务归属 B | 员工离职交接 |
 
 ```text
 转办流程：  审批人A ──转办──→ 审批人B ──→ 下一节点
@@ -827,11 +587,14 @@ taskService.delegate(taskId, currentUserId, targetUserId, "请法务先审核合
 
 委派流程：  审批人A ──委派──→ 委派人B ──预审──→ 审批人A ──→ 下一节点
                        （B预审后，任务回到A）
+
+代理流程：  审批人A ──代理──→ 代理人B ──完成──→ 任务结束
+                       （A和B都能查到该任务）
 ```
 
-### 5.5 加签与减签
+### 4.5 加签与减签
 
-加签是在审批过程中临时增加审批人，减签是减少审批人。这是中国式审批的特色功能：
+加签是在审批过程中临时增加审批人，减签是减少审批人。这是**中国式审批**的特色功能：
 
 | 加签类型 | 说明 | 示例场景 |
 |---------|------|---------|
@@ -839,460 +602,525 @@ taskService.delegate(taskId, currentUserId, targetUserId, "请法务先审核合
 | **后加签** | 在当前审批人之后增加审批人 | 主管审批后需要增加风控审核 |
 | **并行加签** | 增加与当前审批人并行的审批人 | 需要增加一个会签人 |
 
-```java
-// 加签：在当前任务上增加审批人
-// 前加签：新审批人先审，审完回到当前审批人
-taskService.addSign(taskId, currentUserId, SignType.BEFORE,
-    Arrays.asList(FlowLongUser.of(6001L, "赵组长")), "请组长先确认");
-
-// 并行加签：新审批人与当前审批人同时审批
-taskService.addSign(taskId, currentUserId, SignType.PARALLEL,
-    Arrays.asList(FlowLongUser.of(7001L, "孙风控")), "需要风控同步审核");
-
-// 减签：移除某个审批人（仅并行/会签场景）
-taskService.removeSign(taskId, currentUserId, targetUserId, "该审批人已调离");
+```text
+前加签：  新审批人 → 当前审批人 → 下一节点
+后加签：  当前审批人 → 新审批人 → 下一节点
+并行加签：当前审批人 ─┐
+                    ├─→ 下一节点
+          新审批人 ──┘
 ```
 
-加签产生的临时任务记录在 `flw_recruit_task` 表中，与原始任务关联。
+减签则是在当前办理人操作之前减少办理人，仅适用于并行/会签场景。
 
-### 5.6 撤回
+### 4.6 撤回与撤销
 
-撤回是发起人在审批人尚未办理时，将任务收回：
-
-```java
-// 撤回：在下一节点审批人尚未办理时，收回任务
-// 撤回条件：下一节点任务未被处理
-boolean success = taskService.revoke(taskId, currentUserId, "信息有误，撤回修改");
-
-if (success) {
-    // 撤回成功，任务回到发起人手中
-    // 发起人可以修改后重新提交
-} else {
-    // 撤回失败，审批人已开始处理
-    throw new RuntimeException("审批人已处理，无法撤回");
-}
-```
+| 操作 | 执行者 | 条件 | 效果 |
+|------|--------|------|------|
+| **撤回（拿回）** | 上一节点提交人 | 当前办理人尚未处理 | 任务回到提交人 |
+| **撤销** | 流程发起者 | 任意时间 | 整个流程实例被撤销 |
 
 ```text
-正常流程：  发起人 → 主管审批（待办中）→ ...
-撤回流程：  发起人 → 主管审批（待办中）
-                       ↓ 撤回
-              任务回到发起人，可修改后重新提交
+撤回（拿回）：
+  发起人 → 主管审批（待办中）
+               ↓ 拿回
+          任务回到发起人
+
+撤销：
+  发起人 → 主管审批 → 总监审批（进行中）
+               ↓ 撤销
+          整个流程实例标记为"已撤销"
 ```
 
-::: warning 撤回的条件
-撤回仅在下一审批节点尚未办理时有效。如果审批人已经完成审批（同意/驳回），则无法撤回。引擎会检查任务状态，确保撤回操作的安全性。
-:::
+### 4.7 其他中国式审批操作
 
-### 5.7 流程取消
+除了上述核心操作，完整的 BPM 审批引擎还应支持以下中国式审批特色功能：
 
-流程取消（又称"终止流程"）是指强制结束一个正在进行的流程实例，通常在业务数据失效或流程不再需要时使用：
-
-```java
-/**
- * 取消流程实例
- * 适用于：业务数据被删除、流程不再需要、异常情况强制终止
- */
-public void cancelProcess(Long instanceId, String reason) {
-    // 取消流程实例
-    // 引擎内部执行：
-    // 1. 检查流程实例是否存在且处于运行状态
-    // 2. 关闭所有待办任务（从 flw_task 删除）
-    // 3. 将流程实例移到历史表（flw_his_instance）
-    // 4. 标记实例状态为"已取消"
-    runtimeService.cancel(instanceId, reason);
-}
-
-/**
- * 业务场景示例：工单被删除时取消关联的审批流程
- */
-public void onTicketDeleted(Long ticketId) {
-    // 根据 businessId 查询流程实例
-    FlwInstance instance = runtimeService.getByBusinessId(ticketId.toString());
-    if (instance != null && instance.isRunning()) {
-        runtimeService.cancel(instance.getId(), "工单已删除，流程自动取消");
-    }
-}
-```
-
-```text
-正常流程：  开始 → 主管审批 → 总监审批 → 结束
-取消流程：  开始 → 主管审批（待办中）
-                       ↓ 取消
-              流程实例标记为"已取消"，所有待办任务关闭
-```
-
-::: warning 流程取消的注意事项
-- 流程取消是**不可逆操作**，取消后无法恢复
-- 取消后流程实例会进入历史表，可通过 `HistoryService` 查询
-- 建议在取消前记录取消原因，便于后续审计
-- 与"驳回"的区别：驳回是审批操作的一种，流程仍在运行（发起人可重新提交）；取消是强制终止，流程彻底结束
-:::
+| 操作 | 说明 |
+|------|------|
+| **跳转** | 将当前流程实例跳转到任意办理节点 |
+| **唤醒** | 历史任务唤醒，重新进入审批流程 |
+| **认领** | 公共任务（角色/部门任务）由某人主动认领 |
+| **已阅** | 标记任务为已查看状态 |
+| **催办** | 通知当前活动任务处理人办理任务 |
+| **沟通** | 与当前活动任务处理人沟通 |
+| **终止** | 在任意节点终止流程实例 |
+| **追加** | 发起流程后动态追加修改节点处理人 |
+| **暂存待审** | 流程发起时暂存，发起人后续修改后重新提交激活 |
+| **超时审批** | 超时后自动审批（自动通过或拒绝） |
+| **自动提醒** | 根据设置的提醒时间提醒审批人（可设定提醒次数） |
+| **穿越时空** | 指定某个日期发起审批，所有任务记录为该时间（如事后补审） |
+| **AI 审批** | AI 智能体根据参数配置智能路由决策，智能辅助审批 |
 
 ---
 
-## 六、架构与运行机制
+## 五、主流 BPM 引擎对比
 
-### 6.1 整体架构
+### 5.1 引擎全景
+
+| 引擎 | 出品方 | 流程描述 | 依赖大小 | 特点 |
+|------|--------|---------|---------|------|
+| **FlowLong** | aizuda | JSON | ~1MB | 极简轻量，专注审批场景，MyBatis-Plus 生态，中国式审批 |
+| **Activiti** | Alfresco | BPMN 2.0 XML | ~30MB+ | 功能完整，国际标准，社区成熟 |
+| **Flowable** | Flowable | BPMN 2.0 XML | ~30MB+ | Activiti 分支，功能更丰富，支持 CMMN/DMN |
+| **Camunda** | Camunda | BPMN 2.0 XML | ~40MB+ | 企业级流程引擎，监控能力强 |
+| **SnakerFlow** | snakerflow | XML | ~5MB | 国产轻量工作流，类 Activiti 设计 |
+
+### 5.2 设计理念对比
+
+| 特性 | FlowLong（飞龙工作流） | 传统/主流工作流引擎（Camunda、Activiti） |
+|------|------------------|------------------|
+| **设计理念** | **审批模式优先**，贴近钉钉/飞书审批体验 | **BPMN 2.0 标准**优先，强调流程的规范性与复杂性 |
+| **流程定义** | 自定义的 **JSON 格式**，结构简单，易于生成和解析 | 基于国际标准的 **BPMN XML**，功能强大但相对复杂 |
+| **学习曲线** | **较低**，尤其适合有国内 OA 系统开发经验的开发者 | **较陡峭**，需要理解 BPMN 规范和各种技术细节 |
+| **适用场景** | **企业级审批流程**（人事、财务、行政等） | **复杂业务流程**（订单处理、供应链管理、工业自动化） |
+| **部署规模** | **轻量级**，适合快速集成到现有 Spring Boot 项目中 | **重量级**，通常作为独立服务部署，功能全面 |
+
+### 5.3 功能对比
+
+| 功能 | FlowLong | Activiti / Flowable |
+|------|----------|-------------------|
+| **人工审批** | ✅ 核心能力 | ✅ 核心能力 |
+| **会签/或签/票签** | ✅ 原生支持 | ✅ 支持（配置较复杂） |
+| **驳回/转办/委派/加签** | ✅ 开箱即用 | ✅ 支持（需自定义实现） |
+| **条件/并行/包容/路由分支** | ✅ 原生支持 | ✅ 支持（BPMN 网关） |
+| **父子流程** | ✅ 支持（同步/异步） | ✅ 支持 |
+| **定时/触发器任务** | ✅ 支持 | ✅ 支持 |
+| **AI 审批** | ✅ 支持 | ❌ 需自行集成 |
+| **穿越时空审批** | ✅ 支持 | ❌ 不支持 |
+| **可视化设计器** | ✅ 提供（独立组件） | ✅ Flowable Modeler |
+| **BPMN 标准兼容** | ❌ 不兼容 | ✅ 完全兼容 |
+| **数据库表数量** | 8 张 | ~20~40 张 |
+| **持久化框架** | MyBatis-Plus | MyBatis / JPA |
+
+---
+
+## 六、FlowLong 飞龙工作流引擎实战
+
+> 前面我们从 BPM 系统的角度梳理了审批流引擎的完整概念体系。接下来，我们以 **FlowLong 飞龙工作流引擎**为例，深入其具体实现。FlowLong 是 aizuda 团队开发的开源工作流引擎，采用 JSON 格式存储模型、仅 8 张表实现核心逻辑，专注为中国特色审批场景打造。
 
 ![FlowLong分层架构](/ai-cs/flow-orchestration/flowlong-analysis/flowlong-architecture-overview.svg)
 
-FlowLong 采用分层架构设计，各层职责清晰：
+### 6.1 项目简介
 
-```text
-┌─────────────────────────────────────────────────────┐
-│                    业务层                              │
-│         LeaveService / TicketService / ...            │
-└──────────────────────┬──────────────────────────────┘
-                       │ 调用
-┌──────────────────────▼──────────────────────────────┐
-│                  FlowLongEngine                       │
-│              （引擎入口 / 统一调度）                     │
-├──────────┬──────────┬──────────┬─────────────────────┤
-│ Process  │ Runtime  │   Task   │     History         │
-│ Service  │ Service  │ Service  │     Service         │
-│ (流程定义) │ (流程实例) │ (任务管理) │   (历史记录)          │
-├──────────┴──────────┴──────────┴─────────────────────┤
-│              MyBatis-Plus 数据访问层                    │
-│    FlwProcessMapper / FlwInstanceMapper / ...        │
-├───────────────────────────────────────────────────────┤
-│                  数据库（MySQL）                        │
-│  flw_process / flw_instance / flw_task / flw_his_*   │
-└───────────────────────────────────────────────────────┘
-```
+FlowLong 中文名"飞龙"，LOGO 采用中国红、中国龙、华表为元素设计。它的设计初衷很简单：**Activiti 太重，手写太累，需要一个刚刚好的审批流引擎**。
 
-| 层级 | 职责 | 核心类 |
-|------|------|-------|
-| **引擎入口** | 统一调度，门面模式 | `FlowLongEngine` |
-| **流程定义服务** | 流程的部署、查询、版本管理 | `ProcessService` |
-| **运行时服务** | 流程实例的启动、取消、查询 | `RuntimeService` |
-| **任务服务** | 任务的办理、转办、委派、加签、驳回 | `TaskService` |
-| **历史服务** | 历史实例和任务的查询、审计 | `HistoryService` |
-| **数据访问层** | 基于 MyBatis-Plus 的 CRUD | `*Mapper` |
+在真实业务中，90% 的流程需求其实就是"审批"——请假审批、报销审批、工单审批、合同审批。这些场景的共同特征是：有人工参与的节点、需要持久化任务状态、需要记录审批历史。但对于这些场景，引入 Activiti/Flowable 这种重量级工作流引擎往往是大材小用——BPMN 2.0 的复杂性、大量不必要的表结构、陡峭的学习曲线，都增加了项目的维护成本。
 
-### 6.2 流程启动机制
+FlowLong 在 `flowlong` 中抛弃了传统 BPMN 所包含的泳道、网关、连线、补偿、信号、活动、数据对象等复杂的概念，也不采用 XML 这种较重格式的标记语言作为模型设计，模型化繁为简只有节点这么一个概念。
 
-当调用 `runtimeService.start()` 启动流程时，引擎内部执行以下步骤：
+### 6.2 核心特性
 
-```text
-runtimeService.start(processId, businessId, createUser, variables)
-     │
-     ▼
-┌─────────────────────────────────┐
-│ 1. 加载流程定义                    │  从 flw_process 表读取 JSON
-│    解析 JSON → FlowModel         │  反序列化为内存模型
-└──────────┬──────────────────────┘
-           │
-           ▼
-┌─────────────────────────────────┐
-│ 2. 创建流程实例                    │  写入 flw_instance 表
-│    记录 businessId、发起人         │  关联业务数据
-└──────────┬──────────────────────┘
-           │
-           ▼
-┌─────────────────────────────────┐
-│ 3. 解析第一个审批节点               │  从开始节点的 nextNodeCode
-│    解析审批人（变量替换）            │  ${manager_id} → 实际值
-└──────────┬──────────────────────┘
-           │
-           ▼
-┌─────────────────────────────────┐
-│ 4. 创建待办任务                    │  写入 flw_task 表
-│    通知审批人                      │  可扩展通知方式
-└─────────────────────────────────┘
-```
-
-```java
-// 引擎启动流程的伪代码
-public Long start(Long processId, String businessId, FlowLongUser createUser,
-                  Map<String, Object> variables) {
-    // 1. 加载并解析流程定义
-    FlwProcess process = processMapper.selectById(processId);
-    FlowModel flowModel = JSON.parseObject(process.getFlowJson(), FlowModel.class);
-
-    // 2. 创建流程实例
-    FlwInstance instance = new FlwInstance();
-    instance.setProcessId(processId);
-    instance.setBusinessId(businessId);
-    instance.setCreateUserId(createUser.getUserId());
-    instance.setCreateTime(LocalDateTime.now());
-    instanceMapper.insert(instance);
-
-    // 3. 解析第一个审批节点（从 start 节点的 nextNodeCode 开始）
-    FlowNode startNode = flowModel.getNode("start");
-    FlowNode firstApprovalNode = flowModel.getNode(startNode.getNextNodeCode());
-
-    // 4. 解析审批人（变量替换）
-    List<FlowLongUser> approvers = resolvePermissionList(
-        firstApprovalNode.getPermissionList(), variables);
-
-    // 5. 创建待办任务
-    for (FlowLongUser approver : approvers) {
-        FlwTask task = new FlwTask();
-        task.setInstanceId(instance.getId());
-        task.setNodeCode(firstApprovalNode.getNodeCode());
-        task.setNodeName(firstApprovalNode.getNodeName());
-        task.setAssignee(approver.getUserId());
-        taskMapper.insert(task);
-    }
-
-    return instance.getId();
-}
-```
-
-### 6.3 任务流转机制
-
-当审批人办理任务时，引擎执行以下流转逻辑：
-
-```text
-taskService.complete(taskId, userId, comment)
-     │
-     ▼
-┌─────────────────────────────────┐
-│ 1. 关闭当前任务                    │  从 flw_task 删除
-│    记录到历史                      │  写入 flw_his_task
-└──────────┬──────────────────────┘
-           │
-           ▼
-┌─────────────────────────────────┐
-│ 2. 检查并行/会签是否完成             │  如果是会签节点
-│    未完成 → 等待其他审批人            │  检查 nodeRatio 是否达到
-└──────────┬──────────────────────┘
-           │ 完成
-           ▼
-┌─────────────────────────────────┐
-│ 3. 解析下一节点                    │  读取 nextNodeCode
-│    条件节点 → 匹配 expression      │  或 conditionList 匹配
-└──────────┬──────────────────────┘
-           │
-           ▼
-┌─────────────────────────────────┐
-│ 4. 创建下一节点任务                 │  写入 flw_task
-│    或到达结束节点 → 完成流程实例      │  或更新 flw_instance 状态
-└─────────────────────────────────┘
-```
-
-关键流转规则：
-
-| 当前节点类型 | 流转逻辑 |
-|------------|---------|
-| 审批节点（单人） | 直接流转到 `nextNodeCode` |
-| 审批节点（会签） | 检查 `nodeRatio`，未达到则等待，达到后流转 |
-| 抄送节点 | 自动完成，创建抄送记录后立即流转 |
-| 条件节点 | 匹配 `conditionList` 中的 `expression`，跳转到匹配的 `nodeCode` |
-| 结束节点 | 标记流程实例为已完成 |
-
-### 6.4 持久化机制
-
-FlowLong 的持久化完全基于 MyBatis-Plus，所有数据操作通过 Mapper 接口完成：
-
-```java
-// 引擎内部的数据操作示例（简化）
-// 1. 创建任务
-FlwTask task = new FlwTask();
-task.setInstanceId(instanceId);
-task.setNodeCode("manager_approval");
-task.setNodeName("主管审批");
-task.setAssignee(managerId);
-task.setCreateTime(LocalDateTime.now());
-taskMapper.insert(task);  // MyBatis-Plus 自动 insert
-
-// 2. 完成任务
-FlwTask pendingTask = taskMapper.selectById(taskId);
-// 移到历史表
-FlwHisTask hisTask = FlwHisTask.of(pendingTask, approverId, "同意", LocalDateTime.now());
-hisTaskMapper.insert(hisTask);
-// 删除待办
-taskMapper.deleteById(taskId);
-
-// 3. 创建下一节点任务
-FlwTask nextTask = new FlwTask();
-nextTask.setInstanceId(pendingTask.getInstanceId());
-nextTask.setNodeCode(nextNode.getNodeCode());
-nextTask.setAssignee(nextApproverId);
-taskMapper.insert(nextTask);
-```
-
-::: tip MyBatis-Plus 的优势
-基于 MyBatis-Plus 意味着：
-- **零 SQL 编写**：所有 CRUD 通过 BaseMapper 自动完成
-- **分页友好**：审批列表、待办查询天然支持 MyBatis-Plus 分页插件
-- **多数据库兼容**：通过 MyBatis-Plus 的数据库方言，支持 MySQL、PostgreSQL、Oracle 等
-- **事务管理**：集成 Spring 事务，流程操作自动参与数据库事务
-:::
-
-### 6.5 事件监听机制
-
-FlowLong 提供了事件监听机制，允许业务系统在流程状态变化时执行自定义逻辑，实现流程与业务的解耦：
-
-```java
-/**
- * FlowLong 事件类型
- */
-public enum FlowLongEventType {
-    PROCESS_STARTED,      // 流程已启动
-    PROCESS_COMPLETED,    // 流程已完成
-    PROCESS_CANCELLED,    // 流程已取消
-    PROCESS_REJECTED,     // 流程被驳回
-    TASK_CREATED,         // 任务已创建
-    TASK_COMPLETED,       // 任务已完成（同意）
-    TASK_REJECTED,        // 任务已驳回
-    TASK_TRANSFERRED,     // 任务已转办
-    TASK_DELEGATED        // 任务已委派
-}
-```
-
-```java
-/**
- * 注册事件监听器
- */
-@Component
-public class TicketFlowListener {
-
-    @Autowired
-    private NotificationService notificationService;
-
-    @Autowired
-    private TicketService ticketService;
-
-    /**
-     * 监听任务创建事件：通知审批人
-     */
-    @FlowLongListener(event = TASK_CREATED)
-    public void onTaskCreated(FlowLongEvent event) {
-        Long taskId = event.getTaskId();
-        Long assignee = event.getAssignee();
-        String nodeName = event.getNodeName();
-
-        // 发送通知给审批人
-        notificationService.send(assignee,
-            String.format("您有新的【%s】任务需要处理", nodeName));
-    }
-
-    /**
-     * 监听流程完成事件：更新业务状态
-     */
-    @FlowLongListener(event = PROCESS_COMPLETED)
-    public void onProcessCompleted(FlowLongEvent event) {
-        String businessId = event.getBusinessId();
-        Long ticketId = Long.parseLong(businessId);
-
-        // 更新工单状态为"已审批"
-        ticketService.updateStatus(ticketId, TicketStatus.APPROVED);
-    }
-
-    /**
-     * 监听流程驳回事件：通知发起人
-     */
-    @FlowLongListener(event = PROCESS_REJECTED)
-    public void onProcessRejected(FlowLongEvent event) {
-        String businessId = event.getBusinessId();
-        Long creatorId = event.getCreatorId();
-        String reason = event.getReason();
-
-        // 通知发起人流程被驳回
-        notificationService.send(creatorId,
-            String.format("您的申请已被驳回，原因：%s", reason));
-
-        // 更新工单状态
-        ticketService.updateStatus(Long.parseLong(businessId), TicketStatus.REJECTED);
-    }
-
-    /**
-     * 监听流程取消事件：清理关联数据
-     */
-    @FlowLongListener(event = PROCESS_CANCELLED)
-    public void onProcessCancelled(FlowLongEvent event) {
-        String businessId = event.getBusinessId();
-        // 更新业务状态为"已取消"
-        ticketService.updateStatus(Long.parseLong(businessId), TicketStatus.CANCELLED);
-    }
-}
-```
-
-::: tip 事件监听的最佳实践
-- **通知解耦**：通过事件监听发送通知，避免在业务代码中硬编码通知逻辑
-- **状态同步**：监听流程完成/驳回/取消事件，同步更新业务数据状态
-- **审计日志**：监听所有事件类型，记录完整的操作审计日志
-- **异步处理**：对于耗时的监听逻辑（如发送邮件），建议使用 `@Async` 异步执行，避免阻塞流程流转
-:::
-
-### 6.6 流程版本管理机制
-
-FlowLong 支持流程定义的多版本管理，新版本部署后不影响进行中的旧版本实例：
-
-```java
-/**
- * 流程版本管理示例
- */
-@Service
-public class ProcessVersionService {
-
-    @Autowired
-    private ProcessService processService;
-
-    /**
-     * 部署新版本流程定义
-     * 每次部署会生成一个新版本号，旧版本继续保留
-     */
-    public Long deployNewVersion(String flowJson) {
-        // 部署流程，版本号自动递增
-        // 如果 flowName 相同，则创建新版本
-        // 如果 flowName 不同，则创建新流程
-        return processService.deploy(flowJson);
-    }
-
-    /**
-     * 查询流程的所有版本
-     */
-    public List<FlwProcess> listVersions(String flowName) {
-        return processService.listByFlowName(flowName);
-    }
-
-    /**
-     * 查询当前激活的最新版本
-     */
-    public FlwProcess getActiveVersion(String flowName) {
-        return processService.getLatestVersion(flowName);
-    }
-
-    /**
-     * 按版本号查询特定版本
-     */
-    public FlwProcess getVersion(String flowName, Integer version) {
-        return processService.getByVersion(flowName, version);
-    }
-}
-```
-
-版本管理的核心规则：
-
-| 场景 | 行为 |
+| 特性 | 说明 |
 |------|------|
-| **首次部署** | 创建版本 1 |
-| **同名再部署** | 创建版本 2，版本 1 保留 |
-| **启动流程** | 默认使用最新版本的流程定义 |
-| **进行中实例** | 不受新版本影响，继续按旧版本执行 |
-| **新发起实例** | 使用最新版本的流程定义 |
+| **极简轻量** | 核心 JAR 仅约 1MB，引擎核心仅 8 张表 |
+| **JSON 流程定义** | 用 JSON 描述流程，无需 BPMN 2.0 XML，直观易读 |
+| **中国式审批** | 动态加签、任意驳回、拿回、撤销、已阅、沟通等特色操作 |
+| **多种审批模式** | 顺序会签、并行会签、或签、票签（权重投票） |
+| **四种分支类型** | 条件分支、并行分支、包容分支、路由分支 |
+| **父子流程** | 主流程节点设置子流程，支持同步/异步 |
+| **定时与触发器** | 定时任务、触发器任务（立即触发/定时触发） |
+| **超时与提醒** | 超时自动审批、定时提醒（可设定次数） |
+| **AI 审批** | AI 智能体智能路由决策，智能辅助审批 |
+| **穿越时空** | 指定日期发起审批，任务记录为该时间 |
+| **暂存待审** | 发起时暂存，后续修改后重新提交激活 |
+| **MyBatis-Plus 持久化** | 基于 MyBatis-Plus，数据库操作透明可追踪 |
+| **Spring Boot / Solon 集成** | 提供 Starter，自动配置，即引即用 |
+| **流程设计器** | 提供独立的可视化流程设计器组件 |
 
-```text
-版本 1 (v1)：开始 → 主管审批 → 结束
-                    ↓
-              已启动的实例 A（按 v1 执行）
+### 6.3 安装集成
 
-版本 2 (v2)：开始 → 主管审批 → 总监审批 → 结束
-                    ↓
-              新启动的实例 B（按 v2 执行）
+#### Maven 依赖
 
-说明：实例 A 不受 v2 部署影响，继续按 v1 流程执行
+```xml
+<!-- Spring Boot 2/3 -->
+<dependency>
+    <groupId>com.aizuda</groupId>
+    <artifactId>flowlong-spring-boot-starter</artifactId>
+    <version>1.2.5</version>
+</dependency>
+
+<!-- Spring Boot 4 使用专用 starter -->
+<dependency>
+    <groupId>com.aizuda</groupId>
+    <artifactId>flowlong-spring-boot4-starter</artifactId>
+    <version>1.2.5</version>
+</dependency>
 ```
 
-::: tip 版本管理的最佳实践
-- **流程变更时部署新版本**：不要直接修改已部署的流程 JSON，而是部署新版本
-- **测试后再上线**：新版本部署后，先用测试业务验证流程正确性
-- **保留旧版本**：不要删除旧版本定义，以便追溯历史实例的执行依据
-- **版本说明**：在流程定义的 `version` 字段中记录版本变更说明
+::: tip 环境要求
+FlowLong 支持 Spring Boot 2.x/3.x/4.x 和 Solon 框架。环境要求 JDK 8+。如需使用 MyBatis-Plus 数据访问层，确保项目中已引入 MyBatis-Plus 依赖。最新版本号请查看 [Maven Central](https://central.sonatype.com/artifact/com.aizuda/flowlong-spring-boot-starter/versions)。
 :::
+
+#### 项目结构
+
+```text
+flowlong/
+├── db/                              # 数据库脚本存放目录
+├── flowlong-core/                   # 工作流核心库
+├── flowlong-mybatis-plus/           # 数据访问层（默认 MyBatis-Plus）
+├── flowlong-solon-plugin/           # Solon 启动插件
+├── flowlong-solon-example/          # Solon 演示案例
+├── flowlong-spring-boot-autoconfigure/  # Spring Boot 自动配置
+├── flowlong-spring-boot-example/    # Spring Boot 演示案例
+├── flowlong-spring-boot-starter/    # Spring Boot 2/3 启动插件
+└── flowlong-spring-boot4-starter/   # Spring Boot 4 启动插件
+```
+
+### 6.4 数据库表结构
+
+FlowLong 引擎核心仅 **8 张表**实现逻辑数据存储，采用 JSON 数据格式存储模型结构：
+
+| 表名 | 说明 | 核心字段 |
+|------|------|---------|
+| `flw_process` | 流程定义 | `process_key`（唯一标识）、`process_name`、`model_content`（JSON 定义）、`process_version`、`process_state` |
+| `flw_instance` | 流程实例 | `process_id`、`business_key`（业务关联）、`current_node_name`、`variable`（变量 JSON） |
+| `flw_his_instance` | 历史流程实例 | 继承实例表字段 + `instance_state`（状态）、`end_time`、`duration` |
+| `flw_ext_instance` | 扩展流程实例 | `instance_id`、`model_content`（动态添加节点存储临时模型） |
+| `flw_task` | 待办任务 | `instance_id`、`task_name`、`task_key`、`task_type`、`perform_type`、`variable` |
+| `flw_his_task` | 历史任务 | 继承任务表字段 + `task_state`、`finish_time`、`duration` |
+| `flw_task_actor` | 任务参与者 | `task_id`、`actor_id`、`actor_name`、`actor_type`（0 用户/1 角色/2 部门）、`weight`（权重）、`agent_id` |
+| `flw_his_task_actor` | 历史任务参与者 | 与 `flw_task_actor` 结构一致，存储历史记录 |
+
+```text
+┌──────────────┐     ┌──────────────┐     ┌──────────────┐
+│  flw_process  │     │ flw_instance  │     │   flw_task    │
+│  (流程定义)    │────→│  (流程实例)    │────→│  (待办任务)    │
+└──────────────┘     └──────┬───────┘     └──────┬───────┘
+                            │                     │
+                     ┌──────▼───────┐     ┌──────▼───────┐
+                     │flw_his_instance│   │ flw_his_task  │
+                     │  (历史实例)    │     │  (历史任务)    │
+                     └──────────────┘     └──────┬───────┘
+                                                 │
+                     ┌──────────────┐     ┌──────▼───────┐
+                     │flw_ext_instance│    │flw_task_actor│
+                     │ (扩展实例)     │     │ (任务参与者)  │
+                     └──────────────┘     └──────┬───────┘
+                                                 │
+                                          ┌──────▼───────┐
+                                          │flw_his_task_ │
+                                          │    actor     │
+                                          │(历史参与者)   │
+                                          └──────────────┘
+```
+
+**流程实例状态**（`flw_his_instance.instance_state`）：
+
+| 状态值 | 含义 |
+|-------|------|
+| 0 | 审批中 |
+| 1 | 审批通过 |
+| 2 | 审批拒绝 |
+| 3 | 撤销审批 |
+| 4 | 超时结束 |
+| 5 | 强制终止 |
+
+**任务状态**（`flw_his_task.task_state`）：
+
+| 状态值 | 含义 |
+|-------|------|
+| 0 | 活动 |
+| 1 | 跳转 |
+| 2 | 完成 |
+| 3 | 拒绝 |
+| 4 | 撤销审批 |
+| 5 | 超时 |
+| 6 | 终止 |
+| 7 | 驳回终止 |
+
+### 6.5 流程定义（JSON 格式）
+
+FlowLong 使用 JSON 描述流程定义，节点定义对应的 Java 实体类为 `NodeModel`，源码位于 `flowlong-core/src/main/java/com/aizuda/bpm/engine/model` 目录。
+
+```jsonc
+{
+  "flowName": "请假审批流程",
+  "flowNodes": [
+    {
+      "nodeType": 0,            // 节点类型：0=开始
+      "nodeCode": "start",
+      "nodeName": "开始",
+      "nextNodeCode": "manager_approval"
+    },
+    {
+      "nodeType": 1,            // 节点类型：1=审批
+      "nodeCode": "manager_approval",
+      "nodeName": "主管审批",
+      "permissionList": [
+        { "type": 0, "handler": "${manager_id}" }
+      ],
+      "nextNodeCode": "check_days"
+    },
+    {
+      "nodeType": 4,            // 节点类型：4=条件
+      "nodeCode": "check_days",
+      "nodeName": "天数判断",
+      "conditionList": [
+        { "nodeCode": "director_approval", "expression": "days > 3" },
+        { "nodeCode": "cc_hr", "expression": "days <= 3" }
+      ]
+    },
+    {
+      "nodeType": 1,
+      "nodeCode": "director_approval",
+      "nodeName": "总监审批",
+      "permissionList": [
+        { "type": 0, "handler": "${director_id}" }
+      ],
+      "nextNodeCode": "cc_hr"
+    },
+    {
+      "nodeType": 2,            // 节点类型：2=抄送
+      "nodeCode": "cc_hr",
+      "nodeName": "抄送HR",
+      "permissionList": [
+        { "type": 0, "handler": "${hr_id}" }
+      ],
+      "nextNodeCode": "end"
+    },
+    {
+      "nodeType": 3,            // 节点类型：3=结束
+      "nodeCode": "end",
+      "nodeName": "结束"
+    }
+  ]
+}
+```
+
+#### 节点类型
+
+| `nodeType` | 类型 | 说明 |
+|------------|------|------|
+| 0 | 开始节点 | 流程入口，每个流程有且仅有一个 |
+| 1 | 审批节点 | 需要人工审批的环节，最核心的节点类型 |
+| 2 | 抄送节点 | 仅通知，不需要审批，任务自动完成 |
+| 3 | 结束节点 | 流程出口，表示流程正常结束 |
+| 4 | 条件节点 | 根据表达式动态选择下一个执行节点 |
+
+#### 审批人设置
+
+`permissionList` 定义了每个审批/抄送节点的处理人：
+
+| `type` 值 | 含义 | `handler` 格式 | 示例 |
+|-----------|------|---------------|------|
+| 0 | 指定用户 | 用户ID 或 `${变量名}` | `"1001"` 或 `"${manager_id}"` |
+| 1 | 指定角色 | 角色标识 | `"role_manager"` |
+| 2 | 指定部门 | 部门ID | `"dept_001"` |
+
+::: tip 动态审批人
+`handler` 字段支持 `${变量名}` 语法，在流程启动时通过 `args` 参数传入实际值。这样可以根据业务上下文动态指定审批人。
+:::
+
+#### 会签比例
+
+`nodeRatio` 字段控制并行审批的通过策略：
+
+| `nodeRatio` | 含义 |
+|------------|------|
+| 不设置 | 串行审批（依次审批） |
+| `1.0` | 会签（全票通过） |
+| `0` | 或签（任一通过） |
+| `0.5` | 比例通过（半数以上） |
+
+### 6.6 核心 API
+
+FlowLong 的核心类是 `FlowLongEngine`，它是流程引擎的关键接口，可以获取流程的各种服务：
+
+```java
+@Resource
+private FlowLongEngine flowLongEngine;
+
+// 获取各种服务
+ProcessService processService = flowLongEngine.processService();   // 流程定义服务
+QueryService queryService = flowLongEngine.queryService();         // 查询服务
+TaskService taskService = flowLongEngine.taskService();            // 任务服务
+RuntimeService runtimeService = flowLongEngine.runtimeService();   // 运行时服务
+```
+
+#### 部署流程
+
+```java
+// 方式一：根据资源文件部署（文件放在 resources 目录下）
+Long processId = flowLongEngine.processService()
+    .deployByResource("leave-approval.json", flowCreator, repeat);
+
+// 方式二：根据输入流部署
+Long processId = flowLongEngine.processService()
+    .deploy(inputStream, flowCreator, repeat);
+
+// 方式三：根据 JSON 字符串部署
+Long processId = flowLongEngine.processService()
+    .deploy(jsonString, flowCreator, repeat);
+```
+
+| 参数 | 说明 |
+|------|------|
+| `resourceName` / `input` / `jsonString` | 流程定义来源 |
+| `flowCreator` | 流程任务部署者（`FlowCreator.of(userId, userName)`） |
+| `repeat` | 是否重复部署：`true` 存在则版本+1 新增记录，`false` 存在则直接返回 |
+
+#### 发起流程
+
+```java
+// 方式一：根据流程定义ID启动
+Map<String, Object> args = new HashMap<>();
+args.put("days", 5);
+args.put("manager_id", 3001L);
+args.put("director_id", 4001L);
+
+flowLongEngine.startInstanceById(processId, flowCreator, args)
+    .ifPresent(instance -> {
+        // 获取实例信息
+        Long instanceId = instance.getId();
+    });
+
+// 方式二：根据流程定义KEY启动
+flowLongEngine.startInstanceByProcessKey(processKey, version, flowCreator, args)
+    .ifPresent(instance -> {
+        // 其它流程操作
+    });
+```
+
+| 参数 | 说明 |
+|------|------|
+| `processId` / `processKey` | 流程定义ID或唯一标识 |
+| `version` | 版本号（按 KEY 启动时可选） |
+| `flowCreator` | 流程实例创建者 |
+| `args` | 流程变量，用于条件判断和审批人解析 |
+| `businessKey` | 业务KEY（用于关联业务数据） |
+
+#### 审批任务
+
+```java
+// 审批同意
+flowLongEngine.executeTask(taskId, flowCreator, args);
+
+// 审批拒绝（默认返回上一级节点）
+// nodeKey 为空则默认返回上一级，指定则跳转到该节点
+// termination 为 true 时直接终止流程
+flowLongEngine.executeRejectTask(flwTask, nodeKey, flowCreator, args, termination);
+
+// 查询当前实例的活动任务
+List<FlwTask> tasks = flowLongEngine.queryService()
+    .getActiveTasksByInstanceId(instanceId).get();
+
+// 查询历史任务
+List<FlwHisTask> hisTasks = flowLongEngine.queryService()
+    .getHisTasksByInstanceId(instanceId).get();
+```
+
+::: warning 事务一致性
+业务层调用审批方法时，请务必保证事务一致性。在 SpringBoot 中使用 `@Transactional(rollbackFor = Exception.class)` 注解。
+:::
+
+#### 其他任务操作
+
+```java
+// 转办任务：A 转给 B 审批，B 审批后进入下一节点
+flowLongEngine.taskService().transferTask(taskId, flowCreator, assigneeFlowCreator, args);
+
+// 委派任务：A 转给 B 审批，B 审批后转回 A，A 审批后进入下一节点
+flowLongEngine.taskService().delegateTask(taskId, flowCreator, assigneeFlowCreator, args);
+
+// 撤回任务：后续任务未执行前有效
+flowLongEngine.taskService().withdrawTask(taskId, flowCreator);
+
+// 唤醒任务：唤醒历史任务，重新进入审批流程
+flowLongEngine.taskService().resume(instanceId, nodeKey, flowCreator);
+
+// 跳转到任意节点
+flowLongEngine.executeJumpTask(taskId, nodeKey, flowCreator, args);
+
+// 指定代理人
+flowLongEngine.taskService().agentTask(taskId, flowCreator, agentFlowCreators, args);
+
+// 认领角色任务
+flowLongEngine.taskService().claimRole(taskId, flowCreator);
+
+// 认领部门任务
+flowLongEngine.taskService().claimDepartment(taskId, flowCreator);
+
+// 追加节点模型（true=前置，false=后置）
+flowLongEngine.executeAppendNodemodel(taskId, nodeModel, flowCreator, args, beforeAfter);
+```
+
+#### 节点模型驳回策略
+
+在 `NodeModel` 中可配置驳回相关属性：
+
+| 属性 | 说明 |
+|------|------|
+| `rejectStrategy` | 驳回策略：1=驳回到发起人，2=驳回到上一节点，3=驳回到指定节点，4=终止审批流程，5=驳回到模型父节点 |
+| `rejectStart` | 驳回重新审批策略：1=继续往下执行，2=回到上一个节点 |
+
+### 6.7 完整示例
+
+将上面的步骤串联起来，一个完整的请假审批流程如下：
+
+```java
+@Service
+public class LeaveApprovalDemo {
+
+    @Resource
+    private FlowLongEngine flowLongEngine;
+
+    public void demo() {
+        FlowCreator creator = FlowCreator.of("2001", "张三");
+
+        // ========== 1. 部署流程 ==========
+        Long processId = flowLongEngine.processService()
+            .deployByResource("leave-approval.json", creator, false);
+
+        // ========== 2. 发起请假 ==========
+        Map<String, Object> args = new HashMap<>();
+        args.put("days", 5);  // 请假5天，需要总监审批
+        args.put("manager_id", "3001");
+        args.put("director_id", "4001");
+        args.put("hr_id", "5001");
+
+        FlwInstance instance = flowLongEngine.startInstanceById(processId, creator, args).get();
+        System.out.println("流程已启动，实例ID: " + instance.getId());
+
+        // ========== 3. 主管审批 ==========
+        List<FlwTask> managerTasks = flowLongEngine.queryService()
+            .getActiveTasksByInstanceId(instance.getId()).get();
+        FlwTask managerTask = managerTasks.stream()
+            .filter(t -> "主管审批".equals(t.getTaskName()))
+            .findFirst().get();
+        flowLongEngine.executeTask(managerTask.getId(),
+            FlowCreator.of("3001", "李主管"),
+            Collections.singletonMap("reason", "同意，注意交接工作"));
+        // 引擎自动流转到条件判断 → days=5 > 3 → 总监审批节点
+
+        // ========== 4. 总监审批 ==========
+        List<FlwTask> directorTasks = flowLongEngine.queryService()
+            .getActiveTasksByInstanceId(instance.getId()).get();
+        FlwTask directorTask = directorTasks.stream()
+            .filter(t -> "总监审批".equals(t.getTaskName()))
+            .findFirst().get();
+        flowLongEngine.executeTask(directorTask.getId(),
+            FlowCreator.of("4001", "王总监"),
+            Collections.singletonMap("reason", "同意"));
+        // 引擎自动流转到抄送HR → 结束
+
+        // ========== 5. 查看审批历史 ==========
+        List<FlwHisTask> history = flowLongEngine.queryService()
+            .getHisTasksByInstanceId(instance.getId()).get();
+        for (FlwHisTask hisTask : history) {
+            System.out.printf("节点: %s, 审批人: %s, 状态: %d, 时间: %s%n",
+                hisTask.getTaskName(),
+                hisTask.getCreateBy(),
+                hisTask.getTaskState(),
+                hisTask.getFinishTime());
+        }
+        // 输出:
+        // 节点: 主管审批, 审批人: 李主管, 状态: 2(完成), 时间: ...
+        // 节点: 总监审批, 审批人: 王总监, 状态: 2(完成), 时间: ...
+    }
+}
+```
+
+三步搞定：**部署流程 → 启动实例 → 办理任务**。业务代码只关心业务数据，审批流转完全由引擎驱动。
 
 ---
 
@@ -1310,15 +1138,6 @@ AI 客服系统中，工单从自动处理到人工审批是一个典型场景�
       "nodeType": 0,
       "nodeCode": "start",
       "nodeName": "工单提交",
-      "nextNodeCode": "ai_classify"
-    },
-    {
-      "nodeType": 1,
-      "nodeCode": "ai_classify",
-      "nodeName": "AI分类",
-      "permissionList": [
-        { "type": 0, "handler": "ai_system" }
-      ],
       "nextNodeCode": "route_by_category"
     },
     {
@@ -1373,11 +1192,8 @@ AI 客服系统中，工单从自动处理到人工审批是一个典型场景�
 @Service
 public class TicketApprovalService {
 
-    @Autowired
-    private RuntimeService runtimeService;
-
-    @Autowired
-    private TaskService taskService;
+    @Resource
+    private FlowLongEngine flowLongEngine;
 
     /**
      * 提交工单，启动审批流程
@@ -1390,48 +1206,59 @@ public class TicketApprovalService {
         ticket.setSeverity(classification.getSeverity());
 
         // 准备流程变量
-        Map<String, Object> variables = new HashMap<>();
-        variables.put("category", ticket.getCategory());
-        variables.put("amount", ticket.getAmount());
-        variables.put("severity", ticket.getSeverity());
-        variables.put("manager_id", deptService.getManagerId(ticket.getDeptId()));
-        variables.put("finance_id", financeService.getFinanceId());
-        variables.put("senior_manager_id", deptService.getSeniorManagerId());
-        variables.put("record_keeper_id", recordService.getKeeperId());
+        Map<String, Object> args = new HashMap<>();
+        args.put("category", ticket.getCategory());
+        args.put("amount", ticket.getAmount());
+        args.put("severity", ticket.getSeverity());
+        args.put("manager_id", deptService.getManagerId(ticket.getDeptId()));
+        args.put("finance_id", financeService.getFinanceId());
+        args.put("senior_manager_id", deptService.getSeniorManagerId());
+        args.put("record_keeper_id", recordService.getKeeperId());
 
         // 启动审批流程
-        return runtimeService.start(
-            ticketProcessId,
-            ticket.getId().toString(),
-            FlowLongUser.of(ticket.getCreatorId(), ticket.getCreatorName()),
-            variables
+        FlowCreator creator = FlowCreator.of(
+            ticket.getCreatorId().toString(),
+            ticket.getCreatorName()
         );
+
+        FlwInstance instance = flowLongEngine.startInstanceById(
+            ticketProcessId, creator, args
+        ).get();
+
+        return instance.getId();
     }
 
     /**
      * 审批人处理工单
      */
     public void processApproval(ApprovalRequest request) {
+        FlowCreator creator = FlowCreator.of(
+            request.getApproverId().toString(),
+            request.getApproverName()
+        );
+
         switch (request.getAction()) {
             case APPROVE:
-                taskService.complete(request.getTaskId(),
-                    request.getApproverId(), request.getComment());
+                flowLongEngine.executeTask(request.getTaskId(),
+                    creator, Collections.singletonMap("reason", request.getComment()));
                 break;
             case REJECT:
-                taskService.reject(request.getTaskId(),
-                    request.getApproverId(), request.getComment());
+                // 驳回，nodeKey 为空则默认返回上一级
+                FlwTask task = flowLongEngine.queryService()
+                    .getActiveTasksByInstanceId(request.getInstanceId()).get().get(0);
+                flowLongEngine.executeRejectTask(
+                    task, null, creator,
+                    Collections.singletonMap("rejectReason", request.getComment()),
+                    false  // 不终止流程
+                );
                 break;
             case TRANSFER:
-                taskService.transfer(request.getTaskId(),
-                    request.getApproverId(),
-                    request.getTargetUserId(),
-                    request.getComment());
-                break;
-            case ADD_SIGN:
-                taskService.addSign(request.getTaskId(),
-                    request.getApproverId(), SignType.PARALLEL,
-                    request.getAdditionalApprovers(),
-                    request.getComment());
+                flowLongEngine.taskService().transferTask(
+                    request.getTaskId(), creator,
+                    FlowCreator.of(request.getTargetUserId().toString(),
+                                   request.getTargetUserName()),
+                    Collections.singletonMap("reason", request.getComment())
+                );
                 break;
         }
     }
@@ -1439,20 +1266,19 @@ public class TicketApprovalService {
     /**
      * 查询我的待审批工单
      */
-    public Page<TicketTaskVO> myPendingTasks(Long userId, int pageNum, int pageSize) {
-        Page<FlowLongTask> taskPage = taskService.pageByUserId(userId, pageNum, pageSize);
+    public List<TicketTaskVO> myPendingTasks(String userId) {
+        // 通过查询服务获取当前用户的活动任务
+        List<FlwTask> tasks = flowLongEngine.queryService()
+            .getActiveTasksByActorId(userId);
 
-        // 关联工单信息
-        List<TicketTaskVO> voList = taskPage.getRecords().stream()
-            .map(task -> {
-                // businessId 存储在 FlwInstance 上，需通过 instanceId 查询实例获取
-                FlwInstance instance = runtimeService.getById(task.getInstanceId());
-                Ticket ticket = ticketMapper.selectById(Long.parseLong(instance.getBusinessId()));
-                return TicketTaskVO.of(task, ticket);
-            })
-            .collect(Collectors.toList());
-
-        return new Page<>(pageNum, pageSize, taskPage.getTotal()).setRecords(voList);
+        return tasks.stream().map(task -> {
+            FlwInstance instance = flowLongEngine.queryService()
+                .getInstanceById(task.getInstanceId()).get();
+            Ticket ticket = ticketMapper.selectById(
+                Long.parseLong(instance.getBusinessKey())
+            );
+            return TicketTaskVO.of(task, ticket);
+        }).collect(Collectors.toList());
     }
 }
 ```
@@ -1469,48 +1295,45 @@ public class TicketApprovalService {
 @Service
 public class ComplaintEscalationService {
 
-    @Autowired
-    private RuntimeService runtimeService;
-
-    @Autowired
-    private TaskService taskService;
-
-    @Autowired
-    private HistoryService historyService;
+    @Resource
+    private FlowLongEngine flowLongEngine;
 
     /**
      * AI 检测到高风险投诉，触发升级
      */
     public Long escalateComplaint(Complaint complaint) {
-        Map<String, Object> variables = new HashMap<>();
-        variables.put("severity", complaint.getSeverity());
-        variables.put("emotion_score", complaint.getEmotionScore());
-        variables.put("first_manager_id", deptService.getManagerId(complaint.getDeptId()));
-        variables.put("director_id", deptService.getDirectorId());
-        variables.put("vp_id", deptService.getVPId());
-        variables.put("legal_id", legalService.getLegalCounselId());
+        Map<String, Object> args = new HashMap<>();
+        args.put("severity", complaint.getSeverity());
+        args.put("emotion_score", complaint.getEmotionScore());
+        args.put("first_manager_id", deptService.getManagerId(complaint.getDeptId()));
+        args.put("director_id", deptService.getDirectorId());
+        args.put("vp_id", deptService.getVPId());
+        args.put("legal_id", legalService.getLegalCounselId());
 
-        return runtimeService.start(
-            complaintEscalationProcessId,
-            complaint.getId().toString(),
-            FlowLongUser.of(complaint.getCustomerId(), complaint.getCustomerName()),
-            variables
+        FlowCreator creator = FlowCreator.of(
+            complaint.getCustomerId().toString(),
+            complaint.getCustomerName()
         );
+
+        return flowLongEngine.startInstanceById(
+            complaintEscalationProcessId, creator, args
+        ).get().getId();
     }
 
     /**
      * 查看投诉的完整审批轨迹
      */
     public List<ApprovalTraceVO> getApprovalTrace(Long instanceId) {
-        List<FlowLongHisTask> history = historyService.listByInstanceId(instanceId);
+        List<FlwHisTask> history = flowLongEngine.queryService()
+            .getHisTasksByInstanceId(instanceId).get();
 
         return history.stream()
             .map(hisTask -> ApprovalTraceVO.builder()
-                .nodeName(hisTask.getNodeName())
-                .approverName(hisTask.getApproverName())
-                .comment(hisTask.getComment())
-                .action(hisTask.getAction())  // APPROVE / REJECT / TRANSFER
-                .completeTime(hisTask.getCompleteTime())
+                .nodeName(hisTask.getTaskName())
+                .approverName(hisTask.getCreateBy())
+                .taskState(hisTask.getTaskState())  // 0活动/2完成/3拒绝/...
+                .finishTime(hisTask.getFinishTime())
+                .duration(hisTask.getDuration())
                 .build())
             .collect(Collectors.toList());
     }
@@ -1618,8 +1441,8 @@ public class ComplaintEscalationService {
 @LiteflowComponent("startApprovalNode")
 public class StartApprovalNode extends NodeComponent {
 
-    @Autowired
-    private RuntimeService runtimeService;
+    @Resource
+    private FlowLongEngine flowLongEngine;
 
     @Override
     public void process() {
@@ -1633,13 +1456,12 @@ public class StartApprovalNode extends NodeComponent {
 
         if (needApproval) {
             // 启动 FlowLong 审批流程
-            Long instanceId = runtimeService.start(
+            FlwInstance instance = flowLongEngine.startInstanceById(
                 ctx.getProcessId(),
-                ctx.getTicketId().toString(),
-                FlowLongUser.of(ctx.getCustomerId(), ctx.getCustomerName()),
+                FlowCreator.of(ctx.getCustomerId(), ctx.getCustomerName()),
                 ctx.toVariables()
-            );
-            ctx.setApprovalInstanceId(instanceId);
+            ).get();
+            ctx.setApprovalInstanceId(instance.getId());
             ctx.setNeedManualApproval(true);
         }
     }
@@ -1652,37 +1474,17 @@ public class StartApprovalNode extends NodeComponent {
 
 ![审批流引擎选型决策图](/ai-cs/flow-orchestration/flowlong-analysis/flowlong-selection-guide.svg)
 
-### 8.1 FlowLong vs Activiti / Flowable
-
-| 维度 | FlowLong | Activiti / Flowable |
-|------|----------|-------------------|
-| **依赖大小** | ~1MB | ~30MB+ |
-| **流程描述** | JSON（简洁直观） | BPMN 2.0 XML（标准但复杂） |
-| **学习曲线** | 低（5 分钟入门） | 高（需理解 BPMN 概念） |
-| **人工审批** | ✅ 核心能力 | ✅ 核心能力 |
-| **会签/或签** | ✅ 原生支持 | ✅ 支持（配置较复杂） |
-| **驳回/转办/加签** | ✅ 开箱即用 | ✅ 支持（需自定义实现） |
-| **可视化设计器** | ❌ 无（JSON 即定义） | ✅ Flowable Modeler |
-| **BPMN 标准兼容** | ❌ 不兼容 | ✅ 完全兼容 |
-| **定时任务/信号** | ❌ 不支持 | ✅ 支持 |
-| **子流程** | ❌ 不支持 | ✅ 支持 |
-| **多实例** | ✅ 会签/或签 | ✅ 支持（配置复杂） |
-| **数据库表数量** | ~7 张 | ~20~40 张 |
-| **持久化框架** | MyBatis-Plus | MyBatis / JPA |
-| **Spring Boot 集成** | ✅ Starter | ✅ Starter |
-| **社区生态** | 国内社区，发展中 | 国际社区，成熟 |
-| **适用规模** | 中小型项目 | 中大型企业级项目 |
-
-### 8.2 选择 FlowLong 的场景
+### 8.1 选择 FlowLong 的场景
 
 - **只需要审批功能**：不需要 BPMN 的定时任务、信号、子流程等复杂特性
 - **快速上手**：团队没有 BPMN 经验，希望 5 分钟内跑通审批流
 - **轻量部署**：不想引入 30MB+ 的依赖，追求极简技术栈
 - **MyBatis-Plus 生态**：项目已使用 MyBatis-Plus，FlowLong 无缝衔接
-- **中国式审批**：需要会签、或签、加签、减签、转办、委派等特色功能
+- **中国式审批**：需要会签、或签、票签、加签、减签、转办、委派、代理等特色功能
+- **AI 审批**：需要 AI 智能体辅助审批决策
 - **中小型项目**：审批流程不超过 10 个节点，不需要可视化设计器
 
-### 8.3 选择 Activiti / Flowable 的场景
+### 8.2 选择 Activiti / Flowable 的场景
 
 - **复杂企业级流程**：需要子流程、定时任务、信号事件、消息事件等
 - **BPMN 标准兼容**：需要与国际标准对接，或使用第三方 BPMN 工具
@@ -1690,6 +1492,22 @@ public class StartApprovalNode extends NodeComponent {
 - **流程治理**：需要完整的流程版本管理、部署管理、监控仪表盘
 - **大规模部署**：流程数量多、并发量大，需要企业级稳定性保障
 - **多系统集成**：需要与 CRM、ERP 等系统通过标准协议集成
+
+### 8.3 FlowLong vs Activiti / Flowable 详细对比
+
+| 维度 | FlowLong | Activiti / Flowable |
+|------|----------|-------------------|
+| **依赖大小** | ~1MB | ~30MB+ |
+| **流程描述** | JSON（简洁直观） | BPMN 2.0 XML（标准但复杂） |
+| **学习曲线** | 低（5 分钟入门） | 高（需理解 BPMN 概念） |
+| **数据库表数量** | 8 张 | ~20~40 张 |
+| **持久化框架** | MyBatis-Plus | MyBatis / JPA |
+| **Spring Boot 集成** | ✅ Starter（2/3/4） | ✅ Starter |
+| **Solon 集成** | ✅ Plugin | ❌ 不支持 |
+| **AI 审批** | ✅ 原生支持 | ❌ 需自行集成 |
+| **穿越时空审批** | ✅ 支持 | ❌ 不支持 |
+| **社区生态** | 国内社区，发展中 | 国际社区，成熟 |
+| **适用规模** | 中小型项目 | 中大型企业级项目 |
 
 ::: tip 混合使用建议
 如果你的系统既有自动编排需求（AI 处理流程），又有人工审批需求（工单审批），可以考虑 LiteFlow + FlowLong 的组合：LiteFlow 负责自动步骤编排，FlowLong 负责人工审批流转，QLExpress 负责条件判断。
@@ -1699,32 +1517,41 @@ public class StartApprovalNode extends NodeComponent {
 
 ## 总结
 
-FlowLong 的核心价值可以概括为一句话：**让审批流程成为数据，而非代码**。
+BPM 审批流引擎的核心价值可以概括为一句话：**让审批流程成为数据，而非代码**。
 
-相比 Activiti/Flowable 等重量级工作流引擎，FlowLong 的独特优势在于：
+从 BPM 系统的角度看，审批流引擎需要解决四个层面的问题：
 
-- **极简轻量**：~1MB 依赖，7 张表，5 分钟上手
+1. **流程建模**——如何描述一个审批流程（JSON vs BPMN XML）
+2. **任务流转**——如何驱动审批任务在节点间流动（条件/并行/包容/路由分支）
+3. **审批操作**——如何支持丰富的审批行为（会签/或签/驳回/转办/加签/减签...）
+4. **持久化与追溯**——如何可靠地存储和查询审批历史（运行时表 + 历史表）
+
+FlowLong 作为轻量审批引擎的代表，其独特优势在于：
+
+- **极简轻量**：~1MB 依赖，8 张表，5 分钟上手
 - **JSON 定义**：无需 BPMN 知识，看 JSON 即懂流程
-- **审批全覆盖**：串行/并行/会签/或签/驳回/转办/委派/加签/减签/撤回
+- **中国式审批全覆盖**：会签/或签/票签/驳回/转办/委派/代理/加签/减签/拿回/撤销/跳转/唤醒/认领/已阅/催办/沟通
+- **四种分支**：条件分支、并行分支、包容分支、路由分支
+- **高级特性**：AI 审批、穿越时空、暂存待审、超时审批、自动提醒、触发器
 - **MyBatis-Plus 生态**：零 SQL 编写，分页友好，多数据库兼容
-- **动态审批人**：`${变量名}` 语法，运行时动态指定
-- **条件路由**：表达式驱动的分支选择，满足动态审批需求
+- **多框架支持**：Spring Boot 2/3/4 + Solon
 
 在 AI 客服系统中，FlowLong 可以灵活支撑工单审批、投诉升级、退款复核等多种审批场景。结合 QLExpress 表达式引擎和 LiteFlow 流程编排引擎，可以构建从自动处理到人工审批的完整技术栈——LiteFlow 编排自动流程，QLExpress 做条件判断，FlowLong 驱动人工审批，三者各司其职，配合默契。
 
 选择建议可以简单概括为：
 
-1. **轻量审批 + 快速上手** → 选 FlowLong
-2. **复杂 BPMN + 可视化设计** → 选 Activiti / Flowable
+1. **轻量审批 + 快速上手 + 中国式审批** → 选 FlowLong
+2. **复杂 BPMN + 可视化设计 + 企业级治理** → 选 Activiti / Flowable
 3. **两者都不是** → 看团队技术栈，MyBatis-Plus 生态选 FlowLong，JPA 生态选 Flowable
 
 ---
 
 ## 延伸阅读
 
-- [FlowLong 官方文档](https://flowlong.com/) —— 官方教程和 API 文档
+- [FlowLong 官方文档](https://doc.flowlong.com/) —— 官方教程和 API 文档
 - [FlowLong GitHub 仓库](https://github.com/aizuda/flowlong) —— 源码和 Issue
 - [FlowLong Gitee 仓库](https://gitee.com/aizuda/flowlong) —— 国内镜像
+- [FlowLong 流程设计器在线演示](https://flowlong-desginer.pages.dev/) —— 可视化流程设计器
 - [QLExpress4表达式引擎](/ai-cs/qlexpress-study-notes/) —— 表达式引擎基础知识
 - [Flow流程编排引擎](/ai-cs/flow-orchestration-engine/) —— LiteFlow 和 CompileFlow 流程编排引擎
 - [Activiti 官网](https://www.activiti.org/) —— 完整的工作流引擎

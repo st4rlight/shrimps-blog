@@ -1,0 +1,122 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 480" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <linearGradient id="redG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#f87171;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ef4444;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="blueG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="amberG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="greenG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#34d399;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.12"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto" preserveAspectRatio="xMidYMid meet">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/>
+    </marker>
+  </defs>
+
+  <!-- ===== Background ===== -->
+  <rect width="820" height="480" rx="12" fill="#f8fafc"/>
+
+  <!-- ===== Title ===== -->
+  <text x="410" y="35" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">状态机四种实现方式对比</text>
+  <text x="410" y="55" text-anchor="middle" font-size="12" fill="#94a3b8">从简单到复杂，按需选择</text>
+
+  <!-- ===== Column 1: if-else ===== -->
+  <g filter="url(#shadow)">
+    <rect x="30" y="80" width="180" height="320" rx="10" fill="white" stroke="#ef4444" stroke-width="2"/>
+  </g>
+  <rect x="30" y="80" width="180" height="36" rx="10" fill="url(#redG)"/>
+  <rect x="30" y="92" width="180" height="24" fill="url(#redG)"/>
+  <text x="120" y="103" text-anchor="middle" font-size="14" font-weight="700" fill="white">if-else / switch</text>
+  <text x="120" y="135" text-anchor="middle" font-size="11" font-weight="600" fill="#991b1b">复杂度：低</text>
+  <text x="120" y="160" text-anchor="middle" font-size="10" fill="#64748b">适用：状态 ≤ 3</text>
+  <rect x="45" y="180" width="150" height="1" fill="#e2e8f0"/>
+  <text x="120" y="200" text-anchor="middle" font-size="10" fill="#64748b">✓ 简单直接</text>
+  <text x="120" y="216" text-anchor="middle" font-size="10" fill="#64748b">✓ 零依赖</text>
+  <text x="120" y="238" text-anchor="middle" font-size="10" fill="#991b1b">✗ 状态多了不可维护</text>
+  <text x="120" y="254" text-anchor="middle" font-size="10" fill="#991b1b">✗ 无法可视化</text>
+  <text x="120" y="270" text-anchor="middle" font-size="10" fill="#991b1b">✗ 无统一校验</text>
+  <text x="120" y="286" text-anchor="middle" font-size="10" fill="#991b1b">✗ Action 难嵌入</text>
+  <rect x="45" y="310" width="150" height="55" rx="8" fill="#fee2e2"/>
+  <text x="120" y="332" text-anchor="middle" font-size="10" font-weight="600" fill="#991b1b">适用场景</text>
+  <text x="120" y="350" text-anchor="middle" font-size="9" fill="#64748b">极简逻辑、原型验证</text>
+
+  <!-- ===== Column 2: State Pattern ===== -->
+  <g filter="url(#shadow)">
+    <rect x="225" y="80" width="180" height="320" rx="10" fill="white" stroke="#3b82f6" stroke-width="2"/>
+  </g>
+  <rect x="225" y="80" width="180" height="36" rx="10" fill="url(#blueG)"/>
+  <rect x="225" y="92" width="180" height="24" fill="url(#blueG)"/>
+  <text x="315" y="103" text-anchor="middle" font-size="14" font-weight="700" fill="white">状态模式</text>
+  <text x="315" y="135" text-anchor="middle" font-size="11" font-weight="600" fill="#1d4ed8">复杂度：中</text>
+  <text x="315" y="160" text-anchor="middle" font-size="10" fill="#64748b">适用：状态 3~8</text>
+  <rect x="240" y="180" width="150" height="1" fill="#e2e8f0"/>
+  <text x="315" y="200" text-anchor="middle" font-size="10" fill="#64748b">✓ 状态内聚</text>
+  <text x="315" y="216" text-anchor="middle" font-size="10" fill="#64748b">✓ 开闭原则</text>
+  <text x="315" y="232" text-anchor="middle" font-size="10" fill="#64748b">✓ Action 自然嵌入</text>
+  <text x="315" y="254" text-anchor="middle" font-size="10" fill="#991b1b">✗ 类数量线性增长</text>
+  <text x="315" y="270" text-anchor="middle" font-size="10" fill="#991b1b">✗ 转换规则分散</text>
+  <text x="315" y="286" text-anchor="middle" font-size="10" fill="#991b1b">✗ 不可视化</text>
+  <rect x="240" y="310" width="150" height="55" rx="8" fill="#dbeafe"/>
+  <text x="315" y="332" text-anchor="middle" font-size="10" font-weight="600" fill="#1d4ed8">适用场景</text>
+  <text x="315" y="350" text-anchor="middle" font-size="9" fill="#64748b">中等复杂度业务</text>
+
+  <!-- ===== Column 3: Enum ===== -->
+  <g filter="url(#shadow)">
+    <rect x="420" y="80" width="180" height="320" rx="10" fill="white" stroke="#f59e0b" stroke-width="2"/>
+  </g>
+  <rect x="420" y="80" width="180" height="36" rx="10" fill="url(#amberG)"/>
+  <rect x="420" y="92" width="180" height="24" fill="url(#amberG)"/>
+  <text x="510" y="103" text-anchor="middle" font-size="14" font-weight="700" fill="white">枚举驱动</text>
+  <text x="510" y="135" text-anchor="middle" font-size="11" font-weight="600" fill="#92400e">复杂度：低</text>
+  <text x="510" y="160" text-anchor="middle" font-size="10" fill="#64748b">适用：状态 ≤ 6</text>
+  <rect x="435" y="180" width="150" height="1" fill="#e2e8f0"/>
+  <text x="510" y="200" text-anchor="middle" font-size="10" fill="#64748b">✓ 声明式</text>
+  <text x="510" y="216" text-anchor="middle" font-size="10" fill="#64748b">✓ 零依赖</text>
+  <text x="510" y="232" text-anchor="middle" font-size="10" fill="#64748b">✓ 类型安全</text>
+  <text x="510" y="254" text-anchor="middle" font-size="10" fill="#991b1b">✗ Action 难嵌入</text>
+  <text x="510" y="270" text-anchor="middle" font-size="10" fill="#991b1b">✗ 不支持 Guard</text>
+  <text x="510" y="286" text-anchor="middle" font-size="10" fill="#991b1b">✗ 规则仍分散</text>
+  <rect x="435" y="310" width="150" height="55" rx="8" fill="#fef3c7"/>
+  <text x="510" y="332" text-anchor="middle" font-size="10" font-weight="600" fill="#92400e">适用场景</text>
+  <text x="510" y="350" text-anchor="middle" font-size="9" fill="#64748b">纯状态流转、无副作用</text>
+
+  <!-- ===== Column 4: Engine ===== -->
+  <g filter="url(#shadow)">
+    <rect x="615" y="80" width="175" height="320" rx="10" fill="white" stroke="#10b981" stroke-width="2"/>
+  </g>
+  <rect x="615" y="80" width="175" height="36" rx="10" fill="url(#greenG)"/>
+  <rect x="615" y="92" width="175" height="24" fill="url(#greenG)"/>
+  <text x="702" y="103" text-anchor="middle" font-size="14" font-weight="700" fill="white">状态机引擎</text>
+  <text x="702" y="135" text-anchor="middle" font-size="11" font-weight="600" fill="#047857">复杂度：高</text>
+  <text x="702" y="160" text-anchor="middle" font-size="10" fill="#64748b">适用：任意复杂度</text>
+  <rect x="630" y="180" width="145" height="1" fill="#e2e8f0"/>
+  <text x="702" y="200" text-anchor="middle" font-size="10" fill="#64748b">✓ 规则集中</text>
+  <text x="702" y="216" text-anchor="middle" font-size="10" fill="#64748b">✓ 可视化导出</text>
+  <text x="702" y="232" text-anchor="middle" font-size="10" fill="#64748b">✓ Action / Guard 原生支持</text>
+  <text x="702" y="248" text-anchor="middle" font-size="10" fill="#64748b">✓ 支持嵌套 / 并行</text>
+  <text x="702" y="270" text-anchor="middle" font-size="10" fill="#991b1b">✗ 引入框架依赖</text>
+  <text x="702" y="286" text-anchor="middle" font-size="10" fill="#991b1b">✗ 学习成本较高</text>
+  <rect x="630" y="310" width="145" height="55" rx="8" fill="#d1fae5"/>
+  <text x="702" y="332" text-anchor="middle" font-size="10" font-weight="600" fill="#047857">适用场景</text>
+  <text x="702" y="350" text-anchor="middle" font-size="9" fill="#64748b">复杂业务编排</text>
+
+  <!-- Arrow indicating progression -->
+  <line x1="215" y1="400" x2="221" y2="400" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="410" y1="400" x2="416" y2="400" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="605" y1="400" x2="611" y2="400" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- ===== Bottom tip ===== -->
+  <rect x="150" y="440" width="520" height="26" rx="13" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1"/>
+  <text x="410" y="457" text-anchor="middle" font-size="11" fill="#15803d">💡 状态 ≤ 3 用 if-else，3~8 用状态模式/枚举，> 8 或需可视化用状态机引擎</text>
+</svg>
