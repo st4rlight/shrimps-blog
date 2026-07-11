@@ -53,6 +53,15 @@ config:
 <div class="home-timeline__item">
   <div class="home-timeline__dot"></div>
   <div class="home-timeline__body">
+    <span class="home-timeline__date">07-11</span>
+    <span class="home-timeline__tag home-timeline__tag--ai">AI客服系统</span>
+    <a href="/ai-cs/flow-orchestration-engine/">新增《流程编排引擎Flow》</a>
+  </div>
+</div>
+
+<div class="home-timeline__item">
+  <div class="home-timeline__dot"></div>
+  <div class="home-timeline__body">
     <span class="home-timeline__date">07-07</span>
     <span class="home-timeline__tag home-timeline__tag--ai">AI客服系统</span>
     <a href="/ai-cs/qlexpress-study-notes/">新增《QLExpress表达式引擎学习笔记》</a>
@@ -65,6 +74,15 @@ config:
     <span class="home-timeline__date">07-07</span>
     <span class="home-timeline__tag home-timeline__tag--ai">AI客服系统</span>
     <a href="/ai-cs/akka-introduction/">新增《Akka高并发系统介绍》</a>
+  </div>
+</div>
+
+<div class="home-timeline__item">
+  <div class="home-timeline__dot"></div>
+  <div class="home-timeline__body">
+    <span class="home-timeline__date">07-05</span>
+    <span class="home-timeline__tag home-timeline__tag--ai">AI学习</span>
+    <a href="/ai-study/loop-engineering/">新增《Loop Engineering解析》</a>
   </div>
 </div>
 

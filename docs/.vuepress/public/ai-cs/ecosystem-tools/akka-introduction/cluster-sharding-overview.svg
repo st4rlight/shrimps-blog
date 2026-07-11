@@ -32,7 +32,7 @@
 
   <!-- Title -->
   <text x="410" y="38" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">Akka Cluster 与 Sharding 总览</text>
-  Cluster：节点通过 Gossip 协议组成逻辑集群  |  Sharding：Actor 自动分散到各节点
+  <text x="410" y="58" text-anchor="middle" font-size="12" fill="#94a3b8">Cluster：节点通过 Gossip 协议组成逻辑集群  |  Sharding：Actor 自动分散到各节点</text>
 
   <!-- ===== Cluster boundary ===== -->
   <rect x="40" y="60" width="740" height="280" rx="14" fill="white" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="6 3"/>

@@ -20,6 +20,20 @@ icon: mdi:timeline-clock-outline
 <div class="timeline-item">
   <div class="timeline-item__dot"></div>
   <div class="timeline-item__content">
+    <div class="timeline-item__date">7 月 11 日</div>
+    <div class="timeline-item__entries">
+      <div class="timeline-entry">
+        <span class="timeline-entry__tag timeline-entry__tag--ai">AI客服系统</span>
+        <a class="timeline-entry__link" href="/ai-cs/flow-orchestration-engine/">新增《流程编排引擎Flow》</a>
+        <span class="timeline-entry__desc">—— LiteFlow 与 CompileFlow 两大流程编排引擎的设计与实践</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="timeline-item">
+  <div class="timeline-item__dot"></div>
+  <div class="timeline-item__content">
     <div class="timeline-item__date">7 月 7 日</div>
     <div class="timeline-item__entries">
       <div class="timeline-entry">
@@ -41,6 +55,11 @@ icon: mdi:timeline-clock-outline
   <div class="timeline-item__content">
     <div class="timeline-item__date">7 月 5 日</div>
     <div class="timeline-item__entries">
+      <div class="timeline-entry">
+        <span class="timeline-entry__tag timeline-entry__tag--ai">AI学习</span>
+        <a class="timeline-entry__link" href="/ai-study/loop-engineering/">新增《Loop Engineering解析》</a>
+        <span class="timeline-entry__desc">—— 从"写 Prompt"到"设计循环"的范式跃迁</span>
+      </div>
       <div class="timeline-entry">
         <span class="timeline-entry__tag timeline-entry__tag--ai">AI学习</span>
         <a class="timeline-entry__link" href="/ai-study/ag-ui-study-notes/">新增《AG-UI 学习笔记》</a>
@@ -242,11 +261,6 @@ icon: mdi:timeline-clock-outline
         <span class="timeline-entry__tag timeline-entry__tag--ai">AI学习</span>
         <a class="timeline-entry__link" href="/ai-study/system-prompt-and-injection-analysis/">更新《Claude Code 系统提示词与注入分析》</a>
         <span class="timeline-entry__desc">—— 补充 Tool Assembly 和 Deferred Tool 机制</span>
-      </div>
-      <div class="timeline-entry">
-        <span class="timeline-entry__tag timeline-entry__tag--thought">思考领悟</span>
-        <a class="timeline-entry__link" href="/thoughts/a4puatid/">新增《持续思考的意义》</a>
-        <span class="timeline-entry__desc">—— 停下来想一想，也是一种进步</span>
       </div>
     </div>
   </div>
