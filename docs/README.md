@@ -64,7 +64,7 @@ config:
   <div class="home-timeline__body">
     <span class="home-timeline__date">07-07</span>
     <span class="home-timeline__tag home-timeline__tag--ai">AI客服系统</span>
-    <a href="/ai-cs/qlexpress-study-notes/">新增《QLExpress表达式引擎学习笔记》</a>
+    <a href="/ai-cs/qlexpress-study-notes/">新增《QLExpress4表达式引擎》</a>
   </div>
 </div>
 

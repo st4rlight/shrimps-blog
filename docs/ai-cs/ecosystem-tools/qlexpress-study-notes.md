@@ -1,5 +1,5 @@
 ---
-title: QLExpress4表达式引擎学习笔记
+title: QLExpress4表达式引擎
 tags:
   - QLExpress
   - QLExpress4
@@ -9,11 +9,11 @@ tags:
   - 客服系统
 excerpt: QLExpress4 是阿里巴巴开源的轻量级表达式引擎的最新演进版本，基于 ANTLR4 重写了解析引擎（4.1.2 起移除 ANTLR4 依赖），新增了函数式编程、原生 JSON、表达式追踪等特性。本文从表达式引擎的基本概念出发，系统梳理 QLExpress4 的语法体系、运行机制、扩展能力与实战用法，并结合 AI 客服系统场景探讨其落地实践。
 createTime: 2026/07/07 14:00:00
-updateTime: 2026/07/11 10:00:00
+updateTime: 2026/07/11 16:00:00
 permalink: /ai-cs/qlexpress-study-notes/
 ---
 
-# QLExpress4表达式引擎学习笔记
+# QLExpress4表达式引擎
 
 > 当你的系统里开始出现大量 `if-else`，而且这些判断逻辑还在频繁变化——比如客服路由规则、VIP 等级判定、促销活动条件——你需要的不是更多的 `if`，而是一个**表达式引擎**。QLExpress4 就是阿里巴巴在经历了多年双 11 考验后，全新重写开源的新一代表达式引擎。
 

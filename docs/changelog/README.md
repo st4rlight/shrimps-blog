@@ -43,7 +43,7 @@ icon: mdi:timeline-clock-outline
       </div>
       <div class="timeline-entry">
         <span class="timeline-entry__tag timeline-entry__tag--ai">AI客服系统</span>
-        <a class="timeline-entry__link" href="/ai-cs/qlexpress-study-notes/">新增《QLExpress表达式引擎学习笔记》</a>
+        <a class="timeline-entry__link" href="/ai-cs/qlexpress-study-notes/">新增《QLExpress4表达式引擎》</a>
         <span class="timeline-entry__desc">—— 阿里轻量级表达式引擎的语法、机制与客服场景实践</span>
       </div>
     </div>

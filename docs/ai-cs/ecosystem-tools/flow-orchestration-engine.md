@@ -1441,7 +1441,7 @@ result.onSuccess(data -> log.info("成功: {}", data))
 - [LiteFlow 官网](https://liteflow.cc/) —— 官方文档和教程
 - [LiteFlow GitHub 仓库](https://github.com/dromara/liteflow) —— 源码和 Issue
 - [CompileFlow GitHub 仓库](https://github.com/alibaba/compileflow) —— 官方源码和文档
-- [QLExpress4 学习笔记](/ai-cs/qlexpress-study-notes/) —— 表达式引擎的基础知识
+- [QLExpress4表达式引擎](/ai-cs/qlexpress-study-notes/) —— 表达式引擎的基础知识
 - [Activiti 官网](https://www.activiti.org/) —— 完整的工作流引擎，适合需要人工审批的场景
 - [Flowable 官网](https://flowable.com/) —— Activiti 的增强分支，功能更丰富
 - [BPMN 2.0 规范](https://www.omg.org/spec/BPMN/2.0/) —— 业务流程建模标记法国际标准
