@@ -20,7 +20,7 @@ export default defineUserConfig({
     },
     profile: {
       name: 'st4rlight',
-      description: "愿你有得偿所愿的奇遇，也有失而复得的幸运 (●'◡'●)",
+      description: "愿你有得偿所愿的奇遇，也有失而复得的幸运",
       circle: true,
       layout: 'right',
     },

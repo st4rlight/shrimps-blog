@@ -6,7 +6,7 @@ config:
     full: true
     hero:
       tagline: <span class="hero-nowrap">平安 . 健康 . 自律 . 知足 . 快樂 . 長久</span><br />(●'◡'●)<br /><br />
-      text: <span>愿你有得偿所愿的奇遇，也有失而复得的幸运 (●'◡'●)<br /><br />“我不管他们说多少至理名言，我除了你没有第二志愿”</span>
+      text: <span>愿你有得偿所愿的奇遇，也有失而复得的幸运<br /><br />“我不管他们说多少至理名言，我除了你没有第二志愿”</span>
 ---
 
 欢迎来到我的个人博客。
