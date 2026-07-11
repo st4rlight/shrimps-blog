@@ -1,5 +1,5 @@
 ---
-title: 流程编排引擎Flow
+title: Flow流程编排引擎
 tags:
   - LiteFlow
   - CompileFlow
@@ -12,7 +12,7 @@ createTime: 2026/07/11 16:00:00
 permalink: /ai-cs/flow-orchestration-engine/
 ---
 
-# 流程编排引擎Flow
+# Flow流程编排引擎
 
 > 当你的业务逻辑从单条 `if-else` 演变成一张包含串行、并行、选择、循环的"流程图"时——比如一个客服工单从创建到关闭需要经过意图识别、情绪判断、路由分配、自动回复、满意度回访等多个步骤，而且这些步骤之间的编排关系还在频繁变化——你需要的不再是一个表达式引擎，而是一个**流程编排引擎**。
 

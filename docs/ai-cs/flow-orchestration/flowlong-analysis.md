@@ -1,5 +1,5 @@
 ---
-title: FlowLong审批流引擎分析
+title: BPM审批流引擎
 tags:
   - FlowLong
   - 审批流引擎
@@ -11,7 +11,7 @@ createTime: 2026/07/11 18:00:00
 permalink: /ai-cs/flowlong-analysis/
 ---
 
-# FlowLong审批流引擎分析
+# BPM审批流引擎
 
 > 当你的业务需要"人参与决策"——比如客服工单需要主管审批、投诉升级需要多级确认、退款申请需要财务复核——你需要的不再是流程编排引擎，而是一个**审批流引擎**。FlowLong 就是一款专为审批场景而生的极简工作流引擎，用 JSON 定义流程、以 MyBatis-Plus 持久化，无需 BPMN 2.0 的复杂性，5 分钟即可上手。
 
@@ -1726,7 +1726,7 @@ FlowLong 的核心价值可以概括为一句话：**让审批流程成为数据
 - [FlowLong GitHub 仓库](https://github.com/aizuda/flowlong) —— 源码和 Issue
 - [FlowLong Gitee 仓库](https://gitee.com/aizuda/flowlong) —— 国内镜像
 - [QLExpress4表达式引擎](/ai-cs/qlexpress-study-notes/) —— 表达式引擎基础知识
-- [流程编排引擎Flow](/ai-cs/flow-orchestration-engine/) —— LiteFlow 和 CompileFlow 流程编排引擎
+- [Flow流程编排引擎](/ai-cs/flow-orchestration-engine/) —— LiteFlow 和 CompileFlow 流程编排引擎
 - [Activiti 官网](https://www.activiti.org/) —— 完整的工作流引擎
 - [Flowable 官网](https://flowable.com/) —— Activiti 的增强分支
 - [MyBatis-Plus 官网](https://baomidou.com/) —— FlowLong 的持久化基础设施
