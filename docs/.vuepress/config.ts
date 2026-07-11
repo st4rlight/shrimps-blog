@@ -8,7 +8,7 @@ export default defineUserConfig({
   title: 'st4rlight',
   description: '记录技术、想法与生活碎片',
   head: [
-    ['link', { rel: 'icon', type: 'image/svg+xml', href: '/logo.svg' }],
+    ['link', { rel: 'icon', type: 'image/svg+xml', href: '/shrimps-blog/logo.svg' }],
     ['meta', { name: 'theme-color', content: '#8b5cf6' }],
   ],
   bundler: viteBundler({
