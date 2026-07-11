@@ -57,9 +57,23 @@ export default defineUserConfig({
             collapsed: false,
             items: [
               'ecosystem-tools/akka-introduction.md',
-              'ecosystem-tools/qlexpress-study-notes.md',
-              'ecosystem-tools/flow-orchestration-engine.md',
-              'ecosystem-tools/flowlong-analysis.md',
+            ],
+          },
+          {
+            text: '流程编排引擎',
+            link: '/ai-cs/',
+            collapsed: false,
+            items: [
+              'flow-orchestration/flow-orchestration-engine.md',
+              'flow-orchestration/flowlong-analysis.md',
+            ],
+          },
+          {
+            text: '表达式引擎',
+            link: '/ai-cs/',
+            collapsed: false,
+            items: [
+              'expression-engine/qlexpress-study-notes.md',
             ],
           },
         ],

@@ -108,7 +108,7 @@ public SessionResult processSession(Session session) {
 
 流程编排引擎在技术栈中处于承上启下的位置——比表达式引擎更复杂（多步骤编排），比工作流引擎更轻量（无持久化、无人工审批）。
 
-![流程编排引擎在技术栈中的定位](/ai-cs/ecosystem-tools/flow-orchestration-engine/flow-engine-overview.svg)
+![流程编排引擎在技术栈中的定位](/ai-cs/flow-orchestration/flow-orchestration-engine/flow-engine-overview.svg)
 
 三者处理的问题域不同，经常被混为一谈：
 
@@ -127,7 +127,7 @@ public SessionResult processSession(Session session) {
 **表达式引擎**解决的是"一个条件怎么判断"的问题；**流程编排引擎**解决的是"多个步骤怎么协调"的问题；**工作流引擎**解决的是"一个长周期流程怎么管理"的问题。三者互补，不是替代关系。
 :::
 
-![三种引擎核心差异对比](/ai-cs/ecosystem-tools/flow-orchestration-engine/engine-type-comparison.svg)
+![三种引擎核心差异对比](/ai-cs/flow-orchestration/flow-orchestration-engine/engine-type-comparison.svg)
 
 ### 1.4 主流流程编排引擎对比
 
@@ -359,7 +359,7 @@ THEN(
 LiteFlow 的 EL 语法设计追求"所见即所得"——看规则文件就能知道流程是怎么运转的。学习门槛极低，5 分钟即可入门。
 :::
 
-![LiteFlow编排语法总览](/ai-cs/ecosystem-tools/flow-orchestration-engine/liteflow-syntax-overview.svg)
+![LiteFlow编排语法总览](/ai-cs/flow-orchestration/flow-orchestration-engine/liteflow-syntax-overview.svg)
 
 ### 2.6 组件体系
 
@@ -555,7 +555,7 @@ CompileFlow：流程文件 → 生成 Java 代码 → 编译为字节码 → 直
 
 这意味着 CompileFlow 执行时**没有解析开销**——流程在部署时就被编译为原生的 Java 方法调用，执行性能等同于手写的 Java 代码。代价是每次流程变更都需要重新编译，且不支持运行时动态脚本。
 
-![LiteFlow vs CompileFlow 执行模式对比](/ai-cs/ecosystem-tools/flow-orchestration-engine/liteflow-vs-compileflow.svg)
+![LiteFlow vs CompileFlow 执行模式对比](/ai-cs/flow-orchestration/flow-orchestration-engine/liteflow-vs-compileflow.svg)
 
 ### 3.4 Maven 依赖
 
@@ -826,7 +826,7 @@ CompileFlow 的核心创新在于**编译后执行**——流程文件不是在�
 解释执行（如 LiteFlow）在每次执行时都需要解析 DSL、调度组件、管理上下文；而编译执行将这些开销全部前置到部署阶段——运行时就是普通的 Java 方法调用，没有解析开销，没有反射开销（生成代码时已确定方法签名），因此性能等同于手写代码。
 :::
 
-![CompileFlow编译执行机制](/ai-cs/ecosystem-tools/flow-orchestration-engine/compileflow-mechanism.svg)
+![CompileFlow编译执行机制](/ai-cs/flow-orchestration/flow-orchestration-engine/compileflow-mechanism.svg)
 
 可以通过 Tooling Service 查看生成的 Java 代码：
 
@@ -1321,7 +1321,7 @@ public class ScoringFlowService {
 
 ## 六、选型建议
 
-![流程编排引擎选型决策图](/ai-cs/ecosystem-tools/flow-orchestration-engine/flow-selection-guide.svg)
+![流程编排引擎选型决策图](/ai-cs/flow-orchestration/flow-orchestration-engine/flow-selection-guide.svg)
 
 ### 6.1 选择 LiteFlow 的场景
 

@@ -86,7 +86,7 @@ QLExpress4 定位是**表达式引擎**，但它支持 `if-else`、`for`、`whil
 
 ### 1.4 主流表达式引擎对比
 
-![主流表达式引擎对比](/ai-cs/ecosystem-tools/qlexpress-study-notes/expression-engine-comparison.svg)
+![主流表达式引擎对比](/ai-cs/expression-engine/qlexpress-study-notes/expression-engine-comparison.svg)
 
 | 引擎 | 出品方 | 性能 | 语法风格 | 特点 |
 |------|--------|------|---------|------|
@@ -923,7 +923,7 @@ Object result = runner.execute("hello()",
 
 QLExpress4 的执行流程分为三个阶段：**词法分析 → 语法分析 → 指令执行**。
 
-![QLExpress执行流程](/ai-cs/ecosystem-tools/qlexpress-study-notes/qlexpress-execution-flow.svg)
+![QLExpress执行流程](/ai-cs/expression-engine/qlexpress-study-notes/qlexpress-execution-flow.svg)
 
 ```text
 表达式字符串
@@ -1034,7 +1034,7 @@ RETURN               ← 返回结果
 
 QLExpress4 独有的表达式追踪功能，可以在返回计算结果的同时，返回一颗表达式追踪树。追踪树的结构类似语法树，不同之处在于它会在每个节点上记录本次执行的**中间结果值**——这让"表达式到底是怎么算出来的"变得完全透明。
 
-![表达式追踪树结构](/ai-cs/ecosystem-tools/qlexpress-study-notes/expression-trace-tree.svg)
+![表达式追踪树结构](/ai-cs/expression-engine/qlexpress-study-notes/expression-trace-tree.svg)
 
 #### 7.5.1 基本用法
 
@@ -1685,7 +1685,7 @@ for (ExpressionTrace trace : traces) {
 
 ### 9.5 完整集成架构
 
-![QLExpress4 AI客服系统完整集成架构](/ai-cs/ecosystem-tools/qlexpress-study-notes/integration-architecture.svg)
+![QLExpress4 AI客服系统完整集成架构](/ai-cs/expression-engine/qlexpress-study-notes/integration-architecture.svg)
 
 整体架构分为三层：
 

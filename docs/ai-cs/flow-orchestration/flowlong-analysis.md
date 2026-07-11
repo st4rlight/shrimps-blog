@@ -166,7 +166,7 @@ taskService.complete(taskId, approverId, "同意，退款金额核对无误");
 **表达式引擎**解决"一个条件怎么判断"；**流程编排引擎**解决"多个步骤怎么协调"；**审批流引擎**解决"人工任务怎么流转"；**工作流引擎**解决"长周期复杂流程怎么治理"。四者互补，覆盖了从简单到复杂的完整流程管理需求。
 :::
 
-![四种流程引擎核心差异对比](/ai-cs/ecosystem-tools/flowlong-analysis/engine-type-comparison.svg)
+![四种流程引擎核心差异对比](/ai-cs/flow-orchestration/flowlong-analysis/engine-type-comparison.svg)
 
 ### 1.4 主流审批流/工作流引擎对比
 
@@ -522,7 +522,7 @@ FlowLong 的 JSON 流程定义由两部分组成：流程元信息 + 节点列�
 
 ### 4.2 节点类型详解
 
-![FlowLong五种节点类型总览](/ai-cs/ecosystem-tools/flowlong-analysis/flowlong-node-types-overview.svg)
+![FlowLong五种节点类型总览](/ai-cs/flow-orchestration/flowlong-analysis/flowlong-node-types-overview.svg)
 
 FlowLong 支持五种节点类型，覆盖了审批流的核心场景：
 
@@ -669,7 +669,7 @@ FlowLong 的条件表达式语法相对简单，适用于基本的条件路由�
 
 ### 5.1 串行审批与并行审批
 
-![串行审批vs并行审批对比](/ai-cs/ecosystem-tools/flowlong-analysis/serial-vs-parallel-comparison.svg)
+![串行审批vs并行审批对比](/ai-cs/flow-orchestration/flowlong-analysis/serial-vs-parallel-comparison.svg)
 
 FlowLong 通过 `permissionList` 的配置方式区分串行和并行审批：
 
@@ -935,7 +935,7 @@ public void onTicketDeleted(Long ticketId) {
 
 ### 6.1 整体架构
 
-![FlowLong分层架构](/ai-cs/ecosystem-tools/flowlong-analysis/flowlong-architecture-overview.svg)
+![FlowLong分层架构](/ai-cs/flow-orchestration/flowlong-analysis/flowlong-architecture-overview.svg)
 
 FlowLong 采用分层架构设计，各层职责清晰：
 
@@ -1575,7 +1575,7 @@ public class ComplaintEscalationService {
 
 ### 7.3 与 QLExpress / LiteFlow 的配合
 
-![三引擎协作架构](/ai-cs/ecosystem-tools/flowlong-analysis/engine-collaboration-overview.svg)
+![三引擎协作架构](/ai-cs/flow-orchestration/flowlong-analysis/engine-collaboration-overview.svg)
 
 在 AI 客服系统中，FlowLong 可以与 QLExpress 表达式引擎和 LiteFlow 流程编排引擎配合使用，构成完整的技术栈：
 
@@ -1650,7 +1650,7 @@ public class StartApprovalNode extends NodeComponent {
 
 ## 八、选型建议
 
-![审批流引擎选型决策图](/ai-cs/ecosystem-tools/flowlong-analysis/flowlong-selection-guide.svg)
+![审批流引擎选型决策图](/ai-cs/flow-orchestration/flowlong-analysis/flowlong-selection-guide.svg)
 
 ### 8.1 FlowLong vs Activiti / Flowable
 
