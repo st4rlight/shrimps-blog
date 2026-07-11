@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 460" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 490" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
   <defs>
     <linearGradient id="blueG" x1="0%" y1="0%" x2="0%" y2="100%">
       <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
@@ -19,64 +19,72 @@
     <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
       <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.12"/>
     </filter>
-    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-auto">
+    <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5"
+            markerWidth="8" markerHeight="8"
+            markerUnits="userSpaceOnUse"
+            orient="auto"
+            preserveAspectRatio="xMidYMid meet">
       <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/>
     </marker>
-    <marker id="arrowA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-auto">
+    <marker id="arrowA" viewBox="0 0 10 10" refX="10" refY="5"
+            markerWidth="8" markerHeight="8"
+            markerUnits="userSpaceOnUse"
+            orient="auto"
+            preserveAspectRatio="xMidYMid meet">
       <path d="M 0 0 L 10 5 L 0 10 z" fill="#f59e0b"/>
     </marker>
   </defs>
 
-  <!-- Background -->
-  <rect width="800" height="460" rx="12" fill="#f8fafc"/>
+  <!-- ===== Background ===== -->
+  <rect width="800" height="490" rx="12" fill="#f8fafc"/>
 
-  <!-- Title -->
+  <!-- ===== Title ===== -->
   <text x="400" y="36" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">Akka Streams 流水线与背压机制</text>
   <text x="400" y="56" text-anchor="middle" font-size="12" fill="#94a3b8">Source → Flow → Sink 声明式流处理，内置背压自动防止 OOM</text>
 
   <!-- ===== Pipeline Section ===== -->
   <text x="50" y="82" font-size="12" font-weight="600" fill="#475569">消息处理流水线</text>
 
-  <!-- Source -->
+  <!-- Source: x=50, y=95, w=140, h=55 → right=190, center y=123 -->
   <g filter="url(#shadow)" transform="translate(50, 95)">
     <rect x="0" y="0" width="140" height="55" rx="10" fill="white" stroke="#3b82f6" stroke-width="2"/>
   </g>
   <rect x="50" y="95" width="140" height="55" rx="10" fill="url(#blueG)"/>
   <text x="120" y="121" text-anchor="middle" font-size="14" font-weight="700" fill="white">Source</text>
-  <text x="120" y="140" text-anchor="middle" fill="rgba(255,255,255,0.8)">（数据源）仅输出</text>
+  <text x="120" y="140" text-anchor="middle" font-size="10" fill="rgba(255,255,255,0.8)">（数据源）仅输出</text>
 
-  <!-- Arrow 1 -->
-  <line x1="190" y1="122" x2="230" y2="122" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+  <!-- Arrow 1: Source right(190) → Flow1 left(235) - 4px = 231, y=123 -->
+  <line x1="190" y1="123" x2="231" y2="123" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
 
-  <!-- Flow 1 -->
+  <!-- Flow 1: x=235, y=95, w=140, h=55 → right=375 -->
   <g filter="url(#shadow)" transform="translate(235, 95)">
     <rect x="0" y="0" width="140" height="55" rx="10" fill="white" stroke="#8b5cf6" stroke-width="2"/>
   </g>
   <rect x="235" y="95" width="140" height="55" rx="10" fill="url(#violetG)"/>
   <text x="305" y="121" text-anchor="middle" font-size="14" font-weight="700" fill="white">Flow</text>
-  <text x="305" y="140" text-anchor="middle" fill="rgba(255,255,255,0.8)">（转换）输入+输出</text>
+  <text x="305" y="140" text-anchor="middle" font-size="10" fill="rgba(255,255,255,0.8)">（转换）输入+输出</text>
 
-  <!-- Arrow 2 -->
-  <line x1="375" y1="122" x2="415" y2="122" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+  <!-- Arrow 2: Flow1 right(375) → Flow2 left(420) - 4px = 416 -->
+  <line x1="375" y1="123" x2="416" y2="123" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
 
-  <!-- Flow 2 -->
+  <!-- Flow 2: x=420, y=95, w=140, h=55 → right=560 -->
   <g filter="url(#shadow)" transform="translate(420, 95)">
     <rect x="0" y="0" width="140" height="55" rx="10" fill="white" stroke="#f59e0b" stroke-width="2"/>
   </g>
   <rect x="420" y="95" width="140" height="55" rx="10" fill="url(#amberG)"/>
   <text x="490" y="121" text-anchor="middle" font-size="14" font-weight="700" fill="white">Flow</text>
-  <text x="490" y="140" text-anchor="middle" fill="rgba(255,255,255,0.8)">（异步边界）</text>
+  <text x="490" y="140" text-anchor="middle" font-size="10" fill="rgba(255,255,255,0.8)">（异步边界）</text>
 
-  <!-- Arrow 3 -->
-  <line x1="560" y1="122" x2="600" y2="122" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+  <!-- Arrow 3: Flow2 right(560) → Sink left(605) - 4px = 601 -->
+  <line x1="560" y1="123" x2="601" y2="123" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
 
-  <!-- Sink -->
+  <!-- Sink: x=605, y=95, w=140, h=55 -->
   <g filter="url(#shadow)" transform="translate(605, 95)">
     <rect x="0" y="0" width="140" height="55" rx="10" fill="white" stroke="#10b981" stroke-width="2"/>
   </g>
   <rect x="605" y="95" width="140" height="55" rx="10" fill="url(#greenG)"/>
   <text x="675" y="121" text-anchor="middle" font-size="14" font-weight="700" fill="white">Sink</text>
-  <text x="675" y="140" text-anchor="middle" fill="rgba(255,255,255,0.8)">（消费者）仅输入</text>
+  <text x="675" y="140" text-anchor="middle" font-size="10" fill="rgba(255,255,255,0.8)">（消费者）仅输入</text>
 
   <!-- Data type labels -->
   <text x="120" y="165" text-anchor="middle" font-size="9" fill="#64748b">UserMessage</text>
@@ -87,9 +95,9 @@
   <!-- ===== Backpressure Section ===== -->
   <text x="50" y="195" font-size="12" font-weight="600" fill="#475569">背压机制（Backpressure）</text>
 
-  <!-- Backpressure diagram -->
+  <!-- Backpressure diagram (translate 100, 210) -->
   <g transform="translate(100, 210)">
-    <!-- Source (fast) -->
+    <!-- Source (fast): x=0, y=0, w=160, h=80 → right=160, center y=40 -->
     <rect x="0" y="0" width="160" height="80" rx="10" fill="#dbeafe" stroke="#93c5fd" stroke-width="1.5"/>
     <text x="80" y="25" text-anchor="middle" font-size="12" font-weight="600" fill="#1d4ed8">Source（生产快）</text>
     <g transform="translate(20, 35)">
@@ -102,15 +110,17 @@
     </g>
     <text x="80" y="72" text-anchor="middle" font-size="9" fill="#64748b">快速生产消息</text>
 
-    <!-- Messages flowing right -->
-    <text x="240" y="30" font-size="10" fill="#64748b">──→ ──→ ──→</text>
-    <text x="240" y="50" font-size="10" fill="#64748b">──→ ──→ ──→</text>
+    <!-- Data flow arrow 1: Source right(160) → Buffer left(220) - 4px = 216, y=40 -->
+    <line x1="160" y1="40" x2="216" y2="40" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrow)"/>
 
-    <!-- Buffer -->
-    <rect x="220" y="15" width="30" height="45" rx="4" fill="#fef3c7" stroke="#fbbf24" stroke-width="1"/>
-    <text x="235" y="42" text-anchor="middle" font-size="8" fill="#92400e">buf</text>
+    <!-- Buffer: x=220, y=15, w=30, h=50 → center y=40 -->
+    <rect x="220" y="15" width="30" height="50" rx="4" fill="#fef3c7" stroke="#fbbf24" stroke-width="1"/>
+    <text x="235" y="43" text-anchor="middle" font-size="8" fill="#92400e">buf</text>
 
-    <!-- Sink (slow) -->
+    <!-- Data flow arrow 2: Buffer right(250) → Sink left(340) - 4px = 336, y=40 -->
+    <line x1="250" y1="40" x2="336" y2="40" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrow)"/>
+
+    <!-- Sink (slow): x=340, y=0, w=160, h=80 → center x=420, center y=40 -->
     <rect x="340" y="0" width="160" height="80" rx="10" fill="#fee2e2" stroke="#fca5a5" stroke-width="1.5"/>
     <text x="420" y="25" text-anchor="middle" font-size="12" font-weight="600" fill="#991b1b">Sink（消费慢）</text>
     <g transform="translate(360, 35)">
@@ -119,44 +129,44 @@
     </g>
     <text x="420" y="72" text-anchor="middle" font-size="9" fill="#64748b">处理速度慢</text>
 
-    <!-- Backpressure signal going left -->
-    <text x="290" y="95" font-size="10" fill="#f59e0b">←── 背压信号</text>
-    <path d="M 250 100 Q 200 115 160 100" fill="none" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrowA)" stroke-dasharray="5 3"/>
-    <text x="195" y="128" text-anchor="middle" font-size="9" fill="#f59e0b" transform="rotate(-15, 195, 128)">减速或暂停</text>
+    <!-- Backpressure signal: L-shaped path from Sink bottom(420,80) → down(100) → left(80,100) → up(80,84) -->
+    <path d="M 420 80 L 420 100 L 80 100 L 80 84" fill="none" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrowA)" stroke-dasharray="5 3"/>
+    <text x="250" y="95" text-anchor="middle" font-size="10" fill="#f59e0b" font-weight="600">← 背压信号</text>
+    <text x="250" y="115" text-anchor="middle" font-size="9" fill="#f59e0b">减速或暂停</text>
   </g>
 
-  <!-- ===== Three core components table ===== -->
-  <line x1="50" y1="328" x2="750" y2="328" stroke="#e2e8f0" stroke-width="1"/>
-  <text x="50" y="348" font-size="12" font-weight="600" fill="#475569">三大核心组件组合</text>
+  <!-- ===== Three core components ===== -->
+  <line x1="50" y1="345" x2="750" y2="345" stroke="#e2e8f0" stroke-width="1"/>
+  <text x="50" y="365" font-size="12" font-weight="600" fill="#475569">三大核心组件组合</text>
 
   <!-- Source combinations -->
-  <g transform="translate(50, 358)">
+  <g transform="translate(50, 375)">
     <rect x="0" y="0" width="220" height="70" rx="8" fill="#eff6ff" stroke="#93c5fd" stroke-width="1"/>
     <text x="110" y="20" text-anchor="middle" font-size="11" font-weight="600" fill="#1d4ed8">Source 可组合</text>
-    <text x="110" y="38" text-anchor="middle" fill="#64748b">.via(Flow) —— 连接转换</text>
-    <text x="110" y="53" text-anchor="middle" fill="#64748b">.to(Sink) —— 连接终点</text>
-    <text x="110" y="66" text-anchor="middle" fill="#64748b">.async —— 插入异步边界</text>
+    <text x="110" y="38" text-anchor="middle" font-size="10" fill="#64748b">.via(Flow) —— 连接转换</text>
+    <text x="110" y="53" text-anchor="middle" font-size="10" fill="#64748b">.to(Sink) —— 连接终点</text>
+    <text x="110" y="66" text-anchor="middle" font-size="10" fill="#64748b">.async —— 插入异步边界</text>
   </g>
 
   <!-- Flow -->
-  <g transform="translate(290, 358)">
+  <g transform="translate(290, 375)">
     <rect x="0" y="0" width="220" height="70" rx="8" fill="#ede9fe" stroke="#c4b5fd" stroke-width="1"/>
     <text x="110" y="20" text-anchor="middle" font-size="11" font-weight="600" fill="#5b21b6">Flow 可重用</text>
-    <text x="110" y="38" text-anchor="middle" fill="#64748b">.map() / .filter() / .grouped()</text>
-    <text x="110" y="53" text-anchor="middle" fill="#64748b">.mapAsync() —— 异步映射</text>
-    <text x="110" y="66" text-anchor="middle" fill="#64748b">.buffer() —— 显式缓冲</text>
+    <text x="110" y="38" text-anchor="middle" font-size="10" fill="#64748b">.map() / .filter() / .grouped()</text>
+    <text x="110" y="53" text-anchor="middle" font-size="10" fill="#64748b">.mapAsync() —— 异步映射</text>
+    <text x="110" y="66" text-anchor="middle" font-size="10" fill="#64748b">.buffer() —— 显式缓冲</text>
   </g>
 
   <!-- RunnableGraph -->
-  <g transform="translate(530, 358)">
+  <g transform="translate(530, 375)">
     <rect x="0" y="0" width="220" height="70" rx="8" fill="#ecfdf5" stroke="#86efac" stroke-width="1"/>
     <text x="110" y="20" text-anchor="middle" font-size="11" font-weight="600" fill="#047857">RunnableGraph</text>
-    <text x="110" y="38" text-anchor="middle" fill="#64748b">只有连接 Sink 后才可运行</text>
-    <text x="110" y="53" text-anchor="middle" fill="#64748b">.run() —— 触发执行</text>
-    <text x="110" y="66" text-anchor="middle" fill="#64748b">返回 Future [Done]</text>
+    <text x="110" y="38" text-anchor="middle" font-size="10" fill="#64748b">只有连接 Sink 后才可运行</text>
+    <text x="110" y="53" text-anchor="middle" font-size="10" fill="#64748b">.run() —— 触发执行</text>
+    <text x="110" y="66" text-anchor="middle" font-size="10" fill="#64748b">返回 Future&lt;Done&gt;</text>
   </g>
 
   <!-- Bottom tip -->
-  <rect x="120" y="440" width="560" height="18" rx="9" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1"/>
-  <text x="400" y="452" text-anchor="middle" font-size="10" fill="#15803d">💡 背压是反应式系统的核心：下游控制上游速率，配合有界缓冲确保不会 OOM</text>
+  <rect x="120" y="460" width="560" height="20" rx="10" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1"/>
+  <text x="400" y="474" text-anchor="middle" font-size="10" fill="#15803d">💡 背压是反应式系统的核心：下游控制上游速率，配合有界缓冲确保不会 OOM</text>
 </svg>

@@ -15,15 +15,33 @@
     <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
       <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.12"/>
     </filter>
-    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-auto">
+    <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5"
+            markerWidth="8" markerHeight="8"
+            markerUnits="userSpaceOnUse"
+            orient="auto"
+            preserveAspectRatio="xMidYMid meet">
       <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/>
+    </marker>
+    <marker id="arrowB" viewBox="0 0 10 10" refX="10" refY="5"
+            markerWidth="8" markerHeight="8"
+            markerUnits="userSpaceOnUse"
+            orient="auto"
+            preserveAspectRatio="xMidYMid meet">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#3b82f6"/>
+    </marker>
+    <marker id="arrowG" viewBox="0 0 10 10" refX="10" refY="5"
+            markerWidth="8" markerHeight="8"
+            markerUnits="userSpaceOnUse"
+            orient="auto"
+            preserveAspectRatio="xMidYMid meet">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#10b981"/>
     </marker>
   </defs>
 
-  <!-- Background -->
+  <!-- ===== Background ===== -->
   <rect width="800" height="440" rx="12" fill="#f8fafc"/>
 
-  <!-- Title -->
+  <!-- ===== Title ===== -->
   <text x="400" y="36" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">消息传递模式对比</text>
   <text x="400" y="56" text-anchor="middle" font-size="12" fill="#94a3b8">Tell / Ask / Forward —— 三种模式的语义差异与适用场景</text>
 
@@ -33,15 +51,16 @@
   </g>
   <rect x="30" y="75" width="230" height="42" rx="12" fill="url(#blueG)"/>
   <rect x="30" y="97" width="230" height="18" fill="url(#blueG)"/>
-  <text x="145" y="102" text-anchor="middle" font-size="16" font-weight="700" fill="white">Tell / ! (Fire-and-Forget)</text>
+  <text x="145" y="102" text-anchor="middle" font-size="16" font-weight="700" fill="white">Tell (Fire-and-Forget)</text>
 
-  <!-- Diagram -->
+  <!-- Diagram: Sender → Receiver -->
   <g transform="translate(80, 130)">
     <rect x="0" y="0" width="50" height="30" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
-    <text x="25" y="19" text-anchor="middle" font-size="9" font-weight="600" fill="#1d4ed8">Sender</text>
-    <line x1="50" y1="15" x2="100" y2="15" stroke="#3b82f6" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <text x="25" y="20" text-anchor="middle" font-size="9" font-weight="600" fill="#1d4ed8">Sender</text>
+    <!-- Arrow: Sender right(50) → Receiver left(100) - 4px gap = 96 -->
+    <line x1="50" y1="15" x2="96" y2="15" stroke="#3b82f6" stroke-width="1.5" marker-end="url(#arrowB)"/>
     <rect x="100" y="0" width="50" height="30" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
-    <text x="125" y="19" text-anchor="middle" font-size="9" font-weight="600" fill="#1d4ed8">Receiver</text>
+    <text x="125" y="20" text-anchor="middle" font-size="9" font-weight="600" fill="#1d4ed8">Receiver</text>
   </g>
 
   <text x="145" y="180" text-anchor="middle" font-size="9" fill="#64748b">发送后不等待，继续执行</text>
@@ -49,17 +68,17 @@
 
   <!-- Code snippet -->
   <rect x="45" y="205" width="200" height="28" rx="6" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
-  <text x="145" y="222" text-anchor="middle" font-size="10" fill="#374151" font-family="monospace">ref ! message</text>
+  <text x="145" y="223" text-anchor="middle" font-size="10" fill="#374151" font-family="monospace">ref.tell(msg, self)</text>
 
   <!-- Use case -->
   <rect x="45" y="243" width="200" height="40" rx="8" fill="#eff6ff" stroke="#93c5fd" stroke-width="1"/>
   <text x="145" y="260" text-anchor="middle" font-size="10" font-weight="600" fill="#1d4ed8">适用场景</text>
-  <text x="145" y="275" text-anchor="middle" fill="#64748b">事件通知、命令下达、高吞吐</text>
+  <text x="145" y="275" text-anchor="middle" font-size="10" fill="#64748b">事件通知、命令下达、高吞吐</text>
 
   <!-- Tip -->
   <rect x="45" y="293" width="200" height="38" rx="6" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1"/>
   <text x="145" y="308" text-anchor="middle" font-size="9" fill="#15803d">💡 默认选择：优先使用 Tell</text>
-  <text x="145" y="323" text-anchor="middle" fill="#15803d">发送方不阻塞，系统解耦</text>
+  <text x="145" y="323" text-anchor="middle" font-size="9" fill="#15803d">发送方不阻塞，系统解耦</text>
 
   <!-- ===== Ask (Request-Response) ===== -->
   <g filter="url(#shadow)">
@@ -67,18 +86,19 @@
   </g>
   <rect x="285" y="75" width="230" height="42" rx="12" fill="url(#amberG)"/>
   <rect x="285" y="97" width="230" height="18" fill="url(#amberG)"/>
-  <text x="400" y="102" text-anchor="middle" font-size="16" font-weight="700" fill="white">Ask / ? (Request-Response)</text>
+  <text x="400" y="102" text-anchor="middle" font-size="16" font-weight="700" fill="white">Ask (Request-Response)</text>
 
-  <!-- Diagram -->
+  <!-- Diagram: Sender ⇄ Receiver -->
   <g transform="translate(325, 128)">
     <rect x="0" y="0" width="50" height="30" rx="6" fill="#fef3c7" stroke="#fbbf24" stroke-width="1"/>
-    <text x="25" y="19" text-anchor="middle" font-size="9" font-weight="600" fill="#92400e">Sender</text>
-    <line x1="50" y1="12" x2="100" y2="12" stroke="#f59e0b" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <text x="25" y="20" text-anchor="middle" font-size="9" font-weight="600" fill="#92400e">Sender</text>
+    <!-- Forward arrow: Sender right(50) → Receiver left(100) - 4 = 96, y=12 -->
+    <line x1="50" y1="12" x2="96" y2="12" stroke="#f59e0b" stroke-width="1.5" marker-end="url(#arrow)"/>
     <rect x="100" y="0" width="50" height="30" rx="6" fill="#fef3c7" stroke="#fbbf24" stroke-width="1"/>
-    <text x="125" y="19" text-anchor="middle" font-size="9" font-weight="600" fill="#92400e">Receiver</text>
-    <!-- Reply arrow -->
-    <line x1="100" y1="22" x2="50" y2="22" stroke="#94a3b8" stroke-width="1" stroke-dasharray="3 2" marker-end="url(#arrow)"/>
-    <text x="75" y="38" text-anchor="middle" font-size="8" fill="#64748b">Future[T]</text>
+    <text x="125" y="20" text-anchor="middle" font-size="9" font-weight="600" fill="#92400e">Receiver</text>
+    <!-- Reply arrow: Receiver left(100) → Sender right(50) + 4 = 54, y=22 -->
+    <line x1="100" y1="22" x2="54" y2="22" stroke="#94a3b8" stroke-width="1" stroke-dasharray="3 2" marker-end="url(#arrow)"/>
+    <text x="75" y="38" text-anchor="middle" font-size="8" fill="#64748b">Future&lt;T&gt;</text>
   </g>
 
   <text x="400" y="178" text-anchor="middle" font-size="9" fill="#64748b">返回 Future，异步获取结果</text>
@@ -86,17 +106,17 @@
 
   <!-- Code snippet -->
   <rect x="300" y="203" width="200" height="28" rx="6" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
-  <text x="400" y="220" text-anchor="middle" font-size="10" fill="#374151" font-family="monospace">ref ? message</text>
+  <text x="400" y="221" text-anchor="middle" font-size="9" fill="#374151" font-family="monospace">Patterns.ask(ref, msg, timeout)</text>
 
   <!-- Use case -->
   <rect x="300" y="241" width="200" height="40" rx="8" fill="#fffbeb" stroke="#fbbf24" stroke-width="1"/>
   <text x="400" y="258" text-anchor="middle" font-size="10" font-weight="600" fill="#92400e">适用场景</text>
-  <text x="400" y="273" text-anchor="middle" fill="#64748b">必须拿到结果、外部 API 调用</text>
+  <text x="400" y="273" text-anchor="middle" font-size="10" fill="#64748b">必须拿到结果、外部 API 调用</text>
 
   <!-- Tip -->
   <rect x="300" y="291" width="200" height="38" rx="6" fill="#fef2f2" stroke="#fca5a5" stroke-width="1"/>
   <text x="400" y="306" text-anchor="middle" font-size="9" fill="#991b1b">⚠ 谨慎使用：必须设置超时</text>
-  <text x="400" y="321" text-anchor="middle" fill="#991b1b">避免滥用导致临时 Actor 膨胀</text>
+  <text x="400" y="321" text-anchor="middle" font-size="9" fill="#991b1b">避免滥用导致临时 Actor 膨胀</text>
 
   <!-- ===== Forward (Keep Sender) ===== -->
   <g filter="url(#shadow)">
@@ -106,24 +126,24 @@
   <rect x="540" y="97" width="230" height="18" fill="url(#greenG)"/>
   <text x="655" y="102" text-anchor="middle" font-size="16" font-weight="700" fill="white">Forward (保持发送者)</text>
 
-  <!-- Diagram -->
+  <!-- Diagram: RealSender → Router → Worker, reply bypasses Router -->
   <g transform="translate(565, 125)">
-    <!-- Real sender -->
+    <!-- Real Sender: x=35, y=0, w=55, h=22 → bottom=22, center x=62 -->
     <rect x="35" y="0" width="55" height="22" rx="5" fill="#d1fae5" stroke="#86efac" stroke-width="1"/>
     <text x="62" y="15" text-anchor="middle" font-size="8" font-weight="600" fill="#047857">Real Sender</text>
-    <!-- Router -->
+    <!-- Router: x=20, y=32, w=85, h=22 → top=32, bottom=54, center x=62 -->
     <rect x="20" y="32" width="85" height="22" rx="5" fill="#ecfdf5" stroke="#86efac" stroke-width="1"/>
     <text x="62" y="47" text-anchor="middle" font-size="8" font-weight="600" fill="#047857">Router</text>
-    <!-- Worker -->
+    <!-- Worker: x=35, y=64, w=55, h=22 → top=64, center x=62 -->
     <rect x="35" y="64" width="55" height="22" rx="5" fill="#d1fae5" stroke="#86efac" stroke-width="1"/>
     <text x="62" y="79" text-anchor="middle" font-size="8" font-weight="600" fill="#047857">Worker</text>
-    <!-- Arrows -->
-    <line x1="62" y1="22" x2="62" y2="30" stroke="#10b981" stroke-width="1.5" marker-end="url(#arrow)"/>
-    <line x1="62" y1="54" x2="62" y2="62" stroke="#10b981" stroke-width="1.5" marker-end="url(#arrow)"/>
-    <!-- Reply back -->
-    <line x1="35" y1="75" x2="10" y2="75" stroke="#94a3b8" stroke-width="1" stroke-dasharray="3 2" marker-end="url(#arrow)"/>
-    <line x1="10" y1="75" x2="10" y2="11" stroke="#94a3b8" stroke-width="1" stroke-dasharray="3 2"/>
-    <text x="5" y="55" font-size="7" fill="#64748b" transform="rotate(-90, 5, 55)">forward 保持 sender</text>
+    <!-- Arrow: Sender bottom(22) → Router top(32) - 4 = 28 -->
+    <line x1="62" y1="22" x2="62" y2="28" stroke="#10b981" stroke-width="1.5" marker-end="url(#arrowG)"/>
+    <!-- Arrow: Router bottom(54) → Worker top(64) - 4 = 60 -->
+    <line x1="62" y1="54" x2="62" y2="60" stroke="#10b981" stroke-width="1.5" marker-end="url(#arrowG)"/>
+    <!-- Reply path: Worker left(35) → x=10 → up to Sender bottom(22) + 4 = 26 -->
+    <path d="M 35 75 L 10 75 L 10 26" fill="none" stroke="#94a3b8" stroke-width="1" stroke-dasharray="3 2" marker-end="url(#arrow)"/>
+    <text x="6" y="50" text-anchor="middle" font-size="7" fill="#64748b" transform="rotate(-90, 6, 50)">reply → 原始发送者</text>
   </g>
 
   <text x="655" y="185" text-anchor="middle" font-size="9" fill="#64748b">消息转发给下游 Actor</text>
@@ -131,19 +151,19 @@
 
   <!-- Code snippet -->
   <rect x="555" y="210" width="200" height="28" rx="6" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
-  <text x="655" y="227" text-anchor="middle" font-size="10" fill="#374151" font-family="monospace">workerRef.forward(msg)</text>
+  <text x="655" y="228" text-anchor="middle" font-size="9" fill="#374151" font-family="monospace">workerRef.forward(msg)</text>
 
   <!-- Use case -->
   <rect x="555" y="248" width="200" height="40" rx="8" fill="#ecfdf5" stroke="#86efac" stroke-width="1"/>
   <text x="655" y="265" text-anchor="middle" font-size="10" font-weight="600" fill="#047857">适用场景</text>
-  <text x="655" y="280" text-anchor="middle" fill="#64748b">路由器、代理、负载均衡</text>
+  <text x="655" y="280" text-anchor="middle" font-size="10" fill="#64748b">路由器、代理、负载均衡</text>
 
   <!-- Tip -->
   <rect x="555" y="298" width="200" height="38" rx="6" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1"/>
   <text x="655" y="313" text-anchor="middle" font-size="9" fill="#15803d">💡 Worker 回复时直接回复给</text>
-  <text x="655" y="328" text-anchor="middle" fill="#15803d">原始发送者，不经 Router 中转</text>
+  <text x="655" y="328" text-anchor="middle" font-size="9" fill="#15803d">原始发送者，不经 Router 中转</text>
 
-  <!-- Bottom tip -->
+  <!-- ===== Bottom tip ===== -->
   <rect x="130" y="368" width="540" height="26" rx="13" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1"/>
   <text x="400" y="385" text-anchor="middle" font-size="11" fill="#15803d">💡 核心原则：优先使用 Tell；仅在必须等待结果时用 Ask；需要透明转发时用 Forward</text>
 </svg>
