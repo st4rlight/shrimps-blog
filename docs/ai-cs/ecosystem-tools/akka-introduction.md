@@ -57,15 +57,22 @@ Akka 的核心思想是：**不共享，不锁，只传消息**。
 - 一次只处理**一条消息**，天然串行，无需加锁
 - 极其轻量，单个 JVM 上可以创建**数百万**个 Actor
 
-```scala
+```java
 // Akka 方式：Actor 封装状态，通过消息通信
-class Counter extends Actor {
-  var count = 0  // 私有状态，无需锁保护
+public class Counter extends AbstractActor {
+    private int count = 0;  // 私有状态，无需锁保护
 
-  def receive = {
-    case Increment => count += 1       // 一次只处理一条消息，天然线程安全
-    case Get       => sender() ! count  // 异步回复
-  }
+    public static Props props() {
+        return Props.create(Counter.class);
+    }
+
+    @Override
+    public Receive createReceive() {
+        return receiveBuilder()
+            .match(Increment.class, msg -> count++)                          // 一次只处理一条消息，天然线程安全
+            .match(Get.class, msg -> getSender().tell(count, getSelf()))     // 异步回复
+            .build();
+    }
 }
 ```
 
@@ -161,11 +168,11 @@ Actor 的状态完全私有，外部只能通过发送消息与其交互。不�
 - 调度器（Scheduler）—— 定时任务
 - Actor 生命周期管理
 
-```scala
-import akka.actor.ActorSystem
+```java
+import akka.actor.ActorSystem;
 
 // 创建 ActorSystem
-val system = ActorSystem("ai-customer-service")
+ActorSystem system = ActorSystem.create("ai-customer-service");
 ```
 
 ::: tip ActorSystem 是重量级
@@ -213,14 +220,14 @@ public class SessionActor extends AbstractActor {
 
 `Props` 是 Actor 的**创建配置对象**，描述了如何创建一个 Actor 实例。它的作用类似于工厂模式的配置：
 
-```scala
-// Scala：定义 Props
-object SessionActor {
-  def props(sessionId: String): Props = Props(new SessionActor(sessionId))
+```java
+// Java：在 Actor 类中定义静态 props 方法
+public static Props props(String sessionId) {
+    return Props.create(SessionActor.class, sessionId);
 }
 
 // 使用 Props 创建 Actor
-val sessionRef = system.actorOf(SessionActor.props("session-001"), "session-001")
+ActorRef sessionRef = system.actorOf(SessionActor.props("session-001"), "session-001");
 ```
 
 为什么要用 `Props` 而不直接 `new`？因为 Akka 需要：
@@ -233,13 +240,12 @@ val sessionRef = system.actorOf(SessionActor.props("session-001"), "session-001"
 
 `ActorRef` 是 Actor 的**引用**，是外部与 Actor 交互的唯一接口。你**永远拿不到** Actor 的实例对象，只能拿到 `ActorRef`：
 
-```scala
+```java
 // 创建 Actor，返回 ActorRef（不是 Actor 实例）
-val sessionRef: ActorRef = system.actorOf(SessionActor.props("session-001"), "session-001")
+ActorRef sessionRef = system.actorOf(SessionActor.props("session-001"), "session-001");
 
 // 通过 ActorRef 发送消息
-sessionRef ! UserMessage("你好，我需要帮助")  // tell 模式
-sessionRef.tell(UserMessage("你好"), ActorRef.noSender())  // Java 风格
+sessionRef.tell(new UserMessage("你好，我需要帮助", System.currentTimeMillis()), ActorRef.noSender());  // tell 模式
 ```
 
 `ActorRef` 的好处：
@@ -252,12 +258,12 @@ sessionRef.tell(UserMessage("你好"), ActorRef.noSender())  // Java 风格
 
 消息是 Actor 之间通信的唯一方式。消息是**不可变对象**（immutable），通常用 case class（Scala）或 POJO（Java）定义：
 
-```scala
-// 不可变消息定义
-case class UserMessage(text: String, timestamp: Long)
-case class BotReply(text: String, confidence: Double)
-case object GetHistory
-case class EndSession(sessionId: String)
+```java
+// 不可变消息定义（使用 Java Record）
+public record UserMessage(String text, long timestamp) {}
+public record BotReply(String text, double confidence) {}
+public record GetHistory() {}
+public record EndSession(String sessionId) {}
 ```
 
 ::: warning 消息必须不可变
@@ -285,12 +291,9 @@ Mailbox（FIFO 队列）
 
 `tell`（Scala 中写作 `!`）是最常用的消息发送方式——发送后不等待回复：
 
-```scala
+```java
 // Tell 模式：发后即忘
-sessionRef ! UserMessage("你好")
-
-// 等价于
-sessionRef.tell(UserMessage("你好"), ActorRef.noSender())
+sessionRef.tell(new UserMessage("你好", System.currentTimeMillis()), ActorRef.noSender());
 ```
 
 `tell` 的第二个参数是**发送方引用**（`sender`），接收方可以通过 `sender()` 获取并回复。传入 `noSender()` 表示不需要回复。
@@ -299,21 +302,23 @@ sessionRef.tell(UserMessage("你好"), ActorRef.noSender())
 
 `ask`（Scala 中写作 `?`）用于需要等待回复的场景，返回一个 `Future`：
 
-```scala
-import akka.pattern.ask
-import scala.concurrent.duration._
-import scala.concurrent.Await
+```java
+import akka.pattern.Patterns;
+import akka.util.Timeout;
+import java.time.Duration;
+import java.util.concurrent.CompletionStage;
 
 // Ask 模式：等待回复
-implicit val timeout: Timeout = 3.seconds
+Timeout timeout = Timeout.create(Duration.ofSeconds(3));
 
-val future: Future[List[String]] = (sessionRef ? GetHistory).mapTo[List[String]]
+CompletionStage<Object> future = Patterns.ask(sessionRef, new GetHistory(), timeout);
 
 // 异步处理回复
-future.onComplete {
-  case Success(history) => println(s"历史消息: $history")
-  case Failure(e)       => println(s"获取失败: ${e.getMessage}")
-}
+future.thenAccept(history -> System.out.println("历史消息: " + history))
+      .exceptionally(e -> {
+          System.out.println("获取失败: " + e.getMessage());
+          return null;
+      });
 ```
 
 ::: tip Tell vs Ask
@@ -324,14 +329,21 @@ future.onComplete {
 
 `forward` 将消息转发给另一个 Actor，同时保持原始发送者不变：
 
-```scala
-class RouterActor extends Actor {
-  val workerRef = context.actorOf(WorkerActor.props(), "worker")
+```java
+public class RouterActor extends AbstractActor {
+    private final ActorRef workerRef;
 
-  def receive = {
-    case msg: ProcessRequest =>
-      workerRef.forward(msg)  // 转发，sender 仍是原始发送者
-  }
+    public RouterActor() {
+        this.workerRef = getContext().actorOf(WorkerActor.props(), "worker");
+    }
+
+    @Override
+    public Receive createReceive() {
+        return receiveBuilder()
+            .match(ProcessRequest.class, msg ->
+                workerRef.forward(msg, getContext()))  // 转发，sender 仍是原始发送者
+            .build();
+    }
 }
 ```
 
@@ -366,29 +378,35 @@ class RouterActor extends Actor {
 | `preRestart(reason, message)` | Actor 即将重启前（旧实例） | 保存状态、记录日志 |
 | `postRestart(reason)` | Actor 重启后（新实例） | 恢复状态、重新初始化 |
 
-```scala
-class DbSessionActor extends Actor {
-  private var connection: Connection = _
+```java
+public class DbSessionActor extends AbstractActor {
+    private Connection connection;
 
-  override def preStart(): Unit = {
-    connection = DriverManager.getConnection(url)  // 初始化数据库连接
-    log.info("数据库连接已建立")
-  }
+    @Override
+    public void preStart() {
+        connection = DriverManager.getConnection(url);  // 初始化数据库连接
+        log().info("数据库连接已建立");
+    }
 
-  override def postStop(): Unit = {
-    if (connection != null) connection.close()  // 释放连接
-    log.info("数据库连接已关闭")
-  }
+    @Override
+    public void postStop() {
+        if (connection != null) connection.close();  // 释放连接
+        log().info("数据库连接已关闭");
+    }
 
-  override def preRestart(reason: Throwable, message: Option[Any]): Unit = {
-    // 重启前保存状态（可选）
-    log.warning(s"Actor 即将重启，原因: ${reason.getMessage}")
-    super.preRestart(reason, message)  // 默认会调用 postStop
-  }
+    @Override
+    public void preRestart(Throwable reason, Optional<Object> message) {
+        // 重启前保存状态（可选）
+        log().warning("Actor 即将重启，原因: " + reason.getMessage());
+        super.preRestart(reason, message);  // 默认会调用 postStop
+    }
 
-  def receive = {
-    case Query(sql) => // ...
-  }
+    @Override
+    public Receive createReceive() {
+        return receiveBuilder()
+            .match(Query.class, msg -> { /* ... */ })
+            .build();
+    }
 }
 ```
 
@@ -396,19 +414,20 @@ class DbSessionActor extends Actor {
 
 停止 Actor 有三种方式：
 
-```scala
+```java
 // 方式一：Actor 自己停止
-context.stop(self)
+getContext().stop(getSelf());
 
 // 方式二：父 Actor 停止子 Actor
-context.stop(childRef)
+getContext().stop(childRef);
 
 // 方式三：通过 PoisonPill 毒丸消息（Actor 处理完当前消息后停止）
-childRef ! PoisonPill
+childRef.tell(PoisonPill.getInstance(), ActorRef.noSender());
 
 // 方式四：通过 gracefulStop 优雅停止（等待超时）
-import akka.pattern.gracefulStop
-val stopped: Future[Boolean] = gracefulStop(childRef, 5.seconds)
+import akka.pattern.Patterns;
+import java.time.Duration;
+CompletionStage<Boolean> stopped = Patterns.gracefulStop(childRef, Duration.ofSeconds(5));
 ```
 
 ---
@@ -440,20 +459,26 @@ Akka 范式：出现异常 → **让 Actor 崩溃** → 父 Actor（监督者）
 
 Akka 提供两种监督策略：
 
-```scala
-import akka.actor.OneForOneStrategy
-import akka.actor.SupervisorStrategy._
-import scala.concurrent.duration._
+```java
+import akka.actor.OneForOneStrategy;
+import akka.actor.SupervisorStrategy;
+import akka.actor.SupervisorStrategy.*;
+import akka.japi.function.Function;
+import java.time.Duration;
 
 // OneForOne：只对出错的子 Actor 执行策略
-override val supervisorStrategy = OneForOneStrategy(
-  maxNrOfRetries = 3,        // 最大重试次数
-  withinTimeRange = 1.minute // 时间窗口
-) {
-  case _: ArithmeticException      => Resume   // 算术异常：恢复
-  case _: NullPointerException     => Restart  // 空指针：重启
-  case _: IllegalArgumentException => Stop     // 非法参数：停止
-  case _: Exception                => Escalate // 其他：上报
+@Override
+public SupervisorStrategy supervisorStrategy() {
+    return new OneForOneStrategy(
+        3,                              // 最大重试次数
+        Duration.ofMinutes(1),          // 时间窗口
+        DeciderBuilder
+            .match(ArithmeticException.class, e -> SupervisorStrategy.resume())     // 算术异常：恢复
+            .match(NullPointerException.class, e -> SupervisorStrategy.restart())   // 空指针：重启
+            .match(IllegalArgumentException.class, e -> SupervisorStrategy.stop())  // 非法参数：停止
+            .matchAny(e -> SupervisorStrategy.escalate())                            // 其他：上报
+            .build()
+    );
 }
 ```
 
@@ -513,27 +538,31 @@ Source(输出) → Flow(转换) → Sink(消费)
 
 ### 7.3 客服场景示例：消息处理流水线
 
-```scala
-import akka.stream.scaladsl._
-import akka.stream._
+```java
+import akka.stream.javadsl.*;
+import akka.NotUsed;
 
 // 构建消息处理流水线
-val pipeline: RunnableGraph[NotUsed] =
-  Source.fromIterator(() => messageQueue.iterator())       // Source：消息队列
-    .via(Flow[UserMessage]                                 // Flow 1：预处理
-      .map(msg => preprocess(msg)))
-    .via(Flow[PreprocessedMessage]                         // Flow 2：意图识别
-      .async                                              // 异步边界，并行处理
-      .map(msg => detectIntent(msg)))
-    .via(Flow[IntentMessage]                              // Flow 3：生成回复
-      .async
-      .map(msg => generateReply(msg)))
-    .to(Sink.foreach[(String, String)] {                  // Sink：发送回复
-      case (sessionId, reply) => sendReply(sessionId, reply)
-    })
+Source<UserMessage, NotUsed> source = Source.fromIterator(() -> messageQueue.iterator());
+
+Flow<UserMessage, PreprocessedMessage, NotUsed> preprocessFlow =
+    Flow.of(UserMessage.class).map(this::preprocess);
+
+Flow<PreprocessedMessage, IntentMessage, NotUsed> intentFlow =
+    Flow.of(PreprocessedMessage.class)
+        .async()                         // 异步边界，并行处理
+        .map(this::detectIntent);
+
+Flow<IntentMessage, ReplyResult, NotUsed> replyFlow =
+    Flow.of(IntentMessage.class)
+        .async()
+        .map(this::generateReply);
+
+Sink<ReplyResult, NotUsed> sink = Sink.foreach(result ->
+    sendReply(result.sessionId(), result.reply()));
 
 // 运行流水线
-pipeline.run()
+source.via(preprocessFlow).via(intentFlow).via(replyFlow).to(sink).run(system);
 ```
 
 ### 7.4 背压机制
@@ -576,30 +605,45 @@ pipeline.run()
 
 当系统中有数百万个 Session Actor 时，不可能全部放在一个节点上。Cluster Sharding 自动将 Actor 分散到集群各节点：
 
-```scala
-import akka.cluster.sharding.ShardRegion
-import akka.cluster.sharding.ClusterSharding
+```java
+import akka.cluster.sharding.ClusterSharding;
+import akka.cluster.sharding.ClusterShardingSettings;
+import akka.cluster.sharding.ShardRegion;
 
 // 定义分片规则
-val extractEntityId: ShardRegion.ExtractEntityId = {
-  case msg @ SessionMessage(sessionId, _) => (sessionId, msg)
-}
+ShardRegion.MessageExtractor messageExtractor = new ShardRegion.MessageExtractor() {
+    @Override
+    public String entityId(Object message) {
+        if (message instanceof SessionMessage msg) {
+            return msg.sessionId();
+        }
+        return null;
+    }
 
-val extractShardId: ShardRegion.ExtractShardId = {
-  case SessionMessage(sessionId, _) => (Math.abs(sessionId.hashCode) % 100).toString
-}
+    @Override
+    public Object entityMessage(Object message) {
+        return message;
+    }
+
+    @Override
+    public String shardId(Object message) {
+        if (message instanceof SessionMessage msg) {
+            return String.valueOf(Math.abs(msg.sessionId().hashCode()) % 100);
+        }
+        return null;
+    }
+};
 
 // 启动分片
-val sessionShardRegion = ClusterSharding(system).start(
-  typeName = "Session",
-  entityProps = SessionActor.props(),
-  settings = ClusterShardingSettings(system),
-  extractEntityId = extractEntityId,
-  extractShardId = extractShardId
-)
+ActorRef sessionShardRegion = ClusterSharding.get(system).start(
+    "Session",
+    SessionActor.props(),
+    ClusterShardingSettings.create(system),
+    messageExtractor
+);
 
 // 发送消息——Akka 自动路由到正确的节点和 Actor
-sessionShardRegion ! SessionMessage("session-001", "你好")
+sessionShardRegion.tell(new SessionMessage("session-001", "你好"), ActorRef.noSender());
 ```
 
 Sharding 的核心逻辑：
@@ -621,34 +665,46 @@ Akka Persistence 提供了事件溯源能力——Actor 的状态变化不是直
 
 ### 9.2 Persistent Actor
 
-```scala
-import akka.persistence.PersistentActor
+```java
+import akka.persistence.AbstractPersistentActor;
 
-case class AddMessage(sessionId: String, message: String)
-case class MessageAdded(sessionId: String, message: String)  // 事件
+public record AddMessage(String sessionId, String message) {}
+public record MessageAdded(String sessionId, String message) {}  // 事件
 
-class SessionPersistentActor(sessionId: String) extends PersistentActor {
+public class SessionPersistentActor extends AbstractPersistentActor {
+    private final String sessionId;
+    private final List<String> messages = new ArrayList<>();
 
-  override def persistenceId: String = s"session-$sessionId"
+    public SessionPersistentActor(String sessionId) {
+        this.sessionId = sessionId;
+    }
 
-  var messages: List[String] = List.empty
+    @Override
+    public String persistenceId() {
+        return "session-" + sessionId;
+    }
 
-  override def receiveCommand: Receive = {
-    case AddMessage(sid, msg) =>
-      // 先持久化事件，成功后再更新状态
-      persist(MessageAdded(sid, msg)) { event =>
-        messages = messages :+ msg  // 事件持久化成功后更新内存状态
-        sender() ! Ack
-      }
+    @Override
+    public Receive createReceiveRecover() {
+        return receiveBuilder()
+            .match(MessageAdded.class, evt -> messages.add(evt.message()))  // 重放事件，恢复状态
+            .build();
+    }
 
-    case GetMessages =>
-      sender() ! messages
-  }
-
-  override def receiveRecover: Receive = {
-    case MessageAdded(_, msg) =>
-      messages = messages :+ msg  // 重放事件，恢复状态
-  }
+    @Override
+    public Receive createReceive() {
+        return receiveBuilder()
+            .match(AddMessage.class, cmd -> {
+                // 先持久化事件，成功后再更新状态
+                persist(new MessageAdded(cmd.sessionId(), cmd.message()), evt -> {
+                    messages.add(evt.message());  // 事件持久化成功后更新内存状态
+                    getSender().tell(Ack.getInstance(), getSelf());
+                });
+            })
+            .match(GetMessages.class, msg ->
+                getSender().tell(new ArrayList<>(messages), getSelf()))
+            .build();
+    }
 }
 ```
 
@@ -809,36 +865,53 @@ Akka 2.6+ 引入了 **Akka Typed**（类型安全的 Actor API），解决了经
 
 ### 11.2 Typed Actor 示例
 
-```scala
-import akka.actor.typed.*
-import akka.actor.typed.scaladsl.*
+```java
+import akka.actor.typed.*;
+import akka.actor.typed.javadsl.*;
 
-// 定义消息协议（密封 trait，编译器会检查穷尽性）
-sealed trait SessionCommand
-case class UserMessage(text: String, replyTo: ActorRef[BotReply]) extends SessionCommand
-case class GetHistory(replyTo: ActorRef[HistoryResponse]) extends SessionCommand
-case object EndSession extends SessionCommand
+// 定义消息协议（密封接口，编译器会检查穷尽性）
+public sealed interface SessionCommand permits UserMessage, GetHistory, EndSession {}
+public record UserMessage(String text, ActorRef<BotReply> replyTo) implements SessionCommand {}
+public record GetHistory(ActorRef<HistoryResponse> replyTo) implements SessionCommand {}
+public record EndSession() implements SessionCommand {}
 
-object SessionActor {
-  // 类型安全的 Behavior
-  def apply(sessionId: String): Behavior[SessionCommand] = Behaviors.setup { context =>
-    var messages: List[String] = Nil
+public class SessionActor extends AbstractBehavior<SessionCommand> {
+    private final String sessionId;
+    private final List<String> messages = new ArrayList<>();
 
-    Behaviors.receiveMessage {
-      case UserMessage(text, replyTo) =>
-        messages = messages :+ text
-        replyTo ! BotReply(s"收到你的消息: $text", 0.95)  // 类型安全：只能发 BotReply
-        Behaviors.same
-
-      case GetHistory(replyTo) =>
-        replyTo ! HistoryResponse(messages)
-        Behaviors.same
-
-      case EndSession =>
-        context.log.info(s"会话 $sessionId 结束")
-        Behaviors.stopped
+    public static Behavior<SessionCommand> create(String sessionId) {
+        return Behaviors.setup(ctx -> new SessionActor(ctx, sessionId));
     }
-  }
+
+    private SessionActor(ActorContext<SessionCommand> context, String sessionId) {
+        super(context);
+        this.sessionId = sessionId;
+    }
+
+    @Override
+    public Receive<SessionCommand> createReceive() {
+        return newReceiveBuilder()
+            .onMessage(UserMessage.class, this::onUserMessage)
+            .onMessage(GetHistory.class, this::onGetHistory)
+            .onMessage(EndSession.class, this::onEndSession)
+            .build();
+    }
+
+    private Behavior<SessionCommand> onUserMessage(UserMessage msg) {
+        messages.add(msg.text());
+        msg.replyTo().tell(new BotReply("收到你的消息: " + msg.text(), 0.95));  // 类型安全：只能发 BotReply
+        return this;
+    }
+
+    private Behavior<SessionCommand> onGetHistory(GetHistory msg) {
+        msg.replyTo().tell(new HistoryResponse(new ArrayList<>(messages)));
+        return this;
+    }
+
+    private Behavior<SessionCommand> onEndSession(EndSession msg) {
+        getContext().getLog().info("会话 {} 结束", sessionId);
+        return Behaviors.stopped();
+    }
 }
 ```
 
@@ -868,25 +941,36 @@ Typed API 的最大好处是：**如果 `replyTo` 期望接收 `BotReply`，但�
 
 ### 12.3 避免阻塞操作
 
-```scala
+```java
 // ❌ 错误：在 Actor 中直接阻塞
-class BadActor extends Actor {
-  def receive = {
-    case Query(sql) =>
-      val result = db.query(sql)  // 阻塞调用！占住线程
-      sender() ! result
-  }
+public class BadActor extends AbstractActor {
+    @Override
+    public Receive createReceive() {
+        return receiveBuilder()
+            .match(Query.class, msg -> {
+                QueryResult result = db.query(msg.sql());  // 阻塞调用！占住线程
+                getSender().tell(result, getSelf());
+            })
+            .build();
+    }
 }
 
-// ✅ 正确：使用 pipeTo 将 Future 结果转为消息
-import akka.pattern.pipe
+// ✅ 正确：使用 pipeTo 将 CompletableFuture 结果转为消息
+import akka.pattern.Patterns;
+import java.util.concurrent.CompletableFuture;
 
-class GoodActor extends Actor {
-  def receive = {
-    case Query(sql) =>
-      val result: Future[QueryResult] = Future { db.query(sql) }(blockingDispatcher)
-      result.pipeTo(sender())  // Future 完成后自动发送结果给 sender
-  }
+public class GoodActor extends AbstractActor {
+    @Override
+    public Receive createReceive() {
+        return receiveBuilder()
+            .match(Query.class, msg -> {
+                CompletableFuture<QueryResult> result = CompletableFuture
+                    .supplyAsync(() -> db.query(msg.sql()), blockingExecutor);
+                Patterns.pipe(result, getContext().getDispatcher()).to(getSender());
+                // CompletableFuture 完成后自动发送结果给 sender
+            })
+            .build();
+    }
 }
 ```
 
@@ -946,60 +1030,67 @@ Akka 的独特优势在于：**Actor 模型 + 位置透明性 + 完整的分布�
 
 ### 14.2 代码示例
 
-```scala
-import akka.pattern.CircuitBreaker
-import scala.concurrent.duration._
+```java
+import akka.pattern.CircuitBreaker;
+import java.time.Duration;
+import java.util.concurrent.CompletionStage;
 
 // 创建熔断器
-val breaker = CircuitBreaker(
-  scheduler = system.scheduler,
-  maxFailures = 5,           // 最多容忍 5 次失败
-  callTimeout = 3.seconds,   // 调用超时时间
-  resetTimeout = 30.seconds  // 复位等待时间
-)
+CircuitBreaker breaker = new CircuitBreaker(
+    system.getScheduler(),
+    5,                          // 最多容忍 5 次失败
+    Duration.ofSeconds(3),      // 调用超时时间
+    Duration.ofSeconds(30),     // 复位等待时间
+    system.dispatcher()
+);
 
-// 方式一：withCircuitBreaker（返回 Future）
-val result: Future[String] = breaker.withCircuitBreaker {
-  // 调用外部服务（如 LLM API）
-  modelGateway.ask(Query("你好")).mapTo[String]
-}
+// 方式一：withCircuitBreaker（返回 CompletionStage）
+CompletionStage<String> result = breaker.withCircuitBreaker(() ->
+    Patterns.ask(modelGateway, new Query("你好"), timeout)
+             .thenApply(obj -> (String) obj)
+);
 
 // 方式二：withSyncCircuitBreaker（同步调用）
-val syncResult: String = breaker.withSyncCircuitBreaker {
-  externalService.call()
-}
+String syncResult = breaker.withSyncCircuitBreaker(() -> externalService.call());
 
 // 监听状态变化
-breaker.onClose(() => log.info("熔断器关闭，恢复正常"))
-breaker.onOpen(() => log.warning("熔断器打开，请求被熔断！"))
-breaker.onHalfOpen(() => log.info("熔断器半开，正在试探恢复"))
+breaker.onClose(() -> log.info("熔断器关闭，恢复正常"));
+breaker.onOpen(() -> log.warning("熔断器打开，请求被熔断！"));
+breaker.onHalfOpen(() -> log.info("熔断器半开，正在试探恢复"));
 ```
 
 ### 14.3 客服场景中的熔断实践
 
 在 AI 客服系统中，LLM API 是最不稳定的下游依赖——可能因流量高峰、限流或模型维护而超时。典型的熔断配置：
 
-```scala
+```java
 // 针对 LLM API 的熔断器
-val llmBreaker = CircuitBreaker(
-  scheduler = system.scheduler,
-  maxFailures = 10,          // 10 次失败后熔断
-  callTimeout = 5.seconds,   // LLM 调用 5 秒超时
-  resetTimeout = 60.seconds  // 60 秒后试探恢复
-)
+CircuitBreaker llmBreaker = new CircuitBreaker(
+    system.getScheduler(),
+    10,                         // 10 次失败后熔断
+    Duration.ofSeconds(5),      // LLM 调用 5 秒超时
+    Duration.ofSeconds(60),     // 60 秒后试探恢复
+    system.dispatcher()
+);
 
 // 在 ModelGateway Actor 中使用
-class ModelGatewayActor extends Actor {
-  def receive = {
-    case Query(text) =>
-      val originalSender = sender()
-      llmBreaker.withCircuitBreaker {
-        llmClient.complete(text)
-      }.onComplete {
-        case Success(reply) => originalSender ! BotReply(reply, 0.95)
-        case Failure(_)     => originalSender ! BotReply("抱歉，服务暂时繁忙，请稍后重试", 0.0)
-      }
-  }
+public class ModelGatewayActor extends AbstractActor {
+    @Override
+    public Receive createReceive() {
+        return receiveBuilder()
+            .match(Query.class, msg -> {
+                ActorRef originalSender = getSender();
+                llmBreaker.withCircuitBreaker(() -> llmClient.complete(msg.text()))
+                    .whenComplete((reply, failure) -> {
+                        if (failure == null) {
+                            originalSender.tell(new BotReply(reply, 0.95), getSelf());
+                        } else {
+                            originalSender.tell(new BotReply("抱歉，服务暂时繁忙，请稍后重试", 0.0), getSelf());
+                        }
+                    });
+            })
+            .build();
+    }
 }
 ```
 
@@ -1024,41 +1115,49 @@ Akka Typed 提供两种 Router：
 
 ### 15.2 Pool Router 示例
 
-```scala
-import akka.actor.typed.ActorRef
-import akka.actor.typed.Behavior
-import akka.actor.typed.javadsl.*
+```java
+import akka.actor.typed.*;
+import akka.actor.typed.javadsl.*;
 
 // 定义 Worker
-object Worker {
-  sealed trait Command
-  case class DoLog(text: String) extends Command
+public class Worker extends AbstractBehavior<Worker.Command> {
+    public sealed interface Command permits DoLog {}
+    public record DoLog(String text) implements Command {}
 
-  def apply(): Behavior[Command] = Behaviors.setup { context =>
-    Behaviors.receiveMessage {
-      case DoLog(text) =>
-        context.log.info("Worker 收到消息: {}", text)
-        Behaviors.same
+    public static Behavior<Command> create() {
+        return Behaviors.setup(Worker::new);
     }
-  }
+
+    private Worker(ActorContext<Command> context) {
+        super(context);
+    }
+
+    @Override
+    public Receive<Command> createReceive() {
+        return newReceiveBuilder()
+            .onMessage(DoLog.class, msg -> {
+                getContext().getLog().info("Worker 收到消息: {}", msg.text());
+                return this;
+            })
+            .build();
+    }
 }
 
 // 创建 Pool Router
-import akka.actor.typed.DispatcherSelector
-import akka.actor.typed.PoolRouter
+import akka.actor.typed.javadsl.Routers;
 
-val pool: Behavior[Worker.Command] = Routers.pool(
-  poolSize = 4,                    // 4 个 Worker
-  behavior = Worker.apply()         // Worker 的 Behavior
-).withRoundRobinRouting()           // 轮询路由
+Behavior<Worker.Command> pool = Routers.pool(
+    4,                    // 4 个 Worker
+    Worker.create()       // Worker 的 Behavior
+).withRoundRobinRouting();  // 轮询路由
 
-val routerRef: ActorRef[Worker.Command] = context.spawn(pool, "worker-pool")
+ActorRef<Worker.Command> routerRef = getContext().spawn(pool, "worker-pool");
 
 // 发送消息——Router 自动分发给某个 Worker
-routerRef ! Worker.DoLog("处理消息1")
-routerRef ! Worker.DoLog("处理消息2")
-routerRef ! Worker.DoLog("处理消息3")
-routerRef ! Worker.DoLog("处理消息4")
+routerRef.tell(new Worker.DoLog("处理消息1"));
+routerRef.tell(new Worker.DoLog("处理消息2"));
+routerRef.tell(new Worker.DoLog("处理消息3"));
+routerRef.tell(new Worker.DoLog("处理消息4"));
 // 4 条消息分别分给 4 个 Worker 并行处理
 ```
 
@@ -1075,20 +1174,22 @@ routerRef ! Worker.DoLog("处理消息4")
 
 Group Router 结合 Receptionist 可以实现**集群感知路由**——消息自动分发到集群中任意节点上注册的 Worker：
 
-```scala
+```java
 // Worker 在集群各节点上启动时注册自己
-val WorkerServiceKey = ServiceKey[Worker.Command]("worker-service")
+ServiceKey<Worker.Command> workerServiceKey =
+    ServiceKey.create(Worker.Command.class, "worker-service");
 
-context.system.receptionist ! Receptionist.Register(WorkerServiceKey, context.self)
+getContext().getSystem().receptionist()
+    .tell(Receptionist.register(workerServiceKey, getContext().getSelf()));
 
 // Group Router 通过 ServiceKey 发现所有 Worker
-val group: Behavior[Worker.Command] = Routers.group(WorkerServiceKey)
-  .withRoundRobinRouting()
+Behavior<Worker.Command> group = Routers.group(workerServiceKey)
+    .withRoundRobinRouting();
 
-val groupRouter = context.spawn(group, "worker-group")
+ActorRef<Worker.Command> groupRouter = getContext().spawn(group, "worker-group");
 
 // 发送消息——自动路由到集群中任意节点的 Worker
-groupRouter ! Worker.DoLog("集群范围内处理")
+groupRouter.tell(new Worker.DoLog("集群范围内处理"));
 ```
 
 ::: tip Pool vs Group 选择
@@ -1117,89 +1218,102 @@ groupRouter ! Worker.DoLog("集群范围内处理")
 
 以 AI 客服会话为例，设计一个有状态的会话 Actor：
 
-```scala
-import akka.actor.typed.*
-import akka.actor.typed.scaladsl.*
-import scala.concurrent.duration.*
+```java
+import akka.actor.typed.*;
+import akka.actor.typed.javadsl.*;
+import java.time.Duration;
 
 // 消息（事件）
-sealed trait SessionEvent
-case class UserMessage(text: String) extends SessionEvent
-case class BotReply(text: String, confidence: Double) extends SessionEvent
-case object UserAway extends SessionEvent           // 用户离开
-case object UserReturn extends SessionEvent         // 用户回来
-case object SessionTimeout extends SessionEvent     // 超时
-case object EndSession extends SessionEvent         // 结束
+public sealed interface SessionEvent permits UserMessage, BotReply, UserAway, UserReturn, SessionTimeout, EndSession {}
+public record UserMessage(String text) implements SessionEvent {}
+public record BotReply(String text, double confidence) implements SessionEvent {}
+public record UserAway() implements SessionEvent {}
+public record UserReturn() implements SessionEvent {}
+public record SessionTimeout() implements SessionEvent {}
+public record EndSession() implements SessionEvent {}
 
 // 状态数据
-case class SessionData(messages: List[String], awaySince: Long)
+public record SessionData(List<String> messages, long awaySince) {
+    public SessionData addMessage(String msg) {
+        return new SessionData(new ArrayList<>(messages) {{ add(msg); }}, awaySince);
+    }
+}
 
 // 会话 FSM Actor
-object SessionFSM {
+public class SessionFSM extends AbstractBehavior<SessionEvent> {
 
-  // 初始状态：Idle（等待用户消息）
-  def apply(sessionId: String): Behavior[SessionEvent] =
-    idle(SessionData(List.empty, 0L))
+    private final String sessionId;
 
-  // Idle 状态：等待第一条消息
-  private def idle(data: SessionData): Behavior[SessionEvent] =
-    Behaviors.receiveMessage {
-      case UserMessage(text) =>
-        // 收到消息，切换到 Active 状态
-        active(data.copy(messages = data.messages :+ s"[用户] $text"))
-      case EndSession =>
-        Behaviors.stopped
-      case _ =>
-        Behaviors.unhandled  // Idle 状态不处理 BotReply 等
+    // 初始状态：Idle（等待用户消息）
+    public static Behavior<SessionEvent> create(String sessionId) {
+        return Behaviors.setup(ctx -> new SessionFSM(ctx, sessionId))
+            .narrow();  // 初始进入 idle
     }
 
-  // Active 状态：正在对话
-  private def active(data: SessionData): Behavior[SessionEvent] =
-    Behaviors.withTimers[SessionEvent] { timers =>
-      // 启动空闲超时计时器
-      timers.startSingleTimer(SessionTimeout, 5.minutes)
-
-      Behaviors.receiveMessage {
-        case UserMessage(text) =>
-          // 重置超时，保持 Active
-          timers.startSingleTimer(SessionTimeout, 5.minutes)
-          active(data.copy(messages = data.messages :+ s"[用户] $text"))
-
-        case BotReply(text, confidence) =>
-          active(data.copy(messages = data.messages :+ s"[客服] $text"))
-
-        case UserAway =>
-          // 用户离开，切换到 Away 状态
-          away(data.copy(awaySince = System.currentTimeMillis()))
-
-        case SessionTimeout =>
-          // 超时自动结束
-          Behaviors.stopped
-
-        case EndSession =>
-          Behaviors.stopped
-      }
+    private SessionFSM(ActorContext<SessionEvent> context, String sessionId) {
+        super(context);
+        this.sessionId = sessionId;
+        // 启动时进入 idle 状态
+        getContext().getSelf().tell(new EnterIdle());
     }
 
-  // Away 状态：用户暂时离开
-  private def away(data: SessionData): Behavior[SessionEvent] =
-    Behaviors.withTimers[SessionEvent] { timers =>
-      timers.startSingleTimer(SessionTimeout, 30.minutes)  // 离开 30 分钟后超时
+    // Idle 状态：等待第一条消息
+    private Behavior<SessionEvent> idle(SessionData data) {
+        return Behaviors.receiveMessage()
+            .onMessage(UserMessage.class, msg ->
+                // 收到消息，切换到 Active 状态
+                active(data.addMessage("[用户] " + msg.text())))
+            .onMessage(EndSession.class, msg -> Behaviors.stopped())
+            .build();
+    }
 
-      Behaviors.receiveMessage {
-        case UserReturn =>
-          // 用户回来，切回 Active
-          active(data)
+    // Active 状态：正在对话
+    private Behavior<SessionEvent> active(SessionData data) {
+        return Behaviors.withTimers(timers -> {
+            // 启动空闲超时计时器
+            timers.startSingleTimer(SessionTimeout.class, new SessionTimeout(), Duration.ofMinutes(5));
 
-        case SessionTimeout =>
-          Behaviors.stopped
+            return Behaviors.receiveMessage()
+                .onMessage(UserMessage.class, msg -> {
+                    timers.startSingleTimer(SessionTimeout.class, new SessionTimeout(), Duration.ofMinutes(5));
+                    return active(data.addMessage("[用户] " + msg.text()));
+                })
+                .onMessage(BotReply.class, msg ->
+                    active(data.addMessage("[客服] " + msg.text())))
+                .onMessage(UserAway.class, msg ->
+                    // 用户离开，切换到 Away 状态
+                    away(new SessionData(data.messages(), System.currentTimeMillis())))
+                .onMessage(SessionTimeout.class, msg ->
+                    // 超时自动结束
+                    Behaviors.stopped())
+                .onMessage(EndSession.class, msg -> Behaviors.stopped())
+                .build();
+        });
+    }
 
-        case EndSession =>
-          Behaviors.stopped
+    // Away 状态：用户暂时离开
+    private Behavior<SessionEvent> away(SessionData data) {
+        return Behaviors.withTimers(timers -> {
+            timers.startSingleTimer(SessionTimeout.class, new SessionTimeout(), Duration.ofMinutes(30));
 
-        case _ =>
-          Behaviors.unhandled  // 离开状态不处理新消息
-      }
+            return Behaviors.receiveMessage()
+                .onMessage(UserReturn.class, msg ->
+                    // 用户回来，切回 Active
+                    active(data))
+                .onMessage(SessionTimeout.class, msg -> Behaviors.stopped())
+                .onMessage(EndSession.class, msg -> Behaviors.stopped())
+                .build();
+        });
+    }
+
+    // 内部消息：进入 Idle 状态
+    private record EnterIdle() implements SessionEvent {}
+
+    @Override
+    public Receive<SessionEvent> createReceive() {
+        return newReceiveBuilder()
+            .onMessage(EnterIdle.class, msg -> idle(new SessionData(List.of(), 0L)))
+            .build();
     }
 }
 ```
