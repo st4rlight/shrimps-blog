@@ -1,0 +1,149 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 530" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <!-- Gradients -->
+    <linearGradient id="blueG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="violetG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#a78bfa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="greenG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#34d399;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="amberG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:1" />
+    </linearGradient>
+
+    <!-- Shadow filter -->
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.12"/>
+    </filter>
+
+    <!-- Arrow markers -->
+    <marker id="arrowB" viewBox="0 0 10 10" refX="10" refY="5"
+            markerWidth="8" markerHeight="8"
+            markerUnits="userSpaceOnUse"
+            orient="auto"
+            preserveAspectRatio="xMidYMid meet">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#3b82f6"/>
+    </marker>
+    <marker id="arrowV" viewBox="0 0 10 10" refX="10" refY="5"
+            markerWidth="8" markerHeight="8"
+            markerUnits="userSpaceOnUse"
+            orient="auto"
+            preserveAspectRatio="xMidYMid meet">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#8b5cf6"/>
+    </marker>
+    <marker id="arrowG" viewBox="0 0 10 10" refX="10" refY="5"
+            markerWidth="8" markerHeight="8"
+            markerUnits="userSpaceOnUse"
+            orient="auto"
+            preserveAspectRatio="xMidYMid meet">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#10b981"/>
+    </marker>
+  </defs>
+
+  <!-- ===== Background ===== -->
+  <rect width="800" height="530" rx="14" fill="#f8fafc"/>
+
+  <!-- ===== Title ===== -->
+  <text x="400" y="32" text-anchor="middle" font-size="19" font-weight="700" fill="#1e293b">QLExpress4 在 AI 客服系统中的集成架构</text>
+  <text x="400" y="52" text-anchor="middle" font-size="12" fill="#94a3b8">规则与代码解耦 · 运营自助修改 · 无需发版实时生效</text>
+
+  <!-- ===== Input Layer: 规则配置中心 ===== -->
+  <g filter="url(#shadow)">
+    <rect x="30" y="70" width="360" height="75" rx="10" fill="white" stroke="#3b82f6" stroke-width="2"/>
+  </g>
+  <rect x="30" y="70" width="360" height="28" rx="10" fill="url(#blueG)"/>
+  <rect x="30" y="88" width="360" height="10" fill="url(#blueG)"/>
+  <text x="210" y="89" text-anchor="middle" font-size="13" font-weight="700" fill="white">规则配置中心</text>
+  <text x="210" y="115" text-anchor="middle" font-size="11" fill="#475569">数据库 / 配置文件</text>
+  <text x="210" y="133" text-anchor="middle" font-size="10" fill="#64748b">路由规则 · 评分规则 · 过滤规则</text>
+
+  <!-- ===== Input Layer: 用户上下文 ===== -->
+  <g filter="url(#shadow)">
+    <rect x="410" y="70" width="360" height="75" rx="10" fill="white" stroke="#8b5cf6" stroke-width="2"/>
+  </g>
+  <rect x="410" y="70" width="360" height="28" rx="10" fill="url(#violetG)"/>
+  <rect x="410" y="88" width="360" height="10" fill="url(#violetG)"/>
+  <text x="590" y="89" text-anchor="middle" font-size="13" font-weight="700" fill="white">用户上下文</text>
+  <text x="590" y="115" text-anchor="middle" font-size="11" fill="#475569">Map&lt;String, Object&gt;</text>
+  <text x="590" y="133" text-anchor="middle" font-size="10" fill="#64748b">用户属性 · 会话信息 · 业务数据</text>
+
+  <!-- ===== Arrows: inputs → runner ===== -->
+  <line x1="210" y1="145" x2="210" y2="171" stroke="#3b82f6" stroke-width="1.5" marker-end="url(#arrowB)"/>
+  <line x1="590" y1="145" x2="590" y2="171" stroke="#8b5cf6" stroke-width="1.5" marker-end="url(#arrowV)"/>
+
+  <!-- ===== Core: Express4Runner ===== -->
+  <g filter="url(#shadow)">
+    <rect x="80" y="175" width="640" height="140" rx="12" fill="white" stroke="#10b981" stroke-width="2"/>
+  </g>
+  <rect x="80" y="175" width="640" height="32" rx="12" fill="url(#greenG)"/>
+  <rect x="80" y="195" width="640" height="12" fill="url(#greenG)"/>
+  <text x="400" y="196" text-anchor="middle" font-size="15" font-weight="700" fill="white">Express4Runner</text>
+
+  <!-- Feature boxes -->
+  <rect x="110" y="220" width="130" height="35" rx="6" fill="#d1fae5" stroke="#86efac" stroke-width="1"/>
+  <text x="175" y="242" text-anchor="middle" font-size="11" font-weight="500" fill="#047857">表达式解析</text>
+
+  <rect x="260" y="220" width="130" height="35" rx="6" fill="#d1fae5" stroke="#86efac" stroke-width="1"/>
+  <text x="325" y="242" text-anchor="middle" font-size="11" font-weight="500" fill="#047857">执行引擎</text>
+
+  <rect x="410" y="220" width="130" height="35" rx="6" fill="#d1fae5" stroke="#86efac" stroke-width="1"/>
+  <text x="475" y="242" text-anchor="middle" font-size="11" font-weight="500" fill="#047857">结果缓存</text>
+
+  <rect x="560" y="220" width="130" height="35" rx="6" fill="#d1fae5" stroke="#86efac" stroke-width="1"/>
+  <text x="625" y="242" text-anchor="middle" font-size="11" font-weight="500" fill="#047857">表达式追踪</text>
+
+  <!-- API line -->
+  <text x="400" y="280" text-anchor="middle" font-size="10" fill="#64748b">execute() · check() · getOutVarNames() · 预编译缓存</text>
+
+  <!-- Config line -->
+  <text x="400" y="298" text-anchor="middle" font-size="10" fill="#94a3b8">InitOptions(安全策略·超时·精确计算) · QLOptions(追踪·缓存·短路)</text>
+
+  <!-- ===== Arrows: runner → outputs ===== -->
+  <line x1="145" y1="315" x2="145" y2="341" stroke="#10b981" stroke-width="1.5" marker-end="url(#arrowG)"/>
+  <line x1="400" y1="315" x2="400" y2="341" stroke="#10b981" stroke-width="1.5" marker-end="url(#arrowG)"/>
+  <line x1="655" y1="315" x2="655" y2="341" stroke="#10b981" stroke-width="1.5" marker-end="url(#arrowG)"/>
+
+  <!-- ===== Output Layer: 智能路由 ===== -->
+  <g filter="url(#shadow)">
+    <rect x="30" y="345" width="230" height="80" rx="10" fill="white" stroke="#f59e0b" stroke-width="2"/>
+  </g>
+  <rect x="30" y="345" width="230" height="28" rx="10" fill="url(#amberG)"/>
+  <rect x="30" y="363" width="230" height="10" fill="url(#amberG)"/>
+  <text x="145" y="364" text-anchor="middle" font-size="13" font-weight="700" fill="white">智能路由</text>
+  <text x="145" y="392" text-anchor="middle" font-size="11" fill="#475569">路由分流 · 知识过滤</text>
+  <text x="145" y="410" text-anchor="middle" font-size="10" fill="#64748b">按用户属性动态分配通道</text>
+
+  <!-- ===== Output Layer: 优先级评分 ===== -->
+  <g filter="url(#shadow)">
+    <rect x="285" y="345" width="230" height="80" rx="10" fill="white" stroke="#f59e0b" stroke-width="2"/>
+  </g>
+  <rect x="285" y="345" width="230" height="28" rx="10" fill="url(#amberG)"/>
+  <rect x="285" y="363" width="230" height="10" fill="url(#amberG)"/>
+  <text x="400" y="364" text-anchor="middle" font-size="13" font-weight="700" fill="white">优先级评分</text>
+  <text x="400" y="392" text-anchor="middle" font-size="11" fill="#475569">动态评分 · 权重计算</text>
+  <text x="400" y="410" text-anchor="middle" font-size="10" fill="#64748b">实时调整工单优先级</text>
+
+  <!-- ===== Output Layer: 归因分析 ===== -->
+  <g filter="url(#shadow)">
+    <rect x="540" y="345" width="230" height="80" rx="10" fill="white" stroke="#f59e0b" stroke-width="2"/>
+  </g>
+  <rect x="540" y="345" width="230" height="28" rx="10" fill="url(#amberG)"/>
+  <rect x="540" y="363" width="230" height="10" fill="url(#amberG)"/>
+  <text x="655" y="364" text-anchor="middle" font-size="13" font-weight="700" fill="white">归因分析</text>
+  <text x="655" y="392" text-anchor="middle" font-size="11" fill="#475569">追踪树 · 表达式归因</text>
+  <text x="655" y="410" text-anchor="middle" font-size="10" fill="#64748b">AI 决策路径可视化</text>
+
+  <!-- ===== Bottom Tips ===== -->
+  <rect x="30" y="440" width="740" height="75" rx="10" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1"/>
+  <text x="55" y="465" font-size="11" fill="#15803d">✅ 规则与代码解耦，运营自助修改</text>
+  <text x="415" y="465" font-size="11" fill="#15803d">✅ 无需发版，实时生效</text>
+  <text x="55" y="490" font-size="11" fill="#15803d">✅ 表达式追踪支持 AI 归因分析</text>
+  <text x="415" y="490" font-size="11" fill="#15803d">✅ 默认安全策略，防止恶意代码</text>
+</svg>
