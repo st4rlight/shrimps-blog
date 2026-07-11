@@ -55,6 +55,15 @@ config:
   <div class="home-timeline__body">
     <span class="home-timeline__date">07-11</span>
     <span class="home-timeline__tag home-timeline__tag--ai">AI客服系统</span>
+    <a href="/ai-cs/akka-introduction/">更新《Akka高并发系统介绍》</a>
+  </div>
+</div>
+
+<div class="home-timeline__item">
+  <div class="home-timeline__dot"></div>
+  <div class="home-timeline__body">
+    <span class="home-timeline__date">07-11</span>
+    <span class="home-timeline__tag home-timeline__tag--ai">AI客服系统</span>
     <a href="/ai-cs/flow-orchestration-engine/">新增《流程编排引擎Flow》</a>
   </div>
 </div>
@@ -119,15 +128,6 @@ config:
     <span class="home-timeline__date">06-08</span>
     <span class="home-timeline__tag home-timeline__tag--ai">AI学习</span>
     <a href="/ai-study/anthropic-managed-agents/">新增《Managed Agents解析》</a>
-  </div>
-</div>
-
-<div class="home-timeline__item">
-  <div class="home-timeline__dot"></div>
-  <div class="home-timeline__body">
-    <span class="home-timeline__date">06-08</span>
-    <span class="home-timeline__tag home-timeline__tag--ai">AI源码</span>
-    <a href="/ai-source/openclaw-architecture-analysis/">新增《OpenClaw 架构分层设计深度解析》</a>
   </div>
 </div>
 

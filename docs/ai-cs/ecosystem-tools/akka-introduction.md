@@ -6,7 +6,7 @@ tags:
   - 高并发
   - 分布式
   - 客服系统
-excerpt: Akka 是基于 Actor 模型构建的高并发、分布式、容错消息驱动应用框架。本文从 Actor 模型理论基础出发，系统梳理 Akka 的核心概念、消息传递机制、容错策略、流处理与集群能力，并结合 AI 客服系统场景探讨其实践价值。
+excerpt: Akka 是基于 Actor 模型构建的高并发、分布式、容错消息驱动应用框架。本文从 Actor 模型理论基础出发，系统梳理 Akka 的核心概念、消息传递机制、容错策略（Supervision + Circuit Breaker）、流处理与集群能力（Cluster Sharding + Receptionist）、事件溯源、Routers 路由、FSM 状态机、测试策略、生态模块全景，并涵盖 Akka 许可证变更与 Apache Pekko 的选型建议，结合 AI 客服系统场景探讨完整工程实践。
 createTime: 2026/07/07 10:00:00
 permalink: /ai-cs/akka-introduction/
 ---
@@ -930,6 +930,651 @@ Akka 的独特优势在于：**Actor 模型 + 位置透明性 + 完整的分布�
 
 ---
 
+## 十四、Circuit Breaker（熔断器）
+
+在分布式系统中，一个服务的故障可能像雪崩一样传导到上游，导致整个系统不可用。Akka 提供了内置的 **Circuit Breaker**（熔断器）来防止这种级联故障。
+
+### 14.1 熔断器核心思想
+
+熔断器的灵感来自电路保险丝——当电流过大时自动断开电路，保护电器设备。在软件系统中，当对下游服务的调用失败率超过阈值时，熔断器会"跳闸"，后续请求直接快速失败，不再等待超时。
+
+![Circuit Breaker 状态机](/ai-cs/ecosystem-tools/akka-introduction/circuit-breaker-states.svg)
+
+熔断器有三个状态：
+
+| 状态 | 行为 | 说明 |
+|------|------|------|
+| **Closed（关闭）** | 正常放行请求 | 统计失败率，超过阈值则跳到 Open |
+| **Open（打开）** | 快速失败，不调用下游 | 等待一段复位时间后进入 Half-Open |
+| **Half-Open（半开）** | 放行少量试探请求 | 成功则回到 Closed，失败则回到 Open |
+
+### 14.2 代码示例
+
+```scala
+import akka.pattern.CircuitBreaker
+import scala.concurrent.duration._
+
+// 创建熔断器
+val breaker = CircuitBreaker(
+  scheduler = system.scheduler,
+  maxFailures = 5,           // 最多容忍 5 次失败
+  callTimeout = 3.seconds,   // 调用超时时间
+  resetTimeout = 30.seconds  // 复位等待时间
+)
+
+// 方式一：withCircuitBreaker（返回 Future）
+val result: Future[String] = breaker.withCircuitBreaker {
+  // 调用外部服务（如 LLM API）
+  modelGateway.ask(Query("你好")).mapTo[String]
+}
+
+// 方式二：withSyncCircuitBreaker（同步调用）
+val syncResult: String = breaker.withSyncCircuitBreaker {
+  externalService.call()
+}
+
+// 监听状态变化
+breaker.onClose(() => log.info("熔断器关闭，恢复正常"))
+breaker.onOpen(() => log.warning("熔断器打开，请求被熔断！"))
+breaker.onHalfOpen(() => log.info("熔断器半开，正在试探恢复"))
+```
+
+### 14.3 客服场景中的熔断实践
+
+在 AI 客服系统中，LLM API 是最不稳定的下游依赖——可能因流量高峰、限流或模型维护而超时。典型的熔断配置：
+
+```scala
+// 针对 LLM API 的熔断器
+val llmBreaker = CircuitBreaker(
+  scheduler = system.scheduler,
+  maxFailures = 10,          // 10 次失败后熔断
+  callTimeout = 5.seconds,   // LLM 调用 5 秒超时
+  resetTimeout = 60.seconds  // 60 秒后试探恢复
+)
+
+// 在 ModelGateway Actor 中使用
+class ModelGatewayActor extends Actor {
+  def receive = {
+    case Query(text) =>
+      val originalSender = sender()
+      llmBreaker.withCircuitBreaker {
+        llmClient.complete(text)
+      }.onComplete {
+        case Success(reply) => originalSender ! BotReply(reply, 0.95)
+        case Failure(_)     => originalSender ! BotReply("抱歉，服务暂时繁忙，请稍后重试", 0.0)
+      }
+  }
+}
+```
+
+::: tip 熔断 vs 重试
+熔断器和重试是互补的：**重试**处理偶发失败（网络抖动），**熔断**处理持续性故障（服务宕机）。重试加重试次数上限，达到上限后触发熔断，是最佳实践组合。
+:::
+
+---
+
+## 十五、Routers（路由器）
+
+当一个 Actor 的消息处理速度跟不上生产速度时，单靠一个 Actor 会成为瓶颈。**Router** 可以将消息分发到一组同类型的 Actor（Routees），实现并行处理和负载均衡。
+
+### 15.1 Pool Router vs Group Router
+
+Akka Typed 提供两种 Router：
+
+| 类型 | 特点 | 适用场景 |
+|------|------|---------|
+| **Pool Router** | 自己创建并管理子 Actor（Routees），子 Actor 是本地 Actor | 简单的并行处理，不需跨节点 |
+| **Group Router** | 不创建 Actor，而是通过 Receptionist 发现已注册的服务 Actor | 集群范围内的负载均衡 |
+
+### 15.2 Pool Router 示例
+
+```scala
+import akka.actor.typed.ActorRef
+import akka.actor.typed.Behavior
+import akka.actor.typed.javadsl.*
+
+// 定义 Worker
+object Worker {
+  sealed trait Command
+  case class DoLog(text: String) extends Command
+
+  def apply(): Behavior[Command] = Behaviors.setup { context =>
+    Behaviors.receiveMessage {
+      case DoLog(text) =>
+        context.log.info("Worker 收到消息: {}", text)
+        Behaviors.same
+    }
+  }
+}
+
+// 创建 Pool Router
+import akka.actor.typed.DispatcherSelector
+import akka.actor.typed.PoolRouter
+
+val pool: Behavior[Worker.Command] = Routers.pool(
+  poolSize = 4,                    // 4 个 Worker
+  behavior = Worker.apply()         // Worker 的 Behavior
+).withRoundRobinRouting()           // 轮询路由
+
+val routerRef: ActorRef[Worker.Command] = context.spawn(pool, "worker-pool")
+
+// 发送消息——Router 自动分发给某个 Worker
+routerRef ! Worker.DoLog("处理消息1")
+routerRef ! Worker.DoLog("处理消息2")
+routerRef ! Worker.DoLog("处理消息3")
+routerRef ! Worker.DoLog("处理消息4")
+// 4 条消息分别分给 4 个 Worker 并行处理
+```
+
+### 15.3 路由策略
+
+| 策略 | 说明 | 适用场景 |
+|------|------|---------|
+| **Round-Robin（轮询）** | 按顺序依次分配 | 各 Worker 处理能力相近 |
+| **Random（随机）** | 随机选择一个 Worker | 简单均匀分配 |
+| **Consistent Hashing（一致性哈希）** | 根据消息内容的哈希值选择 Worker | 需要相同 key 的消息路由到同一 Worker |
+| **Smallest Mailbox（最小邮箱）** | 选择消息队列最短的 Worker | 各消息处理耗时差异较大 |
+
+### 15.4 Group Router 与集群感知
+
+Group Router 结合 Receptionist 可以实现**集群感知路由**——消息自动分发到集群中任意节点上注册的 Worker：
+
+```scala
+// Worker 在集群各节点上启动时注册自己
+val WorkerServiceKey = ServiceKey[Worker.Command]("worker-service")
+
+context.system.receptionist ! Receptionist.Register(WorkerServiceKey, context.self)
+
+// Group Router 通过 ServiceKey 发现所有 Worker
+val group: Behavior[Worker.Command] = Routers.group(WorkerServiceKey)
+  .withRoundRobinRouting()
+
+val groupRouter = context.spawn(group, "worker-group")
+
+// 发送消息——自动路由到集群中任意节点的 Worker
+groupRouter ! Worker.DoLog("集群范围内处理")
+```
+
+::: tip Pool vs Group 选择
+- **Pool**：适合单节点并行，Router 自动管理 Worker 生命周期
+- **Group**：适合集群级负载均衡，Worker 生命周期由各自节点管理，Router 只负责路由
+:::
+
+---
+
+## 十六、FSM（有限状态机）
+
+在实际业务中，很多 Actor 的行为会随状态变化而变化——比如一个客服会话有"等待中"、"对话中"、"转人工中"、"已结束"等状态。Akka 提供了 **FSM（Finite State Machine）** 支持，让 Actor 以状态机的方式组织行为。
+
+### 16.1 FSM 核心概念
+
+在 Akka Typed 中，FSM 通过**不同的 Behavior 表示不同的状态**，每次处理消息后返回下一个状态的 Behavior：
+
+| 概念 | 说明 | 示例 |
+|------|------|------|
+| **State（状态）** | Actor 当前所处的行为模式 | Idle、Active、Flushing |
+| **Data（状态数据）** | 随状态流转的内部数据 | 待发送的消息队列 |
+| **Event（事件）** | 触发状态转换的消息 | Queue、Flush、Timeout |
+| **Transition（转换）** | 从一个状态切换到另一个 | Idle → Active |
+
+### 16.2 客服会话 FSM 示例
+
+以 AI 客服会话为例，设计一个有状态的会话 Actor：
+
+```scala
+import akka.actor.typed.*
+import akka.actor.typed.scaladsl.*
+import scala.concurrent.duration.*
+
+// 消息（事件）
+sealed trait SessionEvent
+case class UserMessage(text: String) extends SessionEvent
+case class BotReply(text: String, confidence: Double) extends SessionEvent
+case object UserAway extends SessionEvent           // 用户离开
+case object UserReturn extends SessionEvent         // 用户回来
+case object SessionTimeout extends SessionEvent     // 超时
+case object EndSession extends SessionEvent         // 结束
+
+// 状态数据
+case class SessionData(messages: List[String], awaySince: Long)
+
+// 会话 FSM Actor
+object SessionFSM {
+
+  // 初始状态：Idle（等待用户消息）
+  def apply(sessionId: String): Behavior[SessionEvent] =
+    idle(SessionData(List.empty, 0L))
+
+  // Idle 状态：等待第一条消息
+  private def idle(data: SessionData): Behavior[SessionEvent] =
+    Behaviors.receiveMessage {
+      case UserMessage(text) =>
+        // 收到消息，切换到 Active 状态
+        active(data.copy(messages = data.messages :+ s"[用户] $text"))
+      case EndSession =>
+        Behaviors.stopped
+      case _ =>
+        Behaviors.unhandled  // Idle 状态不处理 BotReply 等
+    }
+
+  // Active 状态：正在对话
+  private def active(data: SessionData): Behavior[SessionEvent] =
+    Behaviors.withTimers[SessionEvent] { timers =>
+      // 启动空闲超时计时器
+      timers.startSingleTimer(SessionTimeout, 5.minutes)
+
+      Behaviors.receiveMessage {
+        case UserMessage(text) =>
+          // 重置超时，保持 Active
+          timers.startSingleTimer(SessionTimeout, 5.minutes)
+          active(data.copy(messages = data.messages :+ s"[用户] $text"))
+
+        case BotReply(text, confidence) =>
+          active(data.copy(messages = data.messages :+ s"[客服] $text"))
+
+        case UserAway =>
+          // 用户离开，切换到 Away 状态
+          away(data.copy(awaySince = System.currentTimeMillis()))
+
+        case SessionTimeout =>
+          // 超时自动结束
+          Behaviors.stopped
+
+        case EndSession =>
+          Behaviors.stopped
+      }
+    }
+
+  // Away 状态：用户暂时离开
+  private def away(data: SessionData): Behavior[SessionEvent] =
+    Behaviors.withTimers[SessionEvent] { timers =>
+      timers.startSingleTimer(SessionTimeout, 30.minutes)  // 离开 30 分钟后超时
+
+      Behaviors.receiveMessage {
+        case UserReturn =>
+          // 用户回来，切回 Active
+          active(data)
+
+        case SessionTimeout =>
+          Behaviors.stopped
+
+        case EndSession =>
+          Behaviors.stopped
+
+        case _ =>
+          Behaviors.unhandled  // 离开状态不处理新消息
+      }
+    }
+}
+```
+
+### 16.3 状态转换图
+
+```text
+                    ┌──────────┐
+     UserMessage     │          │  EndSession / Timeout
+    ───────────────→ │  Active  │ ───────────────→ [Stopped]
+         ↑           │          │
+         │           └────┬─────┘
+         │                │ UserAway
+         │                ↓
+         │           ┌──────────┐
+         │           │          │  Timeout (30min)
+         │  UserReturn│   Away   │ ───────────────→ [Stopped]
+         └───────────│          │
+                     └──────────┘
+
+    ┌──────────┐  UserMessage   ┌──────────┐
+    │   Idle   │ ─────────────→ │  Active  │
+    │ (初始)   │                 │ (对话中)  │
+    └──────────┘                 └──────────┘
+```
+
+::: tip FSM vs if-else
+当 Actor 只有 2-3 个简单状态时，用 `if-else` 就够了。但当状态超过 3 个、状态间转换复杂、需要状态超时或条件转换时，FSM 模式让代码更清晰、更可维护——每个状态的行为是独立的 Behavior，互不干扰。
+:::
+
+---
+
+## 十七、Actor Discovery 与 Receptionist
+
+在单机模式下，Actor 之间可以通过 `ActorRef` 直接通信。但在集群环境中，你往往不知道目标 Actor 在哪个节点上。Akka Typed 引入了 **Receptionist**——一个集群范围内的**服务注册中心**。
+
+### 17.1 Receptionist 核心概念
+
+Receptionist 的工作方式类似服务发现：
+
+| 操作 | 说明 |
+|------|------|
+| **Register** | Actor 启动时将自己注册到 Receptionist，关联一个 `ServiceKey` |
+| **Find** | 其他 Actor 通过 `ServiceKey` 查询已注册的 Actor |
+| **Subscribe** | 订阅服务变化通知，当有 Actor 注册/注销时收到更新 |
+
+```scala
+import akka.actor.typed.receptionist.*
+import akka.actor.typed.ActorRef
+
+// 定义 ServiceKey（类型安全的服务标识）
+val ModelGatewayKey = ServiceKey[ModelCommand]("model-gateway")
+
+// Worker Actor 启动时注册自己
+class ModelGatewayActor extends AbstractBehavior[ModelCommand](context) {
+  override def onMessage(msg: ModelCommand): Behavior[ModelCommand] = {
+    // 注册到 Receptionist
+    context.system.receptionist ! Receptionist.Register(ModelGatewayKey, context.self)
+    // ...处理消息
+    this
+  }
+}
+
+// 客户端通过 Receptionist 查找服务
+class SessionActor extends AbstractBehavior[SessionCommand](context) {
+  // 订阅服务变化
+  context.system.receptionist ! Receptionist.Subscribe(ModelGatewayKey, serviceKeyUpdate)
+
+  private def serviceKeyUpdate(listing: Receptionist.Listing): Behavior[SessionCommand] = {
+    val gateways: Set[ActorRef[ModelCommand]] = listing.serviceInstances(ModelGatewayKey)
+    // 保存可用的 ModelGateway 引用
+    this
+  }
+}
+```
+
+### 17.2 Receptionist 在集群中的价值
+
+| 优势 | 说明 |
+|------|------|
+| **动态发现** | 新节点加入集群后，其上的 Actor 自动注册到 Receptionist，其他节点立即可见 |
+| **自动剔除** | 节点宕机或 Actor 停止后，Receptionist 自动移除对应条目 |
+| **类型安全** | `ServiceKey` 携带消息类型，编译器保证消息类型匹配 |
+| **无单点** | Receptionist 基于 Gossip 协议在集群间同步，没有中心化注册中心 |
+
+### 17.3 客服系统中的服务发现
+
+在 AI 客服系统的集群部署中，Receptionist 可以实现以下服务发现：
+
+```text
+┌─────────────┐         ┌──────────────┐
+│  Gateway    │         │  Receptionist │
+│  Node       │ Find    │  (Cluster     │
+│             │────────→│   Wide)       │
+│  Session    │         └──────┬───────┘
+│  Actors     │                │
+└─────────────┘                │ Register
+                    ┌───────────┼───────────┐
+                    │           │           │
+              ┌─────┴──┐  ┌─────┴──┐  ┌─────┴──┐
+              │Worker 1 │  │Worker 2 │  │Worker 3 │
+              │(Node A) │  │(Node B) │  │(Node C) │
+              └─────────┘  └─────────┘  └─────────┘
+```
+
+- **Session Actor** 注册到 Receptionist，Gateway 节点可以动态发现任意节点上的会话
+- **Model Gateway** 注册到 Receptionist，Session Actor 可以找到可用的模型网关
+- **Knowledge Base Worker** 注册到 Receptionist，实现知识库查询的负载均衡
+
+---
+
+## 十八、Akka 生态模块总览
+
+Akka 不只是一个 Actor 框架，而是一个完整的**响应式应用工具包**。除了前面介绍的核心模块，Akka 生态还包含大量配套工具：
+
+### 18.1 模块全景
+
+| 模块 | 功能 | 客服系统场景 |
+|------|------|------------|
+| **Akka Actor** | Actor 模型核心 | 会话管理、消息路由 |
+| **Akka Streams** | 流处理 + 背压 | LLM 流式输出处理 |
+| **Akka Cluster** | 集群管理 | 多节点会话分布 |
+| **Akka Cluster Sharding** | Actor 分片 | 数百万会话的水平扩展 |
+| **Akka Persistence** | 事件溯源 | 会话历史持久化与恢复 |
+| **Akka HTTP** | HTTP/WebSocket 服务 | 客服 WebSocket 接入层 |
+| **Akka gRPC** | gRPC 服务 | 微服务间通信 |
+| **Akka Connectors** (Alpakka) | 外部系统集成 | Kafka、MQ、AWS 等对接 |
+| **Akka Projections** | CQRS 读模型构建 | 从事件流构建查询视图 |
+| **Akka Management** | 运维管理 | 集群健康检查、滚动升级 |
+| **Akka Discovery** | 服务发现 | K8s/DNS 服务发现 |
+| **Akka Split Brain Resolver** | 脑裂处理 | 集群网络分区恢复 |
+
+### 18.2 关键模块详解
+
+**Akka HTTP** —— 构建接入层
+
+Akka HTTP 是基于 Akka Streams 构建的 HTTP 服务器/客户端，非常适合做 WebSocket 接入层：
+
+```scala
+import akka.http.scaladsl.Http
+import akka.http.scaladsl.server.Directives._
+import akka.http.scaladsl.model.ws.{TextMessage, Message}
+
+// WebSocket 会话路由
+val route = path("chat" / Segment) { sessionId =>
+  handleWebSocketMessages {
+    // 将 WebSocket 消息转发给对应的 Session Actor
+    Flow[Message].collect {
+      case TextMessage.Strict(text) =>
+        sessionRegion ! SessionMessage(sessionId, text)
+        TextMessage("已收到您的消息")
+    }
+  }
+}
+
+Http().newServerAt("0.0.0.0", 8080).bind(route)
+```
+
+**Akka Connectors (Alpakka)** —— 外部系统集成
+
+Alpakka 提供了 70+ 连接器，集成了 Kafka、MQTT、AWS S3、Elasticsearch、MongoDB 等：
+
+```scala
+import akka.stream.alpakka.kafka.scaladsl.*
+import akka.stream.alpakka.kafka.*
+
+// Kafka 消费者 → Session Actor
+val kafkaConsumer: Source[CommittableMessage[String, String], _] =
+  Consumer.committableSource(consumerSettings, Subscriptions.topics("user-messages"))
+
+kafkaConsumer
+  .map { msg =>
+    val record = msg.record
+    sessionRegion ! SessionMessage(record.key, record.value)
+    msg.committableOffset
+  }
+  .batch(max = 100, first => CommittableOffsetBatch(first)) { (batch, offset) =>
+    batch.updated(offset)
+  }
+  .mapAsync(1)(_.commitScaladsl())
+  .run()
+```
+
+**Akka Projections** —— CQRS 读模型
+
+当你使用事件溯源持久化会话数据后，需要一个机制将事件流转化为可查询的视图（如"最近 24 小时的会话统计"）。Akka Projections 就是做这件事的：
+
+```scala
+import akka.projection.scaladsl.*
+import akka.projection.eventsourced.EventEnvelope
+
+// 定义投影：将会话事件转化为统计读模型
+val projection = SourceProvider[Offset, EventEnvelope[SessionEvent]](
+  sessionEventSource
+)
+
+ProjectionHandler
+  .atLeastOnce[EventEnvelope[SessionEvent]](
+    projectionId = ProjectionId("session-stats", "daily"),
+    sourceProvider = projection,
+    handler = () => new SessionStatsHandler()
+  )
+```
+
+### 18.3 Split Brain Resolver
+
+在集群环境中，网络分区可能导致"脑裂"——两个子集群各自认为对方已死，各自选举 Leader，导致数据不一致。Split Brain Resolver 提供了自动处理策略：
+
+| 策略 | 说明 | 适用场景 |
+|------|------|---------|
+| **Static Quorum** | 节点数少于法定多数时自动 down 自己 | 固定节点数量的集群 |
+| **Keep Majority** | 保留节点数多的子集群，down 少的 | 动态节点集群 |
+| **Lease** | 通过外部锁（如 K8s lease）决定 | K8s 环境 |
+| **Keep Oldest** | 保留最老的节点 | 有状态的单例节点保护 |
+
+---
+
+## 十九、Akka 测试策略
+
+Actor 是异步的、消息驱动的，传统的单元测试方法不能直接套用。Akka 提供了专门的测试工具包。
+
+### 19.1 TestKit
+
+Akka Typed 的 `ActorTestKit` 提供了一套测试 Actor 的工具：
+
+```scala
+import akka.actor.testkit.typed.scaladsl.*
+import org.scalatest.wordspec.AnyWordSpecLike
+
+class SessionActorSpec extends ScalaTestWithActorTestKit with AnyWordSpecLike {
+
+  "SessionActor" must {
+
+    "回复用户消息" in {
+      // 创建测试探针（TestProbe），用于接收和断言消息
+      val probe = createTestProbe[BotReply]()
+      val session = spawn(SessionActor("session-001"))
+
+      // 发送消息，指定回复方为 probe
+      session ! UserMessage("你好", probe.ref)
+
+      // 断言收到了正确的回复
+      probe.expectMessage(BotReply("收到你的消息: 你好", 0.95))
+    }
+
+    "在结束时停止自身" in {
+      val session = spawn(SessionActor("session-002"))
+      session ! EndSession
+
+      // 断言 Actor 已停止
+      createTestProbe().expectTerminated(session)
+    }
+
+    "获取历史消息" in {
+      val replyProbe = createTestProbe[HistoryResponse]()
+      val session = spawn(SessionActor("session-003"))
+
+      session ! UserMessage("消息1", createTestProbe[BotReply]().ref)
+      session ! UserMessage("消息2", createTestProbe[BotReply]().ref)
+      session ! GetHistory(replyProbe.ref)
+
+      // 断言历史消息正确
+      val response = replyProbe.receiveMessage()
+      response.messages should have size 2
+      response.messages should contain("[用户] 消息1")
+    }
+  }
+}
+```
+
+### 19.2 测试技巧
+
+| 技巧 | 说明 | 示例 |
+|------|------|------|
+| **TestProbe** | 模拟 Actor，接收并断言消息 | `probe.expectMessage(...)` |
+| **expectNoMessage** | 断言在指定时间内没有收到消息 | `probe.expectNoMessage(100.millis)` |
+| **fishForMessage** | 在时间窗口内"钓鱼"等待特定消息 | `probe.fishForMessage(3.seconds) { case ... => }` |
+| **Behaviors.testable** | 让 Actor 的行为可测试 | 返回 `Effect` 而非直接执行副作用 |
+| **手动调度控制** | 使用 `ManualTime` 控制 Scheduler | 避免测试中的时间等待 |
+
+### 19.3 测试原则
+
+```scala
+// ❌ 错误：在测试中使用 Thread.sleep 等待异步结果
+session ! UserMessage("hello", probe.ref)
+Thread.sleep(1000)  // 不可靠！
+probe.expectMessage(BotReply("...", 0.95))
+
+// ✅ 正确：使用 TestKit 的断言方法，它会自动等待
+session ! UserMessage("hello", probe.ref)
+probe.expectMessage(3.seconds, BotReply("...", 0.95))  // 最多等 3 秒
+```
+
+::: tip 测试覆盖率建议
+- 每种消息类型至少有一个测试用例
+- 测试 Actor 的状态转换（特别是 FSM Actor 的各状态流转）
+- 测试容错行为（注入异常，验证 Supervision 策略是否正确执行）
+- 测试边界条件（空邮箱、超时、并发消息）
+:::
+
+---
+
+## 二十、Akka 许可证变更与 Apache Pekko
+
+### 20.1 许可证变更事件
+
+2022 年 9 月，Akka 的母公司 Lightbend 宣布将 Akka 的许可证从 **Apache 2.0** 变更为 **Business Source License (BSL 1.1)**。这一变更的影响：
+
+| 方面 | 变更前（Apache 2.0） | 变更后（BSL 1.1） |
+|------|--------------------|--------------------|
+| **源码开放** | ✅ 是 | ✅ 是（源码仍然开放） |
+| **生产免费使用** | ✅ 是 | ❌ 否（需购买商业许可） |
+| **非生产使用** | ✅ 免费使用 | ✅ 免费使用（开发、测试、教育） |
+| **修改和分发** | ✅ 自由 | ❌ 受限 |
+| **变更生效版本** | — | Akka 2.7+（2022 年 9 月后） |
+| **旧版本** | — | Akka 2.6.x 及更早版本仍为 Apache 2.0 |
+
+### 20.2 Apache Pekko 的诞生
+
+作为对许可证变更的回应，社区基于 Akka 2.6.x（最后一个 Apache 2.0 版本）创建了 **Apache Pekko** ——一个完全开源的 Akka 分支。
+
+| 维度 | Akka（Lightbend） | Apache Pekko |
+|------|-------------------|--------------|
+| **许可证** | BSL 1.1（生产需付费） | Apache 2.0（完全免费） |
+| **维护方** | Lightbend Inc. | Apache 软件基金会 |
+| **初始版本** | 2.6.x 分叉 | 1.0.0（2023 年） |
+| **当前版本** | 2.8.x+ | 1.6.x |
+| **API 兼容性** | — | 与 Akka 2.6.x 高度兼容 |
+| **模块覆盖** | 全套模块 | 核心模块 + HTTP + gRPC + Connectors + Persistence 插件 |
+| **社区活跃度** | 活跃（商业驱动） | 活跃（社区驱动，持续增长） |
+
+### 20.3 如何选择
+
+| 场景 | 推荐 | 理由 |
+|------|------|------|
+| **新项目，预算有限** | Apache Pekko | 完全免费，API 兼容，社区活跃 |
+| **新项目，有商业预算** | Akka | 有商业支持和 SLA 保障 |
+| **已有 Akka 2.6.x 项目** | 评估迁移到 Pekko | 避免未来 BSL 许可证限制 |
+| **已有 Akka 2.7+ 项目** | 保持 Akka | 已有商业许可，迁移成本可能较高 |
+| **学习与研究** | Apache Pekko | 免费、开源、文档完善 |
+
+### 20.4 迁移指南
+
+从 Akka 2.6.x 迁移到 Apache Pekko 的主要步骤：
+
+```xml
+<!-- Akka 依赖（BSL 许可证） -->
+<!--
+<dependency>
+  <groupId>com.typesafe.akka</groupId>
+  <artifactId>akka-actor-typed_2.13</artifactId>
+  <version>2.6.20</version>
+</dependency>
+-->
+
+<!-- 替换为 Apache Pekko 依赖 -->
+<dependency>
+  <groupId>org.apache.pekko</groupId>
+  <artifactId>pekko-actor-typed_2.13</artifactId>
+  <version>1.6.0</version>
+</dependency>
+```
+
+代码层面的改动主要是**包名替换**：`akka.` → `org.apache.pekko.`，大部分 API 保持一致。Pekko 官方提供了详细的迁移指南和自动化工具辅助迁移。
+
+::: warning 决策建议
+如果你正在启动一个新的 AI 客服系统项目，**强烈建议评估 Apache Pekko**。它提供了与 Akka 2.6.x 几乎完全相同的功能集，且完全免费开源。只有在需要 Lightbend 商业支持或 Akka 2.7+ 独有特性时，才需要考虑商业版 Akka。
+:::
+
+---
+
 ## 总结
 
 Akka 并非银弹，但在以下场景中它的价值尤为突出：
@@ -939,21 +1584,51 @@ Akka 并非银弹，但在以下场景中它的价值尤为突出：
 - **弹性扩展**：Cluster Sharding 让 Actor 在节点间自动分布和迁移，支持动态扩缩容
 - **流式处理**：Akka Streams 的背压机制在处理 LLM 流式输出时非常有价值
 - **事件溯源**：Persistence 支持会话历史恢复和审计追踪
+- **容错弹性**：Supervision 策略 + Circuit Breaker 构建多层次的故障防护体系
+- **服务发现**：Receptionist 实现集群范围内的动态服务注册与发现
+- **状态管理**：FSM 模式让复杂会话状态（等待→对话→离开→结束）清晰可控
+- **负载均衡**：Routers 将消息分发到多个 Worker，实现并行处理和水平扩展
 
-对于 AI 客服系统来说，Akka 提供的不只是一个并发框架，而是一套**从会话管理到容错恢复、从单机处理到集群扩展的完整工程方案**。理解 Actor 模型的思维方式——**不共享、只传消息、让它崩溃**——是掌握 Akka 的关键。
+对于 AI 客服系统来说，Akka 提供的不只是一个并发框架，而是一套**从会话管理到容错恢复、从单机处理到集群扩展、从服务发现到测试保障的完整工程方案**。理解 Actor 模型的思维方式——**不共享、只传消息、让它崩溃**——是掌握 Akka 的关键。
 
 如果你正在从传统并发编程转向 Akka，最大的思维转变是：
 
 1. **从"共享 + 锁"到"隔离 + 消息"** —— 不再担心竞态条件，因为状态不共享
 2. **从"防御性编程"到"Let-It-Crash"** —— 不再到处 try-catch，而是让监督者处理故障
 3. **从"同步调用"到"异步消息"** —— 不再等待返回值，而是通过消息驱动流程
+4. **从"单机思维"到"分布式优先"** —— 位置透明性让你从设计之初就考虑分布式部署
+5. **从"手工选型"到"生态整合"** —— Akka/Pekko 提供了从 HTTP 到 Persistence 的全栈工具链
 
 ---
 
 ## 延伸阅读
 
+### 官方资源
+
 - [Akka 官方文档](https://doc.akka.io/) —— 最权威的参考，包含完整指南和 API 文档
 - [Akka Quickstart](https://doc.akka.io/docs/akka/current/typed/actors.html) —— 快速上手 Typed Actor
+- [Apache Pekko 官方文档](https://pekko.apache.org/docs/pekko/current/) —— 开源分支文档，与 Akka 2.6.x 高度兼容
+- [Akka Samples（GitHub）](https://github.com/akka/akka-samples) —— 官方示例项目集，涵盖 Cluster、Persistence、Streams 等
+- [Akka License FAQ](https://www.lightbend.com/akka/license-faq) —— BSL 许可证常见问题解答
+
+### 理论基础
+
 - [Actor Model 论文](https://arxiv.org/abs/1008.1459) —— Carl Hewitt 的 Actor 模型原始论文
 - [Reactive Manifesto](https://www.reactivemanifesto.org/) —— 响应式系统宣言，Akka 的设计哲学源头
 - [Let It Crash](https://www.erlang.org/doc/design_principles/des_princ.html) —— Erlang/OTP 的容错设计原则，Akka 的灵感来源
+
+### 进阶主题
+
+- [Akka Persistence 指南](https://doc.akka.io/docs/akka/current/typed/persistence.html) —— 事件溯源与持久化详解
+- [Akka Cluster Sharding](https://doc.akka.io/docs/akka/current/typed/cluster-sharding.html) —— 大规模 Actor 分片方案
+- [Akka Streams Cookbook](https://doc.akka.io/docs/akka/current/stream/stream-cookbook.html) —— 流处理实战技巧
+- [Akka Projections](https://doc.akka.io/docs/akka-projection/current/) —— CQRS 读模型构建
+- [Akka HTTP 指南](https://doc.akka.io/docs/akka-http/current/) —— 构建 HTTP/WebSocket 服务
+- [Akka Connectors (Alpakka)](https://doc.akka.io/docs/alpakka/current/) —— 70+ 外部系统集成连接器
+
+### 书籍推荐
+
+- **《Akka in Action》** —— Raymond Roestenburg 等著，最经典的 Akka 实战书籍
+- **《Akka Cookbook》** —— Packt 出版，覆盖常见场景的配方式指南
+- **《Reactive Design Patterns》** —— Roland Kuhn 等著，响应式设计模式（含 Actor 模式）
+- **《Designing for Scalability with Erlang/OTP》** —— Erlang/OTP 的设计思想，理解 Akka 的根源

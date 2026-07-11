@@ -32,6 +32,11 @@ icon: mdi:timeline-clock-outline
         <a class="timeline-entry__link" href="/ai-cs/flowlong-analysis/">新增《FlowLong审批流引擎分析》</a>
         <span class="timeline-entry__desc">—— 极简审批工作流引擎，JSON定义流程、MyBatis-Plus持久化、零BPMN依赖</span>
       </div>
+      <div class="timeline-entry">
+        <span class="timeline-entry__tag timeline-entry__tag--ai">AI客服系统</span>
+        <a class="timeline-entry__link" href="/ai-cs/akka-introduction/">更新《Akka高并发系统介绍》</a>
+        <span class="timeline-entry__desc">—— 新增熔断器、Cluster Sharding、事件溯源、Routers/FSM、测试策略与生态模块全景</span>
+      </div>
     </div>
   </div>
 </div>
@@ -158,6 +163,11 @@ icon: mdi:timeline-clock-outline
   <div class="timeline-item__content">
     <div class="timeline-item__date">6 月 7 日</div>
     <div class="timeline-item__entries">
+      <div class="timeline-entry">
+        <span class="timeline-entry__tag timeline-entry__tag--ai">AI源码</span>
+        <span class="timeline-entry__link">新增「AI源码」模块</span>
+        <span class="timeline-entry__desc">—— Claude Code、DeepAgents、OpenClaw 源码分析专题</span>
+      </div>
       <div class="timeline-entry">
         <span class="timeline-entry__tag timeline-entry__tag--ai">AI源码</span>
         <a class="timeline-entry__link" href="/ai-source/open-claw-overview/">新增《OpenClaw 源码分析总览》</a>

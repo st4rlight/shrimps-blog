@@ -105,7 +105,7 @@ public class TicketService {
 
 审批流引擎的核心思想是：**把审批流程从业务代码中抽离出来，用流程定义描述审批节点、审批人和流转规则，由引擎负责任务分配、状态流转和历史记录**。
 
-```json
+```jsonc
 // FlowLong 方式：审批流程是数据，不是代码
 {
   "flowName": "客服工单审批",
@@ -133,7 +133,8 @@ public class TicketService {
 
 ```java
 // 业务代码只需调用引擎 API，完全不关心流转逻辑
-Long instanceId = runtimeService.start(processId, ticket.getId().toString(), createUser);
+Long instanceId = runtimeService.start(processId, ticket.getId().toString(),
+    createUser, variables);
 // 审批人办理任务
 taskService.complete(taskId, approverId, "同意，退款金额核对无误");
 ```
@@ -394,7 +395,7 @@ public void approve(Long taskId, Long approverId, String comment) {
     FlowLongTask task = taskService.getById(taskId);
 
     // 验证审批人身份
-    if (!approverId.equals(task.getAssignee())) {
+    if (!String.valueOf(approverId).equals(task.getAssignee())) {
         throw new RuntimeException("无权审批此任务");
     }
 
@@ -433,6 +434,9 @@ public class LeaveApprovalDemo {
     @Autowired
     private TaskService taskService;
 
+    @Autowired
+    private HistoryService historyService;
+
     public void demo() {
         // ========== 1. 发起请假 ==========
         LeaveRequest request = new LeaveRequest();
@@ -469,8 +473,8 @@ public class LeaveApprovalDemo {
                 hisTask.getCompleteTime());
         }
         // 输出:
-        // 节点: 主管审批, 审批人: 李主管, 意见: 同意，注意交接工作, 时间: ...
-        // 节点: 总监审批, 审批人: 王总监, 意见: 同意, 时间: ...
+        // 节点: 主管审批, 审批人: 3001, 意见: 同意，注意交接工作, 时间: ...
+        // 节点: 总监审批, 审批人: 4001, 意见: 同意, 时间: ...
     }
 }
 ```
@@ -485,7 +489,7 @@ public class LeaveApprovalDemo {
 
 FlowLong 的 JSON 流程定义由两部分组成：流程元信息 + 节点列表。
 
-```json
+```jsonc
 {
   "flowName": "流程名称",
   "version": "1.0.0",          // 可选，版本号
@@ -605,7 +609,7 @@ FlowLong 支持五种节点类型，覆盖了审批流的核心场景：
 
 `permissionList` 定义了每个审批/抄送节点的处理人：
 
-```json
+```jsonc
 "permissionList": [
   {
     "type": 0,                    // 审批人类型
@@ -733,10 +737,10 @@ FlowLong 通过 `permissionList` 的配置方式区分串行和并行审批：
 | 模式 | `nodeRatio` | 含义 | 示例 |
 |------|------------|------|------|
 | **会签** | `1.0` | 全部同意才通过 | 三人审批，三人都同意才流转 |
-| **或签** | `0.0` 或不设置 | 任一同意即通过 | 三人审批，任何一人同意即流转 |
+| **或签** | `0` | 任一同意即通过 | 三人审批，任何一人同意即流转 |
 | **比例签** | `0.5` | 达到比例即通过 | 五人审批，三人（60%）同意即通过 |
 
-```json
+```jsonc
 // 会签示例：三人全票通过
 {
   "nodeType": 1,
@@ -1094,16 +1098,16 @@ task.setCreateTime(LocalDateTime.now());
 taskMapper.insert(task);  // MyBatis-Plus 自动 insert
 
 // 2. 完成任务
-FlwTask task = taskMapper.selectById(taskId);
+FlwTask pendingTask = taskMapper.selectById(taskId);
 // 移到历史表
-FlwHisTask hisTask = FlwHisTask.of(task, approverId, "同意", LocalDateTime.now());
+FlwHisTask hisTask = FlwHisTask.of(pendingTask, approverId, "同意", LocalDateTime.now());
 hisTaskMapper.insert(hisTask);
 // 删除待办
 taskMapper.deleteById(taskId);
 
 // 3. 创建下一节点任务
 FlwTask nextTask = new FlwTask();
-nextTask.setInstanceId(task.getInstanceId());
+nextTask.setInstanceId(pendingTask.getInstanceId());
 nextTask.setNodeCode(nextNode.getNodeCode());
 nextTask.setAssignee(nextApproverId);
 taskMapper.insert(nextTask);
@@ -1441,7 +1445,9 @@ public class TicketApprovalService {
         // 关联工单信息
         List<TicketTaskVO> voList = taskPage.getRecords().stream()
             .map(task -> {
-                Ticket ticket = ticketMapper.selectById(Long.parseLong(task.getBusinessId()));
+                // businessId 存储在 FlwInstance 上，需通过 instanceId 查询实例获取
+                FlwInstance instance = runtimeService.getById(task.getInstanceId());
+                Ticket ticket = ticketMapper.selectById(Long.parseLong(instance.getBusinessId()));
                 return TicketTaskVO.of(task, ticket);
             })
             .collect(Collectors.toList());
@@ -1620,10 +1626,10 @@ public class StartApprovalNode extends NodeComponent {
         TicketContext ctx = this.getContextBean(TicketContext.class);
 
         // 使用 QLExpress 判断是否需要人工审批
-        boolean needApproval = qlexpressRunner.execute(
+        boolean needApproval = Boolean.TRUE.equals(qlexpressRunner.execute(
             "amount > 100 || category == 'complaint' && severity >= 3",
             ctx.toVariables(), QLOptions.DEFAULT_OPTIONS
-        ).getResult();
+        ).getResult());
 
         if (needApproval) {
             // 启动 FlowLong 审批流程
