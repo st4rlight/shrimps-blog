@@ -936,7 +936,13 @@ RETURN               ← 返回结果
 
 ### 7.5 表达式计算追踪（新增）
 
-QLExpress4 独有的表达式追踪功能，可以在返回计算结果的同时，返回一颗表达式追踪树。追踪树的结构类似语法树，不同之处在于它会在每个节点上记录本次执行的**中间结果值**：
+QLExpress4 独有的表达式追踪功能，可以在返回计算结果的同时，返回一颗表达式追踪树。追踪树的结构类似语法树，不同之处在于它会在每个节点上记录本次执行的**中间结果值**——这让"表达式到底是怎么算出来的"变得完全透明。
+
+![表达式追踪树结构](/ai-cs/ecosystem-tools/qlexpress-study-notes/expression-trace-tree.svg)
+
+#### 7.5.1 基本用法
+
+开启追踪需要**两处同时设置** `traceExpression(true)`：创建 `Express4Runner` 时（`InitOptions`）和每次执行时（`QLOptions`）：
 
 ```java
 // 创建 Runner 时开启追踪
@@ -972,20 +978,148 @@ OPERATOR && false
       | VALUE false false
 ```
 
+每一行的格式为 `类型 Token 值`，缩进表示父子层级关系。通过这棵树，可以清楚地看到 `a` 为 `true`、`myTest(11)` 为 `true`、取反后为 `false`、与 `false` 或运算仍为 `false`、最终与 `a` 做与运算得到 `false` 的完整推导链路。
+
+#### 7.5.2 短路场景
+
 如果中间发生短路导致部分表达式未被计算，则对应节点的 `evaluated` 字段会被设置为 `false`：
 
 ```text
-// 短路场景：a 为 false 时，右侧表达式未被计算
+// 短路场景：将 a 设为 false，右侧表达式未被计算
 OPERATOR && false
-  | OPERATOR && false
-      | VARIABLE a false
-      | VALUE true 
+  | VARIABLE a false
   | OPERATOR ||       ← evaluated: false（被短路）
       | OPERATOR ! 
           | FUNCTION myTest 
               | VALUE 11 
       | VALUE false 
 ```
+
+被短路节点的 `value` 为空——因为它们根本没有被执行。这一信息在归因分析中极为关键：**你可以精确区分"条件计算后不满足"和"条件根本没被计算"两种情况**。
+
+#### 7.5.3 ExpressionTrace 类结构
+
+追踪树的每个节点都是一个 `ExpressionTrace` 对象，其核心字段如下：
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| `type` | `TraceType` | 节点类型（运算符、变量、函数等） |
+| `token` | `String` | 节点对应的源码文本片段 |
+| `value` | `Object` | 本次执行的中间结果值（短路时为 null） |
+| `evaluated` | `boolean` | 是否被实际计算（短路时为 false） |
+| `children` | `List<ExpressionTrace>` | 子节点列表 |
+| `line` | `int` | 对应源码行号 |
+| `col` | `int` | 对应源码列号 |
+| `position` | `int` | 对应源码字符偏移量 |
+
+其中 `line`、`col`、`position` 提供了精确的源码定位信息，可以用于在编辑器中高亮对应表达式片段，或在上层系统中生成可读的诊断报告。
+
+#### 7.5.4 TraceType 节点类型
+
+`TraceType` 枚举定义了追踪树中所有可能的节点类型：
+
+| 类型 | 说明 | 典型场景 |
+|------|------|---------|
+| `OPERATOR` | 运算符节点 | `+`、`-`、`*`、`&&`、`\|\|`、`!`、`>`、`<`、`==` 等 |
+| `FUNCTION` | 函数调用节点 | 自定义函数、内置函数调用 |
+| `METHOD` | 方法调用节点 | 对象方法调用（需安全策略允许） |
+| `FIELD` | 字段访问节点 | 对象属性访问 |
+| `VARIABLE` | 变量引用节点 | Context 中传入的变量 |
+| `VALUE` | 常量值节点 | 数字、字符串、布尔值等字面量 |
+| `LIST` | 列表节点 | `[1, 2, 3]` 列表字面量 |
+| `MAP` | 映射节点 | `{"key": value}` JSON/字典字面量 |
+| `IF` | if 语句节点 | `if-else` 控制流 |
+| `SWITCH` | switch 语句节点 | `switch-case` 控制流 |
+| `RETURN` | return 语句节点 | `return` 提前返回 |
+| `BLOCK` | 代码块节点 | `{ ... }` 语句块 |
+| `DEFINE_FUNCTION` | 函数定义节点 | `function` 关键字定义的函数 |
+| `DEFINE_MACRO` | 宏定义节点 | 宏定义 |
+| `PRIMARY` | 基础表达式节点 | 括号包裹的子表达式 |
+| `STATEMENT` | 语句节点 | 顶层语句 |
+
+#### 7.5.5 编程式遍历追踪树
+
+`toPrettyString()` 适合调试输出，但在实际应用中，往往需要**编程式遍历**追踪树来提取结构化信息：
+
+```java
+/**
+ * 递归遍历追踪树，提取所有被实际计算的函数调用节点
+ */
+public void analyzeTrace(ExpressionTrace trace, int depth) {
+    // 只关注被实际计算的节点（排除短路节点）
+    if (trace.isEvaluated()) {
+        TraceType type = trace.getType();
+        String token = trace.getToken();
+        Object value = trace.getValue();
+
+        // 例如：提取所有函数调用及其结果
+        if (type == TraceType.FUNCTION) {
+            System.out.printf("函数 %s 执行结果: %s (行:%d 列:%d)%n",
+                token, value, trace.getLine(), trace.getCol());
+        }
+
+        // 递归处理子节点
+        for (ExpressionTrace child : trace.getChildren()) {
+            analyzeTrace(child, depth + 1);
+        }
+    } else {
+        // 短路节点：记录哪些条件被跳过
+        System.out.printf("短路跳过: %s %s (行:%d)%n",
+            trace.getType(), trace.getToken(), trace.getLine());
+    }
+}
+
+// 使用
+List<ExpressionTrace> traces = result.getExpressionTraces();
+for (ExpressionTrace trace : traces) {
+    analyzeTrace(trace, 0);
+}
+```
+
+::: tip 构建归因报告
+结合 `line`/`col` 源码定位信息，可以将追踪数据转换为可读的归因报告——例如"用户张三路由到通用通道，原因是第 3 行的 `user.level >= 5` 计算结果为 false"。这种端到端的可解释性是 QLExpress4 区别于其他表达式引擎的核心竞争力。
+:::
+
+#### 7.5.6 性能影响与生产策略
+
+表达式追踪功能会记录每个节点的中间值，带来额外的内存和 CPU 开销。以下是不同场景下的建议策略：
+
+| 场景 | `traceExpression` | 说明 |
+|------|-------------------|------|
+| **生产环境高频执行** | `false`（默认） | 追踪有额外开销，高频路径不建议开启 |
+| **调试/开发环境** | `true` | 快速定位规则为什么返回了意外的结果 |
+| **线上抽样诊断** | `true`（按比例） | 对万分之一请求开启追踪，收集归因样本 |
+| **规则异常时触发** | `true`（条件触发） | 结果不符合预期时重新执行并开启追踪 |
+| **AI 归因分析** | `true` | 需要追踪树数据支撑 AI 诊断和规则优化 |
+
+```java
+// 生产环境抽样追踪示例
+private static final Express4Runner RUNNER = new Express4Runner(
+    InitOptions.builder().traceExpression(true).build());  // Runner 层面开启
+
+public Object executeWithSampling(String express, Map<String, Object> context) {
+    // 万分之一的请求开启追踪
+    boolean enableTrace = ThreadLocalRandom.current().nextInt(10000) == 0;
+
+    QLResult result = RUNNER.execute(express, context,
+        QLOptions.builder()
+            .cache(true)
+            .timeoutMillis(1000L)
+            .traceExpression(enableTrace)  // 按需开启
+            .build());
+
+    if (enableTrace) {
+        // 异步发送追踪数据到分析平台
+        sendToAnalysisPlatform(result.getExpressionTraces());
+    }
+
+    return result.getResult();
+}
+```
+
+::: warning InitOptions 与 QLOptions 的双重控制
+追踪功能受两层控制：`InitOptions.traceExpression` 是总开关，`QLOptions.traceExpression` 是单次执行开关。**两者都为 `true` 时追踪才生效**。如果 `InitOptions` 未开启，即使 `QLOptions` 设置了 `traceExpression(true)` 也不会产生追踪数据。这种设计使得同一个 Runner 既可以执行需要追踪的请求，也可以执行不需要追踪的高频请求。
+:::
 
 ::: tip AI 归因分析
 表达式追踪功能在 AI 客服系统中特别有价值：可以用于分析规则执行失败的原因——到底有多少用户被 VIP 条件拦截，又有多少用户因为其他条件被拦截？这些数据可以用于规则优化和业务决策，甚至支持 AI 自动诊断和修复规则。

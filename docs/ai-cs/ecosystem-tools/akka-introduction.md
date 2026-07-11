@@ -341,7 +341,9 @@ class RouterActor extends Actor {
 
 这样 `WorkerActor` 收到消息时，`sender()` 是最初发消息给 `RouterActor` 的人，而不是 `RouterActor`。
 
-### 4.4 消息传递模式总结
+### 4.4 消息传递模式对比
+
+![消息传递模式对比](/ai-cs/ecosystem-tools/akka-introduction/messaging-patterns-comparison.svg)
 
 | 模式 | 语义 | 适用场景 | 是否阻塞 |
 |------|------|---------|---------|
@@ -355,25 +357,9 @@ class RouterActor extends Actor {
 
 理解 Actor 的生命周期，对于正确管理资源和处理故障至关重要。
 
-### 5.1 生命周期全景
+### 5.1 生命周期流程
 
-```text
-Actor 生命周期
-│
-├─ preStart()          ← Actor 创建时调用（初始化资源）
-│
-├─ [运行中]            ← 正常处理消息
-│     │
-│     ├─ 异常发生 ──→ preRestart()  ← 重启前调用（旧实例）
-│     │                    │
-│     │               postStop()    ← 旧实例停止
-│     │                    │
-│     │               preStart()    ← 新实例启动（或 postRestart）
-│     │                    │
-│     └─ [恢复运行]
-│
-└─ postStop()          ← Actor 终止时调用（释放资源）
-```
+![Actor生命周期流程](/ai-cs/ecosystem-tools/akka-introduction/lifecycle-flow.svg)
 
 ### 5.2 生命周期回调
 
@@ -446,20 +432,6 @@ Akka 范式：出现异常 → **让 Actor 崩溃** → 父 Actor（监督者）
 ### 6.2 Supervisor Strategy
 
 ![Supervision监督策略总览](/ai-cs/ecosystem-tools/akka-introduction/supervision-strategy-overview.svg)
-
-每个 Actor 都是其子 Actor 的监督者。当子 Actor 抛出异常时，父 Actor 的 Supervisor Strategy 决定如何处理：
-
-```text
-子 Actor 崩溃
-     │
-     ↓
-父 Actor（监督者）收到 Failure 通知
-     │
-     ├── Resume  → 恢复：保留状态，继续处理下一条消息
-     ├── Restart → 重启：丢弃旧实例，创建新实例（状态重置）
-     ├── Stop    → 停止：永久终止子 Actor
-     └── Escalate→ 上报：自己处理不了，向上层父 Actor 报告
-```
 
 | 策略 | 行为 | 适用场景 |
 |------|------|---------|
@@ -572,15 +544,7 @@ pipeline.run()
 
 背压是 Akka Streams 的核心特性。当下游处理速度慢于上游生产速度时，系统会自动进行流量控制：
 
-```text
-Source（生产快）         Sink（消费慢）
-     │                       │
-     │ ──→ ──→ ──→ ──→ ──→  │  缓冲区快满了！
-     │                       │
-     │  ←──  背压信号  ────  │  "慢一点，我处理不过来"
-     │                       │
-     │ ──→      (暂停)       │  Source 减速或暂停
-```
+![Akka Streams流水线与背压机制](/ai-cs/ecosystem-tools/akka-introduction/akka-streams-pipeline.svg)
 
 这比传统的"无限缓冲队列"方式安全得多——不会因为积压过多消息而导致 OOM。
 
@@ -604,23 +568,7 @@ Source（生产快）         Sink（消费慢）
 
 ### 8.3 集群角色与客服场景
 
-```text
-Akka Cluster
-┌──────────────────────────────────────────────┐
-│                                               │
-│   ┌─────────┐    ┌─────────┐   ┌─────────┐  │
-│   │  Node1  │    │  Node2  │   │  Node3  │  │
-│   │ (Gateway│    │ (Session│   │ (Session│  │
-│   │  +Seed) │    │  Worker)│   │  Worker)│  │
-│   └────┬────┘    └────┬────┘   └────┬────┘  │
-│        │              │              │       │
-│        └────── Gossip 协议 ──────────┘       │
-│                                               │
-│   消息路由：Session-001 → Node2               │
-│            Session-002 → Node3               │
-│            Session-003 → Node2               │
-└──────────────────────────────────────────────┘
-```
+![Akka Cluster与Sharding总览](/ai-cs/ecosystem-tools/akka-introduction/cluster-sharding-overview.svg)
 
 在 AI 客服系统中，典型的集群部署方案：
 
@@ -673,14 +621,7 @@ Sharding 的核心逻辑：
 
 Akka Persistence 提供了事件溯源能力——Actor 的状态变化不是直接更新数据库，而是**追加写入**一条条不可变的事件。Actor 的当前状态可以通过重放事件来恢复。
 
-```text
-传统方式：               事件溯源：
-┌──────┐ 覆盖写          事件1 → 事件2 → 事件3 → 事件4
-│state │ ────→ DB        ↓        ↓        ↓        ↓
-└──────┘                 状态A → 状态B → 状态C → 状态D
-                                              ↑
-                                         当前状态（重放所有事件得到）
-```
+![传统方式 vs 事件溯源](/ai-cs/ecosystem-tools/akka-introduction/event-sourcing-comparison.svg)
 
 ### 9.2 Persistent Actor
 

@@ -1,0 +1,117 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 480" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <linearGradient id="blueG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="greenG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#34d399;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="amberG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.12"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="820" height="480" rx="14" fill="#f8fafc"/>
+
+  <!-- Title -->
+  <text x="410" y="36" text-anchor="middle" font-size="21" font-weight="700" fill="#1e293b">流程编排引擎在技术栈中的定位</text>
+  <text x="410" y="56" text-anchor="middle" font-size="12" fill="#94a3b8">表达式引擎 → 流程编排引擎 → 工作流引擎 — 解决不同层次的问题</text>
+
+  <!-- Left: Expression Engine -->
+  <g filter="url(#shadow)">
+    <rect x="30" y="80" width="230" height="340" rx="12" fill="white" stroke="#3b82f6" stroke-width="2"/>
+  </g>
+  <rect x="30" y="80" width="230" height="44" rx="12" fill="url(#blueG)"/>
+  <rect x="30" y="106" width="230" height="18" fill="url(#blueG)"/>
+  <text x="145" y="110" text-anchor="middle" font-size="16" font-weight="700" fill="white">表达式引擎</text>
+
+  <text x="50" y="150" font-size="12" font-weight="600" fill="#1d4ed8">核心能力</text>
+  <text x="50" y="168" font-size="11" fill="#374151">单条表达式求值</text>
+  <text x="50" y="184" font-size="11" fill="#374151">条件判断与计算</text>
+
+  <text x="50" y="212" font-size="12" font-weight="600" fill="#1d4ed8">典型代表</text>
+  <text x="50" y="230" font-size="11" fill="#374151">QLExpress4 · Aviator · MVEL</text>
+
+  <text x="50" y="258" font-size="12" font-weight="600" fill="#1d4ed8">特点</text>
+  <text x="50" y="276" font-size="11" fill="#374151">• 无状态，纳秒级响应</text>
+  <text x="50" y="292" font-size="11" fill="#374151">• 单条规则求值</text>
+  <text x="50" y="308" font-size="11" fill="#374151">• 不支持流程控制</text>
+  <text x="50" y="324" font-size="11" fill="#374151">• 无法人工审批</text>
+
+  <text x="50" y="356" font-size="12" font-weight="600" fill="#1d4ed8">适用场景</text>
+  <text x="50" y="374" font-size="11" fill="#374151">规则判断、公式计算</text>
+  <text x="50" y="390" font-size="11" fill="#374151">VIP 等级判定</text>
+
+  <!-- Arrow 1 -->
+  <line x1="270" y1="250" x2="310" y2="250" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="290" y="240" text-anchor="middle" font-size="9" fill="#64748b">进化</text>
+
+  <!-- Center: Flow Orchestration Engine -->
+  <g filter="url(#shadow)">
+    <rect x="320" y="80" width="240" height="340" rx="12" fill="white" stroke="#10b981" stroke-width="2"/>
+  </g>
+  <rect x="320" y="80" width="240" height="44" rx="12" fill="url(#greenG)"/>
+  <rect x="320" y="106" width="240" height="18" fill="url(#greenG)"/>
+  <text x="440" y="110" text-anchor="middle" font-size="16" font-weight="700" fill="white">流程编排引擎</text>
+
+  <text x="340" y="150" font-size="12" font-weight="600" fill="#047857">核心能力</text>
+  <text x="340" y="168" font-size="11" fill="#374151">多步骤编排与调度</text>
+  <text x="340" y="184" font-size="11" fill="#374151">串行/并行/循环/嵌套</text>
+
+  <text x="340" y="212" font-size="12" font-weight="600" fill="#047857">典型代表</text>
+  <text x="340" y="230" font-size="11" fill="#374151">LiteFlow · CompileFlow</text>
+
+  <text x="340" y="258" font-size="12" font-weight="600" fill="#047857">特点</text>
+  <text x="340" y="276" font-size="11" fill="#374151">• 毫秒级响应</text>
+  <text x="340" y="292" font-size="11" fill="#374151">• 流程可视化</text>
+  <text x="340" y="308" font-size="11" fill="#374151">• 组件复用</text>
+  <text x="340" y="324" font-size="11" fill="#374151">• 支持热刷新</text>
+
+  <text x="340" y="352" font-size="12" font-weight="600" fill="#047857">适用场景</text>
+  <text x="340" y="370" font-size="11" fill="#374151">业务步骤编排</text>
+  <text x="340" y="386" font-size="11" fill="#374151">微服务链路协调</text>
+  <text x="340" y="402" font-size="11" fill="#374151">AI Agent 编排</text>
+
+  <!-- Arrow 2 -->
+  <line x1="570" y1="250" x2="610" y2="250" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="590" y="240" text-anchor="middle" font-size="9" fill="#64748b">增强</text>
+
+  <!-- Right: Workflow Engine -->
+  <g filter="url(#shadow)">
+    <rect x="620" y="80" width="180" height="340" rx="12" fill="white" stroke="#f59e0b" stroke-width="2"/>
+  </g>
+  <rect x="620" y="80" width="180" height="44" rx="12" fill="url(#amberG)"/>
+  <rect x="620" y="106" width="180" height="18" fill="url(#amberG)"/>
+  <text x="710" y="110" text-anchor="middle" font-size="16" font-weight="700" fill="white">工作流引擎</text>
+
+  <text x="640" y="150" font-size="12" font-weight="600" fill="#92400e">核心能力</text>
+  <text x="640" y="168" font-size="11" fill="#374151">长周期流程管理</text>
+  <text x="640" y="184" font-size="11" fill="#374151">人工审批与持久化</text>
+
+  <text x="640" y="212" font-size="12" font-weight="600" fill="#92400e">典型代表</text>
+  <text x="640" y="230" font-size="11" fill="#374151">Activiti · Flowable</text>
+  <text x="640" y="246" font-size="11" fill="#374151">Camunda</text>
+
+  <text x="640" y="274" font-size="12" font-weight="600" fill="#92400e">特点</text>
+  <text x="640" y="292" font-size="11" fill="#374151">• 数据库持久化</text>
+  <text x="640" y="308" font-size="11" fill="#374151">• 支持人工任务</text>
+  <text x="640" y="324" font-size="11" fill="#374151">• BPMN 2.0 标准</text>
+
+  <text x="640" y="352" font-size="12" font-weight="600" fill="#92400e">适用场景</text>
+  <text x="640" y="370" font-size="11" fill="#374151">审批流、订单履约</text>
+  <text x="640" y="386" font-size="11" fill="#374151">工单流转</text>
+
+  <!-- Bottom tip -->
+  <rect x="180" y="438" width="460" height="28" rx="14" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1"/>
+  <text x="410" y="457" text-anchor="middle" font-size="11" fill="#15803d">💡 三者互补：表达式引擎解决"怎么判断"，流程编排引擎解决"怎么协调"，工作流引擎解决"怎么持久化"</text>
+</svg>

@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 420" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <linearGradient id="blueG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="greenG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#34d399;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="amberG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.12"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="420" rx="14" fill="#f8fafc"/>
+
+  <!-- Title -->
+  <text x="400" y="36" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">三种引擎核心差异对比</text>
+  <text x="400" y="55" text-anchor="middle" font-size="11" fill="#94a3b8">从问题域、状态管理、性能到适用场景</text>
+
+  <!-- Table Header -->
+  <g filter="url(#shadow)">
+    <rect x="30" y="75" width="740" height="36" rx="8" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1"/>
+  </g>
+  <text x="140" y="98" text-anchor="middle" font-size="12" font-weight="700" fill="#475569">维度</text>
+  <text x="320" y="98" text-anchor="middle" font-size="12" font-weight="700" fill="#3b82f6">表达式引擎</text>
+  <text x="510" y="98" text-anchor="middle" font-size="12" font-weight="700" fill="#10b981">流程编排引擎</text>
+  <text x="690" y="98" text-anchor="middle" font-size="12" font-weight="700" fill="#f59e0b">工作流引擎</text>
+
+  <!-- Row 1: 核心能力 -->
+  <rect x="30" y="115" width="740" height="38" rx="0" fill="white"/>
+  <line x1="30" y1="153" x2="770" y2="153" stroke="#f1f5f9" stroke-width="1"/>
+  <text x="140" y="139" text-anchor="middle" font-size="11" font-weight="600" fill="#1e293b">核心能力</text>
+  <text x="320" y="133" text-anchor="middle" font-size="10" fill="#374151">单条表达式求值</text>
+  <text x="320" y="147" text-anchor="middle" font-size="10" fill="#374151">条件判断与计算</text>
+  <text x="510" y="133" text-anchor="middle" font-size="10" fill="#374151">多步骤编排调度</text>
+  <text x="510" y="147" text-anchor="middle" font-size="10" fill="#374151">串行/并行/循环</text>
+  <text x="690" y="133" text-anchor="middle" font-size="10" fill="#374151">长周期流程管理</text>
+  <text x="690" y="147" text-anchor="middle" font-size="10" fill="#374151">人工审批+持久化</text>
+
+  <!-- Row 2: 状态管理 -->
+  <rect x="30" y="157" width="740" height="38" rx="0" fill="#fafafa"/>
+  <line x1="30" y1="195" x2="770" y2="195" stroke="#f1f5f9" stroke-width="1"/>
+  <text x="140" y="181" text-anchor="middle" font-size="11" font-weight="600" fill="#1e293b">状态管理</text>
+  <text x="320" y="181" text-anchor="middle" font-size="10" fill="#374151">无状态</text>
+  <text x="510" y="181" text-anchor="middle" font-size="10" fill="#374151">无状态 / 轻量状态</text>
+  <text x="690" y="181" text-anchor="middle" font-size="10" fill="#374151">数据库持久化</text>
+
+  <!-- Row 3: 性能 -->
+  <rect x="30" y="199" width="740" height="38" rx="0" fill="white"/>
+  <line x1="30" y1="237" x2="770" y2="237" stroke="#f1f5f9" stroke-width="1"/>
+  <text x="140" y="223" text-anchor="middle" font-size="11" font-weight="600" fill="#1e293b">响应性能</text>
+  <text x="320" y="223" text-anchor="middle" font-size="10" fill="#374151">极高（纳秒级）</text>
+  <text x="510" y="217" text-anchor="middle" font-size="10" fill="#374151">高（毫秒级）</text>
+  <text x="510" y="231" text-anchor="middle" font-size="10" fill="#374151">框架开销极小</text>
+  <text x="690" y="223" text-anchor="middle" font-size="10" fill="#374151">中（数据库 I/O）</text>
+
+  <!-- Row 4: 人工审批 -->
+  <rect x="30" y="241" width="740" height="38" rx="0" fill="#fafafa"/>
+  <line x1="30" y1="279" x2="770" y2="279" stroke="#f1f5f9" stroke-width="1"/>
+  <text x="140" y="265" text-anchor="middle" font-size="11" font-weight="600" fill="#1e293b">人工审批</text>
+  <text x="320" y="265" text-anchor="middle" font-size="10" fill="#ef4444">❌ 不支持</text>
+  <text x="510" y="265" text-anchor="middle" font-size="10" fill="#f59e0b">⚠️ 轻量支持</text>
+  <text x="690" y="265" text-anchor="middle" font-size="10" fill="#10b981">✅ 核心能力</text>
+
+  <!-- Row 5: 典型代表 -->
+  <rect x="30" y="283" width="740" height="38" rx="0" fill="white"/>
+  <line x1="30" y1="321" x2="770" y2="321" stroke="#f1f5f9" stroke-width="1"/>
+  <text x="140" y="307" text-anchor="middle" font-size="11" font-weight="600" fill="#1e293b">典型代表</text>
+  <text x="320" y="301" text-anchor="middle" font-size="10" fill="#374151">QLExpress4</text>
+  <text x="320" y="315" text-anchor="middle" font-size="10" fill="#374151">Aviator · SpEL</text>
+  <text x="510" y="301" text-anchor="middle" font-size="10" fill="#374151">LiteFlow</text>
+  <text x="510" y="315" text-anchor="middle" font-size="10" fill="#374151">CompileFlow</text>
+  <text x="690" y="301" text-anchor="middle" font-size="10" fill="#374151">Activiti · Flowable</text>
+  <text x="690" y="315" text-anchor="middle" font-size="10" fill="#374151">Camunda</text>
+
+  <!-- Row 6: 适用场景 -->
+  <rect x="30" y="325" width="740" height="48" rx="0" fill="#fafafa"/>
+  <text x="140" y="349" text-anchor="middle" font-size="11" font-weight="600" fill="#1e293b">适用场景</text>
+  <text x="320" y="345" text-anchor="middle" font-size="10" fill="#374151">促销规则判定</text>
+  <text x="320" y="361" text-anchor="middle" font-size="10" fill="#374151">VIP 等级计算</text>
+  <text x="510" y="345" text-anchor="middle" font-size="10" fill="#374151">客服会话编排</text>
+  <text x="510" y="361" text-anchor="middle" font-size="10" fill="#374151">微服务链路协调</text>
+  <text x="690" y="345" text-anchor="middle" font-size="10" fill="#374151">审批流 · 订单履约</text>
+  <text x="690" y="361" text-anchor="middle" font-size="10" fill="#374151">工单流转</text>
+
+  <!-- Bottom tip -->
+  <rect x="150" y="386" width="500" height="26" rx="13" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1"/>
+  <text x="400" y="404" text-anchor="middle" font-size="11" fill="#1d4ed8">💡 选择原则：问题越简单越往左，需要人工持久化越往右</text>
+</svg>

@@ -1,0 +1,140 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 530" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <linearGradient id="indigoG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#818cf8;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#6366f1;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="blueG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="greenG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#34d399;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="amberG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.12"/>
+    </filter>
+    <marker id="arrowY" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#f59e0b"/>
+    </marker>
+    <marker id="arrowN" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#64748b"/>
+    </marker>
+    <marker id="arrowG" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#10b981"/>
+    </marker>
+    <marker id="arrowB" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#3b82f6"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="820" height="530" rx="14" fill="#f8fafc"/>
+
+  <!-- Title -->
+  <text x="410" y="30" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">流程编排引擎选型决策图</text>
+  <text x="410" y="48" text-anchor="middle" font-size="11" fill="#94a3b8">根据实际需求选择合适的编排引擎</text>
+
+  <!-- ===== Start Node ===== -->
+  <rect x="310" y="62" width="200" height="34" rx="17" fill="url(#indigoG)"/>
+  <text x="410" y="84" text-anchor="middle" font-size="13" font-weight="700" fill="white">选择编排引擎</text>
+
+  <!-- Arrow Start → Q1 -->
+  <line x1="410" y1="96" x2="410" y2="112" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrowN)"/>
+
+  <!-- ===== Q1: 需要人工审批/持久化？ ===== -->
+  <polygon points="410,114 500,138 410,162 320,138" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="410" y="135" text-anchor="middle" font-size="10" font-weight="600" fill="#92400e">需要人工审批</text>
+  <text x="410" y="148" text-anchor="middle" font-size="10" font-weight="600" fill="#92400e">或持久化？</text>
+
+  <!-- Q1 Yes → Workflow Engine -->
+  <line x1="500" y1="138" x2="618" y2="138" stroke="#f59e0b" stroke-width="1.5" marker-end="url(#arrowY)"/>
+  <text x="555" y="130" text-anchor="middle" font-size="9" font-weight="600" fill="#f59e0b">是</text>
+  <g filter="url(#shadow)">
+    <rect x="620" y="116" width="170" height="44" rx="10" fill="white" stroke="#f59e0b" stroke-width="1.5"/>
+  </g>
+  <rect x="620" y="116" width="170" height="22" rx="10" fill="url(#amberG)"/>
+  <text x="705" y="132" text-anchor="middle" font-size="12" font-weight="700" fill="white">工作流引擎</text>
+  <text x="705" y="153" text-anchor="middle" font-size="9" fill="#92400e">Activiti / Flowable</text>
+
+  <!-- Q1 No → Q2 -->
+  <line x1="410" y1="162" x2="410" y2="182" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrowN)"/>
+  <text x="423" y="174" font-size="9" font-weight="600" fill="#64748b">否</text>
+
+  <!-- ===== Q2: 每秒执行数千次以上？ ===== -->
+  <polygon points="410,184 500,208 410,232 320,208" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="410" y="205" text-anchor="middle" font-size="10" font-weight="600" fill="#92400e">每秒执行</text>
+  <text x="410" y="218" text-anchor="middle" font-size="10" font-weight="600" fill="#92400e">数千次以上？</text>
+
+  <!-- Q2 Yes → CompileFlow -->
+  <line x1="500" y1="208" x2="618" y2="208" stroke="#10b981" stroke-width="1.5" marker-end="url(#arrowG)"/>
+  <text x="555" y="200" text-anchor="middle" font-size="9" font-weight="600" fill="#10b981">是</text>
+  <g filter="url(#shadow)">
+    <rect x="620" y="186" width="170" height="44" rx="10" fill="white" stroke="#10b981" stroke-width="2"/>
+  </g>
+  <rect x="620" y="186" width="170" height="22" rx="10" fill="url(#greenG)"/>
+  <text x="705" y="202" text-anchor="middle" font-size="12" font-weight="700" fill="white">CompileFlow</text>
+  <text x="705" y="223" text-anchor="middle" font-size="9" fill="#047857">编译执行 · 极致性能</text>
+
+  <!-- Q2 No → Q3 -->
+  <line x1="410" y1="232" x2="410" y2="252" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrowN)"/>
+  <text x="423" y="244" font-size="9" font-weight="600" fill="#64748b">否</text>
+
+  <!-- ===== Q3: 需要脚本灵活性或 AI Agent？ ===== -->
+  <polygon points="410,254 500,278 410,302 320,278" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="410" y="275" text-anchor="middle" font-size="10" font-weight="600" fill="#92400e">需要脚本灵活性</text>
+  <text x="410" y="288" text-anchor="middle" font-size="10" font-weight="600" fill="#92400e">或 AI Agent 编排？</text>
+
+  <!-- Q3 Yes → LiteFlow -->
+  <line x1="500" y1="278" x2="618" y2="278" stroke="#3b82f6" stroke-width="1.5" marker-end="url(#arrowB)"/>
+  <text x="555" y="270" text-anchor="middle" font-size="9" font-weight="600" fill="#3b82f6">是</text>
+  <g filter="url(#shadow)">
+    <rect x="620" y="256" width="170" height="44" rx="10" fill="white" stroke="#3b82f6" stroke-width="2"/>
+  </g>
+  <rect x="620" y="256" width="170" height="22" rx="10" fill="url(#blueG)"/>
+  <text x="705" y="272" text-anchor="middle" font-size="12" font-weight="700" fill="white">LiteFlow</text>
+  <text x="705" y="293" text-anchor="middle" font-size="9" fill="#1d4ed8">DSL 驱动 · 脚本 + AI</text>
+
+  <!-- Q3 No → Q4 -->
+  <line x1="410" y1="302" x2="410" y2="322" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrowN)"/>
+  <text x="423" y="314" font-size="9" font-weight="600" fill="#64748b">否</text>
+
+  <!-- ===== Q4: 需要编译期类型安全校验？ ===== -->
+  <polygon points="410,324 500,348 410,372 320,348" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="410" y="345" text-anchor="middle" font-size="10" font-weight="600" fill="#92400e">需要编译期</text>
+  <text x="410" y="358" text-anchor="middle" font-size="10" font-weight="600" fill="#92400e">类型安全校验？</text>
+
+  <!-- Q4 Yes → CompileFlow (second reference) -->
+  <line x1="500" y1="348" x2="618" y2="348" stroke="#10b981" stroke-width="1.5" marker-end="url(#arrowG)"/>
+  <text x="555" y="340" text-anchor="middle" font-size="9" font-weight="600" fill="#10b981">是</text>
+  <g filter="url(#shadow)">
+    <rect x="620" y="326" width="170" height="44" rx="10" fill="white" stroke="#10b981" stroke-width="2"/>
+  </g>
+  <rect x="620" y="326" width="170" height="22" rx="10" fill="url(#greenG)"/>
+  <text x="705" y="342" text-anchor="middle" font-size="12" font-weight="700" fill="white">CompileFlow</text>
+  <text x="705" y="363" text-anchor="middle" font-size="9" fill="#047857">类型安全 · 编译期校验</text>
+
+  <!-- Q4 No → 皆可 -->
+  <line x1="410" y1="372" x2="410" y2="392" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrowN)"/>
+  <text x="423" y="384" font-size="9" font-weight="600" fill="#64748b">否</text>
+
+  <!-- 皆可 result -->
+  <g filter="url(#shadow)">
+    <rect x="320" y="394" width="180" height="44" rx="10" fill="white" stroke="#8b5cf6" stroke-width="1.5"/>
+  </g>
+  <rect x="320" y="394" width="180" height="22" rx="10" fill="#ede9fe" stroke="#c4b5fd" stroke-width="1"/>
+  <text x="410" y="411" text-anchor="middle" font-size="12" font-weight="700" fill="#5b21b6">皆可</text>
+  <text x="410" y="431" text-anchor="middle" font-size="9" fill="#5b21b6">看团队偏好 &amp; 已有技术栈</text>
+
+  <!-- ===== Bottom: Decision tips ===== -->
+  <rect x="50" y="452" width="720" height="68" rx="12" fill="white" stroke="#e2e8f0" stroke-width="1"/>
+  <text x="70" y="474" font-size="11" font-weight="700" fill="#1e293b">决策要点总结</text>
+  <text x="70" y="492" font-size="10" fill="#374151">• 需要人工审批/长周期持久化 → 工作流引擎（Activiti/Flowable）</text>
+  <text x="70" y="508" font-size="10" fill="#374151">• 高频纯内存执行 + 类型安全 → CompileFlow</text>
+  <text x="70" y="524" font-size="10" fill="#374151">• 流程频繁变更 + 脚本灵活 + AI Agent 编排 → LiteFlow</text>
+</svg>

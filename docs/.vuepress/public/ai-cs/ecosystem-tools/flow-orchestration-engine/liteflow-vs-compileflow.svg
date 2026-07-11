@@ -1,0 +1,119 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 490" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <linearGradient id="blueG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="greenG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#34d399;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="3" stdDeviation="5" flood-opacity="0.15"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/>
+    </marker>
+    <marker id="arrowB" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#3b82f6"/>
+    </marker>
+    <marker id="arrowG" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#10b981"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="460" rx="14" fill="#f8fafc"/>
+
+  <!-- Title -->
+  <text x="400" y="36" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">LiteFlow vs CompileFlow 执行模式对比</text>
+  <text x="400" y="56" text-anchor="middle" font-size="11" fill="#94a3b8">解释执行 vs 编译执行 — 两种截然不同的编排范式</text>
+
+  <!-- VS Circle -->
+  <circle cx="400" cy="245" r="32" fill="white" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="400" y="250" text-anchor="middle" font-size="18" font-weight="700" fill="#64748b">VS</text>
+
+  <!-- Left: LiteFlow - Interpreted Execution -->
+  <g filter="url(#shadow)">
+    <rect x="30" y="80" width="330" height="360" rx="12" fill="white" stroke="#3b82f6" stroke-width="2"/>
+  </g>
+  <rect x="30" y="80" width="330" height="44" rx="12" fill="url(#blueG)"/>
+  <rect x="30" y="106" width="330" height="18" fill="url(#blueG)"/>
+  <text x="195" y="110" text-anchor="middle" font-size="16" font-weight="700" fill="white">LiteFlow — 解释执行</text>
+
+  <!-- LiteFlow flow -->
+  <text x="55" y="148" font-size="12" font-weight="600" fill="#1d4ed8">执行流程</text>
+
+  <!-- Step 1 -->
+  <rect x="55" y="158" width="280" height="32" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="195" y="178" text-anchor="middle" font-size="10" font-weight="500" fill="#1d4ed8">规则文件（XML/JSON/YML）</text>
+  <line x1="195" y1="192" x2="195" y2="208" stroke="#3b82f6" stroke-width="1.5" marker-end="url(#arrowB)"/>
+
+  <!-- Step 2 -->
+  <rect x="55" y="210" width="280" height="32" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="195" y="225" text-anchor="middle" font-size="10" font-weight="500" fill="#1d4ed8">运行时解析 DSL</text>
+  <text x="195" y="237" text-anchor="middle" font-size="9" fill="#64748b">构建执行计划，调度组件</text>
+  <line x1="195" y1="244" x2="195" y2="260" stroke="#3b82f6" stroke-width="1.5" marker-end="url(#arrowB)"/>
+
+  <!-- Step 3 -->
+  <rect x="55" y="262" width="280" height="32" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="195" y="282" text-anchor="middle" font-size="10" font-weight="500" fill="#1d4ed8">按编排关系调度组件</text>
+  <line x1="195" y1="296" x2="195" y2="312" stroke="#3b82f6" stroke-width="1.5" marker-end="url(#arrowB)"/>
+
+  <!-- Step 4 -->
+  <rect x="55" y="314" width="280" height="32" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="195" y="334" text-anchor="middle" font-size="10" font-weight="500" fill="#1d4ed8">返回结果</text>
+
+  <!-- LiteFlow characteristics -->
+  <text x="55" y="370" font-size="11" font-weight="600" fill="#1d4ed8">特点</text>
+  <text x="55" y="386" font-size="10" fill="#374151">✅ 首次执行无延迟</text>
+  <text x="55" y="400" font-size="10" fill="#374151">✅ 支持动态脚本（8种语言）</text>
+  <text x="195" y="386" font-size="10" fill="#374151">⚠️ 每次执行有解析开销</text>
+  <text x="195" y="400" font-size="10" fill="#374151">⚠️ 弱类型上下文</text>
+
+  <!-- Right: CompileFlow - Compiled Execution -->
+  <g filter="url(#shadow)">
+    <rect x="440" y="80" width="330" height="360" rx="12" fill="white" stroke="#10b981" stroke-width="2"/>
+  </g>
+  <rect x="440" y="80" width="330" height="44" rx="12" fill="url(#greenG)"/>
+  <rect x="440" y="106" width="330" height="18" fill="url(#greenG)"/>
+  <text x="605" y="110" text-anchor="middle" font-size="16" font-weight="700" fill="white">CompileFlow — 编译执行</text>
+
+  <!-- CompileFlow flow -->
+  <text x="465" y="148" font-size="12" font-weight="600" fill="#047857">执行流程</text>
+
+  <!-- Step 1 -->
+  <rect x="465" y="158" width="280" height="32" rx="6" fill="#d1fae5" stroke="#86efac" stroke-width="1"/>
+  <text x="605" y="178" text-anchor="middle" font-size="10" font-weight="500" fill="#047857">流程文件（TBBPM/BPMN XML）</text>
+  <line x1="605" y1="192" x2="605" y2="208" stroke="#10b981" stroke-width="1.5" marker-end="url(#arrowG)"/>
+
+  <!-- Step 2 -->
+  <rect x="465" y="210" width="280" height="32" rx="6" fill="#d1fae5" stroke="#86efac" stroke-width="1"/>
+  <text x="605" y="225" text-anchor="middle" font-size="10" font-weight="500" fill="#047857">解析为 FlowModel</text>
+  <text x="605" y="237" text-anchor="middle" font-size="9" fill="#64748b">节点、连线、表达式</text>
+  <line x1="605" y1="244" x2="605" y2="260" stroke="#10b981" stroke-width="1.5" marker-end="url(#arrowG)"/>
+
+  <!-- Step 3 -->
+  <rect x="465" y="262" width="280" height="32" rx="6" fill="#d1fae5" stroke="#86efac" stroke-width="1"/>
+  <text x="605" y="277" text-anchor="middle" font-size="10" font-weight="500" fill="#047857">生成 Java 源代码</text>
+  <text x="605" y="289" text-anchor="middle" font-size="9" fill="#64748b">包含所有节点调用</text>
+  <line x1="605" y1="296" x2="605" y2="312" stroke="#10b981" stroke-width="1.5" marker-end="url(#arrowG)"/>
+
+  <!-- Step 4 -->
+  <rect x="465" y="314" width="280" height="32" rx="6" fill="#d1fae5" stroke="#86efac" stroke-width="1"/>
+  <text x="605" y="329" text-anchor="middle" font-size="10" font-weight="500" fill="#047857">Janino 编译为字节码</text>
+  <text x="605" y="341" text-anchor="middle" font-size="9" fill="#64748b">动态生成 .class 文件</text>
+  <line x1="605" y1="348" x2="605" y2="364" stroke="#10b981" stroke-width="1.5" marker-end="url(#arrowG)"/>
+
+  <!-- Step 5 -->
+  <rect x="465" y="366" width="280" height="28" rx="6" fill="#d1fae5" stroke="#86efac" stroke-width="1"/>
+  <text x="605" y="384" text-anchor="middle" font-size="10" font-weight="500" fill="#047857">直接执行（原生 Java 性能）</text>
+
+  <!-- CompileFlow characteristics -->
+  <text x="465" y="414" font-size="11" font-weight="600" fill="#047857">特点</text>
+  <text x="465" y="430" font-size="10" fill="#374151">✅ 无解析开销，性能等同手写</text>
+
+  <!-- Bottom tip -->
+  <rect x="130" y="452" width="540" height="26" rx="13" fill="#fef3c7" stroke="#fde68a" stroke-width="1"/>
+  <text x="400" y="470" text-anchor="middle" font-size="11" fill="#92400e">💡 核心差异：LiteFlow 运行时解析 DSL 调度组件；CompileFlow 部署时编译为原生 Java 代码</text>
+</svg>
