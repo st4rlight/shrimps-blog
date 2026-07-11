@@ -1360,33 +1360,54 @@ Receptionist 的工作方式类似服务发现：
 | **Find** | 其他 Actor 通过 `ServiceKey` 查询已注册的 Actor |
 | **Subscribe** | 订阅服务变化通知，当有 Actor 注册/注销时收到更新 |
 
-```scala
-import akka.actor.typed.receptionist.*
-import akka.actor.typed.ActorRef
+```java
+import akka.actor.typed.receptionist.*;
+import akka.actor.typed.ActorRef;
+import akka.actor.typed.javadsl.*;
 
 // 定义 ServiceKey（类型安全的服务标识）
-val ModelGatewayKey = ServiceKey[ModelCommand]("model-gateway")
+ServiceKey<ModelCommand> modelGatewayKey =
+    ServiceKey.create(ModelCommand.class, "model-gateway");
 
 // Worker Actor 启动时注册自己
-class ModelGatewayActor extends AbstractBehavior[ModelCommand](context) {
-  override def onMessage(msg: ModelCommand): Behavior[ModelCommand] = {
-    // 注册到 Receptionist
-    context.system.receptionist ! Receptionist.Register(ModelGatewayKey, context.self)
-    // ...处理消息
-    this
-  }
+public class ModelGatewayActor extends AbstractBehavior<ModelCommand> {
+    public ModelGatewayActor(ActorContext<ModelCommand> context) {
+        super(context);
+        // 注册到 Receptionist
+        context.getSystem().receptionist()
+            .tell(Receptionist.register(modelGatewayKey, context.getSelf()));
+    }
+
+    @Override
+    public Receive<ModelCommand> createReceive() {
+        return newReceiveBuilder()
+            // ...处理消息
+            .build();
+    }
 }
 
 // 客户端通过 Receptionist 查找服务
-class SessionActor extends AbstractBehavior[SessionCommand](context) {
-  // 订阅服务变化
-  context.system.receptionist ! Receptionist.Subscribe(ModelGatewayKey, serviceKeyUpdate)
+public class SessionActor extends AbstractBehavior<SessionCommand> {
+    private Set<ActorRef<ModelCommand>> gateways = new java.util.HashSet<>();
 
-  private def serviceKeyUpdate(listing: Receptionist.Listing): Behavior[SessionCommand] = {
-    val gateways: Set[ActorRef[ModelCommand]] = listing.serviceInstances(ModelGatewayKey)
-    // 保存可用的 ModelGateway 引用
-    this
-  }
+    public SessionActor(ActorContext<SessionCommand> context) {
+        super(context);
+        // 订阅服务变化
+        context.getSystem().receptionist()
+            .tell(Receptionist.subscribe(modelGatewayKey,
+                context.getSelf().narrow()));
+    }
+
+    @Override
+    public Receive<SessionCommand> createReceive() {
+        return newReceiveBuilder()
+            .onMessage(Receptionist.Listing.class, listing -> {
+                // 保存可用的 ModelGateway 引用
+                gateways = listing.getServiceInstances(modelGatewayKey);
+                return this;
+            })
+            .build();
+    }
 }
 ```
 
@@ -1452,70 +1473,78 @@ Akka 不只是一个 Actor 框架，而是一个完整的**响应式应用工具
 
 Akka HTTP 是基于 Akka Streams 构建的 HTTP 服务器/客户端，非常适合做 WebSocket 接入层：
 
-```scala
-import akka.http.scaladsl.Http
-import akka.http.scaladsl.server.Directives._
-import akka.http.scaladsl.model.ws.{TextMessage, Message}
+```java
+import akka.http.javadsl.Http;
+import akka.http.javadsl.server.AllDirectives;
+import akka.http.javadsl.server.Route;
+import akka.stream.javadsl.Flow;
+import akka.http.javadsl.model.ws.Message;
+import akka.http.javadsl.model.ws.TextMessage;
 
 // WebSocket 会话路由
-val route = path("chat" / Segment) { sessionId =>
-  handleWebSocketMessages {
-    // 将 WebSocket 消息转发给对应的 Session Actor
-    Flow[Message].collect {
-      case TextMessage.Strict(text) =>
-        sessionRegion ! SessionMessage(sessionId, text)
-        TextMessage("已收到您的消息")
+public class ChatRoute extends AllDirectives {
+    public Route createRoute() {
+        return path(segment("chat").slash(segment()), sessionId ->
+            handleWebSocketMessages(
+                // 将 WebSocket 消息转发给对应的 Session Actor
+                Flow.of(Message.class).collect(() -> {
+                    if (msg.isText()) {
+                        String text = msg.asTextMessage().getStrictText();
+                        sessionRegion.tell(new SessionMessage(sessionId, text), ActorRef.noSender());
+                        return TextMessage.create("已收到您的消息");
+                    }
+                    return msg;
+                })
+            )
+        );
     }
-  }
 }
 
-Http().newServerAt("0.0.0.0", 8080).bind(route)
+Http.get(system).newServerAt("0.0.0.0", 8080).bind(new ChatRoute().createRoute());
 ```
 
 **Akka Connectors (Alpakka)** —— 外部系统集成
 
 Alpakka 提供了 70+ 连接器，集成了 Kafka、MQTT、AWS S3、Elasticsearch、MongoDB 等：
 
-```scala
-import akka.stream.alpakka.kafka.scaladsl.*
-import akka.stream.alpakka.kafka.*
+```java
+import akka.stream.alpakka.kafka.javadsl.*;
+import akka.stream.alpakka.kafka.*;
 
 // Kafka 消费者 → Session Actor
-val kafkaConsumer: Source[CommittableMessage[String, String], _] =
-  Consumer.committableSource(consumerSettings, Subscriptions.topics("user-messages"))
+Source<CommittableMessage<String, String>, NotUsed> kafkaConsumer =
+    Consumer.committableSource(consumerSettings, Subscriptions.topics("user-messages"));
 
 kafkaConsumer
-  .map { msg =>
-    val record = msg.record
-    sessionRegion ! SessionMessage(record.key, record.value)
-    msg.committableOffset
-  }
-  .batch(max = 100, first => CommittableOffsetBatch(first)) { (batch, offset) =>
-    batch.updated(offset)
-  }
-  .mapAsync(1)(_.commitScaladsl())
-  .run()
+    .map(msg -> {
+        ConsumerRecord<String, String> record = msg.record();
+        sessionRegion.tell(new SessionMessage(record.key(), record.value()), ActorRef.noSender());
+        return msg.committableOffset();
+    })
+    .batch(100,
+        CommittableOffsetBatch::empty,
+        CommittableOffsetBatch::updated)
+    .mapAsync(1, CommittableOffsetBatch::commitScaladsl)
+    .run(system);
 ```
 
 **Akka Projections** —— CQRS 读模型
 
 当你使用事件溯源持久化会话数据后，需要一个机制将事件流转化为可查询的视图（如"最近 24 小时的会话统计"）。Akka Projections 就是做这件事的：
 
-```scala
-import akka.projection.scaladsl.*
-import akka.projection.eventsourced.EventEnvelope
+```java
+import akka.projection.javadsl.*;
+import akka.projection.eventsourced.EventEnvelope;
 
 // 定义投影：将会话事件转化为统计读模型
-val projection = SourceProvider[Offset, EventEnvelope[SessionEvent]](
-  sessionEventSource
-)
+SourceProvider<Offset, EventEnvelope<SessionEvent>> projection =
+    EventSourcedProvider.byEventsByTag(system, "session", "session-events");
 
-ProjectionHandler
-  .atLeastOnce[EventEnvelope[SessionEvent]](
-    projectionId = ProjectionId("session-stats", "daily"),
-    sourceProvider = projection,
-    handler = () => new SessionStatsHandler()
-  )
+Projection<Envelope> sessionProjection = Projection.atLeastOnce(
+    ProjectionId.of("session-stats", "daily"),
+    projection,
+    () -> new SessionStatsHandler()  // 自定义 Handler
+);
 ```
 
 ### 18.3 Split Brain Resolver
@@ -1539,48 +1568,56 @@ Actor 是异步的、消息驱动的，传统的单元测试方法不能直接�
 
 Akka Typed 的 `ActorTestKit` 提供了一套测试 Actor 的工具：
 
-```scala
-import akka.actor.testkit.typed.scaladsl.*
-import org.scalatest.wordspec.AnyWordSpecLike
+```java
+import akka.actor.testkit.typed.javadsl.*;
+import org.junit.jupiter.api.*;
+import java.time.Duration;
 
-class SessionActorSpec extends ScalaTestWithActorTestKit with AnyWordSpecLike {
+class SessionActorTest {
+    private static ActorTestKit testKit = ActorTestKit.create();
 
-  "SessionActor" must {
-
-    "回复用户消息" in {
-      // 创建测试探针（TestProbe），用于接收和断言消息
-      val probe = createTestProbe[BotReply]()
-      val session = spawn(SessionActor("session-001"))
-
-      // 发送消息，指定回复方为 probe
-      session ! UserMessage("你好", probe.ref)
-
-      // 断言收到了正确的回复
-      probe.expectMessage(BotReply("收到你的消息: 你好", 0.95))
+    @AfterAll
+    static void tearDown() {
+        testKit.shutdownTestKit();
     }
 
-    "在结束时停止自身" in {
-      val session = spawn(SessionActor("session-002"))
-      session ! EndSession
+    @Test
+    void shouldReplyToUserMessage() {
+        // 创建测试探针（TestProbe），用于接收和断言消息
+        TestProbe<BotReply> probe = testKit.createTestProbe(BotReply.class);
+        ActorRef<SessionCommand> session = testKit.spawn(SessionActor.create("session-001"));
 
-      // 断言 Actor 已停止
-      createTestProbe().expectTerminated(session)
+        // 发送消息，指定回复方为 probe
+        session.tell(new UserMessage("你好", probe.getRef()));
+
+        // 断言收到了正确的回复
+        probe.expectMessage(new BotReply("收到你的消息: 你好", 0.95));
     }
 
-    "获取历史消息" in {
-      val replyProbe = createTestProbe[HistoryResponse]()
-      val session = spawn(SessionActor("session-003"))
+    @Test
+    void shouldStopOnEndSession() {
+        ActorRef<SessionCommand> session = testKit.spawn(SessionActor.create("session-002"));
+        session.tell(new EndSession());
 
-      session ! UserMessage("消息1", createTestProbe[BotReply]().ref)
-      session ! UserMessage("消息2", createTestProbe[BotReply]().ref)
-      session ! GetHistory(replyProbe.ref)
-
-      // 断言历史消息正确
-      val response = replyProbe.receiveMessage()
-      response.messages should have size 2
-      response.messages should contain("[用户] 消息1")
+        // 断言 Actor 已停止
+        TestProbe<Void> probe = testKit.createTestProbe();
+        probe.expectTerminated(session, Duration.ofSeconds(3));
     }
-  }
+
+    @Test
+    void shouldReturnHistoryMessages() {
+        TestProbe<HistoryResponse> replyProbe = testKit.createTestProbe(HistoryResponse.class);
+        ActorRef<SessionCommand> session = testKit.spawn(SessionActor.create("session-003"));
+
+        session.tell(new UserMessage("消息1", testKit.createTestProbe(BotReply.class).getRef()));
+        session.tell(new UserMessage("消息2", testKit.createTestProbe(BotReply.class).getRef()));
+        session.tell(new GetHistory(replyProbe.getRef()));
+
+        // 断言历史消息正确
+        HistoryResponse response = replyProbe.receiveMessage();
+        Assertions.assertEquals(2, response.messages().size());
+        Assertions.assertTrue(response.messages().contains("[用户] 消息1"));
+    }
 }
 ```
 
@@ -1596,15 +1633,15 @@ class SessionActorSpec extends ScalaTestWithActorTestKit with AnyWordSpecLike {
 
 ### 19.3 测试原则
 
-```scala
+```java
 // ❌ 错误：在测试中使用 Thread.sleep 等待异步结果
-session ! UserMessage("hello", probe.ref)
-Thread.sleep(1000)  // 不可靠！
-probe.expectMessage(BotReply("...", 0.95))
+session.tell(new UserMessage("hello", probe.getRef()));
+Thread.sleep(1000);  // 不可靠！
+probe.expectMessage(new BotReply("...", 0.95));
 
 // ✅ 正确：使用 TestKit 的断言方法，它会自动等待
-session ! UserMessage("hello", probe.ref)
-probe.expectMessage(3.seconds, BotReply("...", 0.95))  // 最多等 3 秒
+session.tell(new UserMessage("hello", probe.getRef()));
+probe.expectMessage(Duration.ofSeconds(3), new BotReply("...", 0.95));  // 最多等 3 秒
 ```
 
 ::: tip 测试覆盖率建议
