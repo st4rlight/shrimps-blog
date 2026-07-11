@@ -42,6 +42,11 @@ icon: mdi:timeline-clock-outline
         <a class="timeline-entry__link" href="/ai-cs/akka-introduction/">更新《Akka高并发系统介绍》</a>
         <span class="timeline-entry__desc">—— 新增熔断器、Cluster Sharding、事件溯源、Routers/FSM、测试策略与生态模块全景</span>
       </div>
+      <div class="timeline-entry">
+        <span class="timeline-entry__tag timeline-entry__tag--blog">博客</span>
+        <span class="timeline-entry__link">移动端与窄屏适配优化</span>
+        <span class="timeline-entry__desc">—— 导航栏 hamburger 断点提升至 1024px、首页 Hero 流式字体、面板响应式断点优化、背景图 100vw 溢出修复</span>
+      </div>
     </div>
   </div>
 </div>

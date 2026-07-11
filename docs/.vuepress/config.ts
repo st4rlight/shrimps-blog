@@ -7,7 +7,10 @@ export default defineUserConfig({
   lang: 'zh-CN',
   title: 'st4rlight',
   description: '记录技术、想法与生活碎片',
-  head: [['meta', { name: 'theme-color', content: '#8b5cf6' }]],
+  head: [
+    ['link', { rel: 'icon', type: 'image/svg+xml', href: '/logo.svg' }],
+    ['meta', { name: 'theme-color', content: '#8b5cf6' }],
+  ],
   bundler: viteBundler({
     viteOptions: {
       build: {

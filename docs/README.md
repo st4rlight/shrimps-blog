@@ -54,6 +54,15 @@ config:
   <div class="home-timeline__dot"></div>
   <div class="home-timeline__body">
     <span class="home-timeline__date">07-11</span>
+    <span class="home-timeline__tag home-timeline__tag--blog">博客</span>
+    <span>移动端与窄屏适配优化</span>
+  </div>
+</div>
+
+<div class="home-timeline__item">
+  <div class="home-timeline__dot"></div>
+  <div class="home-timeline__body">
+    <span class="home-timeline__date">07-11</span>
     <span class="home-timeline__tag home-timeline__tag--ai">AI客服系统</span>
     <a href="/ai-cs/fsm-introduction/">新增《有限状态机FSM》</a>
   </div>
@@ -64,7 +73,7 @@ config:
   <div class="home-timeline__body">
     <span class="home-timeline__date">07-11</span>
     <span class="home-timeline__tag home-timeline__tag--ai">AI客服系统</span>
-    <a href="/ai-cs/akka-introduction/">更新《Akka高并发系统介绍》</a>
+    <a href="/ai-cs/flowlong-analysis/">新增《BPM审批流引擎》</a>
   </div>
 </div>
 
@@ -74,6 +83,15 @@ config:
     <span class="home-timeline__date">07-11</span>
     <span class="home-timeline__tag home-timeline__tag--ai">AI客服系统</span>
     <a href="/ai-cs/flow-orchestration-engine/">新增《Flow流程编排引擎》</a>
+  </div>
+</div>
+
+<div class="home-timeline__item">
+  <div class="home-timeline__dot"></div>
+  <div class="home-timeline__body">
+    <span class="home-timeline__date">07-11</span>
+    <span class="home-timeline__tag home-timeline__tag--ai">AI客服系统</span>
+    <a href="/ai-cs/akka-introduction/">更新《Akka高并发系统介绍》</a>
   </div>
 </div>
 
@@ -119,24 +137,6 @@ config:
     <span class="home-timeline__date">07-05</span>
     <span class="home-timeline__tag home-timeline__tag--ai">AI学习</span>
     <a href="/ai-study/a2ui-study-notes/">新增《A2UI 学习笔记》</a>
-  </div>
-</div>
-
-<div class="home-timeline__item">
-  <div class="home-timeline__dot"></div>
-  <div class="home-timeline__body">
-    <span class="home-timeline__date">06-29</span>
-    <span class="home-timeline__tag home-timeline__tag--ai">AI客服系统</span>
-    <a href="/ai-cs/">新增「AI客服系统」模块</a>
-  </div>
-</div>
-
-<div class="home-timeline__item">
-  <div class="home-timeline__dot"></div>
-  <div class="home-timeline__body">
-    <span class="home-timeline__date">06-08</span>
-    <span class="home-timeline__tag home-timeline__tag--ai">AI学习</span>
-    <a href="/ai-study/anthropic-managed-agents/">新增《Managed Agents解析》</a>
   </div>
 </div>
 
