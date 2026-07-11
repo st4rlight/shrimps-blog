@@ -30,7 +30,7 @@
 
   <!-- Title -->
   <text x="410" y="36" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">主流表达式引擎对比</text>
-  <text x="410" y="56" text-anchor="middle" font-size="12" fill="#94a3b8">从性能、语法风格、控制流支持、生态等维度横向比较</text>
+  <text x="410" y="56" text-anchor="middle" font-size="12" fill="#94a3b8">从性能、语法风格、控制流支持、安全策略等维度横向比较</text>
 
   <!-- ===== QLExpress (highlighted) ===== -->
   <g filter="url(#shadow)" transform="translate(30, 75)">
@@ -38,16 +38,16 @@
   </g>
   <rect x="30" y="75" width="230" height="38" rx="12" fill="url(#amberG)"/>
   <rect x="30" y="95" width="230" height="18" fill="url(#amberG)"/>
-  <text x="145" y="99" text-anchor="middle" font-size="15" font-weight="700" fill="white">QLExpress ⭐</text>
+  <text x="145" y="99" text-anchor="middle" font-size="15" font-weight="700" fill="white">QLExpress4 ⭐</text>
 
   <g transform="translate(45, 125)">
     <text x="0" y="0" font-size="11" font-weight="600" fill="#92400e">出品方：阿里巴巴</text>
-    <text x="0" y="18" font-size="11" fill="#64748b">语法：类 Java</text>
-    <text x="0" y="34" font-size="11" fill="#64748b">性能：高</text>
-    <text x="0" y="50" font-size="11" fill="#64748b">控制流：✓ if/for/while</text>
-    <text x="0" y="66" font-size="11" fill="#64748b">函数定义：✓ 自定义函数</text>
-    <text x="0" y="82" font-size="11" fill="#64748b">沙箱安全：✓ 白名单/黑名单</text>
-    <text x="0" y="98" font-size="11" fill="#10b981" font-weight="600">优势：双11验证 · 学习成本最低</text>
+    <text x="0" y="18" font-size="11" fill="#64748b">语法：类 Java + Lambda</text>
+    <text x="0" y="34" font-size="11" fill="#64748b">性能：高（内存降低90%+）</text>
+    <text x="0" y="50" font-size="11" fill="#64748b">控制流：✓ if/for/switch/try</text>
+    <text x="0" y="66" font-size="11" fill="#64748b">函数定义：✓ Lambda + 函数式</text>
+    <text x="0" y="82" font-size="11" fill="#64748b">安全：✓ 四级策略（默认隔离）</text>
+    <text x="0" y="98" font-size="11" fill="#10b981" font-weight="600">优势：原生JSON · 追踪 · 双11验证</text>
   </g>
 
   <!-- ===== Aviator ===== -->
@@ -121,8 +121,8 @@
 
   <g transform="translate(40, 375)">
     <rect x="0" y="0" width="180" height="36" rx="8" fill="#fffbeb" stroke="#fbbf24" stroke-width="1"/>
-    <text x="90" y="15" text-anchor="middle" font-size="10" font-weight="600" fill="#92400e">需要控制流 + 沙箱</text>
-    <text x="90" y="29" text-anchor="middle" font-size="9" fill="#f59e0b">→ QLExpress ⭐</text>
+    <text x="90" y="15" text-anchor="middle" font-size="10" font-weight="600" fill="#92400e">需要控制流 + 安全 + 追踪</text>
+    <text x="90" y="29" text-anchor="middle" font-size="9" fill="#f59e0b">→ QLExpress4 ⭐</text>
   </g>
 
   <g transform="translate(235, 375)">

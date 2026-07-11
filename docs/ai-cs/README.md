@@ -17,7 +17,7 @@ permalink: /ai-cs/
 > AI 客服系统建设中涉及的高并发、分布式等底层技术栈。
 
 - [Akka高并发系统介绍](/ai-cs/akka-introduction/) —— 基于 Actor 模型的高并发、分布式、容错消息驱动框架
-- [QLExpress表达式引擎学习笔记](/ai-cs/qlexpress-study-notes/) —— 阿里开源的轻量级表达式引擎，动态规则驱动客服路由与评分
+- [QLExpress4表达式引擎学习笔记](/ai-cs/qlexpress-study-notes/) —— 阿里开源的新一代轻量级表达式引擎，支持函数式编程、原生JSON、表达式追踪
 
 ## 后续计划
 

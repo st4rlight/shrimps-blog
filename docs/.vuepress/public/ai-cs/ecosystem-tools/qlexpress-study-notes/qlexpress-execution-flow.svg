@@ -24,8 +24,8 @@
   <rect width="820" height="420" rx="16" fill="#f8fafc"/>
 
   <!-- Title -->
-  <text x="410" y="38" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">QLExpress 执行流程</text>
-  <text x="410" y="60" text-anchor="middle" font-size="12" fill="#94a3b8">表达式字符串 → 词法分析 → 语法分析 → 指令缓存 → 虚拟机执行</text>
+  <text x="410" y="38" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">QLExpress4 执行流程</text>
+  <text x="410" y="60" text-anchor="middle" font-size="12" fill="#94a3b8">表达式字符串 → 词法分析 → 语法分析（AST）→ 指令缓存 → 虚拟机执行</text>
 
   <!-- ===== Phase 1: Lexer ===== -->
   <g filter="url(#shadow)">
@@ -97,7 +97,7 @@
 
   <!-- Cache box -->
   <rect x="320" y="242" width="180" height="32" rx="6" fill="#ede9fe"/>
-  <text x="410" y="262" text-anchor="middle" font-size="10" fill="#8b5cf6">AST 编译缓存（isCache=true）</text>
+  <text x="410" y="262" text-anchor="middle" font-size="10" fill="#8b5cf6">AST 编译缓存（QLOptions.cache=true）</text>
 
   <!-- Arrow between phase 2 and 3 -->
   <line x1="520" y1="185" x2="560" y2="185" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
@@ -134,7 +134,7 @@
 
   <!-- Result -->
   <rect x="590" y="242" width="180" height="32" rx="6" fill="#ecfdf5"/>
-  <text x="680" y="262" text-anchor="middle" font-size="10" fill="#047857">结果: 10 + 20 × 2 = 50 ✓</text>
+  <text x="680" y="262" text-anchor="middle" font-size="10" fill="#047857">QLResult: 10 + 20 × 2 = 50 ✓</text>
 
   <!-- ===== Bottom: Cache flow ===== -->
   <line x1="30" y1="310" x2="790" y2="310" stroke="#e2e8f0" stroke-width="1"/>
@@ -154,6 +154,6 @@
   </g>
 
   <!-- Bottom tip -->
-  <rect x="150" y="392" width="520" height="22" rx="11" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1"/>
-  <text x="410" y="407" text-anchor="middle" font-size="10" fill="#15803d">💡 保持表达式模板固定、变量通过 Context 传入，才能命中编译缓存</text>
+  <rect x="120" y="392" width="580" height="22" rx="11" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1"/>
+  <text x="410" y="407" text-anchor="middle" font-size="10" fill="#15803d">💡 v4.1.2 移除 ANTLR4 依赖，内存降低 90%+ · 支持可序列化预编译缓存</text>
 </svg>
