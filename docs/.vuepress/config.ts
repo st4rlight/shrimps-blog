@@ -8,7 +8,19 @@ export default defineUserConfig({
   title: 'st4rlight',
   description: '记录技术、想法与生活碎片',
   head: [['meta', { name: 'theme-color', content: '#8b5cf6' }]],
-  bundler: viteBundler(),
+  bundler: viteBundler({
+    viteOptions: {
+      build: {
+        rolldownOptions: {
+          onLog(level, log, handler) {
+            // 过滤第三方库 @vueuse/core 的 PURE 注释位置警告
+            if (log.code === 'INVALID_ANNOTATION') return
+            handler(level, log)
+          },
+        },
+      },
+    },
+  }),
   theme: plumeTheme({
     hostname: 'https://st4rlight.github.io/shrimps-blog',
     logo: '/logo.svg',

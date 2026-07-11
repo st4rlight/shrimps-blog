@@ -20,7 +20,7 @@
    深色部分自然消失，完美融入亮色底，无蒙层感 */
 .vp-layout.bg-multica::before {
   background:
-    url('/shrimps-blog/multica-bg.jpg') center top / cover no-repeat;
+    url('/multica-bg.jpg') center top / cover no-repeat;
   opacity: 1;
   mix-blend-mode: screen;
   transition: background 0.6s ease, opacity 0.6s ease;
@@ -74,7 +74,7 @@
   pointer-events: none;
   content: '';
   background:
-    url('/shrimps-blog/bg.svg') center 3rem / 100vw auto no-repeat;
+    url('/bg.svg') center 3rem / 100vw auto no-repeat;
   opacity: 1;
 }
 
