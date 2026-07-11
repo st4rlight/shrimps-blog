@@ -54,21 +54,6 @@ permalink: /ai-source/openclaw-plugin-skill-architecture/
 
 ---
 
-## 目录
-
-1. [Manifest-First：零代码发现的设计哲学](#1-manifest-first零代码发现的设计哲学)
-2. [插件发现：五源扫描与候选收集](#2-插件发现五源扫描与候选收集)
-3. [清单注册表：验证、合并与索引](#3-清单注册表验证合并与索引)
-4. [插件加载：从候选到运行时](#4-插件加载从候选到运行时)
-5. [Plugin API：60+ 注册方法的扩展面](#5-plugin-api60-注册方法的扩展面)
-6. [Extension 即 npm 包：分发合约](#6-extension-即-npm-包分发合约)
-7. [Skill 系统：内置技能的发现与生命周期](#7-skill-系统内置技能的发现与生命周期)
-8. [Hook 系统：Agent 生命周期的可扩展点](#8-hook-系统agent-生命周期的可扩展点)
-9. [Lazy Activation：冷启动优先的加载策略](#9-lazy-activation冷启动优先的加载策略)
-10. [设计哲学总结](#10-设计哲学总结)
-
----
-
 ## 1. Manifest-First：零代码发现的设计哲学
 
 OpenClaw 插件系统最核心的设计原则是 **Manifest-First**——发现、配置验证、setup 应该从元数据工作，而不是执行插件代码。

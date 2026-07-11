@@ -54,21 +54,6 @@ permalink: /ai-source/openclaw-agent-session-architecture/
 
 ---
 
-## 目录
-
-1. [Agent Loop：3891 行的核心循环](#1-agent-loop3891-行的核心循环)
-2. [双重队列：Session 串行 + Global 并发](#2-双重队列session-串行--global-并发)
-3. [Provider/Model/Harness 解析链](#3-providermodelharness-解析链)
-4. [认证 Profile 轮转与 Failover](#4-认证-profile-轮转与-failover)
-5. [Compaction：上下文压缩的工程实践](#5-compaction上下文压缩的工程实践)
-6. [Agent Run Terminal Outcome：终止状态的标准化](#6-agent-run-terminal-outcome终止状态的标准化)
-7. [Session Key 体系：会话的身份与路由](#7-session-key-体系会话的身份与路由)
-8. [路由解析：从消息到 Agent 的映射](#8-路由解析从消息到-agent-的映射)
-9. [Hook 系统：Agent 生命周期的可扩展点](#9-hook-系统agent-生命周期的可扩展点)
-10. [设计哲学总结](#10-设计哲学总结)
-
----
-
 ## 1. Agent Loop：3891 行的核心循环
 
 ### 1.1 整体架构

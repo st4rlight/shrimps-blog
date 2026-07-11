@@ -55,22 +55,6 @@ permalink: /ai-source/openclaw-context-engine-architecture/
 
 ---
 
-## 目录
-
-1. [为什么需要可插拔的 Context Engine](#1-为什么需要可插拔的-context-engine)
-2. [ContextEngine 接口契约](#2-contextengine-接口契约)
-3. [注册表机制：Slot、Owner 与优先级](#3-注册表机制slotowner-与优先级)
-4. [检疫代理：运行时故障的自动降级](#4-检疫代理运行时故障的自动降级)
-5. [Legacy 适配器：100% 向后兼容的包装器](#5-legacy-适配器100-向后兼容的包装器)
-6. [SessionKey 兼容性代理：新旧参数的透明桥接](#6-sessionkey-兼容性代理新旧参数的透明桥接)
-7. [记忆插件三层架构](#7-记忆插件三层架构)
-8. [Dreaming：AI 的"睡眠"机制](#8-dreamingai-的睡眠机制)
-9. [Active Memory：对话前的阻塞式召回](#9-active-memory对话前的阻塞式召回)
-10. [Prompt Cache 感知：让 Engine 理解缓存](#10-prompt-cache-感知让-engine-理解缓存)
-11. [设计哲学总结](#11-设计哲学总结)
-
----
-
 ## 1. 为什么需要可插拔的 Context Engine
 
 在 Context Engine 出现之前，OpenClaw 的上下文管理是一个硬编码的管道：

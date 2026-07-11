@@ -17,21 +17,6 @@ permalink: /ai-study/claude-code-system-prompt-and-injection-analysis/
 
 ---
 
-## 目录
-
-1. [全景概览](#1-全景概览)
-2. [System Prompt 的内容结构](#2-system-prompt-的内容结构)
-3. [System Prompt 的组装流水线](#3-system-prompt-的组装流水线)
-4. [CLAUDE.md 加载与注入机制](#4-claudemd-加载与注入机制)
-5. [动态附件（Attachments）注入机制](#5-动态附件attachments注入机制)
-6. [Tools 声明与注入机制](#6-tools-声明与注入机制)
-7. [缓存策略与静态/动态分割](#7-缓存策略与静态动态分割)
-8. [User Context 与 System Context 注入](#8-user-context-与-system-context-注入)
-9. [注入点全景图](#9-注入点全景图)
-10. [设计哲学与核心洞察](#10-设计哲学与核心洞察)
-
----
-
 ## 1. 全景概览
 
 ### 1.1 Prompt 注入的五层架构

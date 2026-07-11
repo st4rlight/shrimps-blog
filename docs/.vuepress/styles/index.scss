@@ -74,7 +74,7 @@
   pointer-events: none;
   content: '';
   background:
-    url('/bg.svg') center 3rem / 100vw auto no-repeat;
+    url('/bg.svg') center 3rem / 100% auto no-repeat;
   opacity: 1;
 }
 
@@ -140,7 +140,33 @@
   box-shadow: 0 6px 18px rgb(15 23 42 / 8%);
 }
 
-@media (min-width: 768px) {
+/* ==================== 导航栏响应式：768px-1023px 使用 hamburger 菜单 ==================== */
+
+/* 主题默认在 768px+ 显示完整导航菜单，但本站有 8 个导航项，
+   768px-1023px 窗口宽度下会严重拥挤，改为使用 hamburger 菜单 */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .vp-navbar-hamburger {
+    display: flex !important;
+  }
+
+  .vp-navbar-menu {
+    display: none !important;
+  }
+
+  .vp-nav-screen {
+    display: block !important;
+  }
+
+  .vp-navbar-extra {
+    display: none !important;
+  }
+
+  .vp-navbar-search {
+    flex: 0 1 auto;
+  }
+}
+
+@media (min-width: 1024px) {
   .vp-navbar:not(.has-sidebar) .content-body {
     position: relative;
   }
@@ -217,24 +243,12 @@
 
 .vp-home-hero .hero-tagline {
   display: block;
-  width: max-content !important;
-  max-width: none !important;
-  font-size: 40px;
+  font-size: clamp(22px, 5vw, 40px);
   line-height: 1.22;
-  word-break: normal !important;
-  overflow-wrap: normal !important;
-  word-wrap: normal !important;
-  white-space: nowrap !important;
-  line-break: auto;
 }
 
 .vp-home-hero .hero-tagline .hero-nowrap {
   display: inline-block;
-  max-width: none !important;
-  word-break: normal !important;
-  overflow-wrap: normal !important;
-  word-wrap: normal !important;
-  white-space: nowrap !important;
 }
 
 .home-panels {
@@ -300,15 +314,38 @@
 @media (max-width: 959px) {
   .vp-layout::before {
     background-position: center 4.5rem;
-    background-size: 100vw auto;
-  }
-
-  .vp-home-hero .hero-tagline {
-    font-size: 30px;
+    background-size: 100% auto;
   }
 
   .home-panels {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 639px) {
+  .home-panels {
     grid-template-columns: 1fr;
+  }
+
+  .vp-home-hero .hero-tagline .hero-nowrap {
+    max-width: 100% !important;
+    white-space: normal !important;
+    overflow-wrap: break-word !important;
+    word-break: keep-all !important;
+  }
+}
+
+@media (max-width: 419px) {
+  .vp-home-hero .hero-text {
+    font-size: 15px !important;
+  }
+
+  .timeline-entry__desc {
+    display: none;
+  }
+
+  .home-panel {
+    padding: 14px 16px;
   }
 }
 

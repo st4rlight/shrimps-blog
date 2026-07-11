@@ -16,10 +16,6 @@ permalink: /notes/mysql2hive-sync-principle/
 
 > 在离线数仓建设中，将 MySQL 业务数据准确、高效地同步到 Hive 是 ODS 层数据接入的核心环节。本文从传统全量同步方案的瓶颈出发，深入剖析基于 Binlog 的 CDC + Merge 增量同步架构，厘清全量与增量两种方案的原理、优劣及适用场景。
 
-[[TOC]]
-
----
-
 ## 一、背景与问题
 
 在数据仓库建模中，未经任何加工处理的原始业务层数据，我们称之为 **ODS（Operational Data Store）** 数据。在互联网企业中，常见的 ODS 数据有两类：

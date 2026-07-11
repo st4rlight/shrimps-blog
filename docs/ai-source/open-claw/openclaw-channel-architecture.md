@@ -50,19 +50,6 @@ permalink: /ai-source/openclaw-channel-architecture/
 
 ---
 
-## 目录
-
-1. [概述](#概述)
-2. [核心层：通道的基础定义](#核心层通道的基础定义)
-3. [ChannelPlugin：插件类型契约](#channelplugin插件类型契约)
-4. [注册与加载机制](#注册与加载机制)
-5. [消息投递契约](#消息投递契约)
-6. [Feishu 插件实现分析](#feishu-插件实现分析)
-7. [完整消息流转链路](#完整消息流转链路)
-8. [架构设计哲学](#架构设计哲学)
-
----
-
 ## 概述
 
 OpenClaw 是一个多通道 AI 代理平台，核心设计原则是 **"Core stays plugin-agnostic"**——核心运行时不知道任何具体通道的细节，所有通道行为都通过插件机制注册和驱动。`src/channels` 定义通道的抽象契约，`extensions/` 下各插件提供具体实现。

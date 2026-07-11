@@ -16,21 +16,6 @@ permalink: /ai-study/claude-code-context-compression-and-cache-analysis/
 
 ---
 
-## 目录
-
-1. [全景概览](#1-全景概览)
-2. [L1: Snip 历史裁剪](#2-l1-snip-历史裁剪)
-3. [L2: Microcompact 微压缩](#3-l2-microcompact-微压缩)
-4. [L3: Context Collapse 上下文折叠](#4-l3-context-collapse-上下文折叠)
-5. [L4: Auto-Compact 自动压缩](#5-l4-auto-compact-自动压缩)
-6. [L5: Reactive Compact 反应式压缩](#6-l5-reactive-compact-反应式压缩)
-7. [L6: API Context Management 服务端上下文管理](#7-l6-api-context-management-服务端上下文管理)
-8. [压缩对缓存命中率的影响矩阵](#8-压缩对缓存命中率的影响矩阵)
-9. [缓存命中率保护体系](#9-缓存命中率保护体系)
-10. [设计哲学与核心洞察](#10-设计哲学与核心洞察)
-
----
-
 ## 1. 全景概览
 
 ### 1.1 六层压缩防线
