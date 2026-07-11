@@ -18,6 +18,8 @@ permalink: /ai-cs/
 
 - [Akka高并发系统介绍](/ai-cs/akka-introduction/) —— 基于 Actor 模型的高并发、分布式、容错消息驱动框架
 - [QLExpress4表达式引擎](/ai-cs/qlexpress-study-notes/) —— 阿里开源的新一代轻量级表达式引擎，支持函数式编程、原生JSON、表达式追踪
+- [流程编排引擎Flow](/ai-cs/flow-orchestration-engine/) —— LiteFlow 和 CompileFlow 两大主流流程编排引擎的设计理念与实战用法
+- [FlowLong审批流引擎分析](/ai-cs/flowlong-analysis/) —— 极简审批工作流引擎，JSON定义流程、MyBatis-Plus持久化、零BPMN依赖
 
 ## 后续计划
 

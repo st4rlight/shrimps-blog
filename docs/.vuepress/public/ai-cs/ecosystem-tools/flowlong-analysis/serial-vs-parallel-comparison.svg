@@ -1,0 +1,113 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 380" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <linearGradient id="blueG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="greenG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#34d399;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.12"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/>
+    </marker>
+    <marker id="arrowG" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#10b981"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="380" rx="14" fill="#f8fafc"/>
+
+  <!-- Title -->
+  <text x="400" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">串行审批 vs 并行审批</text>
+  <text x="400" y="53" text-anchor="middle" font-size="11" fill="#94a3b8">通过 permissionList 配置方式区分两种审批模式</text>
+
+  <!-- ===== Left: 串行审批 ===== -->
+  <g filter="url(#shadow)">
+    <rect x="30" y="72" width="350" height="230" rx="10" fill="white" stroke="#3b82f6" stroke-width="2"/>
+  </g>
+  <rect x="30" y="72" width="350" height="38" rx="10" fill="url(#blueG)"/>
+  <rect x="30" y="92" width="350" height="18" fill="url(#blueG)"/>
+  <text x="205" y="96" text-anchor="middle" font-size="14" font-weight="700" fill="white">串行审批（Serial）</text>
+
+  <!-- Serial flow -->
+  <rect x="70" y="125" width="100" height="30" rx="15" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="120" y="144" text-anchor="middle" font-size="11" font-weight="600" fill="#1d4ed8">组长审批</text>
+
+  <line x1="175" y1="140" x2="195" y2="140" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <rect x="200" y="125" width="100" height="30" rx="15" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="250" y="144" text-anchor="middle" font-size="11" font-weight="600" fill="#1d4ed8">主管审批</text>
+
+  <line x1="305" y1="140" x2="325" y2="140" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <rect x="330" y="125" width="40" height="30" rx="15" fill="#eef2ff" stroke="#c7d2fe" stroke-width="1"/>
+  <text x="350" y="144" text-anchor="middle" font-size="10" font-weight="600" fill="#4f46e5">→</text>
+
+  <!-- Serial flow 2nd line -->
+  <rect x="70" y="170" width="100" height="30" rx="15" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="120" y="189" text-anchor="middle" font-size="11" font-weight="600" fill="#1d4ed8">总监审批</text>
+
+  <line x1="175" y1="185" x2="195" y2="185" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <rect x="200" y="170" width="100" height="30" rx="15" fill="#dcfce7" stroke="#86efac" stroke-width="1"/>
+  <text x="250" y="189" text-anchor="middle" font-size="11" font-weight="600" fill="#047857">完成</text>
+
+  <!-- Serial properties -->
+  <text x="50" y="225" font-size="11" font-weight="700" fill="#1e293b">特点</text>
+  <text x="50" y="243" font-size="10" fill="#475569">• 审批人按顺序依次审批</text>
+  <text x="50" y="258" font-size="10" fill="#475569">• 前一个完成才创建下一个任务</text>
+  <text x="50" y="273" font-size="10" fill="#475569">• 效率低（排队等待）</text>
+  <text x="50" y="288" font-size="10" fill="#475569">• 适用于有层级关系的审批</text>
+
+  <!-- JSON snippet -->
+  <rect x="50" y="297" width="310" height="0" fill="none"/>
+
+  <!-- ===== Right: 并行审批 ===== -->
+  <g filter="url(#shadow)">
+    <rect x="420" y="72" width="350" height="230" rx="10" fill="white" stroke="#10b981" stroke-width="2"/>
+  </g>
+  <rect x="420" y="72" width="350" height="38" rx="10" fill="url(#greenG)"/>
+  <rect x="420" y="92" width="350" height="18" fill="url(#greenG)"/>
+  <text x="595" y="96" text-anchor="middle" font-size="14" font-weight="700" fill="white">并行审批（Parallel / 会签）</text>
+
+  <!-- Parallel flow -->
+  <rect x="500" y="125" width="100" height="30" rx="15" fill="#d1fae5" stroke="#86efac" stroke-width="1"/>
+  <text x="550" y="144" text-anchor="middle" font-size="11" font-weight="600" fill="#047857">主管审批</text>
+
+  <rect x="620" y="125" width="100" height="30" rx="15" fill="#d1fae5" stroke="#86efac" stroke-width="1"/>
+  <text x="670" y="144" text-anchor="middle" font-size="11" font-weight="600" fill="#047857">财务审批</text>
+
+  <!-- Merge point -->
+  <circle cx="595" cy="180" r="6" fill="#10b981"/>
+  <line x1="550" y1="155" x2="590" y2="175" stroke="#10b981" stroke-width="2" marker-end="url(#arrowG)"/>
+  <line x1="670" y1="155" x2="600" y2="175" stroke="#10b981" stroke-width="2" marker-end="url(#arrowG)"/>
+
+  <rect x="545" y="195" width="100" height="30" rx="15" fill="#dcfce7" stroke="#86efac" stroke-width="1"/>
+  <text x="595" y="214" text-anchor="middle" font-size="11" font-weight="600" fill="#047857">完成</text>
+
+  <!-- nodeRatio annotation -->
+  <rect x="440" y="125" width="50" height="20" rx="4" fill="#fef3c7" stroke="#fbbf24" stroke-width="1"/>
+  <text x="465" y="139" text-anchor="middle" font-size="9" font-weight="600" fill="#92400e">同时</text>
+  <rect x="440" y="195" width="50" height="20" rx="4" fill="#fef3c7" stroke="#fbbf24" stroke-width="1"/>
+  <text x="465" y="209" text-anchor="middle" font-size="9" font-weight="600" fill="#92400e">全票通过</text>
+
+  <!-- Parallel properties -->
+  <text x="440" y="225" font-size="11" font-weight="700" fill="#1e293b">特点</text>
+  <text x="440" y="243" font-size="10" fill="#475569">• 审批人同时收到任务</text>
+  <text x="440" y="258" font-size="10" fill="#475569">• 全部完成（会签）或任一完成（或签）</text>
+  <text x="440" y="273" font-size="10" fill="#475569">• 效率高（并行处理）</text>
+  <text x="440" y="288" font-size="10" fill="#475569">• 适用于同级并行审核</text>
+
+  <!-- ===== Center VS ===== -->
+  <circle cx="400" cy="187" r="22" fill="white" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="400" y="192" text-anchor="middle" font-size="13" font-weight="700" fill="#64748b">VS</text>
+
+  <!-- Bottom tip -->
+  <rect x="120" y="320" width="560" height="30" rx="15" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1"/>
+  <text x="400" y="339" text-anchor="middle" font-size="11" fill="#1d4ed8">💡 区分关键：permissionList 有多个审批人 + nodeRatio 设置 → 并行；无 nodeRatio → 串行</text>
+</svg>

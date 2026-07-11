@@ -59,6 +59,7 @@ export default defineUserConfig({
               'ecosystem-tools/akka-introduction.md',
               'ecosystem-tools/qlexpress-study-notes.md',
               'ecosystem-tools/flow-orchestration-engine.md',
+              'ecosystem-tools/flowlong-analysis.md',
             ],
           },
         ],

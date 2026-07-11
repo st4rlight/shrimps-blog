@@ -1,0 +1,120 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 440" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <linearGradient id="indigoG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#818cf8;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#6366f1;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="blueG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="greenG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#34d399;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="amberG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="violetG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#a78bfa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.12"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="820" height="440" rx="14" fill="#f8fafc"/>
+
+  <!-- Title -->
+  <text x="410" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">FlowLong 分层架构</text>
+  <text x="410" y="53" text-anchor="middle" font-size="11" fill="#94a3b8">业务层 → 引擎层 → 服务层 → 数据层 → 数据库</text>
+
+  <!-- Layer 1: 业务层 -->
+  <g filter="url(#shadow)">
+    <rect x="180" y="72" width="460" height="50" rx="10" fill="white" stroke="#6366f1" stroke-width="2"/>
+  </g>
+  <rect x="180" y="72" width="460" height="26" rx="10" fill="url(#indigoG)"/>
+  <rect x="180" y="88" width="460" height="10" fill="url(#indigoG)"/>
+  <text x="410" y="90" text-anchor="middle" font-size="13" font-weight="700" fill="white">业务层</text>
+  <text x="410" y="112" text-anchor="middle" font-size="11" fill="#475569">LeaveService · TicketService · ComplaintService · ...</text>
+
+  <!-- Arrow 1→2 -->
+  <line x1="410" y1="126" x2="410" y2="142" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Layer 2: FlowLongEngine -->
+  <g filter="url(#shadow)">
+    <rect x="230" y="146" width="360" height="44" rx="10" fill="white" stroke="#8b5cf6" stroke-width="2"/>
+  </g>
+  <rect x="230" y="146" width="360" height="24" rx="10" fill="url(#violetG)"/>
+  <rect x="230" y="160" width="360" height="10" fill="url(#violetG)"/>
+  <text x="410" y="163" text-anchor="middle" font-size="13" font-weight="700" fill="white">FlowLongEngine（引擎入口 / 门面模式）</text>
+  <text x="410" y="182" text-anchor="middle" font-size="10" fill="#64748b">统一调度，对业务层暴露简洁 API</text>
+
+  <!-- Arrow 2→3 -->
+  <line x1="410" y1="194" x2="410" y2="208" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Layer 3: Services (4 boxes) -->
+  <g filter="url(#shadow)">
+    <rect x="40" y="212" width="180" height="72" rx="10" fill="white" stroke="#3b82f6" stroke-width="2"/>
+  </g>
+  <rect x="40" y="212" width="180" height="26" rx="10" fill="url(#blueG)"/>
+  <rect x="40" y="228" width="180" height="10" fill="url(#blueG)"/>
+  <text x="130" y="231" text-anchor="middle" font-size="12" font-weight="700" fill="white">ProcessService</text>
+  <text x="130" y="253" text-anchor="middle" font-size="10" fill="#475569">流程定义管理</text>
+  <text x="130" y="268" text-anchor="middle" font-size="10" fill="#64748b">部署 · 查询 · 版本</text>
+
+  <g filter="url(#shadow)">
+    <rect x="240" y="212" width="180" height="72" rx="10" fill="white" stroke="#10b981" stroke-width="2"/>
+  </g>
+  <rect x="240" y="212" width="180" height="26" rx="10" fill="url(#greenG)"/>
+  <rect x="240" y="228" width="180" height="10" fill="url(#greenG)"/>
+  <text x="330" y="231" text-anchor="middle" font-size="12" font-weight="700" fill="white">RuntimeService</text>
+  <text x="330" y="253" text-anchor="middle" font-size="10" fill="#475569">流程实例管理</text>
+  <text x="330" y="268" text-anchor="middle" font-size="10" fill="#64748b">启动 · 取消 · 查询</text>
+
+  <g filter="url(#shadow)">
+    <rect x="440" y="212" width="180" height="72" rx="10" fill="white" stroke="#f59e0b" stroke-width="2"/>
+  </g>
+  <rect x="440" y="212" width="180" height="26" rx="10" fill="url(#amberG)"/>
+  <rect x="440" y="228" width="180" height="10" fill="url(#amberG)"/>
+  <text x="530" y="231" text-anchor="middle" font-size="12" font-weight="700" fill="white">TaskService</text>
+  <text x="530" y="253" text-anchor="middle" font-size="10" fill="#475569">任务管理（核心）</text>
+  <text x="530" y="268" text-anchor="middle" font-size="10" fill="#64748b">办理 · 驳回 · 转办 · 加签</text>
+
+  <g filter="url(#shadow)">
+    <rect x="640" y="212" width="140" height="72" rx="10" fill="white" stroke="#6366f1" stroke-width="2"/>
+  </g>
+  <rect x="640" y="212" width="140" height="26" rx="10" fill="url(#indigoG)"/>
+  <rect x="640" y="228" width="140" height="10" fill="url(#indigoG)"/>
+  <text x="710" y="231" text-anchor="middle" font-size="12" font-weight="700" fill="white">HistoryService</text>
+  <text x="710" y="253" text-anchor="middle" font-size="10" fill="#475569">历史记录</text>
+  <text x="710" y="268" text-anchor="middle" font-size="10" fill="#64748b">查询 · 审计</text>
+
+  <!-- Arrow 3→4 -->
+  <line x1="410" y1="288" x2="410" y2="302" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Layer 4: MyBatis-Plus -->
+  <g filter="url(#shadow)">
+    <rect x="150" y="306" width="520" height="44" rx="10" fill="white" stroke="#10b981" stroke-width="2"/>
+  </g>
+  <rect x="150" y="306" width="520" height="24" rx="10" fill="url(#greenG)"/>
+  <rect x="150" y="320" width="520" height="10" fill="url(#greenG)"/>
+  <text x="410" y="323" text-anchor="middle" font-size="13" font-weight="700" fill="white">MyBatis-Plus 数据访问层</text>
+  <text x="410" y="342" text-anchor="middle" font-size="10" fill="#64748b">FlwProcessMapper · FlwInstanceMapper · FlwTaskMapper · FlwHisTaskMapper · ...</text>
+
+  <!-- Arrow 4→5 -->
+  <line x1="410" y1="354" x2="410" y2="368" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Layer 5: Database -->
+  <g filter="url(#shadow)">
+    <rect x="80" y="372" width="660" height="48" rx="10" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+  </g>
+  <text x="410" y="392" text-anchor="middle" font-size="12" font-weight="700" fill="#475569">数据库（MySQL / PostgreSQL / Oracle）</text>
+  <text x="410" y="409" text-anchor="middle" font-size="10" fill="#64748b">flw_process · flw_instance · flw_task · flw_his_instance · flw_his_task · flw_recruit_task · flw_copy_task</text>
+</svg>

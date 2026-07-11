@@ -214,6 +214,9 @@ QLOptions options = QLOptions.builder()
 | `traceExpression` | 表达式追踪 | 调试/归因分析时 true，生产环境可按需 |
 | `precise` | 高精度计算 | 涉及金额计算时建议开启 |
 | `polluteUserContext` | 变量写回 context | 默认 false（安全），兼容 3.x 时可设 true |
+| `avoidNullPointer` | 避免空指针异常 | 脚本中访问不存在的变量/函数时返回 null 而非抛异常 |
+| `maxArrLength` | 限制数组最大长度 | `-1` 不限制，生产环境建议设置防止内存耗尽 |
+| `shortCircuitDisable` | 关闭短路计算 | 默认 false（开启短路），设 true 时 `false && (1/0)` 会抛异常 |
 
 ::: warning Express4Runner 的复用
 `Express4Runner` 是线程安全的，创建开销较大。**全局只创建一个实例**，通过不同的 `Map` 上下文实现变量隔离。不要每次执行都 new 一个 Runner。
@@ -250,6 +253,46 @@ context.put("a", 123);
 // 使用 ${expression} 进行字符串插值
 runner.execute("\"hello,${a-1}\"", context, QLOptions.DEFAULT_OPTIONS).getResult(); // "hello,122"
 ```
+
+### 3.4 多种执行方式
+
+QLExpress4 提供了四种 `execute` 方法，适配不同的上下文构造场景：
+
+```java
+Express4Runner runner = new Express4Runner(InitOptions.DEFAULT_OPTIONS);
+
+// 方式一：Map 作为上下文（最常用）
+Map<String, Object> mapContext = new HashMap<>();
+mapContext.put("a", 1);
+mapContext.put("b", 2);
+runner.execute("a + b", mapContext, QLOptions.DEFAULT_OPTIONS);
+
+// 方式二：Java 对象字段作为上下文
+// 脚本中的变量名对应该对象的 public 字段名
+public class MyObj {
+    public int a;
+    public String b;
+}
+MyObj myObj = new MyObj();
+myObj.a = 1;
+myObj.b = "test";
+runner.execute("a + b", myObj, QLOptions.DEFAULT_OPTIONS).getResult();  // "1test"
+
+// 方式三：@QLAlias 注解对象作为上下文（适合中文脚本，详见 8.6 节）
+runner.executeWithAliasObjects("用户.是vip ? 订单.金额 * 0.8 : 订单.金额",
+    QLOptions.DEFAULT_OPTIONS, order, user);
+
+// 方式四：自定义 ExpressContext（最灵活，支持动态变量等高级特性）
+ExpressContext customContext = new MapExpressContext(mapContext);
+runner.execute("a + b", customContext, QLOptions.DEFAULT_OPTIONS);
+```
+
+| 方法 | 说明 | 适用场景 |
+|------|------|---------|
+| `execute(String, Map, QLOptions)` | Map 作为上下文 | 最常用，外部业务数据构造 Map 传入 |
+| `execute(String, Object, QLOptions)` | 对象字段作为上下文 | 已有 DTO/POJO，直接传入 |
+| `executeWithAliasObjects(String, QLOptions, Object...)` | `@QLAlias` 注解对象 | 中文脚本、领域语言规则 |
+| `execute(String, ExpressContext, QLOptions)` | 自定义上下文 | 动态变量、按需计算等高级场景 |
 
 ---
 
@@ -320,6 +363,18 @@ QLExpress4 支持的运算符与 Java 高度一致，并新增了一些便捷运
 *.   展开操作符（列表/映射批量取属性）
 in   成员判断（元素是否在集合中）
 like   模式匹配（SQL 风格的字符串模糊匹配）
+```
+
+`in` 和 `like` 的使用示例：
+
+```java
+// in：判断元素是否在集合中
+runner.execute("'ab' in ['cc', 'dd', 'ff']", context, QLOptions.DEFAULT_OPTIONS).getResult();  // false
+runner.execute("1 in [1, 2, 3]", context, QLOptions.DEFAULT_OPTIONS).getResult();  // true
+
+// like：SQL 风格的字符串模糊匹配（% 匹配任意数量的字符）
+runner.execute("'test' like 't%'", context, QLOptions.DEFAULT_OPTIONS).getResult();  // true
+runner.execute("'hello' like 'h_llo'", context, QLOptions.DEFAULT_OPTIONS).getResult();  // true
 ```
 
 ### 4.2 数据类型与自动类型推断
@@ -758,6 +813,47 @@ runner.addFunction("IF", new LazyArgCustomFunction() {
 // 当 b == 0 时，a/b 不会被求值，因此不会触发除零异常
 runner.execute("IF(b == 0, 0, a / b)", context, QLOptions.DEFAULT_OPTIONS);
 ```
+
+#### 方式四：`@QLFunction` 注解批量注册（推荐）
+
+当需要注册大量函数时，可以通过 `@QLFunction` 注解批量注册，避免逐个 `addFunction`：
+
+```java
+import com.alibaba.qlexpress4.annotation.QLFunction;
+
+public class MyFunctionUtil {
+    // 支持多个别名
+    @QLFunction({"myAdd", "iAdd"})
+    public int add(int a, int b) {
+        return a + b;
+    }
+
+    @QLFunction("arr3")
+    public static int[] array3(int a, int b, int c) {
+        return new int[]{a, b, c};
+    }
+
+    // 支持可变参数
+    @QLFunction("addAll")
+    public List<Object> addAll(List<Object> list, Object... obs) {
+        list.addAll(Arrays.asList(obs));
+        return list;
+    }
+}
+
+// 注册实例方法
+BatchAddFunctionResult addResult = runner.addObjFunction(new MyFunctionUtil());
+// 注册静态方法
+runner.addStaticFunction(MyFunctionUtil.class);
+
+// 使用
+runner.execute("myAdd(1,2) + iAdd(5,6)", new HashMap<>(), QLOptions.DEFAULT_OPTIONS).getResult();  // 14
+runner.execute("arr3(5,9,10)[2]", new HashMap<>(), QLOptions.DEFAULT_OPTIONS).getResult();  // 10
+```
+
+::: tip 批量注册返回值
+`addObjFunction` 和 `addStaticFunction` 返回 `BatchAddFunctionResult`，包含 `getSucc()` 和 `getFail()` 列表，可以检查哪些函数注册成功、哪些因名称冲突而失败。
+:::
 
 ### 6.5 自定义运算符
 
@@ -1278,6 +1374,201 @@ try {
 }
 ```
 
+### 8.5 import 与 Java 类调用
+
+当安全策略设为开放模式时，可以在脚本中直接使用 Java 类。QLExpress4 提供了两种方式：
+
+#### 在脚本中使用 `import` 语句
+
+```java
+Express4Runner runner = new Express4Runner(
+    InitOptions.builder().securityStrategy(QLSecurityStrategy.open()).build());
+
+Map<String, Object> params = new HashMap<>();
+params.put("a", 1);
+params.put("b", 2);
+
+// 在脚本中 import Java 类并调用静态方法
+Object result = runner.execute(
+    "import com.alibaba.qlexpress4.QLImportTester; QLImportTester.add(a,b)",
+    params, QLOptions.DEFAULT_OPTIONS).getResult();  // 3
+```
+
+::: warning import 必须在脚本开头
+`import` 语句必须位于脚本的**最前面**，不能在其他语句之后，否则会抛出语法错误。
+:::
+
+#### 创建 Runner 时默认导入
+
+如果不想在脚本中写 `import` 语句，可以在创建 Runner 时通过 `InitOptions` 默认导入：
+
+```java
+import com.alibaba.qlexpress4.aparser.ImportManager;
+
+Express4Runner runner = new Express4Runner(InitOptions.builder()
+    .addDefaultImport(Collections.singletonList(
+        ImportManager.importCls("com.alibaba.qlexpress4.QLImportTester")))
+    .securityStrategy(QLSecurityStrategy.open())
+    .build());
+
+// 脚本中直接使用，无需 import
+runner.execute("QLImportTester.add(1,2)",
+    Collections.emptyMap(), QLOptions.DEFAULT_OPTIONS).getResult();  // 3
+```
+
+`ImportManager` 提供了多种导入方式：
+
+| 方法 | 说明 |
+|------|------|
+| `importCls(className)` | 导入单个类 |
+| `importPack(packageName)` | 导入包下所有类 |
+| `importInnerCls(class)` | 导入给定类的内部类 |
+| `importClsAlias(class, alias)` | 为类指定别名，**特别适用于代码混淆场景** |
+
+::: tip 默认已导入的包
+QLExpress4 默认导入了以下 Java 包：`java.lang`、`java.util`、`java.math`、`java.util.stream`、`java.util.function`。脚本中可以直接使用这些包下的类（需开放安全策略）。
+:::
+
+### 8.6 `@QLAlias` 注解与中文脚本
+
+QLExpress4 支持通过 `@QLAlias` 注解给 Java 类、字段和方法添加中文别名，让非技术人员也能用自然语言编写规则脚本——这在客服系统等业务场景中极为实用。
+
+#### 定义别名
+
+```java
+import com.alibaba.qlexpress4.annotation.QLAlias;
+
+@QLAlias("用户")
+public class User {
+    @QLAlias("是vip")
+    private boolean vip;
+
+    @QLAlias("用户名")
+    private String name;
+
+    public boolean isVip() { return vip; }
+    public void setVip(boolean vip) { this.vip = vip; }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+}
+
+@QLAlias("订单")
+public class Order {
+    @QLAlias("订单号")
+    private String orderNum;
+
+    @QLAlias("金额")
+    private int amount;
+
+    // getter/setter 省略...
+}
+```
+
+#### 使用 `executeWithAliasObjects` 执行
+
+```java
+Order order = new Order();
+order.setAmount(100);
+
+User user = new User();
+user.setVip(true);
+
+Express4Runner runner = new Express4Runner(
+    InitOptions.builder().securityStrategy(QLSecurityStrategy.open()).build());
+
+// 脚本中直接使用中文别名
+Number result = (Number) runner.executeWithAliasObjects(
+    "用户.是vip ? 订单.金额 * 0.8 : 订单.金额",
+    QLOptions.DEFAULT_OPTIONS, order, user
+).getResult();  // 80
+```
+
+::: tip @QLAlias 的价值
+`@QLAlias` 让运营人员可以用 `"用户.是vip ? 订单.金额 * 0.8 : 订单.金额"` 这样的中文脚本编写规则，而无需了解 Java 字段名。这在客服系统的规则配置场景中可以大幅降低使用门槛。
+:::
+
+### 8.7 关键字与操作符别名
+
+除了 `@QLAlias` 注解给对象添加别名外，QLExpress4 还支持通过 `addAlias` 方法给**关键字、操作符和函数**添加别名，进一步让脚本贴近自然语言：
+
+```java
+Express4Runner runner = new Express4Runner(InitOptions.DEFAULT_OPTIONS);
+
+// 添加自定义函数
+runner.addFunction("zero", (String ignore) -> 0);
+
+// 关键字别名
+runner.addAlias("如果", "if");
+runner.addAlias("则", "then");
+runner.addAlias("否则", "else");
+runner.addAlias("返回", "return");
+
+// 操作符别名
+runner.addAlias("大于", ">");
+
+// 函数别名
+runner.addAlias("零", "zero");
+
+Map<String, Object> context = new HashMap<>();
+context.put("语文", 90);
+context.put("数学", 90);
+context.put("英语", 90);
+
+// 完全中文化的脚本
+Object result = runner.execute(
+    "如果 (语文 + 数学 + 英语 大于 270) 则 {返回 1;} 否则 {返回 零();}",
+    context, QLOptions.DEFAULT_OPTIONS
+).getResult();  // 0
+```
+
+支持别名关键字包括：`if`、`then`、`else`、`for`、`while`、`break`、`continue`、`return`、`function`、`macro`、`new`、`null`、`true`、`false`。
+
+::: tip 操作符和函数默认支持别名
+所有操作符（如 `in`、`like`、`>`、`+`）和自定义函数默认就支持通过 `addAlias` 添加别名。`in` 操作符也可以添加中文别名：`runner.addAlias("属于", "in")`。
+:::
+
+### 8.8 脚本依赖分析工具
+
+QLExpress4 提供了一组实用的分析方法，可以在**不执行脚本**的情况下，解析出脚本所需的外部变量、属性和函数——这在规则引擎场景中非常有价值，可以在执行前检查脚本依赖是否满足。
+
+#### `getOutVarNames`：解析外部变量
+
+```java
+Express4Runner runner = new Express4Runner(InitOptions.DEFAULT_OPTIONS);
+
+// 解析脚本中需要从外部传入的变量
+Set<String> outVarNames = runner.getOutVarNames(
+    "int a = 1, b = 10;\n" +
+    "c = 11\n" +
+    "e = a + b + c + d\n" +  // d 是外部变量
+    "f+e"                     // f 是外部变量
+);
+// 结果: ["d", "f"]  —— a、b、c 在脚本内定义，不是外部变量
+```
+
+#### `getOutVarAttrs`：解析外部变量属性路径
+
+`getOutVarAttrs` 是 `getOutVarNames` 的增强版，不仅返回外部变量名，还返回变量上的属性访问路径：
+
+```java
+Set<List<String>> outVarAttrs = runner.getOutVarAttrs("a.b.c + a.b.d * c.m");
+// 结果: [["a","b","c"], ["a","b","d"], ["c","m"]]
+```
+
+#### `getOutFunctions`：解析外部函数
+
+```java
+Set<String> outFunctions = runner.getOutFunctions("time('2025-09-8') + sum(1, sub(3,2))");
+// 结果: ["time", "sum", "sub"]
+```
+
+::: tip 生产环境应用
+这些分析工具可以用于：
+- **规则校验**：在保存规则前检查是否引用了不存在的变量或函数
+- **依赖预加载**：根据分析结果提前加载所需的上下文数据
+- **安全审计**：检查脚本是否引用了不应访问的变量
+:::
+
 ---
 
 ## 九、AI 客服系统中的实战应用
@@ -1494,6 +1785,331 @@ try {
 | **规则版本管理** | 表达式存储在数据库，支持版本和回滚 |
 | **利用追踪分析** | `traceExpression=true` 支持 AI 归因分析 |
 | **分布式预编译** | 可序列化预编译缓存支持跨机器分发 |
+
+---
+
+## 十一、补充说明
+
+本节收录 QLExpress4 中较少使用的特性，供有特殊需求的场景参考。
+
+### 11.1 宏（Macro）
+
+宏是一种**指令级别的文本替换**机制，在编译时将宏名替换为指定指令序列。与函数不同，宏在编译期展开，没有运行时调用开销：
+
+```java
+Express4Runner runner = new Express4Runner(InitOptions.DEFAULT_OPTIONS);
+
+// 定义宏：将 "sayHello" 替换为字符串 "hello"
+runner.addInstructionMacro("sayHello", new QLOptions.InstructionMacro(
+    new LoadAttribute("hello")));
+
+// 使用宏
+runner.execute("sayHello + \" world\"",
+    Collections.emptyMap(), QLOptions.DEFAULT_OPTIONS).getResult();  // "hello world"
+```
+
+::: warning 宏的局限性
+宏是基于指令的替换，不是简单的文本替换。需要了解 QLExpress4 内部指令集才能正确使用，适合框架开发者或高级用户。大多数场景下，自定义函数是更好的选择。
+:::
+
+### 11.2 动态变量（DynamicVariableContext）
+
+动态变量允许在脚本执行时**按需计算**变量值，而非提前将所有变量放入上下文。适用于变量值计算开销大、且不一定每次都需要的场景：
+
+```java
+Express4Runner runner = new Express4Runner(InitOptions.DEFAULT_OPTIONS);
+
+// 创建动态上下文
+DynamicContextContext dynamicContext = new DynamicContextContext(
+    "expensiveVar", () -> {
+        // 模拟耗时计算
+        Thread.sleep(1000);
+        return 42;
+    }
+);
+
+// 如果脚本不引用 expensiveVar，该 lambda 不会被调用
+runner.execute("1 + 2", dynamicContext, QLOptions.DEFAULT_OPTIONS);  // 不会触发计算
+
+// 引用时才计算
+runner.execute("expensiveVar + 1", dynamicContext,
+    QLOptions.DEFAULT_OPTIONS).getResult();  // 43，触发了 lambda
+```
+
+### 11.3 `replaceDefaultOperator` 替换内置运算符
+
+可以替换 QLExpress4 内置运算符的行为，例如自定义 `+` 的语义：
+
+```java
+Express4Runner runner = new Express4Runner(InitOptions.DEFAULT_OPTIONS);
+
+// 替换 + 运算符：字符串拼接时用空格分隔
+runner.replaceDefaultOperator("+", (a, b) -> {
+    if (a instanceof String && b instanceof String) {
+        return a + " " + b;
+    }
+    // 数字仍走默认逻辑
+    return QLConvert.asInt(a) + QLConvert.asInt(b);
+});
+
+runner.execute("\"hello\" + \"world\"",
+    Collections.emptyMap(), QLOptions.DEFAULT_OPTIONS).getResult();  // "hello world"
+```
+
+::: warning 谨慎使用
+替换内置运算符会影响所有使用该运算符的脚本，容易产生意想不到的副作用。仅在确有全局定制需求时使用。
+:::
+
+### 11.4 `QLFunctionalVarargs` 一对象三用
+
+`QLFunctionalVarargs` 是一个特殊接口，注册后可以同时作为**函数调用**、**可变参数函数**和**运算符**使用：
+
+```java
+Express4Runner runner = new Express4Runner(InitOptions.DEFAULT_OPTIONS);
+
+// 注册一个 QLFunctionalVarargs
+runner.addFunction("myFunc", new QLFunctionalVarargs() {
+    @Override
+    public Object call(Object... objects) {
+        return Arrays.stream(objects).reduce(0,
+            (a, b) -> QLConvert.asInt(a) + QLConvert.asInt(b));
+    }
+});
+
+// 用法一：普通函数调用
+runner.execute("myFunc(1,2,3)",
+    Collections.emptyMap(), QLOptions.DEFAULT_OPTIONS).getResult();  // 6
+
+// 用法二：运算符形式
+runner.execute("1 myFunc 2",
+    Collections.emptyMap(), QLOptions.DEFAULT_OPTIONS).getResult();  // 3
+```
+
+### 11.5 `addFunctionOfServiceMethod` 注册服务方法
+
+可以将 Java 对象的指定方法注册为脚本函数，适合已有 Service 层代码的快速接入：
+
+```java
+public class UserService {
+    public String getUserName(Long userId) {
+        return "用户" + userId;
+    }
+
+    public boolean isVip(Long userId) {
+        return userId % 2 == 0;
+    }
+}
+
+UserService userService = new UserService();
+Express4Runner runner = new Express4Runner(InitOptions.DEFAULT_OPTIONS);
+
+// 注册指定方法
+runner.addFunctionOfServiceMethod("getUserName",
+    userService, "getUserName", new Class[]{Long.class});
+runner.addFunctionOfServiceMethod("isVip",
+    userService, "isVip", new Class[]{Long.class});
+
+runner.execute("getUserName(100) + (isVip(100) ? ' (VIP)' : '')",
+    Collections.emptyMap(), QLOptions.DEFAULT_OPTIONS).getResult();  // "用户100 (VIP)"
+```
+
+### 11.6 `addFunctionsDefinedInScript` 脚本函数批量注册
+
+可以将一段脚本中通过 `function` 定义的函数批量注册到 Runner，供后续脚本复用：
+
+```java
+Express4Runner runner = new Express4Runner(InitOptions.DEFAULT_OPTIONS);
+
+// 定义一组函数
+String scriptFunctions =
+    "function add(a, b) { return a + b; }\n" +
+    "function sub(a, b) { return a - b; }\n" +
+    "function mul(a, b) { return a * b; }";
+
+// 批量注册
+List<String> registered = runner.addFunctionsDefinedInScript(scriptFunctions);
+// registered: ["add", "sub", "mul"]
+
+// 后续脚本中直接使用
+runner.execute("add(1, sub(3, 2)) * mul(2, 3)",
+    Collections.emptyMap(), QLOptions.DEFAULT_OPTIONS).getResult();  // 12
+```
+
+### 11.7 占位符（Selector）机制
+
+QLExpress4 支持在字符串中使用 `${}` 占位符，在**编译时**对占位符内的表达式进行解析和替换：
+
+```java
+Express4Runner runner = new Express4Runner(InitOptions.DEFAULT_OPTIONS);
+
+Map<String, Object> context = new HashMap<>();
+context.put("name", "张三");
+context.put("count", 5);
+
+// 动态字符串插值
+runner.execute("\"你好，${name}！您有${count}条消息\"",
+    context, QLOptions.DEFAULT_OPTIONS).getResult();
+// "你好，张三！您有5条消息"
+```
+
+::: tip 与普通字符串拼接的区别
+`${}` 插值在编译时解析，比运行时字符串拼接更高效。可以通过 `InterpolationMode.DISABLE` 关闭此特性。
+:::
+
+### 11.8 `@class` JSON 复杂对象创建
+
+在 JSON 对象中可以通过 `@class` 字段指定 Java 类型，创建复杂嵌套对象：
+
+```java
+Express4Runner runner = new Express4Runner(
+    InitOptions.builder().securityStrategy(QLSecurityStrategy.open()).build());
+
+// 使用 @class 创建带类型信息的对象
+Object result = runner.execute(
+    "{'@class':'com.example.MyConfig', 'name':'test', 'value':42, " +
+    "'nested':{'@class':'com.example.SubConfig', 'flag':true}}",
+    Collections.emptyMap(), QLOptions.DEFAULT_OPTIONS).getResult();
+```
+
+::: warning 需要开放安全策略
+`@class` 机制会实例化 Java 对象，需要安全策略为 open 模式。在沙箱环境中不可用。
+:::
+
+### 11.9 Spring 集成
+
+QLExpress4 官方提供了 Spring 集成方式，但**官方文档明确不推荐**在生产环境使用。建议直接使用 `Express4Runner` API 自行管理生命周期。
+
+如确需集成，核心思路是通过 Spring Bean 注入 Runner 实例：
+
+```java
+@Configuration
+public class QLExpressConfig {
+    @Bean
+    public Express4Runner express4Runner() {
+        return new Express4Runner(InitOptions.DEFAULT_OPTIONS);
+    }
+}
+```
+
+::: warning 官方建议
+QLExpress 官方文档指出 Spring 集成方式**不推荐使用**，建议开发者直接通过 `Express4Runner` API 集成。Runner 是线程安全的，全局单例即可。
+:::
+
+### 11.10 Debug 模式
+
+在开发调试阶段，可以开启 Debug 模式查看详细的执行指令和中间状态：
+
+```java
+Express4Runner runner = new Express4Runner(
+    InitOptions.builder().debug(true).build());
+
+// Debug 模式下，控制台会输出编译后的指令序列和执行过程
+runner.execute("1 + 2 * 3",
+    Collections.emptyMap(), QLOptions.DEFAULT_OPTIONS);
+```
+
+也可以通过 `QLOptions` 获取更详细的执行追踪信息（参见 7.5 节表达式计算追踪）。
+
+### 11.11 关闭字符串插值（`InterpolationMode.DISABLE`）
+
+如果脚本中需要使用 `${}` 字面量而不希望被解析为插值表达式，可以关闭插值：
+
+```java
+// 默认行为：${} 会被解析
+runner.execute("\"${name}\"",
+    context, QLOptions.DEFAULT_OPTIONS).getResult();  // "张三"
+
+// 关闭插值：${} 保持字面量
+runner.execute("\"${name}\"",
+    context, QLOptions.builder()
+        .interpolationMode(QLOptions.InterpolationMode.DISABLE)
+        .build()).getResult();  // "${name}"
+```
+
+### 11.12 数字字面量更多格式
+
+除了普通的十进制数字外，QLExpress4 还支持多种数字字面量格式：
+
+```java
+// 十六进制（0x 前缀）
+runner.execute("0xFF", context, QLOptions.DEFAULT_OPTIONS).getResult();  // 255
+
+// 二进制（0b 前缀）
+runner.execute("0b1010", context, QLOptions.DEFAULT_OPTIONS).getResult();  // 10
+
+// 八进制（0 前缀）
+runner.execute("010", context, QLOptions.DEFAULT_OPTIONS).getResult();  // 8
+
+// 类型后缀
+runner.execute("100L", context, QLOptions.DEFAULT_OPTIONS).getResult();  // 100L (long)
+runner.execute("3.14f", context, QLOptions.DEFAULT_OPTIONS).getResult();  // 3.14f (float)
+runner.execute("1000000s", context, QLOptions.DEFAULT_OPTIONS).getResult();  // short
+runner.execute("100b", context, QLOptions.DEFAULT_OPTIONS).getResult();  // byte
+```
+
+### 11.13 列表切片
+
+类似 Python 的切片语法，可以从列表中截取子列表：
+
+```java
+runner.execute("[1,2,3,4,5][1:3]",
+    context, QLOptions.DEFAULT_OPTIONS).getResult();  // [2, 3]
+
+runner.execute("[1,2,3,4,5][:2]",
+    context, QLOptions.DEFAULT_OPTIONS).getResult();  // [1, 2]
+
+runner.execute("[1,2,3,4,5][3:]",
+    context, QLOptions.DEFAULT_OPTIONS).getResult();  // [4, 5]
+```
+
+### 11.14 `allowPrivateAccess` 访问私有成员
+
+默认情况下，QLExpress4 只能访问 Java 对象的 `public` 字段和方法。在需要时可以开放私有成员访问：
+
+```java
+Express4Runner runner = new Express4Runner(
+    InitOptions.builder()
+        .securityStrategy(QLSecurityStrategy.open())
+        .allowPrivateAccess(true)
+        .build());
+
+// 此时脚本中可以访问 private 字段和方法
+```
+
+::: warning 安全风险
+开启 `allowPrivateAccess` 会破坏 Java 的封装性，存在安全风险。仅在受控环境下使用。
+:::
+
+### 11.15 特殊字符变量名
+
+QLExpress4 支持在变量名中使用中文字符、Unicode 字符等特殊字符：
+
+```java
+Map<String, Object> context = new HashMap<>();
+context.put("姓名", "张三");
+context.put("年龄", 25);
+context.put("π", 3.14);
+
+runner.execute("姓名 + '的年龄是' + 年龄",
+    context, QLOptions.DEFAULT_OPTIONS).getResult();  // "张三的年龄是25"
+
+runner.execute("π * 2",
+    context, QLOptions.DEFAULT_OPTIONS).getResult();  // 6.28
+```
+
+### 11.16 `throw` 语句
+
+可以在脚本中主动抛出异常，用于规则不满足时中断执行：
+
+```java
+runner.execute(
+    "if (amount < 0) { throw '金额不能为负数'; }\n" +
+    "amount * 0.8",
+    context, QLOptions.DEFAULT_OPTIONS);
+// 当 amount < 0 时抛出 QLException: 金额不能为负数
+```
+
+`throw` 可以抛出字符串（包装为 `QLException`）或 Java `Exception` 对象。
 
 ---
 

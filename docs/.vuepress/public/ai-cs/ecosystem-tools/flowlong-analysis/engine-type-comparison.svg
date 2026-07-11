@@ -1,0 +1,121 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 460" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <linearGradient id="blueG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="greenG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#34d399;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="amberG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="violetG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#a78bfa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.12"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="840" height="460" rx="14" fill="#f8fafc"/>
+
+  <!-- Title -->
+  <text x="420" y="36" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">四种流程引擎核心差异对比</text>
+  <text x="420" y="55" text-anchor="middle" font-size="11" fill="#94a3b8">从条件判断到人工审批，覆盖不同复杂度的流程需求</text>
+
+  <!-- Table Header -->
+  <g filter="url(#shadow)">
+    <rect x="20" y="72" width="800" height="38" rx="8" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1"/>
+  </g>
+  <text x="110" y="96" text-anchor="middle" font-size="12" font-weight="700" fill="#475569">维度</text>
+  <text x="280" y="96" text-anchor="middle" font-size="12" font-weight="700" fill="#3b82f6">表达式引擎</text>
+  <text x="450" y="96" text-anchor="middle" font-size="12" font-weight="700" fill="#10b981">流程编排引擎</text>
+  <text x="620" y="96" text-anchor="middle" font-size="12" font-weight="700" fill="#f59e0b">审批流引擎</text>
+  <text x="770" y="96" text-anchor="middle" font-size="12" font-weight="700" fill="#8b5cf6">工作流引擎</text>
+
+  <!-- Highlight column for 审批流引擎 -->
+  <rect x="555" y="114" width="130" height="310" fill="#fffbeb" opacity="0.5"/>
+
+  <!-- Row 1: 核心能力 -->
+  <rect x="20" y="114" width="800" height="40" fill="white"/>
+  <line x1="20" y1="154" x2="820" y2="154" stroke="#f1f5f9" stroke-width="1"/>
+  <text x="110" y="139" text-anchor="middle" font-size="11" font-weight="600" fill="#1e293b">核心能力</text>
+  <text x="280" y="133" text-anchor="middle" font-size="10" fill="#374151">单条表达式求值</text>
+  <text x="280" y="147" text-anchor="middle" font-size="10" fill="#374151">条件判断与计算</text>
+  <text x="450" y="133" text-anchor="middle" font-size="10" fill="#374151">多步骤自动编排</text>
+  <text x="450" y="147" text-anchor="middle" font-size="10" fill="#374151">串行/并行/循环</text>
+  <text x="620" y="133" text-anchor="middle" font-size="10" fill="#1e293b" font-weight="600">人工审批任务流转</text>
+  <text x="620" y="147" text-anchor="middle" font-size="10" fill="#1e293b" font-weight="600">会签/或签/驳回</text>
+  <text x="770" y="133" text-anchor="middle" font-size="10" fill="#374151">完整 BPM 管理</text>
+  <text x="770" y="147" text-anchor="middle" font-size="10" fill="#374151">BPMN 2.0 标准</text>
+
+  <!-- Row 2: 人工任务 -->
+  <rect x="20" y="156" width="800" height="36" fill="#fafafa"/>
+  <line x1="20" y1="192" x2="820" y2="192" stroke="#f1f5f9" stroke-width="1"/>
+  <text x="110" y="179" text-anchor="middle" font-size="11" font-weight="600" fill="#1e293b">人工任务</text>
+  <text x="280" y="179" text-anchor="middle" font-size="10" fill="#ef4444">❌ 不支持</text>
+  <text x="450" y="179" text-anchor="middle" font-size="10" fill="#ef4444">❌ 不支持</text>
+  <text x="620" y="179" text-anchor="middle" font-size="10" fill="#10b981">✅ 核心能力</text>
+  <text x="770" y="179" text-anchor="middle" font-size="10" fill="#10b981">✅ 核心能力</text>
+
+  <!-- Row 3: 持久化 -->
+  <rect x="20" y="194" width="800" height="36" fill="white"/>
+  <line x1="20" y1="230" x2="820" y2="230" stroke="#f1f5f9" stroke-width="1"/>
+  <text x="110" y="217" text-anchor="middle" font-size="11" font-weight="600" fill="#1e293b">状态持久化</text>
+  <text x="280" y="217" text-anchor="middle" font-size="10" fill="#ef4444">无</text>
+  <text x="450" y="217" text-anchor="middle" font-size="10" fill="#f59e0b">通常无</text>
+  <text x="620" y="217" text-anchor="middle" font-size="10" fill="#1e293b" font-weight="600">数据库持久化</text>
+  <text x="770" y="217" text-anchor="middle" font-size="10" fill="#374151">数据库持久化</text>
+
+  <!-- Row 4: 流程描述 -->
+  <rect x="20" y="232" width="800" height="36" fill="#fafafa"/>
+  <line x1="20" y1="268" x2="820" y2="268" stroke="#f1f5f9" stroke-width="1"/>
+  <text x="110" y="255" text-anchor="middle" font-size="11" font-weight="600" fill="#1e293b">流程描述</text>
+  <text x="280" y="255" text-anchor="middle" font-size="10" fill="#374151">表达式字符串</text>
+  <text x="450" y="255" text-anchor="middle" font-size="10" fill="#374151">DSL (XML/JSON)</text>
+  <text x="620" y="255" text-anchor="middle" font-size="10" fill="#1e293b" font-weight="600">JSON</text>
+  <text x="770" y="255" text-anchor="middle" font-size="10" fill="#374151">BPMN 2.0 XML</text>
+
+  <!-- Row 5: 典型代表 -->
+  <rect x="20" y="270" width="800" height="40" fill="white"/>
+  <line x1="20" y1="310" x2="820" y2="310" stroke="#f1f5f9" stroke-width="1"/>
+  <text x="110" y="295" text-anchor="middle" font-size="11" font-weight="600" fill="#1e293b">典型代表</text>
+  <text x="280" y="289" text-anchor="middle" font-size="10" fill="#374151">QLExpress4</text>
+  <text x="280" y="303" text-anchor="middle" font-size="10" fill="#374151">Aviator · SpEL</text>
+  <text x="450" y="289" text-anchor="middle" font-size="10" fill="#374151">LiteFlow</text>
+  <text x="450" y="303" text-anchor="middle" font-size="10" fill="#374151">CompileFlow</text>
+  <text x="620" y="289" text-anchor="middle" font-size="10" fill="#f59e0b" font-weight="700">FlowLong</text>
+  <text x="620" y="303" text-anchor="middle" font-size="10" fill="#374151">SnakerFlow</text>
+  <text x="770" y="289" text-anchor="middle" font-size="10" fill="#374151">Activiti</text>
+  <text x="770" y="303" text-anchor="middle" font-size="10" fill="#374151">Flowable · Camunda</text>
+
+  <!-- Row 6: 复杂度 -->
+  <rect x="20" y="312" width="800" height="36" fill="#fafafa"/>
+  <line x1="20" y1="348" x2="820" y2="348" stroke="#f1f5f9" stroke-width="1"/>
+  <text x="110" y="335" text-anchor="middle" font-size="11" font-weight="600" fill="#1e293b">复杂度</text>
+  <text x="280" y="335" text-anchor="middle" font-size="10" fill="#374151">极低</text>
+  <text x="450" y="335" text-anchor="middle" font-size="10" fill="#374151">低</text>
+  <text x="620" y="335" text-anchor="middle" font-size="10" fill="#1e293b" font-weight="600">低~中</text>
+  <text x="770" y="335" text-anchor="middle" font-size="10" fill="#374151">高</text>
+
+  <!-- Row 7: 适用场景 -->
+  <rect x="20" y="350" width="800" height="44" fill="white"/>
+  <text x="110" y="376" text-anchor="middle" font-size="11" font-weight="600" fill="#1e293b">适用场景</text>
+  <text x="280" y="370" text-anchor="middle" font-size="10" fill="#374151">条件判断</text>
+  <text x="280" y="384" text-anchor="middle" font-size="10" fill="#374151">动态规则求值</text>
+  <text x="450" y="370" text-anchor="middle" font-size="10" fill="#374151">业务步骤编排</text>
+  <text x="450" y="384" text-anchor="middle" font-size="10" fill="#374151">自动流程调度</text>
+  <text x="620" y="370" text-anchor="middle" font-size="10" fill="#1e293b" font-weight="600">审批 · 工单流转</text>
+  <text x="620" y="384" text-anchor="middle" font-size="10" fill="#1e293b" font-weight="600">请假 · 报销</text>
+  <text x="770" y="370" text-anchor="middle" font-size="10" fill="#374151">企业级 BPM</text>
+  <text x="770" y="384" text-anchor="middle" font-size="10" fill="#374151">复杂流程治理</text>
+
+  <!-- Bottom tip -->
+  <rect x="160" y="412" width="520" height="30" rx="15" fill="#fffbeb" stroke="#fde68a" stroke-width="1"/>
+  <text x="420" y="431" text-anchor="middle" font-size="11" fill="#92400e">💡 四者互补：简单条件→表达式，自动编排→编排引擎，人工审批→审批流引擎</text>
+</svg>

@@ -27,6 +27,11 @@ icon: mdi:timeline-clock-outline
         <a class="timeline-entry__link" href="/ai-cs/flow-orchestration-engine/">新增《流程编排引擎Flow》</a>
         <span class="timeline-entry__desc">—— LiteFlow 与 CompileFlow 两大流程编排引擎的设计与实践</span>
       </div>
+      <div class="timeline-entry">
+        <span class="timeline-entry__tag timeline-entry__tag--ai">AI客服系统</span>
+        <a class="timeline-entry__link" href="/ai-cs/flowlong-analysis/">新增《FlowLong审批流引擎分析》</a>
+        <span class="timeline-entry__desc">—— 极简审批工作流引擎，JSON定义流程、MyBatis-Plus持久化、零BPMN依赖</span>
+      </div>
     </div>
   </div>
 </div>
