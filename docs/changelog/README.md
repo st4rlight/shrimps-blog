@@ -24,7 +24,7 @@ icon: mdi:timeline-clock-outline
     <div class="timeline-item__entries">
       <div class="timeline-entry">
         <span class="timeline-entry__tag timeline-entry__tag--ai">AI客服系统</span>
-        <a class="timeline-entry__link" href="/ai-cs/fsm-introduction/">新增《有限状态机FSM》</a>
+        <a class="timeline-entry__link" href="/ai-cs/fsm-introduction/">新增《有限状态机引擎FSM》</a>
         <span class="timeline-entry__desc">—— FSM三要素、DFA/NFA分类、四种实现方式、主流框架对比与基于策略模式的轻量级状态机实战</span>
       </div>
       <div class="timeline-entry">
