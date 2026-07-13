@@ -1,0 +1,128 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 560" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <linearGradient id="blueG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1"/>
+    </linearGradient>
+    <linearGradient id="violetG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#a78bfa;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1"/>
+    </linearGradient>
+    <linearGradient id="emeraldG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#34d399;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#10b981;stop-opacity:1"/>
+    </linearGradient>
+    <linearGradient id="indigoG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#818cf8;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#6366f1;stop-opacity:1"/>
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.12"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto" preserveAspectRatio="xMidYMid meet">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/>
+    </marker>
+    <marker id="arrowB" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto" preserveAspectRatio="xMidYMid meet">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#6366f1"/>
+    </marker>
+  </defs>
+
+  <!-- ===== Background ===== -->
+  <rect width="800" height="560" rx="12" fill="#f8fafc"/>
+
+  <!-- ===== Title ===== -->
+  <text x="400" y="35" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">报表中台：三层架构与元数据驱动</text>
+  <text x="400" y="56" text-anchor="middle" font-size="12" fill="#94a3b8">统一管理 物理表 · 视图 · API，由一套元数据表缝合成体系</text>
+
+  <!-- ===== Left: 元数据层 ===== -->
+  <g filter="url(#shadow)">
+    <rect x="30" y="80" width="210" height="460" rx="12" fill="#ffffff" stroke="#6366f1" stroke-width="2"/>
+  </g>
+  <rect x="30" y="80" width="210" height="40" rx="12" fill="url(#indigoG)"/>
+  <rect x="30" y="100" width="210" height="20" fill="url(#indigoG)"/>
+  <text x="135" y="106" text-anchor="middle" font-size="14" font-weight="700" fill="#ffffff">元数据层 · 8 张表</text>
+
+  <!-- chips 2x4 -->
+  <rect x="45" y="135" width="90" height="34" rx="6" fill="#eef2ff" stroke="#c7d2fe" stroke-width="1"/>
+  <text x="90" y="156" text-anchor="middle" font-size="8" fill="#4338ca">meta_datasource</text>
+  <rect x="150" y="135" width="90" height="34" rx="6" fill="#eef2ff" stroke="#c7d2fe" stroke-width="1"/>
+  <text x="195" y="156" text-anchor="middle" font-size="8" fill="#4338ca">meta_physical_table</text>
+  <rect x="45" y="180" width="90" height="34" rx="6" fill="#eef2ff" stroke="#c7d2fe" stroke-width="1"/>
+  <text x="90" y="201" text-anchor="middle" font-size="8" fill="#4338ca">meta_column</text>
+  <rect x="150" y="180" width="90" height="34" rx="6" fill="#eef2ff" stroke="#c7d2fe" stroke-width="1"/>
+  <text x="195" y="201" text-anchor="middle" font-size="8" fill="#4338ca">meta_lineage</text>
+  <rect x="45" y="225" width="90" height="34" rx="6" fill="#eef2ff" stroke="#c7d2fe" stroke-width="1"/>
+  <text x="90" y="246" text-anchor="middle" font-size="8" fill="#4338ca">meta_view</text>
+  <rect x="150" y="225" width="90" height="34" rx="6" fill="#eef2ff" stroke="#c7d2fe" stroke-width="1"/>
+  <text x="195" y="246" text-anchor="middle" font-size="8" fill="#4338ca">meta_view_field</text>
+  <rect x="45" y="270" width="90" height="34" rx="6" fill="#eef2ff" stroke="#c7d2fe" stroke-width="1"/>
+  <text x="90" y="291" text-anchor="middle" font-size="8" fill="#4338ca">meta_api</text>
+  <rect x="150" y="270" width="90" height="34" rx="6" fill="#eef2ff" stroke="#c7d2fe" stroke-width="1"/>
+  <text x="195" y="291" text-anchor="middle" font-size="8" fill="#4338ca">meta_api_param</text>
+
+  <!-- footer note -->
+  <rect x="45" y="320" width="180" height="200" rx="10" fill="#f1f5f9"/>
+  <text x="60" y="348" font-size="11" fill="#475569">
+    <tspan x="60" dy="0">这些表把三层缝在一起：</tspan>
+    <tspan x="60" dy="20">新增一个取数接口 =</tspan>
+    <tspan x="60" dy="20">注册视图 + 配 API</tspan>
+    <tspan x="60" dy="20">+ 配参数映射，</tspan>
+    <tspan x="60" dy="20">全程无需写新服务。</tspan>
+  </text>
+
+  <!-- arrow left -> right (元数据驱动) -->
+  <line x1="240" y1="305" x2="266" y2="305" stroke="#6366f1" stroke-width="1.5" marker-end="url(#arrowB)"/>
+  <text x="253" y="297" text-anchor="middle" font-size="10" font-weight="600" fill="#6366f1">驱动</text>
+
+  <!-- ===== Right: 3 layer cards ===== -->
+  <!-- Card1 API -->
+  <g filter="url(#shadow)">
+    <rect x="270" y="80" width="500" height="125" rx="12" fill="#ffffff" stroke="#3b82f6" stroke-width="2"/>
+  </g>
+  <rect x="270" y="80" width="500" height="40" rx="12" fill="url(#blueG)"/>
+  <rect x="270" y="100" width="500" height="20" fill="url(#blueG)"/>
+  <text x="290" y="106" font-size="15" font-weight="700" fill="#ffffff">API 管理层（取）</text>
+  <text x="290" y="140" font-size="12" fill="#475569">
+    <tspan x="290" dy="0">把「视图 + 入参映射」翻译成带条件的查询，包成 HTTP 接口。</tspan>
+    <tspan x="290" dy="20">配置一个视图 + 一条 API 规则，零新增服务代码。</tspan>
+  </text>
+  <text x="290" y="190" font-size="10" fill="#64748b">元数据：meta_api · meta_api_param</text>
+
+  <!-- arrow card1 -> card2 -->
+  <line x1="520" y1="205" x2="520" y2="221" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="528" y="216" text-anchor="start" font-size="10" font-weight="600" fill="#64748b">引用视图</text>
+
+  <!-- Card2 视图层 -->
+  <g filter="url(#shadow)">
+    <rect x="270" y="225" width="500" height="125" rx="12" fill="#ffffff" stroke="#8b5cf6" stroke-width="2"/>
+  </g>
+  <rect x="270" y="225" width="500" height="40" rx="12" fill="url(#violetG)"/>
+  <rect x="270" y="245" width="500" height="20" fill="url(#violetG)"/>
+  <text x="290" y="251" font-size="15" font-weight="700" fill="#ffffff">视图层 · 逻辑表（算）</text>
+  <text x="290" y="285" font-size="12" fill="#475569">
+    <tspan x="290" dy="0">Calcite 解析→校验→RBO(HepPlanner)→CBO(VolcanoPlanner)</tspan>
+    <tspan x="290" dy="20">→物化改写→方言下推；缓存优化后 RelNode 复用。</tspan>
+  </text>
+  <text x="290" y="335" font-size="10" fill="#64748b">元数据：meta_view · meta_view_field</text>
+
+  <!-- arrow card2 -> card3 -->
+  <line x1="520" y1="350" x2="520" y2="366" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="528" y="362" text-anchor="start" font-size="10" font-weight="600" fill="#64748b">映射物理表</text>
+
+  <!-- Card3 物理表层 -->
+  <g filter="url(#shadow)">
+    <rect x="270" y="370" width="500" height="125" rx="12" fill="#ffffff" stroke="#10b981" stroke-width="2"/>
+  </g>
+  <rect x="270" y="370" width="500" height="40" rx="12" fill="url(#emeraldG)"/>
+  <rect x="270" y="390" width="500" height="20" fill="url(#emeraldG)"/>
+  <text x="290" y="396" font-size="15" font-weight="700" fill="#ffffff">物理表管理层（存与管）</text>
+  <text x="290" y="430" font-size="12" fill="#475569">
+    <tspan x="290" dy="0">多源元数据注册/发现、字段血缘自动抽取、统计采集。</tspan>
+    <tspan x="290" dy="20">row_count / ndv 是 CBO 的「燃料」。</tspan>
+  </text>
+  <text x="290" y="480" font-size="10" fill="#64748b">元数据：meta_physical_table · meta_column · meta_lineage · meta_datasource</text>
+
+  <!-- ===== Bottom tip ===== -->
+  <rect x="250" y="524" width="300" height="26" rx="13" fill="#eef2ff" stroke="#c7d2fe" stroke-width="1"/>
+  <text x="400" y="541" text-anchor="middle" font-size="11" fill="#4338ca">💡 三层统一在一个平台，需求变更 = 配视图 + 配接口</text>
+</svg>

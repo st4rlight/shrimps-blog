@@ -1,0 +1,115 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 420" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <linearGradient id="blueG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1"/>
+    </linearGradient>
+    <linearGradient id="violetG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#a78bfa;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1"/>
+    </linearGradient>
+    <linearGradient id="indigoG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#818cf8;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#6366f1;stop-opacity:1"/>
+    </linearGradient>
+    <linearGradient id="emeraldG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#34d399;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#10b981;stop-opacity:1"/>
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.12"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto" preserveAspectRatio="xMidYMid meet">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/>
+    </marker>
+  </defs>
+
+  <!-- ===== Background ===== -->
+  <rect width="800" height="420" rx="12" fill="#f8fafc"/>
+
+  <!-- ===== Title ===== -->
+  <text x="400" y="35" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">Calcite 查询优化流水线</text>
+  <text x="400" y="56" text-anchor="middle" font-size="12" fill="#94a3b8">视图 SQL → 解析 → 校验 → RBO → CBO → 物化改写 → 方言下推</text>
+
+  <!-- ===== Premise banner ===== -->
+  <rect x="30" y="72" width="740" height="44" rx="8" fill="#fef3c7" stroke="#fcd34d" stroke-width="1"/>
+  <text x="50" y="95" font-size="11" fill="#92400e">
+    <tspan x="50" dy="0">关键前提：Calcite 必须先「认识」物理表 —— 自定义 Schema 暴露列结构（getRowType）+ getStatistic() 喂统计信息，</tspan>
+    <tspan x="50" dy="16">否则 RBO 只能做语法改写、CBO 会因缺统计而「不生效」。</tspan>
+  </text>
+
+  <!-- ===== Pipeline cards ===== -->
+  <!-- Card1 解析 -->
+  <g filter="url(#shadow)"><rect x="50" y="150" width="100" height="90" rx="10" fill="#ffffff" stroke="#3b82f6" stroke-width="2"/></g>
+  <rect x="50" y="150" width="100" height="30" rx="10" fill="url(#blueG)"/>
+  <rect x="50" y="165" width="100" height="15" fill="url(#blueG)"/>
+  <text x="100" y="170" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">SQL 解析</text>
+  <text x="100" y="198" text-anchor="middle" font-size="9" fill="#475569">→ SqlNode</text>
+  <text x="100" y="213" text-anchor="middle" font-size="9" fill="#64748b">(AST)</text>
+
+  <!-- Card2 校验 -->
+  <g filter="url(#shadow)"><rect x="170" y="150" width="100" height="90" rx="10" fill="#ffffff" stroke="#3b82f6" stroke-width="2"/></g>
+  <rect x="170" y="150" width="100" height="30" rx="10" fill="url(#blueG)"/>
+  <rect x="170" y="165" width="100" height="15" fill="url(#blueG)"/>
+  <text x="220" y="170" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">语义校验</text>
+  <text x="220" y="198" text-anchor="middle" font-size="9" fill="#475569">绑定元数据</text>
+  <text x="220" y="213" text-anchor="middle" font-size="9" fill="#64748b">校验类型</text>
+
+  <!-- Card3 逻辑计划 -->
+  <g filter="url(#shadow)"><rect x="290" y="150" width="100" height="90" rx="10" fill="#ffffff" stroke="#3b82f6" stroke-width="2"/></g>
+  <rect x="290" y="150" width="100" height="30" rx="10" fill="url(#blueG)"/>
+  <rect x="290" y="165" width="100" height="15" fill="url(#blueG)"/>
+  <text x="340" y="170" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">逻辑计划</text>
+  <text x="340" y="198" text-anchor="middle" font-size="9" fill="#475569">→ RelNode</text>
+  <text x="340" y="213" text-anchor="middle" font-size="9" fill="#64748b">(未优化)</text>
+
+  <!-- Card4 RBO -->
+  <g filter="url(#shadow)"><rect x="410" y="150" width="100" height="90" rx="10" fill="#ffffff" stroke="#8b5cf6" stroke-width="2"/></g>
+  <rect x="410" y="150" width="100" height="30" rx="10" fill="url(#violetG)"/>
+  <rect x="410" y="165" width="100" height="15" fill="url(#violetG)"/>
+  <text x="460" y="170" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">RBO</text>
+  <text x="460" y="198" text-anchor="middle" font-size="9" fill="#475569">规则改写</text>
+  <text x="460" y="213" text-anchor="middle" font-size="9" fill="#64748b">HepPlanner</text>
+
+  <!-- Card5 CBO -->
+  <g filter="url(#shadow)"><rect x="530" y="150" width="100" height="90" rx="10" fill="#ffffff" stroke="#6366f1" stroke-width="2"/></g>
+  <rect x="530" y="150" width="100" height="30" rx="10" fill="url(#indigoG)"/>
+  <rect x="530" y="165" width="100" height="15" fill="url(#indigoG)"/>
+  <text x="580" y="170" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">CBO</text>
+  <text x="580" y="198" text-anchor="middle" font-size="9" fill="#475569">代价择优</text>
+  <text x="580" y="213" text-anchor="middle" font-size="9" fill="#64748b">VolcanoPlanner</text>
+
+  <!-- Card6 方言下推 -->
+  <g filter="url(#shadow)"><rect x="650" y="150" width="100" height="90" rx="10" fill="#ffffff" stroke="#10b981" stroke-width="2"/></g>
+  <rect x="650" y="150" width="100" height="30" rx="10" fill="url(#emeraldG)"/>
+  <rect x="650" y="165" width="100" height="15" fill="url(#emeraldG)"/>
+  <text x="700" y="170" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">方言下推</text>
+  <text x="700" y="198" text-anchor="middle" font-size="9" fill="#475569">RelToSql</text>
+  <text x="700" y="213" text-anchor="middle" font-size="9" fill="#64748b">推给数据源</text>
+
+  <!-- arrows between cards -->
+  <line x1="150" y1="195" x2="166" y2="195" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="270" y1="195" x2="286" y2="195" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="390" y1="195" x2="406" y2="195" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="510" y1="195" x2="526" y2="195" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="630" y1="195" x2="646" y2="195" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- ===== Note boxes ===== -->
+  <rect x="50" y="260" width="350" height="70" rx="10" fill="#faf5ff" stroke="#e9d5ff" stroke-width="1"/>
+  <text x="65" y="285" font-size="11" fill="#6b21a8">
+    <tspan x="65" dy="0">RBO（HepPlanner）：确定性规则改写</tspan>
+    <tspan x="65" dy="18">过滤下推 / 列裁剪 / 投影合并 / 谓词合并</tspan>
+    <tspan x="65" dy="18">⚠ planner.rel() 不会自动触发，需显式运行</tspan>
+  </text>
+
+  <rect x="420" y="260" width="350" height="70" rx="10" fill="#eef2ff" stroke="#c7d2fe" stroke-width="1"/>
+  <text x="435" y="285" font-size="11" fill="#3730a3">
+    <tspan x="435" dy="0">CBO（VolcanoPlanner）：代价择优</tspan>
+    <tspan x="435" dy="18">基于 getStatistic() 统计，枚举等价计划</tspan>
+    <tspan x="435" dy="18">按 RelOptCost 选 join 顺序 / 访问路径</tspan>
+  </text>
+
+  <!-- ===== Bottom tip ===== -->
+  <rect x="160" y="372" width="480" height="28" rx="14" fill="#ecfdf5" stroke="#a7f3d0" stroke-width="1"/>
+  <text x="400" y="391" text-anchor="middle" font-size="11" fill="#047857">💡 物化视图可在 CBO 阶段由 MaterializedViewRule 自动改写；方言由 meta_datasource.dialect 决定</text>
+</svg>

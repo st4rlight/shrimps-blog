@@ -4,9 +4,7 @@ tags:
   - 报表中台
   - Calcite
   - 数据中台
-  - 元数据
   - 物化视图
-  - SQL优化
   - 语义层
 excerpt: 报表中台是一套统一管理物理表、视图与 API 的系统。本文从元数据表设计（DDL）落地，到视图层如何接入 Apache Calcite 完成 SQL 解析、校验、RBO/CBO 优化与物化视图改写，再到 API 层的参数映射与 SQL 生成，给出可照着实现的全链路技术细节。
 createTime: 2026/07/13 13:30:00
@@ -227,6 +225,8 @@ try (Connection conn = dataSource.getConnection()) {
 
 视图层是中台最有价值、也最需要"算得聪明"的一层。它的任务是：**把用户定义的视图 SQL，翻译成对物理数据源最高效的执行计划**。这件事交给 Apache Calcite。
 
+![Calcite 查询优化流水线](/commercial-tech/report-tech/report-middle-platform/calcite-pipeline-mechanism.svg)
+
 ### 4.1 Calcite 在中台里扮演什么角色
 
 Apache Calcite 是一个**动态数据管理框架**，本身不存储数据，只负责"查询的大脑"：
@@ -373,6 +373,8 @@ calciteSchema.add("mv_gmv_daily",
 
 中台据此可提供"视图定义 → 自动选物化策略"的能力（Calcite 的 `Lattice` 还能做多维物化的自动推荐），这是视图层优化的进阶形态。
 
+![物化视图：即时计算 vs 预计算权衡](/commercial-tech/report-tech/report-middle-platform/materialization-tradeoff.svg)
+
 ### 4.7 多数据源与方言下推
 
 同一份视图可能 join 多个数据源。Calcite 通过 Adapter（如 JDBC Adapter）屏蔽差异，并借 `RelToSqlConverter` 把优化后的 `RelNode` **回写成对应方言 SQL** 下推给数据源执行：
@@ -448,6 +450,8 @@ public PageResult query(String path, Map<String, Object> params) {
 ```
 
 三层各司其职，Calcite 串起视图层的"算"，API 层解决"取"，物理表层解决"存与管"，元数据表把三层缝在一起。
+
+![报表中台三层架构总览](/commercial-tech/report-tech/report-middle-platform/report-platform-overview.svg)
 
 ### 6.2 业界参考：这其实就是"语义层（Semantic Layer）"
 
