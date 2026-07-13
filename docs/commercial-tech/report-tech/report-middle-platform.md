@@ -105,30 +105,35 @@ Calcite 通过 Adapter 屏蔽底层差异。同一份视图定义，可以对接
 一个典型的视图优化流程：
 
 ```java
-// 1. 配置 Calcite：连接物理数据源的 schema，挂载 RBO 优化规则
-//    Programs.ofRules(...) 直接接收 RelOptRule，无需再用 RuleSets.ofList 包裹
+// 1. 配置 Calcite：连接物理数据源的 schema
 FrameworkConfig config = Frameworks.newConfigBuilder()
     .defaultSchema(schema)            // 物理表元数据
     .parserConfig(SqlParser.Config.DEFAULT)
-    .programs(Programs.ofRules(
-        CoreRules.FILTER_INTO_JOIN,   // 过滤下推：把 Join 上方的过滤条件下推
-        CoreRules.PROJECT_MERGE       // 投影合并：合并相邻的 Project 算子树
-    ))                                // 该 program 基于 HepPlanner（RBO）
     .build();
 
-// 2. 把一个视图定义（SQL）解析、校验、优化
+// 2. 把视图定义（SQL）解析、校验、转换为关系代数（逻辑计划，尚未优化）
 Planner planner = Frameworks.getPlanner(config);
 SqlNode sqlNode = planner.parse(
     "SELECT u.name, SUM(o.amount) " +
     "FROM users u JOIN orders o ON u.id = o.uid " +
     "GROUP BY u.name");
 sqlNode = planner.validate(sqlNode);
-RelNode relNode = planner.rel(sqlNode).rel;   // 关系代数（RelRoot.rel）+ 已应用 RBO 优化
+RelNode relNode = planner.rel(sqlNode).rel;
 
-// 3. relNode 经 Adapter 下推/转换为具体数据源的执行计划后下发
+// 3. 用 HepPlanner（RBO）显式应用 Calcite 优化规则
+//    注意：planner.rel() 产出的是逻辑计划，优化需单独跑一遍规则
+HepProgram program = HepProgram.builder()
+    .addRuleInstance(CoreRules.FILTER_INTO_JOIN)   // 过滤下推
+    .addRuleInstance(CoreRules.PROJECT_MERGE)      // 投影合并
+    .build();
+HepPlanner hepPlanner = new HepPlanner(program);
+hepPlanner.setRoot(relNode);
+RelNode optimized = hepPlanner.findBestExp();      // 优化后的执行计划
+
+// 4. optimized 经 Adapter 下推/转换为具体数据源的执行计划后下发
 ```
 
-视图在注册进中台时跑一遍上述流程，得到优化后的计划并缓存；运行时命中视图直接复用，避免重复解析与优化。
+视图在注册进中台时，按"解析 → 校验 → 转关系代数 → RBO/CBO 优化"的完整流水线跑一遍，把优化后的计划缓存下来；运行时命中视图直接复用，避免重复解析与优化。
 
 ### 3.6 视图的物化：从"即时计算"到"预计算"（进阶）
 
