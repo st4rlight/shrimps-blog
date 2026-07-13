@@ -50,6 +50,7 @@ export default defineUserConfig({
       { text: 'AI学习', link: '/ai-study/', icon: 'mdi:robot-outline' },
       { text: 'AI源码', link: '/ai-source/', icon: 'mdi:code-braces' },
       { text: 'AI客服系统', link: '/ai-cs/', icon: 'mdi:headset' },
+      { text: '商业化技术体系', link: '/commercial-tech/', icon: 'mdi:briefcase' },
       { text: '拾遗补阙', link: '/notes/', icon: 'mdi:puzzle-outline' },
       // { text: '归档', link: '/blog/archives/', icon: 'mdi:archive-outline' },
       // { text: '标签', link: '/blog/tags/', icon: 'mdi:tag-outline' },
@@ -90,6 +91,21 @@ export default defineUserConfig({
             collapsed: false,
             items: [
               'expression-engine/qlexpress-study-notes.md',
+            ],
+          },
+        ],
+      },
+      {
+        type: 'doc',
+        dir: 'commercial-tech',
+        title: '商业化技术体系',
+        sidebar: [
+          {
+            text: '报表技术体系',
+            link: '/commercial-tech/',
+            collapsed: false,
+            items: [
+              'report-tech/report-middle-platform.md',
             ],
           },
         ],
