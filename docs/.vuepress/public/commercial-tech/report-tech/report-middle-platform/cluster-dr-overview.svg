@@ -1,0 +1,125 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 580" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <linearGradient id="blueG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1"/>
+    </linearGradient>
+    <linearGradient id="indigoG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#818cf8;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#6366f1;stop-opacity:1"/>
+    </linearGradient>
+    <linearGradient id="emeraldG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#34d399;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#10b981;stop-opacity:1"/>
+    </linearGradient>
+    <linearGradient id="redG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#f87171;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#ef4444;stop-opacity:1"/>
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.12"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto" preserveAspectRatio="xMidYMid meet">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/>
+    </marker>
+    <marker id="arrowB" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto" preserveAspectRatio="xMidYMid meet">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#3b82f6"/>
+    </marker>
+    <marker id="arrowR" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto" preserveAspectRatio="xMidYMid meet">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#ef4444"/>
+    </marker>
+  </defs>
+
+  <!-- ===== Background ===== -->
+  <rect width="800" height="580" rx="12" fill="#f8fafc"/>
+
+  <!-- ===== Title ===== -->
+  <text x="400" y="35" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">报表中台集群容灾架构</text>
+  <text x="400" y="56" text-anchor="middle" font-size="12" fill="#94a3b8">分层高可用 · 同城双 AZ 同步复制 + 探活路由自动 Failover</text>
+
+  <!-- ===== Layer1: 网关 / LB ===== -->
+  <g filter="url(#shadow)">
+    <rect x="330" y="72" width="180" height="34" rx="8" fill="#dbeafe" stroke="#93c5fd" stroke-width="1.5"/>
+  </g>
+  <text x="420" y="94" text-anchor="middle" font-size="12" font-weight="600" fill="#1d4ed8">网关 / 负载均衡</text>
+
+  <!-- ===== Layer2: 中台服务集群 ===== -->
+  <g filter="url(#shadow)">
+    <rect x="250" y="125" width="340" height="80" rx="12" fill="#ffffff" stroke="#3b82f6" stroke-width="2"/>
+  </g>
+  <rect x="250" y="125" width="340" height="30" rx="12" fill="url(#blueG)"/>
+  <rect x="250" y="142" width="340" height="13" fill="url(#blueG)"/>
+  <text x="265" y="145" font-size="13" font-weight="700" fill="#ffffff">中台服务集群（无状态 · Calcite）</text>
+  <rect x="270" y="170" width="80" height="24" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="310" y="186" text-anchor="middle" font-size="11" fill="#1d4ed8">实例-1</text>
+  <rect x="360" y="170" width="80" height="24" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="400" y="186" text-anchor="middle" font-size="11" fill="#1d4ed8">实例-2</text>
+  <rect x="450" y="170" width="80" height="24" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="490" y="186" text-anchor="middle" font-size="11" fill="#1d4ed8">实例-3</text>
+
+  <!-- arrow LB -> 中台 -->
+  <line x1="420" y1="106" x2="420" y2="121" stroke="#3b82f6" stroke-width="1.5" marker-end="url(#arrowB)"/>
+  <!-- arrow 中台 -> 元数据层 -->
+  <line x1="370" y1="205" x2="370" y2="226" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <!-- arrow 中台 -> 数据层 (折线) -->
+  <path d="M 560 205 L 640 205 L 640 226" stroke="#94a3b8" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
+
+  <!-- ===== 元数据层 ===== -->
+  <g filter="url(#shadow)">
+    <rect x="250" y="230" width="240" height="92" rx="12" fill="#ffffff" stroke="#6366f1" stroke-width="2"/>
+  </g>
+  <rect x="250" y="230" width="240" height="30" rx="12" fill="url(#indigoG)"/>
+  <rect x="250" y="247" width="240" height="13" fill="url(#indigoG)"/>
+  <text x="370" y="250" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">元数据层 · 中台 MySQL</text>
+  <rect x="265" y="272" width="100" height="24" rx="6" fill="#eef2ff" stroke="#c7d2fe" stroke-width="1"/>
+  <text x="315" y="288" text-anchor="middle" font-size="11" fill="#4338ca">主 · AZ1</text>
+  <rect x="375" y="272" width="100" height="24" rx="6" fill="#eef2ff" stroke="#c7d2fe" stroke-width="1"/>
+  <text x="425" y="288" text-anchor="middle" font-size="11" fill="#4338ca">备 · AZ2</text>
+  <text x="265" y="314" font-size="9" fill="#64748b">主从复制 / MGR · 定时备份</text>
+
+  <!-- ===== 数据层 ===== -->
+  <g filter="url(#shadow)">
+    <rect x="520" y="230" width="240" height="300" rx="12" fill="#ffffff" stroke="#10b981" stroke-width="2"/>
+  </g>
+  <rect x="520" y="230" width="240" height="30" rx="12" fill="url(#emeraldG)"/>
+  <rect x="520" y="247" width="240" height="13" fill="url(#emeraldG)"/>
+  <text x="640" y="250" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">数据层 · 多引擎原生多副本</text>
+
+  <!-- CK 区块 -->
+  <rect x="535" y="268" width="210" height="66" rx="8" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1"/>
+  <text x="540" y="286" font-size="12" font-weight="700" fill="#047857">ClickHouse</text>
+  <rect x="540" y="293" width="95" height="22" rx="5" fill="#dcfce7" stroke="#86efac" stroke-width="1"/>
+  <text x="587" y="308" text-anchor="middle" font-size="10" fill="#166534">主 · AZ1</text>
+  <rect x="645" y="293" width="95" height="22" rx="5" fill="#dcfce7" stroke="#86efac" stroke-width="1"/>
+  <text x="692" y="308" text-anchor="middle" font-size="10" fill="#166534">备 · AZ2</text>
+  <line x1="635" y1="304" x2="641" y2="304" stroke="#ef4444" stroke-width="1.5" marker-end="url(#arrowR)"/>
+  <text x="638" y="299" text-anchor="middle" font-size="9" font-weight="600" fill="#ef4444">Failover</text>
+  <text x="540" y="329" font-size="9" fill="#64748b">ReplicatedMergeTree + Keeper</text>
+
+  <!-- ES 区块 -->
+  <rect x="535" y="344" width="210" height="66" rx="8" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1"/>
+  <text x="540" y="362" font-size="12" font-weight="700" fill="#047857">Elasticsearch</text>
+  <rect x="540" y="369" width="95" height="22" rx="5" fill="#dcfce7" stroke="#86efac" stroke-width="1"/>
+  <text x="587" y="384" text-anchor="middle" font-size="10" fill="#166534">主 · AZ1</text>
+  <rect x="645" y="369" width="95" height="22" rx="5" fill="#dcfce7" stroke="#86efac" stroke-width="1"/>
+  <text x="692" y="384" text-anchor="middle" font-size="10" fill="#166534">备 · AZ2</text>
+  <line x1="635" y1="380" x2="641" y2="380" stroke="#ef4444" stroke-width="1.5" marker-end="url(#arrowR)"/>
+  <text x="638" y="375" text-anchor="middle" font-size="9" font-weight="600" fill="#ef4444">Failover</text>
+  <text x="540" y="405" font-size="9" fill="#64748b">number_of_replicas / CCR</text>
+
+  <!-- Doris 区块 -->
+  <rect x="535" y="420" width="210" height="92" rx="8" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1"/>
+  <text x="540" y="438" font-size="12" font-weight="700" fill="#047857">Doris</text>
+  <rect x="540" y="445" width="95" height="22" rx="5" fill="#dcfce7" stroke="#86efac" stroke-width="1"/>
+  <text x="587" y="460" text-anchor="middle" font-size="10" fill="#166534">FE·AZ1</text>
+  <rect x="645" y="445" width="95" height="22" rx="5" fill="#dcfce7" stroke="#86efac" stroke-width="1"/>
+  <text x="692" y="460" text-anchor="middle" font-size="10" fill="#166534">FE·AZ2</text>
+  <line x1="635" y1="456" x2="641" y2="456" stroke="#ef4444" stroke-width="1.5" marker-end="url(#arrowR)"/>
+  <text x="638" y="451" text-anchor="middle" font-size="9" font-weight="600" fill="#ef4444">Failover</text>
+  <text x="540" y="485" font-size="9" fill="#64748b">BE Tablet 三副本跨 AZ</text>
+  <text x="540" y="502" font-size="9" fill="#64748b">Raft(FE) + 多副本(BE)</text>
+
+  <!-- ===== Bottom tip ===== -->
+  <rect x="250" y="545" width="510" height="26" rx="13" fill="#fef2f2" stroke="#fecaca" stroke-width="1"/>
+  <text x="505" y="562" text-anchor="middle" font-size="10" fill="#b91c1c">💡 核心报表同城双 AZ 同步(RPO≈0)；异地异步灾备(RPO>0)；中台探活路由自动 Failover</text>
+</svg>

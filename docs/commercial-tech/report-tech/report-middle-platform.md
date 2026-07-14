@@ -8,7 +8,7 @@ tags:
   - 语义层
 excerpt: 报表中台是一套统一管理物理表、视图与 API 的系统。本文从元数据表设计（DDL）落地，到视图层如何接入 Apache Calcite 完成 SQL 解析、校验、RBO/CBO 优化与物化视图改写，再到 API 层的参数映射与 SQL 生成，给出可照着实现的全链路技术细节。
 createTime: 2026/07/13 13:30:00
-updateTime: 2026/07/13 16:00:00
+updateTime: 2026/07/14 10:31:00
 permalink: /commercial-tech/report-tech/report-middle-platform/
 ---
 
@@ -195,31 +195,135 @@ CREATE TABLE `meta_api_param` (
 
 有了这套表，"新增一个取数接口"就等价于：**注册视图 → 配 API → 配参数映射**，全程无需写新服务代码（见第五节）。
 
-## 三、物理表管理：注册与元数据同步
+## 三、物理表管理：多引擎注册与元数据同步
 
-物理表管理的核心是**注册 + 发现 + 统计采集**：
+报表中台的物理表层要对接的往往不止一种数据库，而是**多种分析引擎并存**：明细与宽表放 ClickHouse/Doris，检索与全文放 Elasticsearch，维表/配置放 MySQL。它们的建表语义、类型系统、统计采集方式天差地别。中台要做的，是把这些差异**收敛到一套统一的元数据模型**，让上层视图/API 无感知。
 
-1. **注册**：录入数据源后，通过 JDBC `DatabaseMetaData` 拉取库表结构，写入 `meta_physical_table` / `meta_column`。
-2. **统计采集**：定时对物理表跑 `SELECT COUNT(*)`、`approx_count_distinct(col)`（或采样），回填 `row_count` / `ndv`——这是 CBO 的"燃料"。
-3. **变更感知**：定时 diff 库表 schema，字段增删自动同步，并触发依赖它的视图重新校验（防止视图引用了已删除的字段）。
+### 3.1 引擎注册：type 枚举与引擎插件
+
+`meta_datasource.type` 枚举出所有受支持的引擎，每种引擎对应一个"引擎插件"（处理连接、元数据抽取、类型映射、统计采集）：
+
+```
+MYSQL        —— 维表 / 配置 / 小事务表
+HIVE         —— 离线数仓 ODS / DWD
+CLICKHOUSE   —— 大宽表 / 实时明细 / 预聚合
+DORIS        —— 高并发即席 / 多维分析
+ELASTICSEARCH—— 日志 / 全文检索 / 标签倒排
+```
+
+中台内部维护一张 `EnginePlugin` 注册表，按 `type` 路由到具体实现——见 3.6 的统一同步抽象。
+
+### 3.2 建表语义差异（核心难点）
+
+不同引擎的"建一张表"语义完全不同，这是元数据同步最大的坑：
+
+| 维度 | ClickHouse | Elasticsearch | Doris |
+| --- | --- | --- | --- |
+| 表/数据集单位 | `MergeTree` 家族表 | `index` + `mapping` | `table`（三种 Key 模型） |
+| 主键/排序 | `ORDER BY`（排序键，非唯一） | `_id` + `routing` | `Duplicate/Unique/Aggregate KEY` |
+| 分区 | `PARTITION BY toYYYYMM(date)` | 无原生分区，靠 `date`+ILM | `PARTITION BY` |
+| 分桶/分片 | 单节点 MergeTree 不分片；分布式靠 `Distributed` 表 | `number_of_shards` | `DISTRIBUTED BY HASH(col) BUCKETS n` |
+| 副本 | `ReplicatedMergeTree`（依赖 Keeper） | `number_of_replicas` | BE Tablet 三副本（FE 调度） |
+| 预聚合 | `AggregatingMergeTree` / 物化视图 | `date_histogram` 等聚合 | `Rollup` / 物化视图 |
+| 索引 | 跳数索引（`skip index`）/ 主键稀疏索引 | 倒排索引（analyzed text）+ `keyword` 不分词 | 前缀索引 / 倒排（BITMAP） |
+| 时间清理 | `TTL` | ILM `delete` phase | `dynamic_partition` |
+
+可以看到：CK 的 `ORDER BY` 承担排序+稀疏主键；ES 没有"主键"概念而是 `_id`+倒排；Doris 的 `Unique Key` 模型才提供更新能力。**同一份"物理表"元数据，落在不同引擎上要翻译成完全不同的建表语句**——这正是中台需要抽象的原因。
+
+### 3.3 逻辑类型 → 各引擎类型的映射
+
+中台内部以 Calcite 的 `SqlTypeName` 作为"逻辑类型"，落库时再翻译成各引擎原生类型。关键差异举例：
+
+| 逻辑类型 | MySQL | ClickHouse | Doris | Elasticsearch |
+| --- | --- | --- | --- | --- |
+| `VARCHAR` | `VARCHAR(n)` | `String` | `VARCHAR(n)` | `text`（分词）+ `keyword` 子字段 |
+| `BIGINT` | `BIGINT` | `Int64` / `UInt64` | `BIGINT` | `long` |
+| `DECIMAL` | `DECIMAL(38,4)` | `Decimal(38,4)` | `DECIMAL(38,4)` | `scaled_float` / `keyword` |
+| `DATE` | `DATE` | `Date` / `Date32` | `DATE` | `date`（带 format） |
+| `TIMESTAMP` | `DATETIME` | `DateTime64(3)` | `DATETIME` | `date`（`epoch_millis`） |
+| `BOOLEAN` | `TINYINT(1)` | `UInt8` | `BOOLEAN` | `boolean` |
+
+注意 ES 对字符串必须区分 `text`（分词，用于全文检索）与 `keyword`（不分词，用于聚合/精确匹配）——这是很多团队建 ES 索引的第一处踩坑。中台在 `meta_column` 上用 `col_type=VARCHAR` 登记，但落 ES 时主动生成 `text` + `.keyword` 多字段，避免丢失聚合能力。
+
+### 3.4 引擎特定元数据扩展
+
+通用 `meta_physical_table` 装不下各引擎的专属属性（分区键、排序键、分桶键、副本数、表模型……）。用一个 `meta_table_engine_attr` 键值表挂载：
+
+```sql
+CREATE TABLE `meta_table_engine_attr` (
+  `id`          BIGINT      NOT NULL AUTO_INCREMENT,
+  `table_id`    BIGINT      NOT NULL,
+  `attr_key`    VARCHAR(64) NOT NULL COMMENT 'partition_by/sort_by/distribute_by/table_model/replicas/ttl/analyzer...',
+  `attr_value`  VARCHAR(512) NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_table` (`table_id`)
+) COMMENT='引擎特定建表属性(键值对)';
+```
+
+这样视图层在把视图 SQL 物化落库时，能拼出正确引擎的原生建表语句：
 
 ```java
-// 通过 JDBC 元数据自动登记物理表字段
-try (Connection conn = dataSource.getConnection()) {
-    DatabaseMetaData md = conn.getMetaData();
-    try (ResultSet cols = md.getColumns(null, schema, tableName, "%")) {
-        int ordinal = 0;
-        while (cols.next()) {
-            MetaColumn c = new MetaColumn();
-            c.setColName(cols.getString("COLUMN_NAME"));
-            c.setColType(toCalciteType(cols.getInt("DATA_TYPE"))); // JDBC类型→SqlTypeName
-            c.setNullable(cols.getInt("NULLABLE") == 1);
-            c.setOrdinal(ordinal++);
-            metaColumnMapper.insert(c);
+// 视图物化落库：根据引擎拼建表 DDL
+String ddl = switch (ds.getType()) {
+  case CLICKHOUSE    -> buildCkDdl(view, attrs);        // ENGINE=AggregatingMergeTree ORDER BY ...
+  case DORIS         -> buildDorisDdl(view, attrs);     // DUPLICATE KEY(...) DISTRIBUTED BY ...
+  case ELASTICSEARCH -> buildEsMapping(view, attrs);    // PUT index + mapping + analyzer
+  default -> throw new UnsupportedEngine();
+};
+engineExec.execute(ds, ddl);
+```
+
+### 3.5 统计采集差异（CBO 燃料各不相同）
+
+`row_count` / `ndv` 是 CBO 的燃料，但每种引擎"怎么拿到这些数"完全不同：
+
+- **MySQL**：`information_schema.tables.TABLE_ROWS`（估算）、`information_schema.statistics.CARDINALITY`；
+- **ClickHouse**：`system.parts`（`sum(rows)` 按分区聚合得行数）、`system.columns`（结合 `uniqExact` 采样估算 NDV）、`system.table_settings` 拿 TTL/引擎参数；
+- **Elasticsearch**：`_stats`（`_all.total.docs.count`）、cardinality 聚合近似 NDV、`_mapping` 拿字段类型；
+- **Doris**：`information_schema.table_stats`、`SHOW DATA`（含副本行数）、`ANALYZE TABLE` 主动收集直方图。
+
+采集逻辑同样按引擎插件隔离，统一回写到 `meta_physical_table.row_count` / `meta_column.ndv`。
+
+### 3.6 统一注册与同步抽象
+
+屏蔽差异的核心是"引擎插件"——上层只调用统一接口，差异下沉到各引擎实现：
+
+```java
+public interface EngineMetadataSyncer {
+    List<PhysicalTable> listTables(EngineCtx ctx);    // 列出物理表
+    List<ColumnMeta>    listColumns(EngineCtx ctx, String table); // 列(逻辑类型+原生类型)
+    TableStat           collectStats(EngineCtx ctx, String table); // 行数/NDV
+    void                materialize(EngineCtx ctx, MetaView view, List<EngineAttr> attrs); // 物化落库
+}
+
+@Component @Engine("CLICKHOUSE")
+public class ClickHouseSyncer implements EngineMetadataSyncer { /* 走 system.parts / system.columns */ }
+
+@Component @Engine("ELASTICSEARCH")
+public class ElasticsearchSyncer implements EngineMetadataSyncer { /* 走 REST _mapping / _stats */ }
+```
+
+> 注意：Elasticsearch **没有 JDBC 元数据**，必须用 REST（`GET /{index}/_mapping`、`GET /{index}/_stats`）拉取；而 ClickHouse/Doris/MySQL 可走 JDBC `DatabaseMetaData`。中台把"连接差异"也收敛进插件，上层注册流程对三种引擎完全一致：
+
+```java
+// 统一注册入口：与引擎无关
+void registerTables(long datasourceId) {
+    EngineCtx ctx = buildCtx(datasourceId);              // 按 type 取连接
+    EngineMetadataSyncer syncer = pluginRegistry.get(ctx.type());
+    for (PhysicalTable pt : syncer.listTables(ctx)) {
+        long tid = metaTableMapper.insert(pt);
+        for (ColumnMeta c : syncer.listColumns(ctx, pt.getName())) {
+            metaColumnMapper.insert(c.withOwner(tid));
         }
+        TableStat stat = syncer.collectStats(ctx, pt.getName());
+        metaTableMapper.updateStat(tid, stat);           // 回填 CBO 燃料
     }
 }
 ```
+
+### 3.7 变更感知
+
+定时 diff 引擎侧实时 schema 与中台元数据：字段增删自动同步到 `meta_column`，并触发依赖该表的视图重新校验（防止视图引用了已删除的列，避免运行时报错）。引擎侧表被删除时，标记 `meta_physical_table.status=0` 并告警。
 
 ## 四、视图层：Apache Calcite 深度集成
 
@@ -463,7 +567,82 @@ public PageResult query(String path, Map<String, Object> params) {
 
 区别只在于：我们把"视图层用 Calcite 做优化建设"作为中台**自己可控的技术选型**，而不是完全依赖某个商业语义层产品——建表、优化器、下推都握在自己手里。
 
-## 七、小结
+## 七、集群容灾方案
+
+> 报表中台一旦挂掉，业务方的看板与取数 API 全部失灵。而中台依赖的"物理表"往往跑在单集群上——集群故障 = 全公司断数。因此容灾不是可选项，是基线能力。容灾要分层设计：中台自身、元数据层、数据层，各管各的高可用。
+
+### 7.1 分层容灾策略
+
+- **查询/计算层（中台服务 + Calcite）**：无状态，多实例 + 负载均衡。挂一个实例不影响整体，天然容灾。
+- **元数据层（中台 MySQL）**：主从复制（或 MGR 组复制），定时备份，配置中心兜底。
+- **数据层（物理表所在集群）**：依赖各引擎原生的多副本 / 多集群复制能力（见 7.3）。
+
+前两层中台自己能搞定；难点在数据层——它跨多个异构引擎，每个引擎的复制机制都不一样。
+
+### 7.2 各引擎原生复制能力
+
+| 引擎 | 复制机制 | 跨 AZ | 读写分离 |
+| --- | --- | --- | --- |
+| ClickHouse | `ReplicatedMergeTree` + ClickHouse Keeper（ZK 替代）；数据多副本 | 副本可跨机架/AZ | 分布式表读本地表，读写分离 |
+| Elasticsearch | `number_of_replicas` 副本分片；跨集群复制 CCR | 副本跨节点/跨集群 | 副本可承接读 |
+| Doris | FE（Leader+Follower，Raft）+ BE Tablet 三副本 | BE 副本跨 AZ 分布 | 多 BE 副本均衡读 |
+
+要点：这些复制都是**引擎内置**的，中台不需要自己写同步逻辑，只需要在"数据源登记"里正确声明主备拓扑（见 7.4）。
+
+### 7.3 跨可用区（AZ）部署
+
+推荐**同城双 AZ + 异地灾备**两层：
+
+- **同城双 AZ（RPO≈0）**：主副本在 AZ1，备副本在 AZ2，同步/近同步复制，单 AZ 故障 RPO≈0、RTO 秒级。
+- **异地灾备（RPO>0）**：跨城市异步复制，应对城市级灾难，RPO 取决于同步间隔（分钟级）。
+
+### 7.4 中台侧故障切换（Failover）设计
+
+这是中台把"引擎原生复制"用起来的关键。核心是在数据源元数据里登记主备，并在查询路由时感知健康度：
+
+```sql
+-- 扩展 meta_datasource：登记主备与优先级
+ALTER TABLE meta_datasource
+  ADD COLUMN `role`       VARCHAR(16) NOT NULL DEFAULT 'PRIMARY' COMMENT 'PRIMARY/STANDBY',
+  ADD COLUMN `priority`   INT         NOT NULL DEFAULT 1 COMMENT '同组优先级,越小越优先',
+  ADD COLUMN `group_code` VARCHAR(64) NULL COMMENT '主备同组标识',
+  ADD COLUMN `healthy`    TINYINT     NOT NULL DEFAULT 1 COMMENT '探活结果:1健康 0异常';
+```
+
+中台查询路由层据此把请求导向健康副本，主挂了自动切备：
+
+```java
+// 查询路由：优先主，主不健康则按 priority 选备
+public EngineCtx route(String groupCode) {
+    List<MetaDatasource> group = dsMapper.listByGroup(groupCode);
+    group.sort(Comparator.comparingInt(MetaDatasource::getPriority));
+    for (MetaDatasource ds : group) {
+        if (ds.getHealthy() == 1) return buildCtx(ds);   // 命中健康副本
+    }
+    throw new AllReplicaDown();                            // 全组不可用
+}
+
+// 探活：定时 ping 各副本，回写 healthy；主异常则自动切备
+@Scheduled(fixedDelay = 10_000)
+void healthCheck() {
+    for (MetaDatasource ds : dsMapper.listAll()) {
+        boolean ok = probe(ds);                            // 轻量 SELECT 1 / GET _cluster/health
+        dsMapper.updateHealthy(ds.getId(), ok ? 1 : 0);
+    }
+}
+```
+
+Calcite 这一层不受影响——它只关心 `Schema` 里"当前该连哪个数据源"，`route()` 返回的 `EngineCtx` 直接喂给 4.2 的 `MetaSchema` 即可，优化与下推逻辑完全复用。
+
+### 7.5 一致性权衡（RPO / RTO）
+
+- **RPO（数据丢失量）**：同城同步复制 RPO≈0；异地异步 RPO>0（接受分钟级丢失）。
+- **RTO（恢复时间）**：无状态查询层 RTO 秒级；数据层取决于故障切换是否自动——中台自动探活+路由可达秒级，人工介入则分钟到小时级。
+- 实际选型：**核心报表走同城双 AZ 同步复制**，非核心/离线走异地异步，兼顾成本与可用性。
+
+![报表中台集群容灾架构](/commercial-tech/report-tech/report-middle-platform/cluster-dr-overview.svg)
+
+## 八、小结
 
 报表中台的本质，是把"报表"从**一次性的 SQL 查询**，升级为**可治理的数据资产**：
 
@@ -471,5 +650,6 @@ public PageResult query(String path, Map<String, Object> params) {
 - **物理表管理**——注册/发现/统计采集，喂饱 CBO；
 - **视图层（Calcite）**——解析→校验→RBO(`HepPlanner`)→CBO(`VolcanoPlanner`)→物化改写→方言下推，把视图变成可复用的优化计划；
 - **API 层**——按元数据运行时拼查询，新增接口=配置视图+API。
+- **集群容灾**——分层高可用（查询层无状态、元数据主从、数据层引擎原生多副本），数据源主备登记 + 探活路由实现自动 Failover。
 
 三者统一在一个平台里，报表的需求变更，从"改代码发版"变成"配视图、配接口"。而这套设计，与业界主流语义层同构——只是把技术底座牢牢握在自己手里。
