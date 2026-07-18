@@ -1,0 +1,172 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 560" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <linearGradient id="indigoG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#818cf8;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#6366f1;stop-opacity:1"/>
+    </linearGradient>
+    <linearGradient id="emeraldG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#34d399;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#10b981;stop-opacity:1"/>
+    </linearGradient>
+    <linearGradient id="violetG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#a78bfa;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1"/>
+    </linearGradient>
+    <linearGradient id="blueG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1"/>
+    </linearGradient>
+    <linearGradient id="amberG" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:1"/>
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.12"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto" preserveAspectRatio="xMidYMid meet">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/>
+    </marker>
+    <marker id="arrowY" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto" preserveAspectRatio="xMidYMid meet">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#f59e0b"/>
+    </marker>
+  </defs>
+
+  <!-- ===== Background ===== -->
+  <rect width="820" height="560" rx="12" fill="#f8fafc"/>
+
+  <!-- ===== Title ===== -->
+  <text x="410" y="30" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">元数据模型：9 张表如何缝合三层</text>
+  <text x="410" y="52" text-anchor="middle" font-size="12" fill="#94a3b8">数据源 → 物理表 → 视图 → API，由 meta_lineage 横跨串起血缘</text>
+
+  <!-- ===== Card 1: 数据源层 (indigo) ===== -->
+  <g filter="url(#shadow)">
+    <rect x="25" y="75" width="160" height="335" rx="12" fill="#ffffff" stroke="#6366f1" stroke-width="2"/>
+  </g>
+  <rect x="25" y="75" width="160" height="30" rx="12" fill="url(#indigoG)"/>
+  <rect x="25" y="92" width="160" height="13" fill="url(#indigoG)"/>
+  <text x="105" y="95" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">数据源层</text>
+
+  <!-- 表块: meta_datasource -->
+  <rect x="35" y="115" width="140" height="85" rx="6" fill="#eef2ff" stroke="#c7d2fe" stroke-width="1"/>
+  <text x="105" y="134" text-anchor="middle" font-size="11" font-weight="700" fill="#4338ca">meta_datasource</text>
+  <text x="105" y="152" text-anchor="middle" font-size="9" fill="#475569">id·code·type·dialect</text>
+  <text x="105" y="166" text-anchor="middle" font-size="9" fill="#64748b">方言回写: dialect(4.7)</text>
+  <text x="105" y="180" text-anchor="middle" font-size="9" fill="#64748b">主备: role/priority(7.4)</text>
+
+  <!-- 说明区 -->
+  <rect x="35" y="215" width="140" height="50" rx="6" fill="#f1f5f9"/>
+  <text x="105" y="235" text-anchor="middle" font-size="9" fill="#64748b">
+    <tspan x="105" dy="0">1 张表 · 登记所有</tspan>
+    <tspan x="105" dy="14">数据源连接与主备拓扑</tspan>
+  </text>
+
+  <!-- ===== Card 2: 物理表管理 (emerald) ===== -->
+  <g filter="url(#shadow)">
+    <rect x="215" y="75" width="180" height="335" rx="12" fill="#ffffff" stroke="#10b981" stroke-width="2"/>
+  </g>
+  <rect x="215" y="75" width="180" height="30" rx="12" fill="url(#emeraldG)"/>
+  <rect x="215" y="92" width="180" height="13" fill="url(#emeraldG)"/>
+  <text x="305" y="95" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">物理表管理</text>
+
+  <!-- 表块1: meta_physical_table -->
+  <rect x="225" y="115" width="160" height="85" rx="6" fill="#ecfdf5" stroke="#a7f3d0" stroke-width="1"/>
+  <text x="305" y="134" text-anchor="middle" font-size="11" font-weight="700" fill="#047857">meta_physical_table</text>
+  <text x="305" y="152" text-anchor="middle" font-size="9" fill="#475569">datasource_id → 数据源</text>
+  <text x="305" y="166" text-anchor="middle" font-size="9" fill="#64748b">row_count → CBO 行数</text>
+  <text x="305" y="180" text-anchor="middle" font-size="9" fill="#64748b">物理表登记</text>
+
+  <!-- 表块2: meta_column -->
+  <rect x="225" y="210" width="160" height="85" rx="6" fill="#ecfdf5" stroke="#a7f3d0" stroke-width="1"/>
+  <text x="305" y="229" text-anchor="middle" font-size="11" font-weight="700" fill="#047857">meta_column</text>
+  <text x="305" y="247" text-anchor="middle" font-size="9" fill="#475569">owner_id → 物理表/视图</text>
+  <text x="305" y="261" text-anchor="middle" font-size="9" fill="#64748b">ndv → CBO 选择性</text>
+  <text x="305" y="275" text-anchor="middle" font-size="9" fill="#64748b">字段元数据(共用)</text>
+
+  <!-- 表块3: meta_table_engine_attr -->
+  <rect x="225" y="305" width="160" height="85" rx="6" fill="#ecfdf5" stroke="#a7f3d0" stroke-width="1"/>
+  <text x="305" y="324" text-anchor="middle" font-size="11" font-weight="700" fill="#047857">meta_table_engine_attr</text>
+  <text x="305" y="342" text-anchor="middle" font-size="9" fill="#475569">table_id → 物理表</text>
+  <text x="305" y="356" text-anchor="middle" font-size="9" fill="#64748b">partition/sort/...</text>
+  <text x="305" y="370" text-anchor="middle" font-size="9" fill="#64748b">引擎专属属性</text>
+
+  <!-- ===== Card 3: 视图层 (violet) ===== -->
+  <g filter="url(#shadow)">
+    <rect x="425" y="75" width="180" height="335" rx="12" fill="#ffffff" stroke="#8b5cf6" stroke-width="2"/>
+  </g>
+  <rect x="425" y="75" width="180" height="30" rx="12" fill="url(#violetG)"/>
+  <rect x="425" y="92" width="180" height="13" fill="url(#violetG)"/>
+  <text x="515" y="95" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">视图层 · 语义</text>
+
+  <!-- 表块1: meta_view -->
+  <rect x="435" y="115" width="160" height="130" rx="6" fill="#faf5ff" stroke="#e9d5ff" stroke-width="1"/>
+  <text x="515" y="134" text-anchor="middle" font-size="11" font-weight="700" fill="#6b21a8">meta_view</text>
+  <text x="515" y="152" text-anchor="middle" font-size="9" fill="#475569">datasource_id → 数据源</text>
+  <text x="515" y="166" text-anchor="middle" font-size="9" fill="#64748b">sql_text · plan_cache</text>
+  <text x="515" y="180" text-anchor="middle" font-size="9" fill="#64748b">materialized · mv_table</text>
+  <text x="515" y="198" text-anchor="middle" font-size="9" fill="#64748b">视图定义 + 缓存优化计划</text>
+  <text x="515" y="212" text-anchor="middle" font-size="9" fill="#64748b">物化标记</text>
+
+  <!-- 表块2: meta_view_field -->
+  <rect x="435" y="255" width="160" height="130" rx="6" fill="#faf5ff" stroke="#e9d5ff" stroke-width="1"/>
+  <text x="515" y="274" text-anchor="middle" font-size="11" font-weight="700" fill="#6b21a8">meta_view_field</text>
+  <text x="515" y="292" text-anchor="middle" font-size="9" fill="#475569">view_id → 视图</text>
+  <text x="515" y="306" text-anchor="middle" font-size="9" fill="#64748b">semantic: DIM/METRIC</text>
+  <text x="515" y="320" text-anchor="middle" font-size="9" fill="#64748b">agg: SUM/COUNT/AVG</text>
+  <text x="515" y="334" text-anchor="middle" font-size="9" fill="#64748b">caliber: 口径说明</text>
+  <text x="515" y="352" text-anchor="middle" font-size="9" fill="#6b21a8" font-weight="600">语义层三关键字</text>
+  <text x="515" y="366" text-anchor="middle" font-size="9" fill="#64748b">指标治理依据</text>
+
+  <!-- ===== Card 4: API 管理层 (blue) ===== -->
+  <g filter="url(#shadow)">
+    <rect x="635" y="75" width="160" height="335" rx="12" fill="#ffffff" stroke="#3b82f6" stroke-width="2"/>
+  </g>
+  <rect x="635" y="75" width="160" height="30" rx="12" fill="url(#blueG)"/>
+  <rect x="635" y="92" width="160" height="13" fill="url(#blueG)"/>
+  <text x="715" y="95" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">API 管理层</text>
+
+  <!-- 表块1: meta_api -->
+  <rect x="645" y="115" width="140" height="130" rx="6" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1"/>
+  <text x="715" y="134" text-anchor="middle" font-size="11" font-weight="700" fill="#1d4ed8">meta_api</text>
+  <text x="715" y="152" text-anchor="middle" font-size="9" fill="#475569">view_id → 视图</text>
+  <text x="715" y="166" text-anchor="middle" font-size="9" fill="#64748b">select_cols 输出字段</text>
+  <text x="715" y="180" text-anchor="middle" font-size="9" fill="#64748b">page_enable 分页</text>
+  <text x="715" y="198" text-anchor="middle" font-size="9" fill="#64748b">path · method</text>
+  <text x="715" y="212" text-anchor="middle" font-size="9" fill="#64748b">API 定义</text>
+
+  <!-- 表块2: meta_api_param -->
+  <rect x="645" y="255" width="140" height="130" rx="6" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1"/>
+  <text x="715" y="274" text-anchor="middle" font-size="11" font-weight="700" fill="#1d4ed8">meta_api_param</text>
+  <text x="715" y="292" text-anchor="middle" font-size="9" fill="#475569">api_id → API</text>
+  <text x="715" y="306" text-anchor="middle" font-size="9" fill="#64748b">param_name → map_field</text>
+  <text x="715" y="320" text-anchor="middle" font-size="9" fill="#64748b">operator: EQ/IN/GE/LE</text>
+  <text x="715" y="334" text-anchor="middle" font-size="9" fill="#64748b">required 是否必填</text>
+  <text x="715" y="352" text-anchor="middle" font-size="9" fill="#1d4ed8" font-weight="600">入参 → 视图字段映射</text>
+  <text x="715" y="366" text-anchor="middle" font-size="9" fill="#64748b">元数据驱动校验</text>
+
+  <!-- ===== 层间箭头 (y=157, 表块1中线) ===== -->
+  <!-- 数据源 → 物理表 -->
+  <line x1="185" y1="157" x2="211" y2="157" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="198" y="149" text-anchor="middle" font-size="9" font-weight="600" fill="#64748b">引用</text>
+  <!-- 物理表 → 视图 -->
+  <line x1="395" y1="157" x2="421" y2="157" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="408" y="149" text-anchor="middle" font-size="9" font-weight="600" fill="#64748b">映射</text>
+  <!-- 视图 → API -->
+  <line x1="605" y1="157" x2="631" y2="157" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="618" y="149" text-anchor="middle" font-size="9" font-weight="600" fill="#64748b">绑定</text>
+
+  <!-- ===== 底部血缘横条 ===== -->
+  <rect x="25" y="430" width="770" height="50" rx="10" fill="#fffbeb" stroke="#fcd34d" stroke-width="1.5"/>
+  <rect x="25" y="430" width="120" height="50" rx="10" fill="url(#amberG)"/>
+  <rect x="125" y="430" width="20" height="50" fill="url(#amberG)"/>
+  <text x="85" y="460" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">meta_lineage</text>
+  <text x="160" y="452" font-size="11" font-weight="600" fill="#92400e">血缘关系（横跨物理表 ↔ 视图）</text>
+  <text x="160" y="470" font-size="10" fill="#b45309">src(src_type, src_id) ↔ dst(dst_type, dst_id) · Calcite 自动抽取(4.5)</text>
+
+  <!-- 血缘 ↔ 横跨标注(虚线连接到物理表卡和视图卡) -->
+  <line x1="305" y1="410" x2="305" y2="426" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="4 4"/>
+  <line x1="515" y1="410" x2="515" y2="426" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="4 4"/>
+
+  <!-- ===== Bottom tip ===== -->
+  <rect x="210" y="500" width="400" height="26" rx="13" fill="#ecfdf5" stroke="#a7f3d0" stroke-width="1"/>
+  <text x="410" y="517" text-anchor="middle" font-size="11" fill="#047857">💡 9 张表用一套元数据，把三层缝合为一个可治理的体系</text>
+</svg>

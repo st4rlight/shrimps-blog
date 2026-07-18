@@ -20,6 +20,20 @@ icon: mdi:timeline-clock-outline
 <div class="timeline-item">
   <div class="timeline-item__dot"></div>
   <div class="timeline-item__content">
+    <div class="timeline-item__date">7 月 18 日</div>
+    <div class="timeline-item__entries">
+      <div class="timeline-entry">
+        <span class="timeline-entry__tag timeline-entry__tag--commercial">商业化技术体系</span>
+        <a class="timeline-entry__link" href="/commercial-tech/report-tech/report-middle-platform/">更新《报表中台技术体系》</a>
+        <span class="timeline-entry__desc">—— 补元数据 9 表关系总览图、扩充 API 层(参数校验+分页下推)、充实变更感知与视图重校验、新增落地建议与选型要点章节</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="timeline-item">
+  <div class="timeline-item__dot"></div>
+  <div class="timeline-item__content">
     <div class="timeline-item__date">7 月 13 日</div>
     <div class="timeline-item__entries">
       <div class="timeline-entry">

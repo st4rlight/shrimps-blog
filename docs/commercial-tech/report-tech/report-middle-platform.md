@@ -8,7 +8,7 @@ tags:
   - 语义层
 excerpt: 报表中台是一套统一管理物理表、视图与 API 的系统。本文从元数据表设计（DDL）落地，到视图层如何接入 Apache Calcite 完成 SQL 解析、校验、RBO/CBO 优化与物化视图改写，再到 API 层的参数映射与 SQL 生成，给出可照着实现的全链路技术细节。
 createTime: 2026/07/13 13:30:00
-updateTime: 2026/07/14 10:31:00
+updateTime: 2026/07/18 15:30:00
 permalink: /commercial-tech/report-tech/report-middle-platform/
 ---
 
@@ -54,6 +54,10 @@ permalink: /commercial-tech/report-tech/report-middle-platform/
 | `meta_view_field` | 视图对外暴露的字段（含指标/维度语义） |
 | `meta_api` | API 定义（绑定视图、路径、方法） |
 | `meta_api_param` | API 入参与视图字段的映射 |
+
+九张表（含 3.4 的引擎属性表）分属四层，彼此通过外键引用缝合：数据源被物理表和视图共同引用，`meta_column` 以 `owner_type` 同时服务物理表与视图，`meta_lineage` 则横跨物理表↔视图串起血缘。
+
+![元数据 9 张表关系总览](/commercial-tech/report-tech/report-middle-platform/metadata-overview.svg)
 
 ### 2.2 数据源表
 
@@ -323,7 +327,56 @@ void registerTables(long datasourceId) {
 
 ### 3.7 变更感知
 
-定时 diff 引擎侧实时 schema 与中台元数据：字段增删自动同步到 `meta_column`，并触发依赖该表的视图重新校验（防止视图引用了已删除的列，避免运行时报错）。引擎侧表被删除时，标记 `meta_physical_table.status=0` 并告警。
+物理表 schema 不是一成不变的——上游加字段、删字段、甚至删表都会发生。中台若感知不到，就会出现"视图引用了已删列，运行时才报错"的事故。变更感知靠**定时 diff**：周期性拉取引擎侧实时 schema，与 `meta_column` / `meta_physical_table` 逐项比对。
+
+```java
+// 定时 diff：引擎侧 schema ↔ 中台元数据
+@Scheduled(cron = "0 0 3 * * ?")  // 每天凌晨低峰期全量比对
+void syncSchemaChange() {
+    for (MetaDatasource ds : dsMapper.listEnabled()) {
+        EngineCtx ctx = buildCtx(ds.getId());
+        EngineMetadataSyncer syncer = pluginRegistry.get(ctx.type());
+
+        // 1. 表级 diff：新增表→登记；缺失表→下线
+        Set<String> liveTables = syncer.listTables(ctx).stream()
+            .map(PhysicalTable::getName).collect(toSet());
+        Set<String> metaTables = metaTableMapper.listNames(ds.getId());
+        // 引擎有、中台无 → 新表自动登记
+        Sets.difference(liveTables, metaTables).forEach(t -> registerOne(ds, t));
+        // 中台有、引擎无 → 表已删，下线 + 告警
+        Sets.difference(metaTables, liveTables).forEach(t -> {
+            metaTableMapper.markStatus(ds.getId(), t, 0);   // status=0
+            alertService.notifyTableDropped(ds.getCode(), t);
+        });
+
+        // 2. 字段级 diff：逐表比对列
+        for (String table : Sets.intersection(liveTables, metaTables)) {
+            List<ColumnMeta> live = syncer.listColumns(ctx, table);
+            List<ColumnMeta> stored = metaColumnMapper.listByTable(ds.getId(), table);
+            diffAndSyncColumns(table, live, stored);        // 增/删/改 → 同步到 meta_column
+        }
+    }
+}
+```
+
+字段变更落地后，还要触发**依赖该表的视图重校验**——用 Calcite 重新解析校验视图 SQL，确认没引用已删列；校验失败的视图标记 `status=0`（回退草稿）并告警，避免脏视图上线后运行时报错：
+
+```java
+// 字段删除后：级联重校验依赖该表的视图
+void revalidateDependentViews(Long tableId) {
+    List<Long> viewIds = lineageMapper.listViewsDependingOn(tableId);
+    for (Long vid : viewIds) {
+        try {
+            planner.parseAndValidate(viewService.get(vid).getSqlText()); // 复用 4.3 链路
+        } catch (SqlValidationError e) {
+            viewService.markStatus(vid, 0);   // 校验失败 → 下线
+            alertService.notifyViewInvalid(vid, e.getMessage());
+        }
+    }
+}
+```
+
+这套机制让中台元数据与物理世界始终对齐——表删了自动下线、字段变了自动同步、视图失效提前告警，而不是等线上查询炸了才发现。
 
 ## 四、视图层：Apache Calcite 深度集成
 
@@ -496,7 +549,11 @@ String pushDownSql = sqlNode.toSqlString(dialect).getSql();
 
 ## 五、API 管理层：从视图到 HTTP 接口
 
-API 层做的事：**把"某视图 + 入参映射"翻译成一次带条件的查询，再包成 HTTP 接口**。核心是运行时按 `meta_api` / `meta_api_param` 动态拼查询。
+API 层做的事：**把"某视图 + 入参映射"翻译成一次带条件的查询，再包成 HTTP 接口**。核心是运行时按 `meta_api` / `meta_api_param` 动态拼查询。它要同时解决三件事：拼查询、校验入参、分页裁剪——全部由元数据驱动，零新增服务代码。
+
+### 5.1 运行时查询拼装
+
+复用第四章视图缓存的优化计划（`RelNode`），在其上叠加 `Filter`（入参条件）和 `Project`（输出字段），再优化→下推方言 SQL→执行：
 
 ```java
 // 运行时：根据 API 配置 + 请求参数，基于视图动态构造查询
@@ -504,29 +561,86 @@ public PageResult query(String path, Map<String, Object> params) {
     MetaApi api = apiService.getByPath(path);
     MetaView view = viewService.get(api.getViewId());
 
-    // 1. 复用视图缓存的优化计划(RelNode)，在其上加 Filter/Project
+    // 1. 校验入参（见 5.2）
+    validateParams(api, params);
+
+    // 2. 复用视图缓存的优化计划(RelNode)，在其上加 Filter/Project
     RelNode viewPlan = planCache.get(view.getId());  // 4.4 缓存的 optimized
     RelBuilder builder = RelBuilder.create(frameworkConfig);
     builder.push(viewPlan);
 
-    // 2. 入参 → 视图字段条件（按 meta_api_param 的 operator 映射）
+    // 3. 入参 → 视图字段条件（按 meta_api_param 的 operator 映射）
     for (MetaApiParam p : apiService.listParams(api.getId())) {
         Object val = params.get(p.getParamName());
         if (val == null && p.getRequired() == 0) continue;
         builder.filter(toCondition(builder, p, val)); // EQ/IN/GE/LE/BETWEEN
     }
 
-    // 3. 投影输出字段 + 分页
+    // 4. 投影输出字段 + 分页下推（见 5.3）
     builder.project(builder.fields(api.getSelectCols()));
+    applyPaging(builder, api, params);
     RelNode finalPlan = builder.build();
 
-    // 4. 优化→下推方言 SQL→执行（复用第四章链路）
+    // 5. 优化→下推方言 SQL→执行（复用第四章链路）
     String sql = toPushDownSql(finalPlan, view);
     return execute(view.getDatasourceId(), sql, params);
 }
 ```
 
-于是"新增取数接口"真正做到：**配置一个视图 + 一条 API 规则**，零新增服务代码。参数校验、分页、字段裁剪全部由元数据驱动。
+`planCache` 复用视图级的优化计划，每次 API 查询只需在其上叠加条件，不用从 SQL 重新解析+优化——这是中台"视图一次优化、多接口复用"的关键。
+
+### 5.2 参数校验
+
+入参校验是 API 层的第一道闸门。`meta_api_param` 已经把规则配好了：`required`（是否必填）、`operator`（比较运算）、`map_field`（目标字段类型）。运行时按这三项做校验，不合法直接 4xx 返回，绝不把脏参数送进 SQL：
+
+```java
+// 入参校验：按 meta_api_param 的 required/operator/类型 校验
+void validateParams(MetaApi api, Map<String, Object> params) {
+    for (MetaApiParam p : apiService.listParams(api.getId())) {
+        Object val = params.get(p.getParamName());
+
+        // 1. 必填校验
+        if (p.getRequired() == 1 && val == null) {
+            throw new ApiParamException(p.getParamName() + " 必填");
+        }
+        if (val == null) continue;  // 非必填且缺省 → 跳过
+
+        // 2. 类型转换 + 合法性（按 map_field 的视图字段类型校验）
+        RelDataType targetType = viewFieldTypes.get(p.getMapField());
+        Object typed = coerce(val, targetType);  // "123"→123，失败抛异常
+
+        // 3. operator 适配：BETWEEN 必须是区间；IN 必须是集合
+        switch (p.getOperator()) {
+            case BETWEEN -> requireRange(typed);       // [start, end]
+            case IN      -> requireCollection(typed);  // 非空集合
+            default      -> requireScalar(typed);
+        }
+    }
+}
+```
+
+这套校验完全由元数据驱动——加一个入参只需配一条 `meta_api_param`，校验逻辑自动生效，无需改代码。它把"非法参数导致 SQL 注入或运行时报错"的风险挡在了查询拼装之前。
+
+### 5.3 分页与字段裁剪
+
+报表接口几乎都要分页。中台的分页不是在应用层内存截取，而是**把 LIMIT/OFFSET 下推进 SQL**，让数据源自己截断，避免全量拉取撑爆内存：
+
+```java
+// 分页下推：把 LIMIT/OFFSET 拼进 RelNode，最终落到方言 SQL
+void applyPaging(RelBuilder builder, MetaApi api, Map<String, Object> params) {
+    if (api.getPageEnable() == 0) return;  // 未开启分页（如导出接口）
+
+    int page  = parseInt(params.getOrDefault("_page", "1"), 1);
+    int size  = parseInt(params.getOrDefault("_size", "20"), 20);
+    size = Math.min(size, MAX_PAGE_SIZE);   // 上限保护，防恶意拉全量
+    int offset = (page - 1) * size;
+    builder.limit(offset, size);            // 生成 Limit → 下推到数据源
+}
+```
+
+字段裁剪同理——`meta_api.select_cols` 决定接口只输出指定列，`RelBuilder.project(...)` 把投影下推，数据源只回传需要的列，减少网络搬运。
+
+于是"新增取数接口"真正做到：**配置一个视图 + 一条 API 规则 + 若干入参映射**，参数校验、分页、字段裁剪全部由元数据驱动，零新增服务代码。
 
 ## 六、整体架构与业界坐标
 
@@ -642,7 +756,48 @@ Calcite 这一层不受影响——它只关心 `Schema` 里"当前该连哪个�
 
 ![报表中台集群容灾架构](/commercial-tech/report-tech/report-middle-platform/cluster-dr-overview.svg)
 
-## 八、小结
+## 八、落地建议与选型要点
+
+一套中台不是空中楼阁，落地时节奏和取舍比技术本身更关键。下面是几条实践建议。
+
+### 8.1 什么时候该建，什么时候别建
+
+报表中台适合**报表数量多、口径频繁变更、取数接口反复加**的场景。如果只有零星几张报表、口径半年不变、接口就那么几个——直接写 SQL 反而更轻，强行上中台是杀鸡用牛刀。
+
+一个简单的判断标准：当你第三次为"同一个指标的不同口径"争论，或第三次为加一个取数字段走完整套发版流程时，就该认真考虑中台了。
+
+### 8.2 落地节奏：元数据先行
+
+别一上来就啃 Calcite。推荐的落地顺序是：
+
+1. **元数据先行**——先把 8 张表的 DDL 落地，把现有物理表、字段、统计信息登记进去。这是地基，没有它后面全是空中楼阁。
+2. **物理表管理跑通**——引擎插件、统一注册、统计采集、变更感知，让中台元数据和物理世界对齐。
+3. **视图层接 Calcite**——从最简单的单表视图开始，验证解析→校验→RBO 链路，再逐步上 CBO 和物化改写。
+4. **API 层收口**——视图稳定后，把取数接口逐步迁到元数据驱动。
+
+这个顺序保证每一步都可验证、可回退——元数据错了不影响线上，物理表管好了视图层才有料可算，视图层稳了 API 才有可靠的数据源。
+
+### 8.3 Calcite 的学习曲线与坑
+
+Calcite 是这套体系的"硬核"部分，也是最容易踩坑的地方：
+
+- **统计信息必须喂准**——`getStatistic()` 不填或乱填，CBO 就是瞎选。很多人接了 Calcite 发现 CBO"不生效"，根因都是没喂统计。
+- **RBO 要显式触发**——`planner.rel()` 只产逻辑计划，不会自动优化，必须手动跑 `HepPlanner`。
+- **方言回写要测**——`RelToSqlConverter` 对某些方言的函数、类型支持不全，跨引擎下推前务必对目标方言做回归测试。
+- **版本踩坑**——Calcite 各版本 API 差异较大（`CoreRules` 合并、`RelMetadataQuery` 变化等），建议锁定一个稳定版本，别频繁升级。
+
+如果团队对查询优化器不熟，可以先只用 RBO（`HepPlanner`）跑起来，CBO 和物化改写作为进阶——先把"视图统一管理 + 方言下推"的价值拿到手，再追求极致优化。
+
+### 8.4 物化视图：不是万能药
+
+物化视图能大幅提升高频查询性能，但它有代价：**刷新成本 + 存储成本 + 一致性延迟**。判断是否该物化一个视图：
+
+- 查询频率高、结果变化慢（如按天聚合的看板）→ 适合物化；
+- 查询频率低、或结果实时性要求高（如秒级明细）→ 不适合，即时计算更划算。
+
+参考 4.6 的权衡图：低频用即时计算（零存储），高频用物化视图（摊薄刷新成本），中频可结合 Calcite 的 `Lattice` 做自动推荐。
+
+## 九、小结
 
 报表中台的本质，是把"报表"从**一次性的 SQL 查询**，升级为**可治理的数据资产**：
 
@@ -651,5 +806,15 @@ Calcite 这一层不受影响——它只关心 `Schema` 里"当前该连哪个�
 - **视图层（Calcite）**——解析→校验→RBO(`HepPlanner`)→CBO(`VolcanoPlanner`)→物化改写→方言下推，把视图变成可复用的优化计划；
 - **API 层**——按元数据运行时拼查询，新增接口=配置视图+API。
 - **集群容灾**——分层高可用（查询层无状态、元数据主从、数据层引擎原生多副本），数据源主备登记 + 探活路由实现自动 Failover。
+
+核心要点回顾：
+
+| 层 | 核心机制 | 关键产物 |
+| --- | --- | --- |
+| 元数据 | 9 张表 DDL（含引擎属性表） | 物理表/视图/API 全部结构化 |
+| 物理表 | 引擎插件 + 统计采集 + 变更 diff | `row_count`/`ndv` 喂饱 CBO |
+| 视图层 | Calcite: 解析→校验→RBO→CBO→物化改写→方言下推 | 可复用的优化 `RelNode` + 自动血缘 |
+| API 层 | 元数据驱动拼查询 + 参数校验 + 分页下推 | 零代码新增取数接口 |
+| 容灾 | 分层高可用 + 数据源主备探活路由 | 自动 Failover，RTO 秒级 |
 
 三者统一在一个平台里，报表的需求变更，从"改代码发版"变成"配视图、配接口"。而这套设计，与业界主流语义层同构——只是把技术底座牢牢握在自己手里。

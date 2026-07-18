@@ -53,6 +53,15 @@ config:
 <div class="home-timeline__item">
   <div class="home-timeline__dot"></div>
   <div class="home-timeline__body">
+    <span class="home-timeline__date">07-18</span>
+    <span class="home-timeline__tag home-timeline__tag--commercial">商业化技术体系</span>
+    <a href="/commercial-tech/report-tech/report-middle-platform/">更新《报表中台技术体系》</a>
+  </div>
+</div>
+
+<div class="home-timeline__item">
+  <div class="home-timeline__dot"></div>
+  <div class="home-timeline__body">
     <span class="home-timeline__date">07-13</span>
     <span class="home-timeline__tag home-timeline__tag--commercial">商业化技术体系</span>
     <a href="/commercial-tech/report-tech/report-middle-platform/">新增《报表中台技术体系》</a>
