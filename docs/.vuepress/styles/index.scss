@@ -429,6 +429,11 @@
   background: rgb(139 92 246 / 10%);
 }
 
+.home-timeline__tag--commercial {
+  color: #2563eb;
+  background: rgb(37 99 235 / 10%);
+}
+
 .home-timeline__body a {
   color: #334155;
   font-weight: 500;
@@ -583,6 +588,11 @@
 .timeline-entry__tag--blog {
   color: #7c3aed;
   background: rgb(139 92 246 / 10%);
+}
+
+.timeline-entry__tag--commercial {
+  color: #2563eb;
+  background: rgb(37 99 235 / 10%);
 }
 
 .timeline-entry__tag--thought {

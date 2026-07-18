@@ -20,6 +20,20 @@ icon: mdi:timeline-clock-outline
 <div class="timeline-item">
   <div class="timeline-item__dot"></div>
   <div class="timeline-item__content">
+    <div class="timeline-item__date">7 月 13 日</div>
+    <div class="timeline-item__entries">
+      <div class="timeline-entry">
+        <span class="timeline-entry__tag timeline-entry__tag--commercial">商业化技术体系</span>
+        <a class="timeline-entry__link" href="/commercial-tech/report-tech/report-middle-platform/">新增《报表中台技术体系》</a>
+        <span class="timeline-entry__desc">—— 元数据建表、Calcite 视图优化(RBO/CBO)、物化视图改写、API 配置化与分层容灾全链路</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="timeline-item">
+  <div class="timeline-item__dot"></div>
+  <div class="timeline-item__content">
     <div class="timeline-item__date">7 月 11 日</div>
     <div class="timeline-item__entries">
       <div class="timeline-entry">
