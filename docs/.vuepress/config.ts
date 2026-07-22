@@ -46,15 +46,15 @@ export default defineUserConfig({
       { text: '首页', link: '/', icon: 'mdi:home' },
       { text: '时间轴', link: '/changelog/', icon: 'mdi:timeline-clock-outline' },
       // { text: '存卿偶寄', link: '/blog/', icon: 'mdi:feather' },
-      { text: '思考领悟', link: '/thoughts/', icon: 'mdi:lightbulb-outline' },
+      // { text: '思考领悟', link: '/thoughts/', icon: 'mdi:lightbulb-outline' },
       { text: 'AI学习', link: '/ai-study/', icon: 'mdi:robot-outline' },
       { text: 'AI源码', link: '/ai-source/', icon: 'mdi:code-braces' },
-      { text: 'AI客服系统', link: '/ai-cs/', icon: 'mdi:headset' },
-      { text: '商业化技术体系', link: '/commercial-tech/', icon: 'mdi:briefcase' },
+      { text: '智能客服体系', link: '/ai-cs/', icon: 'mdi:headset' },
+      { text: '商业技术体系', link: '/commercial-tech/', icon: 'mdi:briefcase' },
       { text: '拾遗补阙', link: '/notes/', icon: 'mdi:puzzle-outline' },
       // { text: '归档', link: '/blog/archives/', icon: 'mdi:archive-outline' },
       // { text: '标签', link: '/blog/tags/', icon: 'mdi:tag-outline' },
-      { text: '关于', link: '/about/', icon: 'mdi:account-outline' },
+      // { text: '关于', link: '/about/', icon: 'mdi:account-outline' },
     ],
     collections: [
       // {
@@ -65,7 +65,7 @@ export default defineUserConfig({
       {
         type: 'doc',
         dir: 'ai-cs',
-        title: 'AI客服系统',
+        title: '智能客服体系',
         sidebar: [
           {
             text: '周边生态工具',
@@ -98,7 +98,7 @@ export default defineUserConfig({
       {
         type: 'doc',
         dir: 'commercial-tech',
-        title: '商业化技术体系',
+        title: '商业技术体系',
         sidebar: [
           {
             text: '报表技术体系',
@@ -106,6 +106,14 @@ export default defineUserConfig({
             collapsed: false,
             items: [
               'report-tech/report-middle-platform.md',
+            ],
+          },
+          {
+            text: '搜广推系统',
+            link: '/commercial-tech/',
+            collapsed: false,
+            items: [
+              'search-ads-recommend/search-ads-recommend-pipeline.md',
             ],
           },
         ],

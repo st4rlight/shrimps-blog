@@ -1,0 +1,144 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 480" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <linearGradient id="blueG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="greenG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#34d399;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="amberG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="violetG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#a78bfa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.12"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5"
+            markerWidth="8" markerHeight="8"
+            markerUnits="userSpaceOnUse"
+            orient="auto"
+            preserveAspectRatio="xMidYMid meet">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/>
+    </marker>
+  </defs>
+
+  <!-- ===== Background ===== -->
+  <rect width="820" height="480" rx="14" fill="#f8fafc"/>
+
+  <!-- ===== Title ===== -->
+  <text x="410" y="36" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">精排模型演进路线</text>
+  <text x="410" y="56" text-anchor="middle" font-size="12" fill="#94a3b8">从线性模型到深度多目标，再到前沿 Scaling Law</text>
+
+  <!-- ===== Timeline arrow ===== -->
+  <line x1="40" y1="90" x2="790" y2="90" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- ===== Phase 1: Classic ===== -->
+  <!-- Phase label -->
+  <rect x="40" y="105" width="180" height="28" rx="6" fill="url(#blueG)"/>
+  <text x="130" y="124" text-anchor="middle" font-size="12" font-weight="700" fill="white">经典阶段</text>
+
+  <!-- Model cards -->
+  <g filter="url(#shadow)">
+    <rect x="40" y="145" width="170" height="80" rx="10" fill="white" stroke="#93c5fd" stroke-width="1.5"/>
+  </g>
+  <text x="125" y="170" text-anchor="middle" font-size="14" font-weight="700" fill="#1d4ed8">LR</text>
+  <text x="125" y="190" text-anchor="middle" font-size="10" fill="#64748b">线性模型</text>
+  <text x="125" y="210" text-anchor="middle" font-size="10" fill="#64748b">+ 人工特征工程</text>
+
+  <g filter="url(#shadow)">
+    <rect x="225" y="145" width="170" height="80" rx="10" fill="white" stroke="#93c5fd" stroke-width="1.5"/>
+  </g>
+  <text x="310" y="170" text-anchor="middle" font-size="14" font-weight="700" fill="#1d4ed8">FM / FFM</text>
+  <text x="310" y="190" text-anchor="middle" font-size="10" fill="#64748b">二阶特征交叉</text>
+  <text x="310" y="210" text-anchor="middle" font-size="10" fill="#64748b">隐向量内积自动组合</text>
+
+  <!-- Arrow between cards -->
+  <line x1="210" y1="185" x2="221" y2="185" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- ===== Phase 2: Deep ===== -->
+  <rect x="40" y="245" width="180" height="28" rx="6" fill="url(#greenG)"/>
+  <text x="130" y="264" text-anchor="middle" font-size="12" font-weight="700" fill="white">深度阶段</text>
+
+  <g filter="url(#shadow)">
+    <rect x="40" y="285" width="120" height="80" rx="10" fill="white" stroke="#86efac" stroke-width="1.5"/>
+  </g>
+  <text x="100" y="310" text-anchor="middle" font-size="13" font-weight="700" fill="#047857">Wide&amp;Deep</text>
+  <text x="100" y="328" text-anchor="middle" font-size="10" fill="#64748b">宽记忆 + 深泛化</text>
+  <text x="100" y="348" text-anchor="middle" font-size="10" fill="#64748b">线性+DNN联合</text>
+
+  <g filter="url(#shadow)">
+    <rect x="175" y="285" width="120" height="80" rx="10" fill="white" stroke="#86efac" stroke-width="1.5"/>
+  </g>
+  <text x="235" y="310" text-anchor="middle" font-size="13" font-weight="700" fill="#047857">DeepFM</text>
+  <text x="235" y="328" text-anchor="middle" font-size="10" fill="#64748b">FM + DNN</text>
+  <text x="235" y="348" text-anchor="middle" font-size="10" fill="#64748b">共享 Embedding</text>
+
+  <g filter="url(#shadow)">
+    <rect x="310" y="285" width="120" height="80" rx="10" fill="white" stroke="#86efac" stroke-width="1.5"/>
+  </g>
+  <text x="370" y="310" text-anchor="middle" font-size="13" font-weight="700" fill="#047857">DCN / v2</text>
+  <text x="370" y="328" text-anchor="middle" font-size="10" fill="#64748b">显式交叉网络</text>
+  <text x="370" y="348" text-anchor="middle" font-size="10" fill="#64748b">结构化特征交叉</text>
+
+  <!-- ===== Phase 3: Attention ===== -->
+  <rect x="455" y="245" width="180" height="28" rx="6" fill="url(#amberG)"/>
+  <text x="545" y="264" text-anchor="middle" font-size="12" font-weight="700" fill="white">注意力阶段</text>
+
+  <g filter="url(#shadow)">
+    <rect x="455" y="285" width="120" height="80" rx="10" fill="white" stroke="#fbbf24" stroke-width="1.5"/>
+  </g>
+  <text x="515" y="310" text-anchor="middle" font-size="13" font-weight="700" fill="#92400e">DIN</text>
+  <text x="515" y="328" text-anchor="middle" font-size="10" fill="#64748b">Target Attention</text>
+  <text x="515" y="348" text-anchor="middle" font-size="10" fill="#64748b">行为序列建模</text>
+
+  <g filter="url(#shadow)">
+    <rect x="590" y="285" width="120" height="80" rx="10" fill="white" stroke="#fbbf24" stroke-width="1.5"/>
+  </g>
+  <text x="650" y="310" text-anchor="middle" font-size="13" font-weight="700" fill="#92400e">DIEN / DSIN</text>
+  <text x="650" y="328" text-anchor="middle" font-size="10" fill="#64748b">兴趣演化</text>
+  <text x="650" y="348" text-anchor="middle" font-size="10" fill="#64748b">会话兴趣网络</text>
+
+  <!-- ===== Phase 4: Multi-task + Frontier ===== -->
+  <rect x="40" y="385" width="180" height="28" rx="6" fill="url(#violetG)"/>
+  <text x="130" y="404" text-anchor="middle" font-size="12" font-weight="700" fill="white">多目标 + 前沿</text>
+
+  <g filter="url(#shadow)">
+    <rect x="40" y="425" width="150" height="40" rx="8" fill="white" stroke="#c4b5fd" stroke-width="1.5"/>
+  </g>
+  <text x="115" y="450" text-anchor="middle" font-size="11" font-weight="600" fill="#5b21b6">MMOE / PLE</text>
+
+  <g filter="url(#shadow)">
+    <rect x="205" y="425" width="150" height="40" rx="8" fill="white" stroke="#c4b5fd" stroke-width="1.5"/>
+  </g>
+  <text x="280" y="450" text-anchor="middle" font-size="11" font-weight="600" fill="#5b21b6">ESMM</text>
+
+  <g filter="url(#shadow)">
+    <rect x="370" y="425" width="150" height="40" rx="8" fill="white" stroke="#c4b5fd" stroke-width="1.5"/>
+  </g>
+  <text x="445" y="450" text-anchor="middle" font-size="11" font-weight="600" fill="#5b21b6">RankMixer</text>
+
+  <g filter="url(#shadow)">
+    <rect x="535" y="425" width="150" height="40" rx="8" fill="white" stroke="#c4b5fd" stroke-width="1.5"/>
+  </g>
+  <text x="610" y="450" text-anchor="middle" font-size="11" font-weight="600" fill="#5b21b6">GDCN / Hiformer</text>
+
+  <!-- Connecting arrows between phases -->
+  <line x1="210" y1="325" x2="221" y2="325" stroke="#94a3b8" stroke-width="1" marker-end="url(#arrow)"/>
+  <line x1="295" y1="325" x2="306" y2="325" stroke="#94a3b8" stroke-width="1" marker-end="url(#arrow)"/>
+
+  <!-- Vertical connecting arrows -->
+  <line x1="125" y1="225" x2="125" y2="281" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#arrow)"/>
+  <line x1="370" y1="365" x2="370" y2="421" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#arrow)"/>
+
+  <!-- Phase labels on timeline -->
+  <text x="130" y="82" text-anchor="middle" font-size="10" fill="#3b82f6" font-weight="600">~2013</text>
+  <text x="310" y="82" text-anchor="middle" font-size="10" fill="#10b981" font-weight="600">~2016</text>
+  <text x="515" y="82" text-anchor="middle" font-size="10" fill="#f59e0b" font-weight="600">~2018</text>
+  <text x="700" y="82" text-anchor="middle" font-size="10" fill="#8b5cf6" font-weight="600">~2022+</text>
+</svg>

@@ -21,7 +21,7 @@ description: 为 shrimps-blog 博客编写技术文章，涵盖菜单归属判�
 
 | 一级栏目 | 目录 | 二级分类（示例） |
 |---------|------|----------------|
-| AI客服系统 | `docs/ai-cs/` | 周边生态工具 |
+| 智能客服体系 | `docs/ai-cs/` | 周边生态工具 |
 | AI学习 | `docs/ai-study/` | SDD规范驱动开发、Harness Engineering、AI Infra演进、RAG技术学习、AI周边生态 |
 | AI源码 | `docs/ai-source/` | ClaudeCode源码分析、DeepAgents源码分析、OpenClaw源码分析 |
 | 拾遗补阙 | `docs/notes/` | Java拾遗、离线数仓建设、数据库技术 |
@@ -29,7 +29,7 @@ description: 为 shrimps-blog 博客编写技术文章，涵盖菜单归属判�
 
 ### 1.3 归属决策规则
 
-1. **AI客服系统**：客服相关技术栈（Akka、流程引擎、表达式引擎等）
+1. **智能客服体系**：客服相关技术栈（Akka、流程引擎、表达式引擎等）
 2. **AI学习**：AI 领域学习笔记、方法论、架构演进、RAG 等
 3. **AI源码**：对开源 AI 项目/工具的源码深度分析
 4. **拾遗补阙**：基础技术补漏（Java、数据库、数仓等）

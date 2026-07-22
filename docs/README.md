@@ -53,8 +53,17 @@ config:
 <div class="home-timeline__item">
   <div class="home-timeline__dot"></div>
   <div class="home-timeline__body">
-    <span class="home-timeline__date">07-18</span>
+    <span class="home-timeline__date">07-23</span>
     <span class="home-timeline__tag home-timeline__tag--commercial">商业化技术体系</span>
+    <a href="/commercial-tech/search-ads-recommend/search-ads-recommend-pipeline/">新增《搜广推系统全链路详解》</a>
+  </div>
+</div>
+
+<div class="home-timeline__item">
+  <div class="home-timeline__dot"></div>
+  <div class="home-timeline__body">
+    <span class="home-timeline__date">07-18</span>
+    <span class="home-timeline__tag home-timeline__tag--commercial">商业技术体系</span>
     <a href="/commercial-tech/report-tech/report-middle-platform/">更新《报表中台技术体系》</a>
   </div>
 </div>
@@ -63,7 +72,7 @@ config:
   <div class="home-timeline__dot"></div>
   <div class="home-timeline__body">
     <span class="home-timeline__date">07-13</span>
-    <span class="home-timeline__tag home-timeline__tag--commercial">商业化技术体系</span>
+    <span class="home-timeline__tag home-timeline__tag--commercial">商业技术体系</span>
     <a href="/commercial-tech/report-tech/report-middle-platform/">新增《报表中台技术体系》</a>
   </div>
 </div>
@@ -81,7 +90,7 @@ config:
   <div class="home-timeline__dot"></div>
   <div class="home-timeline__body">
     <span class="home-timeline__date">07-11</span>
-    <span class="home-timeline__tag home-timeline__tag--ai">AI客服系统</span>
+    <span class="home-timeline__tag home-timeline__tag--ai">智能客服体系</span>
     <a href="/ai-cs/fsm-introduction/">新增《有限状态机引擎FSM》</a>
   </div>
 </div>
@@ -90,7 +99,7 @@ config:
   <div class="home-timeline__dot"></div>
   <div class="home-timeline__body">
     <span class="home-timeline__date">07-11</span>
-    <span class="home-timeline__tag home-timeline__tag--ai">AI客服系统</span>
+    <span class="home-timeline__tag home-timeline__tag--ai">智能客服体系</span>
     <a href="/ai-cs/flowlong-analysis/">新增《BPM审批流引擎》</a>
   </div>
 </div>
@@ -99,7 +108,7 @@ config:
   <div class="home-timeline__dot"></div>
   <div class="home-timeline__body">
     <span class="home-timeline__date">07-11</span>
-    <span class="home-timeline__tag home-timeline__tag--ai">AI客服系统</span>
+    <span class="home-timeline__tag home-timeline__tag--ai">智能客服体系</span>
     <a href="/ai-cs/flow-orchestration-engine/">新增《Flow流程编排引擎》</a>
   </div>
 </div>
@@ -108,7 +117,7 @@ config:
   <div class="home-timeline__dot"></div>
   <div class="home-timeline__body">
     <span class="home-timeline__date">07-11</span>
-    <span class="home-timeline__tag home-timeline__tag--ai">AI客服系统</span>
+    <span class="home-timeline__tag home-timeline__tag--ai">智能客服体系</span>
     <a href="/ai-cs/akka-introduction/">更新《Akka高并发系统介绍》</a>
   </div>
 </div>
@@ -117,7 +126,7 @@ config:
   <div class="home-timeline__dot"></div>
   <div class="home-timeline__body">
     <span class="home-timeline__date">07-07</span>
-    <span class="home-timeline__tag home-timeline__tag--ai">AI客服系统</span>
+    <span class="home-timeline__tag home-timeline__tag--ai">智能客服体系</span>
     <a href="/ai-cs/qlexpress-study-notes/">新增《QLExpress4表达式引擎》</a>
   </div>
 </div>
@@ -126,7 +135,7 @@ config:
   <div class="home-timeline__dot"></div>
   <div class="home-timeline__body">
     <span class="home-timeline__date">07-07</span>
-    <span class="home-timeline__tag home-timeline__tag--ai">AI客服系统</span>
+    <span class="home-timeline__tag home-timeline__tag--ai">智能客服体系</span>
     <a href="/ai-cs/akka-introduction/">新增《Akka高并发系统介绍》</a>
   </div>
 </div>

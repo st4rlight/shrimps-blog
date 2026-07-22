@@ -1681,7 +1681,7 @@ for (ExpressionTrace trace : traces) {
 
 ### 9.5 完整集成架构
 
-![QLExpress4 AI客服系统完整集成架构](/ai-cs/expression-engine/qlexpress-study-notes/integration-architecture.svg)
+![QLExpress4 智能客服体系完整集成架构](/ai-cs/expression-engine/qlexpress-study-notes/integration-architecture.svg)
 
 整体架构分为三层：
 

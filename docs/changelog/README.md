@@ -20,10 +20,24 @@ icon: mdi:timeline-clock-outline
 <div class="timeline-item">
   <div class="timeline-item__dot"></div>
   <div class="timeline-item__content">
-    <div class="timeline-item__date">7 月 18 日</div>
+    <div class="timeline-item__date">7 月 23 日</div>
     <div class="timeline-item__entries">
       <div class="timeline-entry">
         <span class="timeline-entry__tag timeline-entry__tag--commercial">商业化技术体系</span>
+        <a class="timeline-entry__link" href="/commercial-tech/search-ads-recommend/search-ads-recommend-pipeline/">新增《搜广推系统全链路详解》</a>
+        <span class="timeline-entry__desc">—— 召回→粗排→精排→重排级联漏斗架构、各层算法与关键技术、搜索/广告/推荐三大场景差异对比</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="timeline-item">
+  <div class="timeline-item__dot"></div>
+  <div class="timeline-item__content">
+    <div class="timeline-item__date">7 月 18 日</div>
+    <div class="timeline-item__entries">
+      <div class="timeline-entry">
+        <span class="timeline-entry__tag timeline-entry__tag--commercial">商业技术体系</span>
         <a class="timeline-entry__link" href="/commercial-tech/report-tech/report-middle-platform/">更新《报表中台技术体系》</a>
         <span class="timeline-entry__desc">—— 补元数据 9 表关系总览图、扩充 API 层(参数校验+分页下推)、充实变更感知与视图重校验、新增落地建议与选型要点章节</span>
       </div>
@@ -37,7 +51,7 @@ icon: mdi:timeline-clock-outline
     <div class="timeline-item__date">7 月 13 日</div>
     <div class="timeline-item__entries">
       <div class="timeline-entry">
-        <span class="timeline-entry__tag timeline-entry__tag--commercial">商业化技术体系</span>
+        <span class="timeline-entry__tag timeline-entry__tag--commercial">商业技术体系</span>
         <a class="timeline-entry__link" href="/commercial-tech/report-tech/report-middle-platform/">新增《报表中台技术体系》</a>
         <span class="timeline-entry__desc">—— 元数据建表、Calcite 视图优化(RBO/CBO)、物化视图改写、API 配置化与分层容灾全链路</span>
       </div>
@@ -51,22 +65,22 @@ icon: mdi:timeline-clock-outline
     <div class="timeline-item__date">7 月 11 日</div>
     <div class="timeline-item__entries">
       <div class="timeline-entry">
-        <span class="timeline-entry__tag timeline-entry__tag--ai">AI客服系统</span>
+        <span class="timeline-entry__tag timeline-entry__tag--ai">智能客服体系</span>
         <a class="timeline-entry__link" href="/ai-cs/fsm-introduction/">新增《有限状态机引擎FSM》</a>
         <span class="timeline-entry__desc">—— FSM三要素、DFA/NFA分类、四种实现方式、主流框架对比与基于策略模式的轻量级状态机实战</span>
       </div>
       <div class="timeline-entry">
-        <span class="timeline-entry__tag timeline-entry__tag--ai">AI客服系统</span>
+        <span class="timeline-entry__tag timeline-entry__tag--ai">智能客服体系</span>
         <a class="timeline-entry__link" href="/ai-cs/flow-orchestration-engine/">新增《Flow流程编排引擎》</a>
         <span class="timeline-entry__desc">—— LiteFlow 与 CompileFlow 两大流程编排引擎的设计与实践</span>
       </div>
       <div class="timeline-entry">
-        <span class="timeline-entry__tag timeline-entry__tag--ai">AI客服系统</span>
+        <span class="timeline-entry__tag timeline-entry__tag--ai">智能客服体系</span>
         <a class="timeline-entry__link" href="/ai-cs/flowlong-analysis/">新增《BPM审批流引擎》</a>
         <span class="timeline-entry__desc">—— BPM审批流引擎完整概念体系与FlowLong飞龙工作流引擎实战</span>
       </div>
       <div class="timeline-entry">
-        <span class="timeline-entry__tag timeline-entry__tag--ai">AI客服系统</span>
+        <span class="timeline-entry__tag timeline-entry__tag--ai">智能客服体系</span>
         <a class="timeline-entry__link" href="/ai-cs/akka-introduction/">更新《Akka高并发系统介绍》</a>
         <span class="timeline-entry__desc">—— 新增熔断器、Cluster Sharding、事件溯源、Routers/FSM、测试策略与生态模块全景</span>
       </div>
@@ -85,12 +99,12 @@ icon: mdi:timeline-clock-outline
     <div class="timeline-item__date">7 月 7 日</div>
     <div class="timeline-item__entries">
       <div class="timeline-entry">
-        <span class="timeline-entry__tag timeline-entry__tag--ai">AI客服系统</span>
+        <span class="timeline-entry__tag timeline-entry__tag--ai">智能客服体系</span>
         <a class="timeline-entry__link" href="/ai-cs/akka-introduction/">新增《Akka高并发系统介绍》</a>
         <span class="timeline-entry__desc">—— 基于 Actor 模型的高并发分布式框架入门</span>
       </div>
       <div class="timeline-entry">
-        <span class="timeline-entry__tag timeline-entry__tag--ai">AI客服系统</span>
+        <span class="timeline-entry__tag timeline-entry__tag--ai">智能客服体系</span>
         <a class="timeline-entry__link" href="/ai-cs/qlexpress-study-notes/">新增《QLExpress4表达式引擎》</a>
         <span class="timeline-entry__desc">—— 阿里轻量级表达式引擎的语法、机制与客服场景实践</span>
       </div>
@@ -134,8 +148,8 @@ icon: mdi:timeline-clock-outline
     <div class="timeline-item__date">6 月 29 日</div>
     <div class="timeline-item__entries">
       <div class="timeline-entry">
-        <span class="timeline-entry__tag timeline-entry__tag--ai">AI客服系统</span>
-        <a class="timeline-entry__link" href="/ai-cs/">新增「AI客服系统」模块</a>
+        <span class="timeline-entry__tag timeline-entry__tag--ai">智能客服体系</span>
+        <a class="timeline-entry__link" href="/ai-cs/">新增「智能客服体系」模块</a>
         <span class="timeline-entry__desc">—— AI 客服领域的技术方案与工程实践</span>
       </div>
     </div>
