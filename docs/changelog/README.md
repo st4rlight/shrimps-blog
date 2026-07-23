@@ -24,8 +24,8 @@ icon: mdi:timeline-clock-outline
     <div class="timeline-item__entries">
       <div class="timeline-entry">
         <span class="timeline-entry__tag timeline-entry__tag--commercial">商业化技术体系</span>
-        <a class="timeline-entry__link" href="/commercial-tech/search-ads-recommend/search-ads-recommend-pipeline/">新增《搜广推系统全链路详解》</a>
-        <span class="timeline-entry__desc">—— 召回→粗排→精排→重排级联漏斗架构、各层算法与关键技术、搜索/广告/推荐三大场景差异对比</span>
+        <a class="timeline-entry__link" href="/commercial-tech/search-ads-recommend/search-ads-recommend-pipeline/">新增并丰富《搜广推系统全链路详解》</a>
+        <span class="timeline-entry__desc">—— 级联漏斗四阶段 + 三场景对比，补充工程化在线推理（延迟预算/特征平台/ANN 检索）、离线-在线评估体系、冷启动实战与 LLM/生成式推荐趋势（OneRec/HSTU/GPR 等工业案例）</span>
       </div>
       <div class="timeline-entry">
         <span class="timeline-entry__tag timeline-entry__tag--ai">opencode分析</span>
