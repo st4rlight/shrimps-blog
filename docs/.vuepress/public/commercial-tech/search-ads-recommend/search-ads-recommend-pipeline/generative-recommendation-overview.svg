@@ -63,8 +63,10 @@
   <text x="595" y="138" text-anchor="middle" font-size="11" fill="#64748b">行为序列 → 生成"下一个最该交互的物品"</text>
 
   <!-- ===== Fork: GR → 两条落地路线 ===== -->
-  <path d="M 595 154 L 595 180 L 515 180 L 515 206 M 595 180 L 705 180 L 705 206"
-        stroke="#94a3b8" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
+  <path d="M 595 154 L 595 180 L 515 180 L 705 180"
+        stroke="#94a3b8" stroke-width="1.5" fill="none"/>
+  <line x1="515" y1="180" x2="515" y2="206" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="705" y1="180" x2="705" y2="206" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
 
   <!-- Route 1: 端到端生成 E2E-GR -->
   <g filter="url(#shadow)">
