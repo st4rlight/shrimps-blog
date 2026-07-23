@@ -49,6 +49,7 @@ export default defineUserConfig({
       // { text: '思考领悟', link: '/thoughts/', icon: 'mdi:lightbulb-outline' },
       { text: 'AI学习', link: '/ai-study/', icon: 'mdi:robot-outline' },
       { text: 'AI源码', link: '/ai-source/', icon: 'mdi:code-braces' },
+      { text: 'opencode分析', link: '/opencode/', icon: 'mdi:console' },
       { text: '智能客服体系', link: '/ai-cs/', icon: 'mdi:headset' },
       { text: '商业技术体系', link: '/commercial-tech/', icon: 'mdi:briefcase' },
       { text: '拾遗补阙', link: '/notes/', icon: 'mdi:puzzle-outline' },
@@ -204,6 +205,21 @@ export default defineUserConfig({
               'open-claw/openclaw-context-engine-architecture.md',
               'open-claw/openclaw-channel-architecture.md',
               'open-claw/openclaw-node-device-architecture.md',
+            ],
+          },
+        ],
+      },
+      {
+        type: 'doc',
+        dir: 'opencode',
+        title: 'opencode分析',
+        sidebar: [
+          {
+            text: 'OpenCode源码学习路径',
+            link: '/opencode/',
+            collapsed: false,
+            items: [
+              'opencode-learning-guide.md',
             ],
           },
         ],

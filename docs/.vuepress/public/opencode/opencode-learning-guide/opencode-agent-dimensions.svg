@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 340" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <linearGradient id="violetG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#a78bfa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="blueG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="emeraldG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#34d399;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="amberG" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.12"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto" preserveAspectRatio="xMidYMid meet">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/>
+    </marker>
+  </defs>
+
+  <rect width="760" height="340" fill="#f8fafc" rx="12"/>
+
+  <text x="380" y="28" font-size="16" font-weight="600" fill="#1e293b" text-anchor="middle">Agent 的六个可组合维度</text>
+
+  <!-- Center: Agent -->
+  <g filter="url(#shadow)">
+    <rect x="290" y="130" width="180" height="80" rx="12" fill="#ede9fe" stroke="#8b5cf6" stroke-width="2"/>
+    <text x="380" y="165" font-size="20" font-weight="600" fill="#1e293b" text-anchor="middle">Agent</text>
+    <text x="380" y="188" font-size="10" fill="#7c3aed" text-anchor="middle" font-family="'JetBrains Mono', monospace">@opencode/Agent</text>
+  </g>
+
+  <!-- PERMISSION (top-left) -->
+  <g filter="url(#shadow)">
+    <rect x="30" y="50" width="160" height="65" rx="8" fill="#ffffff" stroke="#fbbf24" stroke-width="1.5"/>
+    <text x="110" y="75" font-size="11" font-weight="600" fill="#92400e" text-anchor="middle">PERMISSION</text>
+    <text x="110" y="95" font-size="10" fill="#64748b" text-anchor="middle">allow / deny / ask</text>
+  </g>
+  <line x1="190" y1="115" x2="290" y2="145" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- MODEL (top-center) -->
+  <g filter="url(#shadow)">
+    <rect x="300" y="50" width="160" height="65" rx="8" fill="#ffffff" stroke="#3b82f6" stroke-width="1.5"/>
+    <text x="380" y="75" font-size="11" font-weight="600" fill="#1d4ed8" text-anchor="middle">MODEL</text>
+    <text x="380" y="95" font-size="10" fill="#64748b" text-anchor="middle">provider + modelID</text>
+  </g>
+  <line x1="380" y1="115" x2="380" y2="130" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- PROMPT (top-right) -->
+  <g filter="url(#shadow)">
+    <rect x="570" y="50" width="160" height="65" rx="8" fill="#ffffff" stroke="#10b981" stroke-width="1.5"/>
+    <text x="650" y="75" font-size="11" font-weight="600" fill="#047857" text-anchor="middle">PROMPT</text>
+    <text x="650" y="95" font-size="10" fill="#64748b" text-anchor="middle">per-model 策略</text>
+  </g>
+  <line x1="570" y1="115" x2="470" y2="145" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- TOOLS (bottom-left) -->
+  <g filter="url(#shadow)">
+    <rect x="30" y="225" width="160" height="65" rx="8" fill="#ffffff" stroke="#8b5cf6" stroke-width="1.5"/>
+    <text x="110" y="250" font-size="11" font-weight="600" fill="#5b21b6" text-anchor="middle">TOOLS</text>
+    <text x="110" y="270" font-size="10" fill="#64748b" text-anchor="middle">read / write / edit</text>
+  </g>
+  <line x1="190" y1="225" x2="290" y2="195" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- STEPS (bottom-center) -->
+  <g filter="url(#shadow)">
+    <rect x="300" y="225" width="160" height="65" rx="8" fill="#ffffff" stroke="#ef4444" stroke-width="1.5"/>
+    <text x="380" y="250" font-size="11" font-weight="600" fill="#991b1b" text-anchor="middle">STEPS</text>
+    <text x="380" y="270" font-size="10" fill="#64748b" text-anchor="middle">max_steps</text>
+  </g>
+  <line x1="380" y1="225" x2="380" y2="210" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- MODE (bottom-right) -->
+  <g filter="url(#shadow)">
+    <rect x="570" y="225" width="160" height="65" rx="8" fill="#ffffff" stroke="#6366f1" stroke-width="1.5"/>
+    <text x="650" y="250" font-size="11" font-weight="600" fill="#3730a3" text-anchor="middle">MODE</text>
+    <text x="650" y="270" font-size="10" fill="#64748b" text-anchor="middle">primary / subagent</text>
+  </g>
+  <line x1="570" y1="225" x2="470" y2="195" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+</svg>

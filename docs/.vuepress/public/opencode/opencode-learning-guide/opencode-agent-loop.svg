@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 620" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.12"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto" preserveAspectRatio="xMidYMid meet">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/>
+    </marker>
+    <marker id="arrowAccent" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto" preserveAspectRatio="xMidYMid meet">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#8b5cf6"/>
+    </marker>
+  </defs>
+
+  <rect width="760" height="620" fill="#f8fafc" rx="12"/>
+
+  <text x="380" y="28" font-size="16" font-weight="600" fill="#1e293b" text-anchor="middle">Agent 核心循环 (runLoop)</text>
+
+  <!-- 1. User message -->
+  <g filter="url(#shadow)">
+    <rect x="250" y="50" width="260" height="45" rx="8" fill="#ede9fe" stroke="#8b5cf6" stroke-width="2"/>
+    <text x="380" y="73" font-size="12" font-weight="600" fill="#1e293b" text-anchor="middle">用户消息写入</text>
+  </g>
+  <line x1="380" y1="95" x2="380" y2="113" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- 2. while(true) -->
+  <g filter="url(#shadow)">
+    <rect x="180" y="118" width="400" height="45" rx="8" fill="#ffffff" stroke="#93c5fd" stroke-width="1.5"/>
+    <text x="380" y="143" font-size="12" font-weight="600" fill="#1e293b" text-anchor="middle">while (true) 循环开始</text>
+  </g>
+  <line x1="380" y1="163" x2="380" y2="181" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- 3. Reload messages -->
+  <g filter="url(#shadow)">
+    <rect x="140" y="186" width="480" height="55" rx="8" fill="#ffffff" stroke="#93c5fd" stroke-width="1.5"/>
+    <text x="380" y="208" font-size="11" fill="#374151" text-anchor="middle">1. 重新加载消息历史（含压缩过滤）</text>
+    <text x="380" y="225" font-size="11" fill="#374151" text-anchor="middle">2. 获取 lastUser / lastAssistant / tasks</text>
+  </g>
+  <line x1="380" y1="241" x2="380" y2="259" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- 4. Check exit condition -->
+  <g filter="url(#shadow)">
+    <rect x="180" y="264" width="400" height="55" rx="8" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+    <text x="380" y="286" font-size="11" font-weight="600" fill="#92400e" text-anchor="middle">3. 检查退出条件</text>
+    <text x="380" y="304" font-size="9" fill="#64748b" text-anchor="middle" font-family="'JetBrains Mono', monospace">assistant finished &amp;&amp; !hasToolCalls → break</text>
+  </g>
+  <line x1="380" y1="319" x2="380" y2="337" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- 5. Diamond: has subtask? -->
+  <polygon points="380,340 450,370 380,400 310,370" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="380" y="374" font-size="10" fill="#92400e" text-anchor="middle">有 subtask?</text>
+  <line x1="380" y1="400" x2="380" y2="418" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="390" y="415" font-size="9" fill="#64748b" font-family="'JetBrains Mono', monospace">否</text>
+
+  <!-- 6. Get Agent + Model -->
+  <g filter="url(#shadow)">
+    <rect x="140" y="423" width="480" height="55" rx="8" fill="#ffffff" stroke="#93c5fd" stroke-width="1.5"/>
+    <text x="380" y="445" font-size="11" fill="#374151" text-anchor="middle">4. 获取 Agent + Model，检查 maxSteps</text>
+    <text x="380" y="463" font-size="11" fill="#374151" text-anchor="middle">5. 应用 Reminders + 创建 AssistantMessage</text>
+  </g>
+  <line x1="380" y1="478" x2="380" y2="496" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- 7. handle.process() -->
+  <g filter="url(#shadow)">
+    <rect x="120" y="501" width="520" height="70" rx="8" fill="#ede9fe" stroke="#8b5cf6" stroke-width="2"/>
+    <text x="380" y="523" font-size="12" font-weight="600" fill="#5b21b6" text-anchor="middle">6. handle.process()</text>
+    <text x="380" y="540" font-size="9" fill="#64748b" text-anchor="middle" font-family="'JetBrains Mono', monospace">SessionTools.resolve → LLM.stream → Processor.handleEvent</text>
+    <text x="380" y="557" font-size="9" fill="#64748b" text-anchor="middle" font-family="'JetBrains Mono', monospace">text-delta / tool-call / tool-result / reasoning</text>
+  </g>
+  <line x1="380" y1="571" x2="380" y2="585" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- 8. Diamond: result? -->
+  <polygon points="380,588 460,605 380,622 300,605" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="380" y="609" font-size="10" fill="#92400e" text-anchor="middle">result?</text>
+  <text x="295" y="608" font-size="8" fill="#64748b" text-anchor="end" font-family="'JetBrains Mono', monospace">stop→break</text>
+  <text x="465" y="608" font-size="8" fill="#64748b" font-family="'JetBrains Mono', monospace">continue→loop</text>
+
+  <!-- Loop back arrow -->
+  <path d="M 460 605 Q 690 605 690 340 Q 690 140 580 140" fill="none" stroke="#8b5cf6" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#arrowAccent)"/>
+</svg>
