@@ -27,6 +27,11 @@ icon: mdi:timeline-clock-outline
         <a class="timeline-entry__link" href="/commercial-tech/search-ads-recommend/search-ads-recommend-pipeline/">新增《搜广推系统全链路详解》</a>
         <span class="timeline-entry__desc">—— 召回→粗排→精排→重排级联漏斗架构、各层算法与关键技术、搜索/广告/推荐三大场景差异对比</span>
       </div>
+      <div class="timeline-entry">
+        <span class="timeline-entry__tag timeline-entry__tag--ai">opencode分析</span>
+        <a class="timeline-entry__link" href="/opencode/">新增「opencode分析」模块</a>
+        <span class="timeline-entry__desc">—— 新增《OpenCode 源码学习路径》与整体架构 / Agent Loop / Agent 维度三张架构图</span>
+      </div>
     </div>
   </div>
 </div>
