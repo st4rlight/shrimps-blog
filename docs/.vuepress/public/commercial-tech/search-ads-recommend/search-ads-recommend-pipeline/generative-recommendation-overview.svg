@@ -1,0 +1,141 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 560" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <linearGradient id="blueG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="greenG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#34d399;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="violetG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#a78bfa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="amberG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.12"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5"
+            markerWidth="8" markerHeight="8"
+            markerUnits="userSpaceOnUse"
+            orient="auto"
+            preserveAspectRatio="xMidYMid meet">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/>
+    </marker>
+    <marker id="arrowV" viewBox="0 0 10 10" refX="10" refY="5"
+            markerWidth="8" markerHeight="8"
+            markerUnits="userSpaceOnUse"
+            orient="auto"
+            preserveAspectRatio="xMidYMid meet">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#8b5cf6"/>
+    </marker>
+  </defs>
+
+  <!-- ===== Background ===== -->
+  <rect width="800" height="560" rx="14" fill="#f8fafc"/>
+
+  <!-- ===== Title ===== -->
+  <text x="400" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">生成式推荐（GR）范式总览</text>
+  <text x="400" y="54" text-anchor="middle" font-size="12" fill="#94a3b8">从判别式级联到生成式端到端，以及 LLM 落地搜广推的三种姿势</text>
+
+  <!-- ===== Left: 传统推荐（判别式） ===== -->
+  <g filter="url(#shadow)">
+    <rect x="30" y="90" width="330" height="64" rx="12" fill="white" stroke="#3b82f6" stroke-width="1.5"/>
+  </g>
+  <rect x="30" y="90" width="330" height="6" rx="3" fill="url(#blueG)"/>
+  <text x="195" y="118" text-anchor="middle" font-size="15" font-weight="700" fill="#1d4ed8">传统推荐（判别式）</text>
+  <text x="195" y="138" text-anchor="middle" font-size="11" fill="#64748b">召回 → 粗排 → 精排 → 重排</text>
+
+  <!-- Arrow: 传统 → GR（范式转移） -->
+  <line x1="360" y1="122" x2="426" y2="122" stroke="#8b5cf6" stroke-width="1.5" marker-end="url(#arrowV)"/>
+  <text x="393" y="114" text-anchor="middle" font-size="10" font-weight="600" fill="#7c3aed">范式转移</text>
+
+  <!-- ===== Right: 生成式推荐（GR） ===== -->
+  <g filter="url(#shadow)">
+    <rect x="430" y="90" width="330" height="64" rx="12" fill="white" stroke="#8b5cf6" stroke-width="1.5"/>
+  </g>
+  <rect x="430" y="90" width="330" height="6" rx="3" fill="url(#violetG)"/>
+  <text x="595" y="118" text-anchor="middle" font-size="15" font-weight="700" fill="#5b21b6">生成式推荐（GR）</text>
+  <text x="595" y="138" text-anchor="middle" font-size="11" fill="#64748b">行为序列 → 生成"下一个最该交互的物品"</text>
+
+  <!-- ===== Fork: GR → 两条落地路线 ===== -->
+  <path d="M 595 154 L 595 180 L 515 180 L 515 206 M 595 180 L 705 180 L 705 206"
+        stroke="#94a3b8" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
+
+  <!-- Route 1: 端到端生成 E2E-GR -->
+  <g filter="url(#shadow)">
+    <rect x="430" y="210" width="170" height="80" rx="10" fill="white" stroke="#10b981" stroke-width="1.5"/>
+  </g>
+  <rect x="430" y="210" width="170" height="6" rx="3" fill="url(#greenG)"/>
+  <text x="515" y="236" text-anchor="middle" font-size="12" font-weight="700" fill="#047857">端到端生成 E2E-GR</text>
+  <text x="515" y="254" text-anchor="middle" font-size="10" fill="#64748b">Meta HSTU · 快手 OneRec</text>
+  <text x="515" y="272" text-anchor="middle" font-size="10" fill="#64748b">消除级联信息损耗</text>
+
+  <!-- Route 2: 生成-判别式 Hybrid -->
+  <g filter="url(#shadow)">
+    <rect x="620" y="210" width="170" height="80" rx="10" fill="white" stroke="#3b82f6" stroke-width="1.5"/>
+  </g>
+  <rect x="620" y="210" width="170" height="6" rx="3" fill="url(#blueG)"/>
+  <text x="705" y="236" text-anchor="middle" font-size="12" font-weight="700" fill="#1d4ed8">生成-判别式 Hybrid</text>
+  <text x="705" y="254" text-anchor="middle" font-size="10" fill="#64748b">字节 HLLM · 阿里 LUM</text>
+  <text x="705" y="272" text-anchor="middle" font-size="10" fill="#64748b">渐进融入传统模块</text>
+
+  <!-- ===== Left panel: GR 优势 vs 局限 ===== -->
+  <g filter="url(#shadow)">
+    <rect x="30" y="174" width="330" height="190" rx="12" fill="white" stroke="#e2e8f0" stroke-width="1.5"/>
+  </g>
+  <text x="195" y="196" text-anchor="middle" font-size="13" font-weight="700" fill="#475569">GR 的吸引力 vs 局限</text>
+
+  <!-- 优势 block -->
+  <rect x="42" y="210" width="306" height="70" rx="8" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1"/>
+  <text x="54" y="230" font-size="12" font-weight="700" fill="#15803d">✓ 吸引力</text>
+  <text x="54" y="247" font-size="10" fill="#166534">· Scaling Law 有效，性能可预测提升</text>
+  <text x="54" y="262" font-size="10" fill="#166534">· 擅长超长行为序列建模</text>
+  <text x="54" y="277" font-size="10" fill="#166534">· 端到端统一目标，打破信息茧房</text>
+
+  <!-- 局限 block -->
+  <rect x="42" y="290" width="306" height="70" rx="8" fill="#fef2f2" stroke="#fecaca" stroke-width="1"/>
+  <text x="54" y="310" font-size="12" font-weight="700" fill="#991b1b">⚠ 局限</text>
+  <text x="54" y="327" font-size="10" fill="#b91c1c">· 推理延迟极高，算力非线性增长</text>
+  <text x="54" y="342" font-size="10" fill="#b91c1c">· 跨场景（电商/视频/广告）泛化难</text>
+  <text x="54" y="357" font-size="10" fill="#b91c1c">· 数据不稳定，训练成本大</text>
+
+  <!-- ===== LLM 落地三种姿势 ===== -->
+  <line x1="515" y1="290" x2="515" y2="384" stroke="#8b5cf6" stroke-width="1.5" marker-end="url(#arrowV)"/>
+  <text x="400" y="398" text-anchor="middle" font-size="13" font-weight="700" fill="#5b21b6">LLM 落地搜广推的三种姿势</text>
+
+  <!-- Box 1: 离线特征生成 -->
+  <g filter="url(#shadow)">
+    <rect x="30" y="408" width="240" height="68" rx="10" fill="white" stroke="#3b82f6" stroke-width="1.5"/>
+  </g>
+  <rect x="30" y="408" width="240" height="6" rx="3" fill="url(#blueG)"/>
+  <text x="44" y="432" font-size="13" font-weight="700" fill="#1d4ed8">① 离线特征生成</text>
+  <text x="44" y="450" font-size="10" fill="#64748b">LLM 生成画像 / embedding / 理由</text>
+  <text x="44" y="465" font-size="10" fill="#64748b">存入特征库，线上查表（蚂蚁 LLMRG）</text>
+
+  <!-- Box 2: 知识蒸馏 -->
+  <g filter="url(#shadow)">
+    <rect x="280" y="408" width="240" height="68" rx="10" fill="white" stroke="#8b5cf6" stroke-width="1.5"/>
+  </g>
+  <rect x="280" y="408" width="240" height="6" rx="3" fill="url(#violetG)"/>
+  <text x="294" y="432" font-size="13" font-weight="700" fill="#5b21b6">② 知识蒸馏</text>
+  <text x="294" y="450" font-size="10" fill="#64748b">LLM 生成训练数据 / 标签</text>
+  <text x="294" y="465" font-size="10" fill="#64748b">训小模型，线上仍用小模型</text>
+
+  <!-- Box 3: 混合推理 -->
+  <g filter="url(#shadow)">
+    <rect x="530" y="408" width="240" height="68" rx="10" fill="white" stroke="#f59e0b" stroke-width="1.5"/>
+  </g>
+  <rect x="530" y="408" width="240" height="6" rx="3" fill="url(#amberG)"/>
+  <text x="544" y="432" font-size="13" font-weight="700" fill="#92400e">③ 混合推理</text>
+  <text x="544" y="450" font-size="10" fill="#64748b">粗排传统 · 精排大 · 展示调 LLM</text>
+  <text x="544" y="465" font-size="10" fill="#64748b">Capital One 61s→0.37s（166x）</text>
+
+  <!-- ===== Bottom tip ===== -->
+  <rect x="60" y="500" width="680" height="28" rx="14" fill="#f5f3ff" stroke="#ddd6fe" stroke-width="1"/>
+  <text x="400" y="518" text-anchor="middle" font-size="11" fill="#6d28d9">💡 生成式推荐用行为序列"生成"下一物品；LLM 多离线参与，避开在线推理的性能瓶颈</text>
+</svg>

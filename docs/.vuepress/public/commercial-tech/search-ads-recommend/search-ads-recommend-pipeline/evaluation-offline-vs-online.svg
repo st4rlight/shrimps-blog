@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 470" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <linearGradient id="blueG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="greenG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#34d399;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.12"/>
+    </filter>
+  </defs>
+
+  <!-- ===== Background ===== -->
+  <rect width="800" height="470" rx="14" fill="#f8fafc"/>
+
+  <!-- ===== Title ===== -->
+  <text x="400" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">评估体系：离线看排序，在线看因果</text>
+  <text x="400" y="54" text-anchor="middle" font-size="12" fill="#94a3b8">两层评估逻辑完全不同 —— 离线涨不代表上线涨</text>
+
+  <!-- ===== Left card: 离线评估 ===== -->
+  <g filter="url(#shadow)">
+    <rect x="30" y="80" width="350" height="320" rx="12" fill="white" stroke="#3b82f6" stroke-width="1.5"/>
+  </g>
+  <rect x="30" y="80" width="350" height="36" rx="12" fill="url(#blueG)"/>
+  <rect x="30" y="96" width="350" height="20" fill="url(#blueG)"/>
+  <text x="205" y="103" text-anchor="middle" font-size="15" font-weight="700" fill="white">离线评估 · 看排序能力</text>
+
+  <!-- Row 1: AUC -->
+  <rect x="42" y="130" width="326" height="38" rx="6" fill="#f1f5f9"/>
+  <text x="54" y="147" font-size="13" font-weight="700" fill="#1d4ed8">AUC</text>
+  <text x="54" y="162" font-size="10" fill="#64748b">全局排序能力，但会因活跃度区分而虚高</text>
+
+  <!-- Row 2: GAUC -->
+  <rect x="42" y="178" width="326" height="38" rx="6" fill="#f1f5f9"/>
+  <text x="54" y="195" font-size="13" font-weight="700" fill="#1d4ed8">GAUC（Group AUC）</text>
+  <text x="54" y="210" font-size="10" fill="#64748b">按用户分组各算 AUC —— 个性化推荐的真理</text>
+
+  <!-- Row 3: NDCG@K -->
+  <rect x="42" y="226" width="326" height="38" rx="6" fill="#f1f5f9"/>
+  <text x="54" y="243" font-size="13" font-weight="700" fill="#1d4ed8">NDCG@K</text>
+  <text x="54" y="258" font-size="10" fill="#64748b">考虑位置衰减，更贴近业务但增益需自设计</text>
+
+  <!-- Row 4: Recall@K -->
+  <rect x="42" y="274" width="326" height="38" rx="6" fill="#f1f5f9"/>
+  <text x="54" y="291" font-size="13" font-weight="700" fill="#1d4ed8">Recall@K / HitRate</text>
+  <text x="54" y="306" font-size="10" fill="#64748b">召回阶段"撒网捕鱼"：网大鱼也要覆盖海域</text>
+
+  <!-- Warning box -->
+  <rect x="42" y="322" width="326" height="58" rx="8" fill="#fef2f2" stroke="#fecaca" stroke-width="1"/>
+  <text x="54" y="342" font-size="11" font-weight="700" fill="#991b1b">⚠ 坑：全局 AUC 涨 ≠ 人人涨</text>
+  <text x="54" y="360" font-size="10" fill="#b91c1c">某视频案例全局涨、长尾用户群体反降</text>
+
+  <!-- ===== Right card: 在线评估 ===== -->
+  <g filter="url(#shadow)">
+    <rect x="420" y="80" width="350" height="320" rx="12" fill="white" stroke="#10b981" stroke-width="1.5"/>
+  </g>
+  <rect x="420" y="80" width="350" height="36" rx="12" fill="url(#greenG)"/>
+  <rect x="420" y="96" width="350" height="20" fill="url(#greenG)"/>
+  <text x="595" y="103" text-anchor="middle" font-size="15" font-weight="700" fill="white">在线评估 · 看因果</text>
+
+  <!-- Row 1: A/B Test -->
+  <rect x="432" y="130" width="326" height="38" rx="6" fill="#f1f5f9"/>
+  <text x="444" y="147" font-size="13" font-weight="700" fill="#047857">A/B Test</text>
+  <text x="444" y="162" font-size="10" fill="#64748b">验证因果的唯一方式：随机对照实验</text>
+
+  <!-- Row 2: AA 波动 -->
+  <rect x="432" y="178" width="326" height="38" rx="6" fill="#f1f5f9"/>
+  <text x="444" y="195" font-size="13" font-weight="700" fill="#047857">AA 波动（底噪）</text>
+  <text x="444" y="210" font-size="10" fill="#64748b">ΔNew 须大于 AA 波动，提升才可信</text>
+
+  <!-- Row 3: 上线 SOP -->
+  <rect x="432" y="226" width="326" height="38" rx="6" fill="#f1f5f9"/>
+  <text x="444" y="243" font-size="13" font-weight="700" fill="#047857">上线 SOP</text>
+  <text x="444" y="258" font-size="10" fill="#64748b">Canary 1% → Ramp 10% → Launch 全量</text>
+
+  <!-- Row 4: 护栏指标 -->
+  <rect x="432" y="274" width="326" height="38" rx="6" fill="#f1f5f9"/>
+  <text x="444" y="291" font-size="13" font-weight="700" fill="#047857">护栏指标（Guardrail）</text>
+  <text x="444" y="306" font-size="10" fill="#64748b">留存 / 时长 / 举报率，恶化则一票否决</text>
+
+  <!-- Note box -->
+  <rect x="432" y="322" width="326" height="58" rx="8" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1"/>
+  <text x="444" y="342" font-size="11" font-weight="700" fill="#15803d">✓ 核心：只有随机对照能证明因果</text>
+  <text x="444" y="360" font-size="10" fill="#166534">相关 ≠ 因果，别被离线指标误导</text>
+
+  <!-- ===== VS circle ===== -->
+  <circle cx="400" cy="240" r="20" fill="white" stroke="#94a3b8" stroke-width="1.5"/>
+  <text x="400" y="245" text-anchor="middle" font-size="12" font-weight="700" fill="#475569">VS</text>
+
+  <!-- ===== Bottom tip ===== -->
+  <rect x="120" y="420" width="560" height="28" rx="14" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1"/>
+  <text x="400" y="438" text-anchor="middle" font-size="11" fill="#475569">💡 离线 GAUC 涨 → Canary 跑 7 天 → Ramp → Launch；护栏崩了核心指标再好也不能上</text>
+</svg>

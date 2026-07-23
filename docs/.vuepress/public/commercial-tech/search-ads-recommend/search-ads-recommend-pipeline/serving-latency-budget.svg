@@ -1,0 +1,137 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 580" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <linearGradient id="blueG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="greenG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#34d399;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="violetG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#a78bfa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.12"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5"
+            markerWidth="8" markerHeight="8"
+            markerUnits="userSpaceOnUse"
+            orient="auto"
+            preserveAspectRatio="xMidYMid meet">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/>
+    </marker>
+    <marker id="arrowB" viewBox="0 0 10 10" refX="10" refY="5"
+            markerWidth="8" markerHeight="8"
+            markerUnits="userSpaceOnUse"
+            orient="auto"
+            preserveAspectRatio="xMidYMid meet">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#3b82f6"/>
+    </marker>
+  </defs>
+
+  <!-- ===== Background ===== -->
+  <rect width="800" height="580" rx="14" fill="#f8fafc"/>
+
+  <!-- ===== Title ===== -->
+  <text x="400" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">在线推理延迟预算（Serving Latency Budget）</text>
+  <text x="400" y="54" text-anchor="middle" font-size="12" fill="#94a3b8">p50 ≈ 40ms · p99 ≈ 80ms —— 串行会翻倍，并行是性价比最高的优化</text>
+
+  <!-- ===== Stage: 请求进入 ===== -->
+  <g filter="url(#shadow)">
+    <rect x="300" y="78" width="200" height="32" rx="8" fill="white" stroke="#3b82f6" stroke-width="1.5"/>
+  </g>
+  <text x="400" y="98" text-anchor="middle" font-size="13" font-weight="600" fill="#1d4ed8">请求进入</text>
+
+  <!-- Arrow 请求 → Auth -->
+  <line x1="400" y1="110" x2="400" y2="136" stroke="#3b82f6" stroke-width="1.5" marker-end="url(#arrowB)"/>
+
+  <!-- ===== Stage: Auth / 路由 ===== -->
+  <g filter="url(#shadow)">
+    <rect x="300" y="140" width="200" height="32" rx="8" fill="white" stroke="#3b82f6" stroke-width="1.5"/>
+  </g>
+  <text x="400" y="160" text-anchor="middle" font-size="13" font-weight="600" fill="#1d4ed8">Auth / 路由</text>
+  <text x="612" y="160" text-anchor="start" font-size="10" fill="#64748b">~2ms</text>
+
+  <!-- Arrow Auth → 调度分发 -->
+  <line x1="400" y1="172" x2="400" y2="198" stroke="#3b82f6" stroke-width="1.5" marker-end="url(#arrowB)"/>
+
+  <!-- ===== Stage: 调度分发（并行召回） ===== -->
+  <g filter="url(#shadow)">
+    <rect x="300" y="202" width="200" height="32" rx="8" fill="url(#blueG)"/>
+  </g>
+  <text x="400" y="223" text-anchor="middle" font-size="13" font-weight="700" fill="white">调度分发 · 触发并行召回</text>
+
+  <!-- ===== Fork lines: 调度分发 → 三路并行 ===== -->
+  <path d="M 400 234 L 400 242 M 205 242 L 400 242 L 595 242"
+        stroke="#94a3b8" stroke-width="1.5" fill="none"/>
+  <line x1="205" y1="242" x2="205" y2="262" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="400" y1="242" x2="400" y2="262" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="595" y1="242" x2="595" y2="262" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="120" y="238" text-anchor="middle" font-size="10" font-weight="600" fill="#64748b">并行 Parallel</text>
+
+  <!-- ===== Parallel: 三路召回（并排） ===== -->
+  <!-- Box1: 用户 Embedding 获取（blue） -->
+  <g filter="url(#shadow)">
+    <rect x="120" y="266" width="170" height="64" rx="10" fill="white" stroke="#3b82f6" stroke-width="1.5"/>
+  </g>
+  <rect x="120" y="266" width="170" height="6" rx="3" fill="url(#blueG)"/>
+  <text x="205" y="292" text-anchor="middle" font-size="12" font-weight="700" fill="#1d4ed8">用户 Embedding 获取</text>
+  <text x="205" y="310" text-anchor="middle" font-size="11" font-weight="600" fill="#64748b">~3-5ms</text>
+  <text x="205" y="324" text-anchor="middle" font-size="9" fill="#94a3b8">Redis 预计算</text>
+
+  <!-- Box2: ANN 向量检索（CF 路）（green） -->
+  <g filter="url(#shadow)">
+    <rect x="315" y="266" width="170" height="64" rx="10" fill="white" stroke="#10b981" stroke-width="1.5"/>
+  </g>
+  <rect x="315" y="266" width="170" height="6" rx="3" fill="url(#greenG)"/>
+  <text x="400" y="292" text-anchor="middle" font-size="12" font-weight="700" fill="#047857">ANN 向量检索（CF 路）</text>
+  <text x="400" y="310" text-anchor="middle" font-size="11" font-weight="600" fill="#64748b">~10-20ms</text>
+  <text x="400" y="324" text-anchor="middle" font-size="9" fill="#94a3b8">HNSW 图遍历</text>
+
+  <!-- Box3: 内容召回（violet） -->
+  <g filter="url(#shadow)">
+    <rect x="510" y="266" width="170" height="64" rx="10" fill="white" stroke="#8b5cf6" stroke-width="1.5"/>
+  </g>
+  <rect x="510" y="266" width="170" height="6" rx="3" fill="url(#violetG)"/>
+  <text x="595" y="292" text-anchor="middle" font-size="12" font-weight="700" fill="#5b21b6">内容召回</text>
+  <text x="595" y="310" text-anchor="middle" font-size="11" font-weight="600" fill="#64748b">~10-15ms</text>
+  <text x="595" y="324" text-anchor="middle" font-size="9" fill="#94a3b8">与 CF 并行</text>
+
+  <!-- ===== Converge lines: 三路 → 特征批量拉取 ===== -->
+  <path d="M 205 330 L 205 338 L 595 338 M 400 330 L 400 338 M 595 330 L 595 338"
+        stroke="#94a3b8" stroke-width="1.5" fill="none"/>
+  <line x1="400" y1="338" x2="400" y2="354" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- ===== Stage: 特征批量拉取 ===== -->
+  <g filter="url(#shadow)">
+    <rect x="300" y="358" width="200" height="32" rx="8" fill="white" stroke="#3b82f6" stroke-width="1.5"/>
+  </g>
+  <text x="400" y="378" text-anchor="middle" font-size="13" font-weight="600" fill="#1d4ed8">特征批量拉取</text>
+  <text x="612" y="378" text-anchor="start" font-size="10" fill="#64748b">~5-10ms · Redis MGET</text>
+
+  <!-- Arrow 特征 → 精排推理 -->
+  <line x1="400" y1="390" x2="400" y2="416" stroke="#3b82f6" stroke-width="1.5" marker-end="url(#arrowB)"/>
+
+  <!-- ===== Stage: 精排模型推理 ===== -->
+  <g filter="url(#shadow)">
+    <rect x="300" y="420" width="200" height="32" rx="8" fill="white" stroke="#f59e0b" stroke-width="1.5"/>
+  </g>
+  <text x="400" y="440" text-anchor="middle" font-size="13" font-weight="600" fill="#92400e">精排模型推理</text>
+  <text x="612" y="440" text-anchor="start" font-size="10" fill="#64748b">~5-15ms · DIN/DeepFM</text>
+
+  <!-- Arrow 精排 → 后处理+响应 -->
+  <line x1="400" y1="452" x2="400" y2="478" stroke="#3b82f6" stroke-width="1.5" marker-end="url(#arrowB)"/>
+
+  <!-- ===== Stage: 后处理 + 序列化 → 响应 ===== -->
+  <g filter="url(#shadow)">
+    <rect x="300" y="482" width="200" height="32" rx="8" fill="url(#blueG)"/>
+  </g>
+  <text x="400" y="502" text-anchor="middle" font-size="13" font-weight="700" fill="white">后处理 + 序列化 → 响应</text>
+  <text x="612" y="502" text-anchor="start" font-size="10" fill="#64748b">~2-5ms</text>
+
+  <!-- ===== Bottom tip ===== -->
+  <rect x="60" y="540" width="680" height="28" rx="14" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1"/>
+  <text x="400" y="558" text-anchor="middle" font-size="11" fill="#15803d">💡 关键性能决策：CF 召回与内容召回并行执行，延迟取最慢一路而非相加；串行会直接翻倍</text>
+</svg>

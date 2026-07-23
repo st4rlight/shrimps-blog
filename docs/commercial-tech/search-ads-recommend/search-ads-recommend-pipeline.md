@@ -441,6 +441,8 @@ $$Score = CTR^{\alpha} \times CVR^{\beta} \times Duration^{\gamma} \times Intera
 
 理论上的级联漏斗要落到线上，真正的战场是**延迟、特征与检索的工程实现**。一个生产级推荐 API 的延迟预算大致如下（p50 ≈ 40ms，p99 ≈ 80ms）：
 
+![在线推理延迟预算](/commercial-tech/search-ads-recommend/search-ads-recommend-pipeline/serving-latency-budget.svg)
+
 ```
 请求进入
  ├─ Auth / 路由                ~2ms
@@ -492,6 +494,8 @@ $$Score = CTR^{\alpha} \times CVR^{\beta} \times Duration^{\gamma} \times Intera
 ## 八、评估体系：从离线到在线
 
 模型好不好，**离线看排序、在线看因果**，两层逻辑完全不同。
+
+![评估体系：离线看排序，在线看因果](/commercial-tech/search-ads-recommend/search-ads-recommend-pipeline/evaluation-offline-vs-online.svg)
 
 ### 8.1 离线评估
 
@@ -578,6 +582,8 @@ $$Score = CTR^{\alpha} \times CVR^{\beta} \times Duration^{\gamma} \times Intera
 ---
 
 ## 十一、LLM 与生成式推荐趋势
+
+![生成式推荐范式总览](/commercial-tech/search-ads-recommend/search-ads-recommend-pipeline/generative-recommendation-overview.svg)
 
 ### 11.1 生成式推荐（GR）：范式之辩
 
