@@ -28,11 +28,6 @@ icon: mdi:timeline-clock-outline
         <span class="timeline-entry__desc">—— 级联漏斗四阶段 + 三场景对比，补充工程化在线推理（延迟预算/特征平台/ANN 检索）、离线-在线评估体系、冷启动实战与 LLM/生成式推荐趋势（OneRec/HSTU/GPR 等工业案例）</span>
       </div>
       <div class="timeline-entry">
-        <span class="timeline-entry__tag timeline-entry__tag--ai">opencode分析</span>
-        <a class="timeline-entry__link" href="/opencode/">新增「opencode分析」模块</a>
-        <span class="timeline-entry__desc">—— 新增《OpenCode 源码学习路径》与整体架构 / Agent Loop / Agent 维度三张架构图</span>
-      </div>
-      <div class="timeline-entry">
         <span class="timeline-entry__tag timeline-entry__tag--commercial">商业化技术体系</span>
         <a class="timeline-entry__link" href="/commercial-tech/search-ads-recommend/search-ads-recommend-pipeline/">《搜广推系统全链路详解》新增 3 张 SVG 配图</a>
         <span class="timeline-entry__desc">—— 在线推理延迟预算机制图（第七章）、离线 vs 在线评估对比图（第八章）、生成式推荐范式总览图（第十一章），遵循博客配图规范</span>
