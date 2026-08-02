@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <linearGradient id="redG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#f87171;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ef4444;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="greenG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#34d399;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.12"/>
+    </filter>
+    <marker id="arrowR" viewBox="0 0 10 10" refX="10" refY="5"
+            markerWidth="8" markerHeight="8"
+            markerUnits="userSpaceOnUse"
+            orient="auto"
+            preserveAspectRatio="xMidYMid meet">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#ef4444"/>
+    </marker>
+    <marker id="arrowG" viewBox="0 0 10 10" refX="10" refY="5"
+            markerWidth="8" markerHeight="8"
+            markerUnits="userSpaceOnUse"
+            orient="auto"
+            preserveAspectRatio="xMidYMid meet">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#10b981"/>
+    </marker>
+  </defs>
+
+  <!-- ===== Background ===== -->
+  <rect width="800" height="400" rx="12" fill="#f8fafc"/>
+
+  <!-- ===== Title ===== -->
+  <text x="400" y="32" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">传统向量 RAG vs GraphRAG</text>
+  <text x="400" y="50" text-anchor="middle" font-size="12" fill="#94a3b8">两种检索范式的能力边界对比</text>
+
+  <!-- ===== Left: Traditional RAG ===== -->
+  <g filter="url(#shadow)">
+    <rect x="30" y="70" width="340" height="290" rx="12" fill="white" stroke="#fca5a5" stroke-width="2"/>
+  </g>
+  <rect x="30" y="70" width="340" height="40" rx="12" fill="url(#redG)"/>
+  <rect x="30" y="90" width="340" height="20" fill="url(#redG)"/>
+  <text x="200" y="95" text-anchor="middle" font-size="15" font-weight="700" fill="white">传统向量 RAG</text>
+
+  <!-- Flow steps -->
+  <rect x="50" y="125" width="300" height="30" rx="6" fill="#fee2e2" stroke="#fca5a5" stroke-width="1"/>
+  <text x="200" y="144" text-anchor="middle" font-size="11" fill="#991b1b">文档切块 → Embedding 向量化</text>
+
+  <line x1="200" y1="155" x2="200" y2="168" stroke="#ef4444" stroke-width="1.5" marker-end="url(#arrowR)"/>
+
+  <rect x="50" y="172" width="300" height="30" rx="6" fill="#fee2e2" stroke="#fca5a5" stroke-width="1"/>
+  <text x="200" y="191" text-anchor="middle" font-size="11" fill="#991b1b">查询时向量相似度召回 top-k</text>
+
+  <line x1="200" y1="202" x2="200" y2="215" stroke="#ef4444" stroke-width="1.5" marker-end="url(#arrowR)"/>
+
+  <rect x="50" y="219" width="300" height="30" rx="6" fill="#fee2e2" stroke="#fca5a5" stroke-width="1"/>
+  <text x="200" y="238" text-anchor="middle" font-size="11" fill="#991b1b">拼入 prompt → LLM 生成答案</text>
+
+  <!-- Limitations -->
+  <text x="200" y="275" text-anchor="middle" font-size="11" font-weight="600" fill="#991b1b">局限</text>
+  <text x="200" y="293" text-anchor="middle" font-size="10" fill="#991b1b">无法跨 chunk 多跳推理</text>
+  <text x="200" y="309" text-anchor="middle" font-size="10" fill="#991b1b">无法回答全局总结性问题</text>
+  <text x="200" y="325" text-anchor="middle" font-size="10" fill="#991b1b">只看语义相似，不懂实体关系</text>
+  <text x="200" y="341" text-anchor="middle" font-size="10" fill="#991b1b">索引快，查询快，但能力天花板低</text>
+
+  <!-- ===== Center: VS circle ===== -->
+  <circle cx="400" cy="210" r="22" fill="white" stroke="#cbd5e1" stroke-width="2"/>
+  <text x="400" y="215" text-anchor="middle" font-size="13" font-weight="700" fill="#64748b">VS</text>
+
+  <!-- ===== Right: GraphRAG ===== -->
+  <g filter="url(#shadow)">
+    <rect x="430" y="70" width="340" height="290" rx="12" fill="white" stroke="#86efac" stroke-width="2"/>
+  </g>
+  <rect x="430" y="70" width="340" height="40" rx="12" fill="url(#greenG)"/>
+  <rect x="430" y="90" width="340" height="20" fill="url(#greenG)"/>
+  <text x="600" y="95" text-anchor="middle" font-size="15" font-weight="700" fill="white">GraphRAG</text>
+
+  <!-- Flow steps -->
+  <rect x="450" y="125" width="300" height="30" rx="6" fill="#d1fae5" stroke="#86efac" stroke-width="1"/>
+  <text x="600" y="144" text-anchor="middle" font-size="11" fill="#047857">文档切块 → LLM 抽取实体和关系</text>
+
+  <line x1="600" y1="155" x2="600" y2="168" stroke="#10b981" stroke-width="1.5" marker-end="url(#arrowG)"/>
+
+  <rect x="450" y="172" width="300" height="30" rx="6" fill="#d1fae5" stroke="#86efac" stroke-width="1"/>
+  <text x="600" y="191" text-anchor="middle" font-size="11" fill="#047857">构建知识图谱 → Leiden 社区检测</text>
+
+  <line x1="600" y1="202" x2="600" y2="215" stroke="#10b981" stroke-width="1.5" marker-end="url(#arrowG)"/>
+
+  <rect x="450" y="219" width="300" height="30" rx="6" fill="#d1fae5" stroke="#86efac" stroke-width="1"/>
+  <text x="600" y="238" text-anchor="middle" font-size="11" fill="#047857">Local / Global Search 增强检索</text>
+
+  <!-- Advantages -->
+  <text x="600" y="275" text-anchor="middle" font-size="11" font-weight="600" fill="#047857">优势</text>
+  <text x="600" y="293" text-anchor="middle" font-size="10" fill="#047857">图遍历支撑多跳推理</text>
+  <text x="600" y="309" text-anchor="middle" font-size="10" fill="#047857">社区摘要驱动全局理解</text>
+  <text x="600" y="325" text-anchor="middle" font-size="10" fill="#047857">实体关系网络，结构化推理</text>
+  <text x="600" y="341" text-anchor="middle" font-size="10" fill="#047857">索引成本高，但能力天花板高</text>
+
+  <!-- ===== Bottom tip ===== -->
+  <rect x="200" y="370" width="400" height="22" rx="11" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1"/>
+  <text x="400" y="385" text-anchor="middle" font-size="11" fill="#15803d">从"语义相似度匹配"到"结构化图谱推理"</text>
+</svg>

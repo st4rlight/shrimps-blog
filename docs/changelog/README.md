@@ -25,7 +25,12 @@ icon: mdi:timeline-clock-outline
       <div class="timeline-entry">
         <span class="timeline-entry__tag timeline-entry__tag--ai">AI学习</span>
         <a class="timeline-entry__link" href="/ai-study/codegraph-introduction/">新增《CodeGraph 介绍》</a>
-        <span class="timeline-entry__desc">—— 开源本地 MCP 服务器，tree-sitter 解析 21 语言构建代码知识图谱存入 SQLite，10 个 MCP 工具暴露给 AI Agent，消除"探索税"省 57% token，含 tree-sitter vs LSP 对比、7 项目基准测试、Code RAG 五派对比与 4 张 SVG 配图</span>
+        <span class="timeline-entry__desc">—— 开源本地 MCP 服务器，tree-sitter 解析 21 语言构建代码知识图谱存入 SQLite，10 个 MCP 工具暴露给 AI Agent，消除"探索税"省 57% token，含 tree-sitter vs LSP 对比、7 项目基准测试、Code RAG 五派对比与 5 张 SVG 配图</span>
+      </div>
+      <div class="timeline-entry">
+        <span class="timeline-entry__tag timeline-entry__tag--ai">AI学习</span>
+        <a class="timeline-entry__link" href="/ai-study/graphrag-introduction/">新增《GraphRAG 技术详解》</a>
+        <span class="timeline-entry__desc">—— 将知识图谱与 RAG 结合，LLM 抽取实体关系建图 + Leiden 社区检测 + 层级摘要，解决传统向量 RAG 多跳推理与全局理解瓶颈，含 Local/Global Search 双模式、Microsoft GraphRAG 实战、LightRAG/nano-graphrag 生态对比、选型决策图与 4 张 SVG 配图</span>
       </div>
     </div>
   </div>

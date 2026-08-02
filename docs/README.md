@@ -55,6 +55,15 @@ config:
   <div class="home-timeline__body">
     <span class="home-timeline__date">08-02</span>
     <span class="home-timeline__tag home-timeline__tag--ai">AI学习</span>
+    <a href="/ai-study/graphrag-introduction/">新增《GraphRAG 技术详解》</a>
+  </div>
+</div>
+
+<div class="home-timeline__item">
+  <div class="home-timeline__dot"></div>
+  <div class="home-timeline__body">
+    <span class="home-timeline__date">08-02</span>
+    <span class="home-timeline__tag home-timeline__tag--ai">AI学习</span>
     <a href="/ai-study/codegraph-introduction/">新增《CodeGraph 介绍》</a>
   </div>
 </div>

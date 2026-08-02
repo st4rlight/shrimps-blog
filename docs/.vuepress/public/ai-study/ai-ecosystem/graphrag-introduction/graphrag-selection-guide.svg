@@ -1,0 +1,135 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 540" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <linearGradient id="indigoG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#818cf8;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#6366f1;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.12"/>
+    </filter>
+    <marker id="arrowY" viewBox="0 0 10 10" refX="10" refY="5"
+            markerWidth="8" markerHeight="8"
+            markerUnits="userSpaceOnUse"
+            orient="auto"
+            preserveAspectRatio="xMidYMid meet">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#f59e0b"/>
+    </marker>
+    <marker id="arrowN" viewBox="0 0 10 10" refX="10" refY="5"
+            markerWidth="8" markerHeight="8"
+            markerUnits="userSpaceOnUse"
+            orient="auto"
+            preserveAspectRatio="xMidYMid meet">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#64748b"/>
+    </marker>
+    <marker id="arrowG" viewBox="0 0 10 10" refX="10" refY="5"
+            markerWidth="8" markerHeight="8"
+            markerUnits="userSpaceOnUse"
+            orient="auto"
+            preserveAspectRatio="xMidYMid meet">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#10b981"/>
+    </marker>
+  </defs>
+
+  <!-- ===== Background ===== -->
+  <rect width="820" height="540" rx="12" fill="#f8fafc"/>
+
+  <!-- ===== Title ===== -->
+  <text x="410" y="30" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">RAG 方案选型决策图</text>
+  <text x="410" y="48" text-anchor="middle" font-size="12" fill="#94a3b8">传统向量 RAG / GraphRAG / 混合方案 的选择路径</text>
+
+  <!-- ===== Start node ===== -->
+  <g filter="url(#shadow)">
+    <rect x="310" y="65" width="200" height="40" rx="20" fill="url(#indigoG)"/>
+  </g>
+  <text x="410" y="90" text-anchor="middle" font-size="13" font-weight="700" fill="white">用户有 RAG 需求</text>
+
+  <!-- Arrow down -->
+  <line x1="410" y1="105" x2="410" y2="120" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrowN)"/>
+
+  <!-- ===== Decision 1: Multi-hop or Global? ===== -->
+  <g filter="url(#shadow)">
+    <rect x="290" y="124" width="240" height="60" rx="8" fill="#fef3c7" stroke="#fbbf24" stroke-width="2"/>
+  </g>
+  <text x="410" y="148" text-anchor="middle" font-size="12" font-weight="600" fill="#92400e">是否需要多跳推理</text>
+  <text x="410" y="166" text-anchor="middle" font-size="12" font-weight="600" fill="#92400e">或全局性总结？</text>
+
+  <!-- Yes arrow (right) -->
+  <line x1="530" y1="154" x2="566" y2="154" stroke="#f59e0b" stroke-width="1.5" marker-end="url(#arrowY)"/>
+  <text x="548" y="146" text-anchor="middle" font-size="10" font-weight="600" fill="#f59e0b">是</text>
+
+  <!-- No arrow (down) -->
+  <line x1="410" y1="184" x2="410" y2="200" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrowN)"/>
+  <text x="418" y="196" text-anchor="start" font-size="10" font-weight="600" fill="#64748b">否</text>
+
+  <!-- ===== Decision 2 (No path): Data volume huge? ===== -->
+  <g filter="url(#shadow)">
+    <rect x="290" y="204" width="240" height="50" rx="8" fill="#fef3c7" stroke="#fbbf24" stroke-width="2"/>
+  </g>
+  <text x="410" y="234" text-anchor="middle" font-size="12" font-weight="600" fill="#92400e">数据量是否巨大（百万级）？</text>
+
+  <!-- Yes arrow (right) → Traditional RAG -->
+  <line x1="530" y1="229" x2="566" y2="229" stroke="#f59e0b" stroke-width="1.5" marker-end="url(#arrowY)"/>
+  <text x="548" y="221" text-anchor="middle" font-size="10" font-weight="600" fill="#f59e0b">是</text>
+
+  <!-- No arrow (down) -->
+  <line x1="410" y1="254" x2="410" y2="270" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrowN)"/>
+  <text x="418" y="266" text-anchor="start" font-size="10" font-weight="600" fill="#64748b">否</text>
+
+  <!-- ===== Decision 3 (No-No path): Latency sensitive? ===== -->
+  <g filter="url(#shadow)">
+    <rect x="290" y="274" width="240" height="50" rx="8" fill="#fef3c7" stroke="#fbbf24" stroke-width="2"/>
+  </g>
+  <text x="410" y="304" text-anchor="middle" font-size="12" font-weight="600" fill="#92400e">是否需要毫秒级响应？</text>
+
+  <!-- Yes arrow (right) → Traditional RAG -->
+  <line x1="530" y1="299" x2="566" y2="299" stroke="#f59e0b" stroke-width="1.5" marker-end="url(#arrowY)"/>
+  <text x="548" y="291" text-anchor="middle" font-size="10" font-weight="600" fill="#f59e0b">是</text>
+
+  <!-- No arrow (down) → Hybrid -->
+  <line x1="410" y1="324" x2="410" y2="340" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrowN)"/>
+  <text x="418" y="336" text-anchor="start" font-size="10" font-weight="600" fill="#64748b">否</text>
+
+  <!-- ===== Right side: GraphRAG (Yes on Decision 1) ===== -->
+  <g filter="url(#shadow)">
+    <rect x="570" y="124" width="220" height="80" rx="10" fill="white" stroke="#8b5cf6" stroke-width="2"/>
+  </g>
+  <rect x="570" y="124" width="220" height="32" rx="10" fill="url(#indigoG)"/>
+  <rect x="570" y="144" width="220" height="12" fill="url(#indigoG)"/>
+  <text x="680" y="145" text-anchor="middle" font-size="13" font-weight="700" fill="white">GraphRAG</text>
+  <text x="680" y="174" text-anchor="middle" font-size="10" fill="#5b21b6">知识图谱 + 社区检测</text>
+  <text x="680" y="190" text-anchor="middle" font-size="10" fill="#64748b">多跳推理 · 全局总结</text>
+
+  <!-- ===== Right side: Traditional RAG (Yes on Decision 2 & 3) ===== -->
+  <g filter="url(#shadow)">
+    <rect x="570" y="204" width="220" height="65" rx="10" fill="white" stroke="#3b82f6" stroke-width="2"/>
+  </g>
+  <text x="680" y="232" text-anchor="middle" font-size="13" font-weight="700" fill="#1d4ed8">传统向量 RAG</text>
+  <text x="680" y="250" text-anchor="middle" font-size="10" fill="#64748b">大规模 · 事实型问答</text>
+
+  <g filter="url(#shadow)">
+    <rect x="570" y="274" width="220" height="65" rx="10" fill="white" stroke="#3b82f6" stroke-width="2"/>
+  </g>
+  <text x="680" y="302" text-anchor="middle" font-size="13" font-weight="700" fill="#1d4ed8">传统向量 RAG</text>
+  <text x="680" y="320" text-anchor="middle" font-size="10" fill="#64748b">低延迟 · 事实型问答</text>
+
+  <!-- ===== Bottom: Hybrid (No on all decisions) ===== -->
+  <g filter="url(#shadow)">
+    <rect x="290" y="344" width="240" height="65" rx="10" fill="white" stroke="#10b981" stroke-width="2"/>
+  </g>
+  <rect x="290" y="344" width="240" height="32" rx="10" fill="url(#indigoG)"/>
+  <rect x="290" y="364" width="240" height="12" fill="url(#indigoG)"/>
+  <text x="410" y="365" text-anchor="middle" font-size="13" font-weight="700" fill="white">混合方案</text>
+  <text x="410" y="394" text-anchor="middle" font-size="10" fill="#64748b">向量 RAG 粗筛 + GraphRAG 精排</text>
+
+  <!-- Arrow from Traditional RAG (Decision 2) down to align -->
+  <line x1="680" y1="269" x2="680" y2="274" stroke="#64748b" stroke-width="1.5"/>
+
+  <!-- ===== Bottom tips ===== -->
+  <g filter="url(#shadow)">
+    <rect x="40" y="430" width="740" height="90" rx="10" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+  </g>
+  <text x="410" y="452" text-anchor="middle" font-size="11" font-weight="600" fill="#475569">选型补充建议</text>
+  <text x="60" y="472" font-size="10" fill="#64748b">· GraphRAG 索引成本高（数百次 LLM 调用），建议先用 gpt-4o-mini 或 Ollama 本地模型做小规模验证</text>
+  <text x="60" y="489" font-size="10" fill="#64748b">· 中小规模数据可考虑 LightRAG（去掉社区检测，索引速度快 10x+），学习理解可用 nano-graphrag（~1000 行代码）</text>
+  <text x="60" y="506" font-size="10" fill="#64748b">· 混合方案的路由层可按问题类型分发：简单问题走向量 RAG，复杂多跳问题走 GraphRAG</text>
+</svg>

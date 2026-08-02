@@ -1,0 +1,151 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 560" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <linearGradient id="indigoG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#818cf8;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#6366f1;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="violetG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#a78bfa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.12"/>
+    </filter>
+    <marker id="arrowY" viewBox="0 0 10 10" refX="10" refY="5"
+            markerWidth="8" markerHeight="8"
+            markerUnits="userSpaceOnUse"
+            orient="auto"
+            preserveAspectRatio="xMidYMid meet">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#f59e0b"/>
+    </marker>
+    <marker id="arrowN" viewBox="0 0 10 10" refX="10" refY="5"
+            markerWidth="8" markerHeight="8"
+            markerUnits="userSpaceOnUse"
+            orient="auto"
+            preserveAspectRatio="xMidYMid meet">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#64748b"/>
+    </marker>
+  </defs>
+
+  <!-- ===== Background ===== -->
+  <rect width="820" height="560" rx="12" fill="#f8fafc"/>
+
+  <!-- ===== Title ===== -->
+  <text x="410" y="30" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">Code RAG 工具选型决策图</text>
+  <text x="410" y="48" text-anchor="middle" font-size="12" fill="#94a3b8">CodeGraph / Sourcegraph / Cursor / Aider 等工具的选择路径</text>
+
+  <!-- ===== Start node ===== -->
+  <g filter="url(#shadow)">
+    <rect x="310" y="65" width="200" height="40" rx="20" fill="url(#indigoG)"/>
+  </g>
+  <text x="410" y="90" text-anchor="middle" font-size="13" font-weight="700" fill="white">AI Agent 需要理解代码库</text>
+
+  <!-- Arrow down -->
+  <line x1="410" y1="105" x2="410" y2="120" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrowN)"/>
+
+  <!-- ===== Decision 1: Cross-repo? ===== -->
+  <g filter="url(#shadow)">
+    <rect x="290" y="124" width="240" height="60" rx="8" fill="#fef3c7" stroke="#fbbf24" stroke-width="2"/>
+  </g>
+  <text x="410" y="150" text-anchor="middle" font-size="12" font-weight="600" fill="#92400e">是否需要跨多仓推理？</text>
+  <text x="410" y="168" text-anchor="middle" font-size="10" fill="#92400e">(cross-repo navigation)</text>
+
+  <!-- Yes arrow (right) -->
+  <line x1="530" y1="154" x2="566" y2="154" stroke="#f59e0b" stroke-width="1.5" marker-end="url(#arrowY)"/>
+  <text x="548" y="146" text-anchor="middle" font-size="10" font-weight="600" fill="#f59e0b">是</text>
+
+  <!-- No arrow (down) -->
+  <line x1="410" y1="184" x2="410" y2="200" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrowN)"/>
+  <text x="418" y="196" text-anchor="start" font-size="10" font-weight="600" fill="#64748b">否</text>
+
+  <!-- ===== Decision 2: Type-level precision? ===== -->
+  <g filter="url(#shadow)">
+    <rect x="290" y="204" width="240" height="50" rx="8" fill="#fef3c7" stroke="#fbbf24" stroke-width="2"/>
+  </g>
+  <text x="410" y="226" text-anchor="middle" font-size="12" font-weight="600" fill="#92400e">需要类型级精确分析？</text>
+  <text x="410" y="242" text-anchor="middle" font-size="10" fill="#92400e">(泛型解析 / 安全审计)</text>
+
+  <!-- Yes arrow (right) -->
+  <line x1="530" y1="229" x2="566" y2="229" stroke="#f59e0b" stroke-width="1.5" marker-end="url(#arrowY)"/>
+  <text x="548" y="221" text-anchor="middle" font-size="10" font-weight="600" fill="#f59e0b">是</text>
+
+  <!-- No arrow (down) -->
+  <line x1="410" y1="254" x2="410" y2="270" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrowN)"/>
+  <text x="418" y="266" text-anchor="start" font-size="10" font-weight="600" fill="#64748b">否</text>
+
+  <!-- ===== Decision 3: Large project or call chain? ===== -->
+  <g filter="url(#shadow)">
+    <rect x="290" y="274" width="240" height="50" rx="8" fill="#fef3c7" stroke="#fbbf24" stroke-width="2"/>
+  </g>
+  <text x="410" y="296" text-anchor="middle" font-size="12" font-weight="600" fill="#92400e">项目 > 1万文件 或</text>
+  <text x="410" y="312" text-anchor="middle" font-size="12" font-weight="600" fill="#92400e">需要调用链 / 影响分析？</text>
+
+  <!-- Yes arrow (right) → CodeGraph -->
+  <line x1="530" y1="299" x2="566" y2="299" stroke="#f59e0b" stroke-width="1.5" marker-end="url(#arrowY)"/>
+  <text x="548" y="291" text-anchor="middle" font-size="10" font-weight="600" fill="#f59e0b">是</text>
+
+  <!-- No arrow (down) -->
+  <line x1="410" y1="324" x2="410" y2="340" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrowN)"/>
+  <text x="418" y="336" text-anchor="start" font-size="10" font-weight="600" fill="#64748b">否</text>
+
+  <!-- ===== Decision 4: Fuzzy semantic search? ===== -->
+  <g filter="url(#shadow)">
+    <rect x="290" y="344" width="240" height="50" rx="8" fill="#fef3c7" stroke="#fbbf24" stroke-width="2"/>
+  </g>
+  <text x="410" y="366" text-anchor="middle" font-size="12" font-weight="600" fill="#92400e">主要做模糊语义搜索？</text>
+  <text x="410" y="382" text-anchor="middle" font-size="10" fill="#92400e">("这段逻辑大概在哪")</text>
+
+  <!-- Yes arrow (right) -->
+  <line x1="530" y1="369" x2="566" y2="369" stroke="#f59e0b" stroke-width="1.5" marker-end="url(#arrowY)"/>
+  <text x="548" y="361" text-anchor="middle" font-size="10" font-weight="600" fill="#f59e0b">是</text>
+
+  <!-- No arrow (down) -->
+  <line x1="410" y1="394" x2="410" y2="410" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrowN)"/>
+  <text x="418" y="406" text-anchor="start" font-size="10" font-weight="600" fill="#64748b">否</text>
+
+  <!-- ===== Right side: Sourcegraph / Augment (Decision 1 Yes) ===== -->
+  <g filter="url(#shadow)">
+    <rect x="570" y="124" width="220" height="65" rx="10" fill="white" stroke="#3b82f6" stroke-width="2"/>
+  </g>
+  <text x="680" y="152" text-anchor="middle" font-size="13" font-weight="700" fill="#1d4ed8">Sourcegraph / Augment</text>
+  <text x="680" y="170" text-anchor="middle" font-size="10" fill="#64748b">远端 · 跨仓 · 企业级</text>
+
+  <!-- ===== Right side: SCIP / CodeQL (Decision 2 Yes) ===== -->
+  <g filter="url(#shadow)">
+    <rect x="570" y="204" width="220" height="65" rx="10" fill="white" stroke="#3b82f6" stroke-width="2"/>
+  </g>
+  <text x="680" y="232" text-anchor="middle" font-size="13" font-weight="700" fill="#1d4ed8">SCIP / CodeQL</text>
+  <text x="680" y="250" text-anchor="middle" font-size="10" fill="#64748b">编译器级精确 · 安全分析</text>
+
+  <!-- ===== Right side: CodeGraph (Decision 3 Yes) — Highlighted ===== -->
+  <g filter="url(#shadow)">
+    <rect x="570" y="274" width="220" height="80" rx="10" fill="white" stroke="#8b5cf6" stroke-width="2.5"/>
+  </g>
+  <rect x="570" y="274" width="220" height="32" rx="10" fill="url(#violetG)"/>
+  <rect x="570" y="294" width="220" height="12" fill="url(#violetG)"/>
+  <text x="680" y="295" text-anchor="middle" font-size="14" font-weight="700" fill="white">CodeGraph</text>
+  <text x="680" y="324" text-anchor="middle" font-size="10" fill="#5b21b6">tree-sitter 图谱 + MCP</text>
+  <text x="680" y="340" text-anchor="middle" font-size="10" fill="#64748b">本地 · 零配置 · 大项目收益最大</text>
+
+  <!-- ===== Right side: Cursor / Continue (Decision 4 Yes) ===== -->
+  <g filter="url(#shadow)">
+    <rect x="570" y="344" width="220" height="65" rx="10" fill="white" stroke="#3b82f6" stroke-width="2"/>
+  </g>
+  <text x="680" y="372" text-anchor="middle" font-size="13" font-weight="700" fill="#1d4ed8">Cursor / Continue.dev</text>
+  <text x="680" y="390" text-anchor="middle" font-size="10" fill="#64748b">Embedding · 模糊语义查询</text>
+
+  <!-- ===== Bottom: Aider (No on all decisions) ===== -->
+  <g filter="url(#shadow)">
+    <rect x="290" y="414" width="240" height="65" rx="10" fill="white" stroke="#3b82f6" stroke-width="2"/>
+  </g>
+  <text x="410" y="442" text-anchor="middle" font-size="13" font-weight="700" fill="#1d4ed8">Aider</text>
+  <text x="410" y="460" text-anchor="middle" font-size="10" fill="#64748b">tree-sitter tags + PageRank</text>
+  <text x="410" y="474" text-anchor="middle" font-size="10" fill="#64748b">预算化摘要 · pair programming</text>
+
+  <!-- ===== Bottom tips ===== -->
+  <g filter="url(#shadow)">
+    <rect x="40" y="495" width="740" height="50" rx="10" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+  </g>
+  <text x="60" y="515" font-size="10" fill="#64748b">· CodeGraph 用 tree-sitter 牺牲了类型精度，换来零编译依赖和统一部署——对 Agent 的探索性查询足够</text>
+  <text x="60" y="532" font-size="10" fill="#64748b">· 本地优先工具（CodeGraph / Aider / Continue）索引不离开机器；远端工具（Cursor / Sourcegraph）有更强算力和跨仓能力</text>
+</svg>

@@ -6,7 +6,7 @@ tags:
   - 代码智能
   - AI Agent
   - tree-sitter
-excerpt: CodeGraph 是一款开源的本地 MCP 服务器，用 tree-sitter 解析 21 种语言构建代码知识图谱存入 SQLite，通过 10 个 MCP 工具暴露给 AI Agent，让 Agent 直接查询图谱而非逐文件 grep。本文系统梳理 CodeGraph 的定位、架构设计、工具体系、基准测试、实战用法与设计洞察。
+excerpt: CodeGraph 是一款开源的本地 MCP 服务器，用 tree-sitter 解析 21 种语言构建代码知识图谱存入 SQLite，通过 10 个 MCP 工具暴露给 AI Agent，让 Agent 直接查询图谱而非逐文件 grep。本文系统梳理 CodeGraph 的定位、架构设计、工具体系、基准测试、实战用法与 Code RAG 生态选型。
 createTime: 2026/08/02 15:00:00
 permalink: /ai-study/codegraph-introduction/
 ---
@@ -221,11 +221,23 @@ tree-sitter 不做语义分析，但 CodeGraph 通过启发式规则桥接了动
 | **Calls → 定义** | 函数调用链接到函数定义 | 先用 import 表过滤候选，再做 name matching |
 | **Inheritance** | extends / implements 双向边 | 语法树直接提取 |
 
-### 为什么没有向量数据库
+### 为什么没有向量数据库：code RAG ≠ document RAG
 
-这是 CodeGraph 和同类工具最大的体系差异之一。仓库早期的设计里有 `vectors/` 模块——基于 `@xenova/transformers` 跑 ONNX，存 384 维 `nomic-embed-text-v1.5` embeddings，SQLite vss 索引。但在某次提交中**整个向量搜索和 embedding 模块被移除了**。
+这是 CodeGraph 和同类工具最大的体系差异之一。仓库早期的设计里有 `vectors/` 模块——基于 `@xenova/transformers` 跑 ONNX，存 384 维 `nomic-embed-text-v1.5` embeddings，SQLite vss 索引。但在生产实测后，**整个向量搜索和 embedding 模块被移除了**。
 
-作者用实测发现：对"找调用链、找定义、找路由"这类问题，**符号名 + FTS5 + 图遍历就足够了**，向量检索引入的延迟和不确定性反而是负担。这个设计决策的深层含义，后文[设计洞察](#设计洞察-code-rag-≠-document-rag)章节会详细展开。
+作者的理由很简单：对"找调用链、找定义、找路由"这类问题，**"符号名 + FTS5 全文搜索 + 图遍历"已经把 95% 的问题解决了**，引入 embedding 增加的延迟和不确定性反而把好不容易省下的 tool call 又花了回去。
+
+这给所有 AI Agent 工程师一个重要的提醒：**code RAG ≠ document RAG。**
+
+代码有 AST，有调用图，有静态可推导的关系——这些结构化信息是确定性的、一次计算即可复用的。应该**先把这些吃掉，再考虑用 embedding 补语义层**。普通文档没有 AST、没有调用关系，只能靠向量语义近似——但代码不一样。把代码当作普通文档来做 RAG，等于放弃了代码最宝贵的结构信息。
+
+这个洞察可以总结为一条优先级原则：
+
+```text
+1. 精确结构关系（调用图、import、继承）   ← 先吃掉，确定性、可复现
+2. 符号名全文搜索（FTS5/BM25）              ← 再用，精确匹配标识符
+3. 语义向量检索（embedding）                ← 最后补，处理模糊语义查询
+```
 
 ---
 
@@ -269,6 +281,18 @@ CodeGraph 的影响 Agent 行为的渠道是**低显著性的**——只有 MCP 
 
 这不是靠提示词工程让 Agent "更聪明地搜索"，而是靠工具能力让 Agent "不需要搜索"。前者不可靠，后者确定性。
 
+实际使用中，Agent 按查询复杂度自然分层：
+
+| 查询类型 | 典型工具路径 | 说明 |
+|---------|------------|------|
+| **精准定位**（"找 `validateToken` 在哪"） | `codegraph_search` → `codegraph_node` | 轻型工具，主会话直接调用 |
+| **局部理解**（"谁调用了它"） | `codegraph_callers` / `codegraph_callees` | 轻型工具，返回数据量小 |
+| **影响分析**（"改这个函数影响谁"） | `codegraph_impact` | 轻型工具，给出影响半径 |
+| **功能探索**（"认证流程是怎样的"） | `codegraph_context` → `codegraph_explore` | 重型工具，交给子 Agent |
+| **链路追踪**（"X 怎么调到 Y 的"） | `codegraph_trace` | 重型工具，跨动态分发 |
+
+分层的意义在于：轻型工具返回数据量小，主会话直接调用不浪费 token；重型工具返回大量源码和关系图，交给 Explore 子 Agent 处理，避免撑爆主会话上下文。
+
 ---
 
 ## 基准测试：7 个真实项目
@@ -293,20 +317,6 @@ CodeGraph 的影响 Agent 行为的渠道是**低显著性的**——只有 MCP 
 ---
 
 ## 核心能力详解
-
-### 消除"探索税"
-
-CodeGraph 最核心的价值是消除了 Agent 的"探索税"。传统方式和 CodeGraph 的对比：
-
-```text
-传统方式：
-  Agent → grep "auth" → 匹配 50+ 结果 → 逐个 Read → 猜测调用关系
-  20-80 次工具调用，大量 token 消耗
-
-CodeGraph 方式：
-  Agent → codegraph_context "用户认证流程" → 一次返回入口 + 上下文
-  通常 3-7 次工具调用，token 节省 57%
-```
 
 ### 框架感知路由
 
@@ -338,6 +348,54 @@ CodeGraph 不只理解代码结构，还理解 Web 框架的路由。它能识�
 # 只运行受变更影响的测试
 git diff --name-only HEAD | codegraph affected --stdin --quiet | xargs vitest run
 ```
+
+---
+
+## 实战：如何使用 CodeGraph
+
+### 一行安装
+
+不需要 Node.js，安装脚本自带运行时：
+
+```bash
+# macOS / Linux
+curl -fsSL https://raw.githubusercontent.com/colbymchenry/codegraph/main/install.sh | sh
+
+# Windows PowerShell
+irm https://raw.githubusercontent.com/colbymchenry/codegraph/main/install.ps1 | iex
+
+# 如果有 Node.js
+npx @colbymchenry/codegraph
+```
+
+安装器会交互式引导你选择要配置的 Agent（自动检测已安装的 Claude Code、Cursor、Codex CLI、OpenCode、Gemini CLI、Antigravity、Kiro、Hermes Agent），自动写入 MCP 配置和指令文件。
+
+### 初始化项目
+
+```bash
+cd your-project
+codegraph init -i
+```
+
+这一步构建项目知识图谱索引。完成后 `.codegraph/` 目录出现在项目根目录。
+
+### 重启 Agent
+
+重启 Claude Code / Cursor / Codex 即可。Agent 检测到 `.codegraph/` 目录会自动使用 CodeGraph 工具。
+
+### CLI 命令一览
+
+| 命令 | 功能 |
+|------|------|
+| `codegraph init -i` | 初始化项目 + 全量索引 |
+| `codegraph serve --mcp` | 启动 MCP 服务（Agent 会自动拉起，通常不用手动跑） |
+| `codegraph index` | 重新索引 |
+| `codegraph sync` | 增量更新 |
+| `codegraph query <name>` | 按名称查询符号 |
+| `codegraph context <task>` | 为任务构建上下文 |
+| `codegraph impact <symbol>` | 分析影响范围 |
+| `codegraph affected` | CI 用：找出受变更影响的测试文件 |
+| `codegraph uninstall` | 从所有 Agent 中移除 CodeGraph |
 
 ### 作为库使用
 
@@ -373,53 +431,29 @@ const impact = cg.getImpactRadius(results[0].node.id, 2);
 cg.watch();
 ```
 
----
+### 端到端：Agent + CodeGraph 交互示例
 
-## 实战：如何使用 CodeGraph
+以下是一次典型的 Claude Code + CodeGraph 会话，用户请求"帮我找到用户认证流程的入口，并分析一下如果修改 `validateToken` 会影响哪些地方"：
 
-### 一行安装
+```text
+🧑 用户：帮我找到用户认证流程的入口，并分析一下如果修改 validateToken 会影响哪些地方。
 
-不需要 Node.js，安装脚本自带运行时：
+🤖 Claude Code（主会话）：
+  ① 调用 codegraph_context("用户认证流程")
+     → 返回：入口函数 authRouter.post('/login', handleLogin)，
+       调用链 handleLogin → validateToken → fetchUser → createSession
 
-```bash
-# macOS / Linux
-curl -fsSL https://raw.githubusercontent.com/colbymchenry/codegraph/main/install.sh | sh
+  ② 调用 codegraph_impact("validateToken")
+     → 返回：直接调用者 3 个（handleLogin, refreshToken, apiMiddleware），
+       间接影响 7 个函数，关联测试文件 4 个
 
-# Windows PowerShell
-irm https://raw.githubusercontent.com/colbymchenry/codegraph/main/install.ps1 | iex
-
-# 如果有 Node.js
-npx @colbymchenry/codegraph
+🤖 Claude Code（汇总）：
+  "认证流程入口在 src/routes/auth.ts 的 handleLogin，
+   修改 validateToken 会影响 3 个直接调用者、4 个测试文件。
+   建议重点审查 apiMiddleware 中的错误处理逻辑。"
 ```
 
-安装器会交互式引导你选择要配置的 Agent（自动检测已安装的 Claude Code、Cursor、Codex CLI、OpenCode、Hermes Agent），自动写入 MCP 配置和指令文件。
-
-### 初始化项目
-
-```bash
-cd your-project
-codegraph init -i
-```
-
-这一步构建项目知识图谱索引。完成后 `.codegraph/` 目录出现在项目根目录。
-
-### 重启 Agent
-
-重启 Claude Code / Cursor / Codex 即可。Agent 检测到 `.codegraph/` 目录会自动使用 CodeGraph 工具。
-
-### CLI 命令一览
-
-| 命令 | 功能 |
-|------|------|
-| `codegraph init -i` | 初始化项目 + 全量索引 |
-| `codegraph serve --mcp` | 启动 MCP 服务（Agent 会自动拉起，通常不用手动跑） |
-| `codegraph index` | 重新索引 |
-| `codegraph sync` | 增量更新 |
-| `codegraph query <name>` | 按名称查询符号 |
-| `codegraph context <task>` | 为任务构建上下文 |
-| `codegraph impact <symbol>` | 分析影响范围 |
-| `codegraph affected` | CI 用：找出受变更影响的测试文件 |
-| `codegraph uninstall` | 从所有 Agent 中移除 CodeGraph |
+**对比没有 CodeGraph 的同样会话**：Agent 需要先 `find` 扫目录、`grep "validateToken"` 搜 20+ 匹配、逐个 `Read` 理解上下文——至少 15-30 次工具调用、数万 token 消耗后才能开始回答。有了 CodeGraph，**3 次工具调用搞定**。
 
 ---
 
@@ -442,29 +476,9 @@ CodeGraph 通过 tree-sitter 支持 21 种编程语言，覆盖主流开发场�
 
 ---
 
-## 设计洞察：code RAG ≠ document RAG
-
-CodeGraph 的演化过程本身比代码更有启发性。项目早期曾设计了完整的向量搜索模块——基于 ONNX 跑 384 维 `nomic-embed-text-v1.5` 嵌入，存入 SQLite vss 向量索引。但在生产实测后，**整个向量搜索和 embedding 模块被移除了**。
-
-作者的理由很简单：对 Agent 的探索性查询，**"符号名 + FTS5 全文搜索 + 图遍历"已经把 95% 的问题解决了**，引入 embedding 增加的延迟和不确定性反而把好不容易省下的 tool call 又花了回去。
-
-这给所有 AI Agent 工程师一个重要的提醒：
-
-> **code RAG ≠ document RAG。**
-
-代码有 AST，有调用图，有静态可推导的关系——这些结构化信息是确定性的、一次计算即可复用的。应该**先把这些吃掉，再考虑用 embedding 补语义层**。普通文档没有 AST、没有调用关系，只能靠向量语义近似——但代码不一样。把代码当作普通文档来做 RAG，等于放弃了代码最宝贵的结构信息。
-
-这个洞察可以总结为一条优先级原则：
-
-```text
-1. 精确结构关系（调用图、import、继承）   ← 先吃掉，确定性、可复现
-2. 符号名全文搜索（FTS5/BM25）              ← 再用，精确匹配标识符
-3. 语义向量检索（embedding）                ← 最后补，处理模糊语义查询
-```
-
----
-
 ## 适用场景与建议
+
+![CodeGraph 选型决策图](/ai-study/ai-ecosystem/codegraph-introduction/codegraph-selection-guide.svg)
 
 ### 适合用 CodeGraph 的情况
 
@@ -516,3 +530,32 @@ CodeGraph 的演化过程本身比代码更有启发性。项目早期曾设计�
 | "改这个函数会影响哪些测试？" | ✅ 精确影响范围分析 | ❌ 无法区分"名字相似"和"真正调用" |
 | "日志系统在哪里实现？" | ⚠️ 靠符号名+FTS5，可能不够语义化 | ✅ 语义近似效果好 |
 | "限流逻辑在哪个模块？" | ⚠️ 靠图遍历+名称匹配 | ✅ 模糊语义查询更稳 |
+
+---
+
+## 总结
+
+### 核心要点回顾
+
+| 要点 | 说明 |
+|------|------|
+| **CodeGraph 解决什么** | AI Agent 面对陌生代码库时的"探索税"——大量工具调用花在"找代码"而非"改代码" |
+| **核心机制** | tree-sitter 解析 21 种语言 → 代码知识图谱存入 SQLite → 10 个 MCP 工具暴露给 Agent |
+| **设计取舍** | 选 tree-sitter 而非 LSP——放弃类型精度，换来零编译依赖和毫秒级增量更新 |
+| **体系差异** | 无向量数据库——符号名 + FTS5 + 图遍历覆盖 95% 探索性查询，embedding 是负担而非助力 |
+| **实测效果** | 7 个真实项目平均 token 减少 57%、工具调用减少 71%，项目越大收益越明显 |
+| **生态定位** | 本地优先的代码智能层——不替代 LLM 或 IDE，给 Agent 做前置索引 |
+
+### 设计哲学
+
+CodeGraph 的核心洞察可以推广到所有 AI Agent 工具设计：**Agent 不需要更聪明的搜索，需要不需要搜索的工具。** 靠提示词让 Agent "更好地使用 grep"是脆弱的——LLM 的 tool 选择行为不可靠。让工具一次性给够、让 Agent "没有理由 fallback 去 Read"，才是确定性的方案。
+
+这与 GraphRAG 的理念一脉相承——**结构化信息优先于语义近似**。代码有 AST 和调用图，文档有实体关系图，这些都是确定性的、一次计算可复用的。应该先把结构信息吃掉，再考虑用 embedding 补语义层。
+
+### 进一步阅读
+
+- [CodeGraph GitHub 仓库](https://github.com/colbymchenry/codegraph) —— 项目源码与文档
+- [tree-sitter 官方文档](https://tree-sitter.github.io/) —— 增量解析器详解
+- [MCP 协议规范](https://modelcontextprotocol.io/) —— Model Context Protocol 官方规范
+- 本博客 [GraphRAG 技术详解](/ai-study/graphrag-introduction/) —— 文档场景下的"结构优先于语义"实践
+- 本博客 [AG-UI 学习笔记](/ai-study/ag-ui-study-notes/) —— Agent 与前端双向通信协议
