@@ -53,6 +53,15 @@ config:
 <div class="home-timeline__item">
   <div class="home-timeline__dot"></div>
   <div class="home-timeline__body">
+    <span class="home-timeline__date">08-02</span>
+    <span class="home-timeline__tag home-timeline__tag--ai">AI学习</span>
+    <a href="/ai-study/codegraph-introduction/">新增《CodeGraph 介绍》</a>
+  </div>
+</div>
+
+<div class="home-timeline__item">
+  <div class="home-timeline__dot"></div>
+  <div class="home-timeline__body">
     <span class="home-timeline__date">07-23</span>
     <span class="home-timeline__tag home-timeline__tag--commercial">商业化技术体系</span>
     <a href="/commercial-tech/search-ads-recommend/search-ads-recommend-pipeline/">新增《搜广推系统全链路详解》</a>

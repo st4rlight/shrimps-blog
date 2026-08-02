@@ -164,6 +164,7 @@ export default defineUserConfig({
             items: [
               'ai-ecosystem/ag-ui-study-notes.md',
               'ai-ecosystem/a2ui-study-notes.md',
+              'ai-ecosystem/codegraph-introduction.md',
             ],
           },
         ],

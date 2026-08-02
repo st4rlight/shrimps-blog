@@ -1,0 +1,132 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 420" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <linearGradient id="blueG3" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="amberG3" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="violetG3" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#a78bfa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="greenG3" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#34d399;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow3" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.12"/>
+    </filter>
+    <marker id="arrow3" viewBox="0 0 10 10" refX="10" refY="5"
+            markerWidth="8" markerHeight="8"
+            markerUnits="userSpaceOnUse"
+            orient="auto"
+            preserveAspectRatio="xMidYMid meet">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/>
+    </marker>
+  </defs>
+
+  <!-- ===== Background ===== -->
+  <rect width="800" height="420" rx="12" fill="#f8fafc"/>
+
+  <!-- ===== Title ===== -->
+  <text x="400" y="30" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">CodeGraph 架构总览</text>
+  <text x="400" y="48" text-anchor="middle" font-size="12" fill="#94a3b8">TypeScript MCP Server · SQLite + FTS5 · 零外部依赖</text>
+
+  <!-- ===== Top: Clients ===== -->
+  <!-- MCP Client -->
+  <g filter="url(#shadow3)">
+    <rect x="50" y="70" width="200" height="40" rx="8" fill="white" stroke="#a78bfa" stroke-width="1.5"/>
+  </g>
+  <text x="150" y="94" text-anchor="middle" font-size="12" font-weight="600" fill="#5b21b6">MCP 客户端</text>
+  <text x="150" y="106" text-anchor="middle" font-size="10" fill="#64748b">Claude Code · Cursor · Codex CLI</text>
+
+  <!-- CLI -->
+  <g filter="url(#shadow3)">
+    <rect x="300" y="70" width="200" height="40" rx="8" fill="white" stroke="#a78bfa" stroke-width="1.5"/>
+  </g>
+  <text x="400" y="94" text-anchor="middle" font-size="12" font-weight="600" fill="#5b21b6">CLI</text>
+  <text x="400" y="106" text-anchor="middle" font-size="10" fill="#64748b">init · serve · query · affected</text>
+
+  <!-- Library API -->
+  <g filter="url(#shadow3)">
+    <rect x="550" y="70" width="200" height="40" rx="8" fill="white" stroke="#a78bfa" stroke-width="1.5"/>
+  </g>
+  <text x="650" y="94" text-anchor="middle" font-size="12" font-weight="600" fill="#5b21b6">Library API</text>
+  <text x="650" y="106" text-anchor="middle" font-size="10" fill="#64748b">TypeScript SDK 嵌入</text>
+
+  <!-- Protocol labels -->
+  <text x="150" y="128" text-anchor="middle" font-size="10" fill="#a78bfa">MCP (stdio)</text>
+  <text x="400" y="128" text-anchor="middle" font-size="10" fill="#a78bfa">CLI 调用</text>
+  <text x="650" y="128" text-anchor="middle" font-size="10" fill="#a78bfa">import 嵌入</text>
+
+  <!-- Arrows: Clients → Server -->
+  <line x1="150" y1="110" x2="150" y2="140" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow3)"/>
+  <line x1="400" y1="110" x2="400" y2="140" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow3)"/>
+  <line x1="650" y1="110" x2="650" y2="140" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow3)"/>
+
+  <!-- ===== Center: codegraph-server ===== -->
+  <g filter="url(#shadow3)">
+    <rect x="100" y="144" width="600" height="190" rx="12" fill="white" stroke="#3b82f6" stroke-width="2"/>
+  </g>
+  <rect x="100" y="144" width="600" height="36" rx="12" fill="url(#blueG3)"/>
+  <rect x="100" y="164" width="600" height="16" fill="url(#blueG3)"/>
+  <text x="400" y="167" text-anchor="middle" font-size="15" font-weight="700" fill="white">CodeGraph MCP Server (TypeScript)</text>
+
+  <!-- Internal components grid -->
+  <!-- Row 1 -->
+  <g filter="url(#shadow3)">
+    <rect x="120" y="192" width="170" height="36" rx="8" fill="#fef3c7" stroke="#fbbf24" stroke-width="1"/>
+  </g>
+  <text x="205" y="214" text-anchor="middle" font-size="11" font-weight="600" fill="#92400e">tree-sitter 解析器</text>
+  <text x="205" y="224" text-anchor="middle" font-size="9" fill="#92400e">21 语言 · 增量解析</text>
+
+  <g filter="url(#shadow3)">
+    <rect x="315" y="192" width="170" height="36" rx="8" fill="#fef3c7" stroke="#fbbf24" stroke-width="1"/>
+  </g>
+  <text x="400" y="214" text-anchor="middle" font-size="11" font-weight="600" fill="#92400e">知识图谱引擎</text>
+  <text x="400" y="224" text-anchor="middle" font-size="9" fill="#92400e">节点 · 边 · 遍历</text>
+
+  <g filter="url(#shadow3)">
+    <rect x="510" y="192" width="170" height="36" rx="8" fill="#fef3c7" stroke="#fbbf24" stroke-width="1"/>
+  </g>
+  <text x="595" y="214" text-anchor="middle" font-size="11" font-weight="600" fill="#92400e">引用解析</text>
+  <text x="595" y="224" text-anchor="middle" font-size="9" fill="#92400e">calls → 定义 · imports</text>
+
+  <!-- Row 2 -->
+  <g filter="url(#shadow3)">
+    <rect x="120" y="238" width="170" height="36" rx="8" fill="#ede9fe" stroke="#c4b5fd" stroke-width="1"/>
+  </g>
+  <text x="205" y="260" text-anchor="middle" font-size="11" font-weight="600" fill="#5b21b6">FTS5 全文搜索</text>
+  <text x="205" y="270" text-anchor="middle" font-size="9" fill="#5b21b6">符号名精确匹配</text>
+
+  <g filter="url(#shadow3)">
+    <rect x="315" y="238" width="170" height="36" rx="8" fill="#ede9fe" stroke="#c4b5fd" stroke-width="1"/>
+  </g>
+  <text x="400" y="260" text-anchor="middle" font-size="11" font-weight="600" fill="#5b21b6">Synthesizers</text>
+  <text x="400" y="270" text-anchor="middle" font-size="9" fill="#5b21b6">动态分发桥接</text>
+
+  <g filter="url(#shadow3)">
+    <rect x="510" y="238" width="170" height="36" rx="8" fill="#ede9fe" stroke="#c4b5fd" stroke-width="1"/>
+  </g>
+  <text x="595" y="260" text-anchor="middle" font-size="11" font-weight="600" fill="#5b21b6">框架路由识别</text>
+  <text x="595" y="270" text-anchor="middle" font-size="9" fill="#5b21b6">14 类 Web 框架</text>
+
+  <!-- Row 3: Auto-Sync -->
+  <g filter="url(#shadow3)">
+    <rect x="315" y="284" width="170" height="36" rx="8" fill="#d1fae5" stroke="#86efac" stroke-width="1"/>
+  </g>
+  <text x="400" y="306" text-anchor="middle" font-size="11" font-weight="600" fill="#047857">自动同步</text>
+  <text x="400" y="316" text-anchor="middle" font-size="9" fill="#047857">FSEvents · inotify · 2s 防抖</text>
+
+  <!-- Arrow: Server → SQLite -->
+  <line x1="400" y1="334" x2="400" y2="356" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow3)"/>
+
+  <!-- ===== Bottom: Persistence ===== -->
+  <g filter="url(#shadow3)">
+    <rect x="200" y="360" width="400" height="36" rx="8" fill="white" stroke="#10b981" stroke-width="1.5"/>
+  </g>
+  <text x="400" y="383" text-anchor="middle" font-size="12" font-weight="600" fill="#047857">.codegraph/codegraph.db (SQLite + FTS5 · WAL 模式)</text>
+</svg>

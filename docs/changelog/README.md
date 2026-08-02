@@ -11,6 +11,26 @@ icon: mdi:timeline-clock-outline
 
 <div class="changelog-timeline">
 
+<!-- ==================== 2026 年 8 月 ==================== -->
+
+<div class="timeline-month">
+  <div class="timeline-month__marker">2026 年 8 月</div>
+</div>
+
+<div class="timeline-item">
+  <div class="timeline-item__dot"></div>
+  <div class="timeline-item__content">
+    <div class="timeline-item__date">8 月 2 日</div>
+    <div class="timeline-item__entries">
+      <div class="timeline-entry">
+        <span class="timeline-entry__tag timeline-entry__tag--ai">AI学习</span>
+        <a class="timeline-entry__link" href="/ai-study/codegraph-introduction/">新增《CodeGraph 介绍》</a>
+        <span class="timeline-entry__desc">—— 开源本地 MCP 服务器，tree-sitter 解析 21 语言构建代码知识图谱存入 SQLite，10 个 MCP 工具暴露给 AI Agent，消除"探索税"省 57% token，含 tree-sitter vs LSP 对比、7 项目基准测试、Code RAG 五派对比与 4 张 SVG 配图</span>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ==================== 2026 年 7 月 ==================== -->
 
 <div class="timeline-month">

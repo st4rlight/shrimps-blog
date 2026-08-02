@@ -1,0 +1,123 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 520" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <linearGradient id="blueG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="violetG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#a78bfa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="amberG" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.12"/>
+    </filter>
+    <marker id="arrow2" viewBox="0 0 10 10" refX="10" refY="5"
+            markerWidth="8" markerHeight="8"
+            markerUnits="userSpaceOnUse"
+            orient="auto"
+            preserveAspectRatio="xMidYMid meet">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/>
+    </marker>
+    <marker id="arrowB2" viewBox="0 0 10 10" refX="10" refY="5"
+            markerWidth="8" markerHeight="8"
+            markerUnits="userSpaceOnUse"
+            orient="auto"
+            preserveAspectRatio="xMidYMid meet">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#3b82f6"/>
+    </marker>
+  </defs>
+
+  <!-- ===== Background ===== -->
+  <rect width="820" height="520" rx="12" fill="#f8fafc"/>
+
+  <!-- ===== Title ===== -->
+  <text x="410" y="30" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">CodeGraph 在 AI 编程生态中的定位</text>
+  <text x="410" y="48" text-anchor="middle" font-size="12" fill="#94a3b8">连接代码库与 AI Agent 的本地代码智能层</text>
+
+  <!-- ===== Layer 1: AI Agent Layer (Top) ===== -->
+  <text x="50" y="80" font-size="12" font-weight="700" fill="#64748b">AI Agent 层</text>
+  <g filter="url(#shadow)">
+    <rect x="50" y="88" width="200" height="36" rx="8" fill="white" stroke="#a78bfa" stroke-width="1.5"/>
+  </g>
+  <text x="150" y="111" text-anchor="middle" font-size="12" font-weight="600" fill="#5b21b6">Claude Code</text>
+
+  <g filter="url(#shadow)">
+    <rect x="310" y="88" width="200" height="36" rx="8" fill="white" stroke="#a78bfa" stroke-width="1.5"/>
+  </g>
+  <text x="410" y="111" text-anchor="middle" font-size="12" font-weight="600" fill="#5b21b6">Cursor / Codex CLI</text>
+
+  <g filter="url(#shadow)">
+    <rect x="570" y="88" width="200" height="36" rx="8" fill="white" stroke="#a78bfa" stroke-width="1.5"/>
+  </g>
+  <text x="670" y="111" text-anchor="middle" font-size="12" font-weight="600" fill="#5b21b6">OpenCode / Gemini CLI</text>
+
+  <!-- Arrow: Agent → MCP -->
+  <line x1="150" y1="124" x2="150" y2="152" stroke="#a78bfa" stroke-width="1.5" marker-end="url(#arrow2)"/>
+  <line x1="410" y1="124" x2="410" y2="152" stroke="#a78bfa" stroke-width="1.5" marker-end="url(#arrow2)"/>
+  <line x1="670" y1="124" x2="670" y2="152" stroke="#a78bfa" stroke-width="1.5" marker-end="url(#arrow2)"/>
+
+  <!-- ===== Layer 2: Protocol Layer ===== -->
+  <text x="50" y="148" font-size="12" font-weight="700" fill="#64748b">协议层</text>
+  <rect x="180" y="156" width="460" height="32" rx="8" fill="#ede9fe" stroke="#c4b5fd" stroke-width="1"/>
+  <text x="410" y="176" text-anchor="middle" font-size="12" font-weight="600" fill="#5b21b6">MCP (stdio) — 10 个工具</text>
+
+  <!-- Arrow: Protocol → CodeGraph -->
+  <line x1="410" y1="188" x2="410" y2="218" stroke="#3b82f6" stroke-width="1.5" marker-end="url(#arrowB2)"/>
+
+  <!-- ===== Layer 3: CodeGraph Core (Center) ===== -->
+  <g filter="url(#shadow)">
+    <rect x="180" y="222" width="460" height="120" rx="12" fill="white" stroke="#3b82f6" stroke-width="2"/>
+  </g>
+  <rect x="180" y="222" width="460" height="36" rx="12" fill="url(#blueG)"/>
+  <rect x="180" y="242" width="460" height="16" fill="url(#blueG)"/>
+  <text x="410" y="245" text-anchor="middle" font-size="15" font-weight="700" fill="white">CodeGraph — 本地代码智能层</text>
+
+  <!-- Core components -->
+  <rect x="200" y="270" width="135" height="28" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="267" y="289" text-anchor="middle" font-size="10" fill="#1d4ed8">tree-sitter 解析引擎</text>
+
+  <rect x="345" y="270" width="135" height="28" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="412" y="289" text-anchor="middle" font-size="10" fill="#1d4ed8">知识图谱 + FTS5</text>
+
+  <rect x="490" y="270" width="135" height="28" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="557" y="289" text-anchor="middle" font-size="10" fill="#1d4ed8">引用解析 (Resolution)</text>
+
+  <rect x="200" y="306" width="135" height="28" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="267" y="325" text-anchor="middle" font-size="10" fill="#1d4ed8">SQLite 存储</text>
+
+  <rect x="345" y="306" width="135" height="28" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="412" y="325" text-anchor="middle" font-size="10" fill="#1d4ed8">自动同步 (FSEvents)</text>
+
+  <rect x="490" y="306" width="135" height="28" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="557" y="325" text-anchor="middle" font-size="10" fill="#1d4ed8">框架感知路由</text>
+
+  <!-- Arrow: CodeGraph → tree-sitter -->
+  <line x1="410" y1="342" x2="410" y2="372" stroke="#3b82f6" stroke-width="1.5" marker-end="url(#arrowB2)"/>
+
+  <!-- ===== Layer 4: Parsing Engine ===== -->
+  <g filter="url(#shadow)">
+    <rect x="230" y="376" width="360" height="36" rx="8" fill="white" stroke="#f59e0b" stroke-width="1.5"/>
+  </g>
+  <text x="410" y="399" text-anchor="middle" font-size="12" font-weight="600" fill="#92400e">tree-sitter 解析引擎 (21 种语言)</text>
+
+  <!-- Arrow: tree-sitter → Codebase -->
+  <line x1="410" y1="412" x2="410" y2="442" stroke="#f59e0b" stroke-width="1.5" marker-end="url(#arrow2)"/>
+
+  <!-- ===== Layer 5: Codebase ===== -->
+  <g filter="url(#shadow)">
+    <rect x="180" y="446" width="460" height="36" rx="8" fill="white" stroke="#10b981" stroke-width="1.5"/>
+  </g>
+  <text x="410" y="469" text-anchor="middle" font-size="12" font-weight="600" fill="#047857">代码库（函数 · 类 · 导入 · 调用链 · 框架路由）</text>
+
+  <!-- ===== Side annotations ===== -->
+  <text x="740" y="290" font-size="10" fill="#64748b">← 向上暴露给 Agent</text>
+  <text x="740" y="395" font-size="10" fill="#64748b">← 向下解析代码</text>
+
+  <!-- ===== Bottom tip ===== -->
+  <rect x="210" y="492" width="400" height="22" rx="11" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1"/>
+  <text x="410" y="507" text-anchor="middle" font-size="11" fill="#1d4ed8">本地优先：零 API key、零外部服务、索引不离开机器</text>
+</svg>

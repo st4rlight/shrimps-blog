@@ -1,0 +1,112 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 420" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <linearGradient id="blueG4" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="greenG4" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#34d399;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow4" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.12"/>
+    </filter>
+  </defs>
+
+  <!-- ===== Background ===== -->
+  <rect width="820" height="420" rx="12" fill="#f8fafc"/>
+
+  <!-- ===== Title ===== -->
+  <text x="410" y="30" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">CodeGraph MCP 工具分类</text>
+  <text x="410" y="48" text-anchor="middle" font-size="12" fill="#94a3b8">10 个工具，重型（Explore 子 Agent）和轻型（主会话）两类</text>
+
+  <!-- ===== Heavy Tools (Top) ===== -->
+  <g filter="url(#shadow4)">
+    <rect x="30" y="70" width="760" height="160" rx="10" fill="white" stroke="#3b82f6" stroke-width="1.5"/>
+  </g>
+  <rect x="30" y="70" width="760" height="36" rx="10" fill="url(#blueG4)"/>
+  <rect x="30" y="87" width="760" height="19" fill="url(#blueG4)"/>
+  <text x="410" y="93" text-anchor="middle" font-size="14" font-weight="700" fill="white">重型工具（3 个）— Explore 子 Agent 主力，返回数据量大</text>
+
+  <!-- codegraph_context -->
+  <g filter="url(#shadow4)">
+    <rect x="50" y="120" width="230" height="90" rx="8" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  </g>
+  <text x="165" y="142" text-anchor="middle" font-size="13" font-weight="700" fill="#1d4ed8">codegraph_context</text>
+  <text x="165" y="160" text-anchor="middle" font-size="10" fill="#374151">给定任务描述，组合</text>
+  <text x="165" y="174" text-anchor="middle" font-size="10" fill="#374151">search + node + callers</text>
+  <text x="165" y="188" text-anchor="middle" font-size="10" fill="#374151">+ callees，一次返回</text>
+  <text x="165" y="202" text-anchor="middle" font-size="10" fill="#374151">"涉及到的入口和上下文"</text>
+
+  <!-- codegraph_trace -->
+  <g filter="url(#shadow4)">
+    <rect x="295" y="120" width="230" height="90" rx="8" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  </g>
+  <text x="410" y="142" text-anchor="middle" font-size="13" font-weight="700" fill="#1d4ed8">codegraph_trace</text>
+  <text x="410" y="160" text-anchor="middle" font-size="10" fill="#374151">"X 是怎么调到 Y 的"</text>
+  <text x="410" y="174" text-anchor="middle" font-size="10" fill="#374151">每一跳的函数体内联</text>
+  <text x="410" y="188" text-anchor="middle" font-size="10" fill="#374151">跨动态分发</text>
+  <text x="410" y="202" text-anchor="middle" font-size="10" fill="#374151">一次 trace 结束探索</text>
+
+  <!-- codegraph_explore -->
+  <g filter="url(#shadow4)">
+    <rect x="540" y="120" width="230" height="90" rx="8" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  </g>
+  <text x="655" y="142" text-anchor="middle" font-size="13" font-weight="700" fill="#1d4ed8">codegraph_explore</text>
+  <text x="655" y="160" text-anchor="middle" font-size="10" fill="#374151">返回若干相关符号的</text>
+  <text x="655" y="174" text-anchor="middle" font-size="10" fill="#374151">源码（按文件分组）</text>
+  <text x="655" y="188" text-anchor="middle" font-size="10" fill="#374151">+ 关系图</text>
+  <text x="655" y="202" text-anchor="middle" font-size="10" fill="#374151">探索性了解模块</text>
+
+  <!-- ===== Light Tools (Bottom) ===== -->
+  <g filter="url(#shadow4)">
+    <rect x="30" y="250" width="760" height="150" rx="10" fill="white" stroke="#10b981" stroke-width="1.5"/>
+  </g>
+  <rect x="30" y="250" width="760" height="36" rx="10" fill="url(#greenG4)"/>
+  <rect x="30" y="267" width="760" height="19" fill="url(#greenG4)"/>
+  <text x="410" y="273" text-anchor="middle" font-size="14" font-weight="700" fill="white">轻型工具（7 个）— 主会话直接用，返回数据量小</text>
+
+  <!-- Row 1 of light tools -->
+  <g filter="url(#shadow4)">
+    <rect x="50" y="300" width="170" height="42" rx="8" fill="#d1fae5" stroke="#86efac" stroke-width="1"/>
+  </g>
+  <text x="135" y="320" text-anchor="middle" font-size="11" font-weight="600" fill="#047857">codegraph_search</text>
+  <text x="135" y="334" text-anchor="middle" font-size="9" fill="#374151">按名称搜索符号</text>
+
+  <g filter="url(#shadow4)">
+    <rect x="235" y="300" width="170" height="42" rx="8" fill="#d1fae5" stroke="#86efac" stroke-width="1"/>
+  </g>
+  <text x="320" y="320" text-anchor="middle" font-size="11" font-weight="600" fill="#047857">codegraph_callers</text>
+  <text x="320" y="334" text-anchor="middle" font-size="9" fill="#374151">查找谁调用了某函数</text>
+
+  <g filter="url(#shadow4)">
+    <rect x="420" y="300" width="170" height="42" rx="8" fill="#d1fae5" stroke="#86efac" stroke-width="1"/>
+  </g>
+  <text x="505" y="320" text-anchor="middle" font-size="11" font-weight="600" fill="#047857">codegraph_callees</text>
+  <text x="505" y="334" text-anchor="middle" font-size="9" fill="#374151">查找某函数调用了谁</text>
+
+  <g filter="url(#shadow4)">
+    <rect x="605" y="300" width="165" height="42" rx="8" fill="#d1fae5" stroke="#86efac" stroke-width="1"/>
+  </g>
+  <text x="687" y="320" text-anchor="middle" font-size="11" font-weight="600" fill="#047857">codegraph_impact</text>
+  <text x="687" y="334" text-anchor="middle" font-size="9" fill="#374151">修改影响范围分析</text>
+
+  <!-- Row 2 of light tools -->
+  <g filter="url(#shadow4)">
+    <rect x="120" y="352" width="170" height="42" rx="8" fill="#d1fae5" stroke="#86efac" stroke-width="1"/>
+  </g>
+  <text x="205" y="372" text-anchor="middle" font-size="11" font-weight="600" fill="#047857">codegraph_node</text>
+  <text x="205" y="386" text-anchor="middle" font-size="9" fill="#374151">单个符号详情</text>
+
+  <g filter="url(#shadow4)">
+    <rect x="325" y="352" width="170" height="42" rx="8" fill="#d1fae5" stroke="#86efac" stroke-width="1"/>
+  </g>
+  <text x="410" y="372" text-anchor="middle" font-size="11" font-weight="600" fill="#047857">codegraph_files</text>
+  <text x="410" y="386" text-anchor="middle" font-size="9" fill="#374151">索引文件结构</text>
+
+  <g filter="url(#shadow4)">
+    <rect x="530" y="352" width="170" height="42" rx="8" fill="#d1fae5" stroke="#86efac" stroke-width="1"/>
+  </g>
+  <text x="615" y="372" text-anchor="middle" font-size="11" font-weight="600" fill="#047857">codegraph_status</text>
+  <text x="615" y="386" text-anchor="middle" font-size="9" fill="#374151">索引健康状态</text>
+</svg>
