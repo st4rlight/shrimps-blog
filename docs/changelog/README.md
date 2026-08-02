@@ -313,8 +313,8 @@ icon: mdi:timeline-clock-outline
     <div class="timeline-item__date">5 月 28 日</div>
     <div class="timeline-item__entries">
       <div class="timeline-entry">
-        <span class="timeline-entry__tag timeline-entry__tag--ai">AI学习</span>
-        <a class="timeline-entry__link" href="/ai-study/deep-agents-overview/">新增《DeepAgents 源码分析》</a>
+        <span class="timeline-entry__tag timeline-entry__tag--ai">AI源码</span>
+        <a class="timeline-entry__link" href="/ai-source/deep-agents-overview/">新增《DeepAgents 源码分析》</a>
         <span class="timeline-entry__desc">—— DeepAgents 框架整体架构与核心机制</span>
       </div>
     </div>
@@ -355,8 +355,8 @@ icon: mdi:timeline-clock-outline
     <div class="timeline-item__date">5 月 20 日</div>
     <div class="timeline-item__entries">
       <div class="timeline-entry">
-        <span class="timeline-entry__tag timeline-entry__tag--ai">AI学习</span>
-        <a class="timeline-entry__link" href="/ai-study/system-prompt-and-injection-analysis/">更新《Claude Code 系统提示词与注入分析》</a>
+        <span class="timeline-entry__tag timeline-entry__tag--ai">AI源码</span>
+        <a class="timeline-entry__link" href="/ai-source/claude-code-system-prompt-and-injection-analysis/">更新《Claude Code 系统提示词与注入分析》</a>
         <span class="timeline-entry__desc">—— 补充 Tool Assembly 和 Deferred Tool 机制</span>
       </div>
     </div>
@@ -383,13 +383,13 @@ icon: mdi:timeline-clock-outline
     <div class="timeline-item__date">5 月 17 日</div>
     <div class="timeline-item__entries">
       <div class="timeline-entry">
-        <span class="timeline-entry__tag timeline-entry__tag--ai">AI学习</span>
-        <a class="timeline-entry__link" href="/ai-study/context-compression-and-cache-analysis/">新增《Claude Code 上下文压缩机制与缓存命中率分析》</a>
+        <span class="timeline-entry__tag timeline-entry__tag--ai">AI源码</span>
+        <a class="timeline-entry__link" href="/ai-source/claude-code-context-compression-and-cache-analysis/">新增《Claude Code 上下文压缩机制与缓存命中率分析》</a>
         <span class="timeline-entry__desc">—— 六层压缩防线与缓存保护体系</span>
       </div>
       <div class="timeline-entry">
-        <span class="timeline-entry__tag timeline-entry__tag--ai">AI学习</span>
-        <a class="timeline-entry__link" href="/ai-study/system-prompt-and-injection-analysis/">新增《Claude Code 系统提示词与注入分析》</a>
+        <span class="timeline-entry__tag timeline-entry__tag--ai">AI源码</span>
+        <a class="timeline-entry__link" href="/ai-source/claude-code-system-prompt-and-injection-analysis/">新增《Claude Code 系统提示词与注入分析》</a>
         <span class="timeline-entry__desc">—— 五层注入架构与优先级体系</span>
       </div>
       <div class="timeline-entry">
