@@ -1,7 +1,7 @@
 ---
 title: st4rlight-code 构建笔记
 createTime: 2026/08/16 10:00:00
-permalink: /ai-study/st4rlight-code/
+permalink: /st4rlight-code/
 ---
 
 # st4rlight-code 构建笔记

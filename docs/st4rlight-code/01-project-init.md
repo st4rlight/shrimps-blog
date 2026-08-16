@@ -7,7 +7,7 @@ tags:
   - 项目初始化
 excerpt: 从零初始化一个 TypeScript CLI 项目，作为构建类 Claude Code 编码助手的地基。记录技术选型、工程配置、以及从 tsx 演进到 Node 原生运行 TS 的完整过程。
 createTime: 2026/08/16 10:00:00
-permalink: /ai-study/st4rlight-code/01-project-init/
+permalink: /st4rlight-code/01-project-init/
 ---
 
 # 01. 项目初始化

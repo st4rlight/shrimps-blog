@@ -47,6 +47,7 @@ export default defineUserConfig({
       { text: '时间轴', link: '/changelog/', icon: 'mdi:timeline-clock-outline' },
       // { text: '存卿偶寄', link: '/blog/', icon: 'mdi:feather' },
       // { text: '思考领悟', link: '/thoughts/', icon: 'mdi:lightbulb-outline' },
+      { text: 'st4rlight-code', link: '/st4rlight-code/', icon: 'mdi:code-tags' },
       { text: 'AI学习', link: '/ai-study/', icon: 'mdi:robot-outline' },
       { text: 'AI源码', link: '/ai-source/', icon: 'mdi:code-braces' },
       { text: '智能客服体系', link: '/ai-cs/', icon: 'mdi:headset' },
@@ -168,14 +169,6 @@ export default defineUserConfig({
               'ai-ecosystem/graphrag-introduction.md',
             ],
           },
-          {
-            text: 'st4rlight-code构建笔记',
-            link: '/ai-study/st4rlight-code/',
-            collapsed: false,
-            items: [
-              'st4rlight-code/01-project-init.md',
-            ],
-          },
         ],
       },
       {
@@ -246,6 +239,21 @@ export default defineUserConfig({
             collapsed: false,
             items: [
               'database/database-normal-forms.md',
+            ],
+          },
+        ],
+      },
+      {
+        type: 'doc',
+        dir: 'st4rlight-code',
+        title: 'st4rlight-code构建笔记',
+        sidebar: [
+          {
+            text: '一、起步',
+            link: '/st4rlight-code/',
+            collapsed: false,
+            items: [
+              '01-project-init.md',
             ],
           },
         ],

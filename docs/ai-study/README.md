@@ -45,12 +45,7 @@ permalink: /ai-study/
 - [AG-UI学习笔记](./ai-ecosystem/ag-ui-study-notes.md)
 - [A2UI学习笔记](./ai-ecosystem/a2ui-study-notes.md)
 
-### st4rlight-code 构建笔记
 
-这一部分记录我从零构建一个类似于 `Claude Code` 的 AI 编码助手 CLI 的完整过程，包括技术选型、消息模型、LLM 抽象、工具调用等。
-
-- [项目主页](./st4rlight-code/README.md)
-- [01. 项目初始化](./st4rlight-code/01-project-init.md)
 
 ## 后续计划
 
