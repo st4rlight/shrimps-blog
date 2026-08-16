@@ -256,6 +256,14 @@ export default defineUserConfig({
               '01-agent-loop.md',
             ],
           },
+          {
+            text: '二、工具系统',
+            link: '/st4rlight-code/02-tools.html',
+            collapsed: false,
+            items: [
+              '02-tools.md',
+            ],
+          },
         ],
       },
     ],
