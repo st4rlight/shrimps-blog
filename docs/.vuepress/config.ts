@@ -249,11 +249,11 @@ export default defineUserConfig({
         title: 'st4rlight-code构建笔记',
         sidebar: [
           {
-            text: '一、起步',
+            text: '一、总览',
             link: '/st4rlight-code/',
             collapsed: false,
             items: [
-              '01-project-init.md',
+              '01-project-overview.md',
             ],
           },
         ],

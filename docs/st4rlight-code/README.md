@@ -12,15 +12,18 @@ permalink: /st4rlight-code/
 
 ## 文章目录
 
-### 一、起步
-- [01. 项目初始化](./01-project-init.md)
-- [02. 最简单的 Agent 循环](./02-simplest-agent-loop.md)
+### 一、总览
+- [01. 项目现状总览](./01-project-overview.md)
 
-### 二、模型与消息模型
-- [03. 模型抽象与消息模型设计](./03-model-and-message.md)
+### 二、起步与基础
+- [02. 项目初始化](./02-project-init.md)
+- [03. 最简单的 Agent 循环](./03-simplest-agent-loop.md)
 
-### 三、工具能力
-- [04. 工具调用循环](./04-tool-calling-loop.md)
+### 三、模型与消息模型
+- [04. 模型抽象与消息模型设计](./04-model-and-message.md)
+
+### 四、工具能力
+- [05. 工具调用循环](./05-tool-calling-loop.md)
 
 ## 关于这个项目
 
