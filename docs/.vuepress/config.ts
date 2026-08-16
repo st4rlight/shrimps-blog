@@ -249,11 +249,11 @@ export default defineUserConfig({
         title: 'st4rlight-code构建笔记',
         sidebar: [
           {
-            text: '一、总览',
+            text: '一、Agent 循环',
             link: '/st4rlight-code/',
             collapsed: false,
             items: [
-              '01-project-overview.md',
+              '01-agent-loop.md',
             ],
           },
         ],
