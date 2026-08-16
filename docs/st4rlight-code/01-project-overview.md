@@ -84,11 +84,3 @@ npm run dev "计算 100 乘以 456，并告诉我当前时间"
   100 × 456 = 45600
   当前时间：2026-08-16 01:41:35
 ```
-
-## 待实现
-
-- 交互式终端循环
-- 流式输出
-- 更多内置工具（list_dir、write_file、execute_command 等）
-- 循环错误恢复（Claude Code 的 6 种边界情况）
-- 流式工具执行（StreamingToolExecutor）
