@@ -20,6 +20,25 @@ icon: mdi:timeline-clock-outline
 <div class="timeline-item">
   <div class="timeline-item__dot"></div>
   <div class="timeline-item__content">
+    <div class="timeline-item__date">8 月 16 日</div>
+    <div class="timeline-item__entries">
+      <div class="timeline-entry">
+        <span class="timeline-entry__tag timeline-entry__tag--code">st4rlight-code</span>
+        <a class="timeline-entry__link" href="/st4rlight-code/01-agent-loop/">新增《01. Agent 循环》</a>
+        <span class="timeline-entry__desc">—— 从零用 TypeScript 构建 AI 编码助手的核心循环：最小调模型→工具回路→喂回再调，对比真实 Claude Code 待补的流式输出、中断处理与循环恢复机制</span>
+      </div>
+      <div class="timeline-entry">
+        <span class="timeline-entry__tag timeline-entry__tag--code">st4rlight-code</span>
+        <a class="timeline-entry__link" href="/st4rlight-code/02-tools/">新增《02. 工具系统》</a>
+        <span class="timeline-entry__desc">—— 工具本质三要素、从 read_file 到 12 个内置工具、edit_file 的 read-before-edit 安全机制与防错设计、50K 结果截断、ToolSearch 延迟加载</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="timeline-item">
+  <div class="timeline-item__dot"></div>
+  <div class="timeline-item__content">
     <div class="timeline-item__date">8 月 2 日</div>
     <div class="timeline-item__entries">
       <div class="timeline-entry">

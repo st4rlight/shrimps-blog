@@ -434,6 +434,11 @@
   background: rgb(37 99 235 / 10%);
 }
 
+.home-timeline__tag--code {
+  color: #4f46e5;
+  background: rgb(79 70 229 / 10%);
+}
+
 .home-timeline__body a {
   color: #334155;
   font-weight: 500;
@@ -593,6 +598,11 @@
 .timeline-entry__tag--commercial {
   color: #2563eb;
   background: rgb(37 99 235 / 10%);
+}
+
+.timeline-entry__tag--code {
+  color: #4f46e5;
+  background: rgb(79 70 229 / 10%);
 }
 
 .timeline-entry__tag--thought {

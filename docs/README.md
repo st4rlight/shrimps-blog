@@ -53,6 +53,24 @@ config:
 <div class="home-timeline__item">
   <div class="home-timeline__dot"></div>
   <div class="home-timeline__body">
+    <span class="home-timeline__date">08-16</span>
+    <span class="home-timeline__tag home-timeline__tag--code">st4rlight-code</span>
+    <a href="/st4rlight-code/02-tools/">新增《02. 工具系统》</a>
+  </div>
+</div>
+
+<div class="home-timeline__item">
+  <div class="home-timeline__dot"></div>
+  <div class="home-timeline__body">
+    <span class="home-timeline__date">08-16</span>
+    <span class="home-timeline__tag home-timeline__tag--code">st4rlight-code</span>
+    <a href="/st4rlight-code/01-agent-loop/">新增《01. Agent 循环》</a>
+  </div>
+</div>
+
+<div class="home-timeline__item">
+  <div class="home-timeline__dot"></div>
+  <div class="home-timeline__body">
     <span class="home-timeline__date">08-02</span>
     <span class="home-timeline__tag home-timeline__tag--ai">AI学习</span>
     <a href="/ai-study/graphrag-introduction/">新增《GraphRAG 技术详解》</a>
@@ -164,24 +182,6 @@ config:
     <span class="home-timeline__date">07-05</span>
     <span class="home-timeline__tag home-timeline__tag--ai">AI学习</span>
     <a href="/ai-study/loop-engineering/">新增《Loop Engineering解析》</a>
-  </div>
-</div>
-
-<div class="home-timeline__item">
-  <div class="home-timeline__dot"></div>
-  <div class="home-timeline__body">
-    <span class="home-timeline__date">07-05</span>
-    <span class="home-timeline__tag home-timeline__tag--ai">AI学习</span>
-    <a href="/ai-study/ag-ui-study-notes/">新增《AG-UI 学习笔记》</a>
-  </div>
-</div>
-
-<div class="home-timeline__item">
-  <div class="home-timeline__dot"></div>
-  <div class="home-timeline__body">
-    <span class="home-timeline__date">07-05</span>
-    <span class="home-timeline__tag home-timeline__tag--ai">AI学习</span>
-    <a href="/ai-study/a2ui-study-notes/">新增《A2UI 学习笔记》</a>
   </div>
 </div>
 
