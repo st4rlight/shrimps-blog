@@ -168,6 +168,14 @@ export default defineUserConfig({
               'ai-ecosystem/graphrag-introduction.md',
             ],
           },
+          {
+            text: 'st4rlight-code构建笔记',
+            link: '/ai-study/st4rlight-code/',
+            collapsed: false,
+            items: [
+              'st4rlight-code/01-project-init.md',
+            ],
+          },
         ],
       },
       {
