@@ -264,6 +264,14 @@ export default defineUserConfig({
               '02-tools.md',
             ],
           },
+          {
+            text: '三、Prompt 工程',
+            link: '/st4rlight-code/03-system-prompt.html',
+            collapsed: false,
+            items: [
+              '03-system-prompt.md',
+            ],
+          },
         ],
       },
     ],

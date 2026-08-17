@@ -18,16 +18,15 @@ permalink: /st4rlight-code/
 ### 二、工具系统
 - [02. 工具系统](./02-tools.md)
 
-### 三、起步与基础
-- [03. 项目初始化](./03-project-init.md)
-- [04. 模型抽象与消息模型设计](./04-model-and-message.md)
+### 三、Prompt 工程
+- [03. System Prompt 工程](./03-system-prompt.md)
 
 ## 关于这个项目
 
 - **项目地址**: [st4rlight-code](https://github.com/st4rlight/st4rlight-code)
 - **技术栈**: TypeScript + OpenAI 兼容协议
 - **运行方式**: Node 原生运行 TS（无编译步骤）
-- **当前进度**: 已实现消息模型、LLM 抽象、工具调用循环、3 个内置工具、日志提示
+- **当前进度**: 已实现消息模型、LLM 抽象、工具调用循环、12 个内置工具、System Prompt 工程、CLAUDE.md 加载
 
 ## 构建思路
 
