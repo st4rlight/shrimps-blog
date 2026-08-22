@@ -25,7 +25,7 @@ icon: mdi:timeline-clock-outline
       <div class="timeline-entry">
         <span class="timeline-entry__tag timeline-entry__tag--ai">AI学习</span>
         <a class="timeline-entry__link" href="/ai-study/graph-engineering/">新增《Graph Engineering 全景解析》</a>
-        <span class="timeline-entry__desc">—— 从 AI 视角梳理 Graph Engineering 五层技术栈：LLM 驱动的图建模、GraphRAG 检索机制、社区检测与图计算、图神经网络（GCN/GraphSAGE/GAT）、代码知识图谱与 GNN+LLM 融合范式，含 Graph for AI 选型指南</span>
+        <span class="timeline-entry__desc">—— Agent 架构从 Chain 到 Graph 的范式跃迁：Graph of Thought 推理图、LangGraph 编排图、Multi-Agent Graph 协作范式、Planning Graph 规划搜索，含 GoT 四种操作与四大工程场景选型</span>
       </div>
     </div>
   </div>

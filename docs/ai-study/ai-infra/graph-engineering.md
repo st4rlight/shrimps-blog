@@ -2,60 +2,345 @@
 title: Graph Engineering 全景解析
 tags:
   - Graph Engineering
-  - GraphRAG
-  - 知识图谱
-  - 图神经网络
+  - Graph of Thought
+  - LangGraph
+  - Agent 架构
   - AI Infra
-excerpt: LLM 时代，Graph Engineering 的价值不再是"换个数据库"，而是让 AI 拥有结构化的关系推理能力。本文从 AI 视角出发，梳理 GraphRAG、知识图谱 + LLM、图神经网络、代码知识图谱等 Graph for AI 的工程实践，帮你理解为什么"图"正在成为 AI Infra 不可或缺的一层。
+excerpt: Graph Engineering 是 Agent 架构的下一个范式——从"线性链"到"图结构"的跃迁。Chain of Thought 看到了推理链，Graph of Thought 看到了推理网；线性 Loop 看到了单次循环，Graph-based Orchestration 看到了多路径编排。本文系统梳理 Graph Engineering 的核心概念、技术架构与工程实践。
 createTime: 2026/08/23 16:00:00
 permalink: /ai-study/graph-engineering/
 ---
 
 # Graph Engineering 全景解析
 
-> LLM 很强，但它本质上是"逐 token 预测"——它看到的是线性序列，看不到实体之间的拓扑关系。Graph Engineering 在 AI 时代的核心使命，就是把"谁连到谁"这种结构化关系喂给模型，让 AI 从"读文本"进化到"读图"。
+> 当 Agent 只做一件事时，线性链够用——输入、思考、工具调用、输出，一气呵成。但当一个 Agent 需要面对不确定路径、多步推理、分支决策时，线性链就变成了思维的牢笼。Graph Engineering 的核心命题很简单：**Agent 的推理和编排，应该从 Chain（链）进化到 Graph（图）**。
 
 ---
 
-## 背景与动机：LLM 的"关系盲区"
+## 背景与动机：从 Chain 到 Graph
 
-### 线性序列 vs 拓扑结构
+### Chain of Thought 的天花板
 
-LLM 的输入是一条**线性序列**——token by token，从左到右。这在处理自然语言时很自然，但在面对以下场景时会出现根本性短板：
+Chain of Thought（CoT）是 LLM 推理的第一个范式——让模型一步步推理，写出中间步骤，最终得到答案。这个思路非常成功，但它有一个根本局限：**推理路径是线性的**。
 
-| 场景 | LLM 的困难 | 图能提供什么 |
-|------|-----------|------------|
-| **多跳推理** | "A 的经理的上级负责哪些项目？"需要跨 3 跳实体 | 图遍历天然表达多跳路径 |
-| **全局理解** | LLM 的注意力是局部的，看不全大文档集的实体关系 | 图社区检测发现全局结构 |
-| **实体消歧** | 两个"苹果"是水果还是公司？序列上下文可能不够 | 图结构一致性辅助消歧 |
-| **因果追溯** | "为什么推荐这个方案？"LLM 无法回溯推理链 | 图路径显式记录推理过程 |
-| **代码理解** | "谁调用了这个函数？"grep 做不到跨文件语义分析 | 代码知识图谱显式存储调用关系 |
+```
+Chain of Thought（线性推理）：
+  输入 → 步骤1 → 步骤2 → 步骤3 → ... → 输出
+        ↓ 单一方向、不能分叉、不能回溯
+```
+
+线性的 CoT 在以下场景下暴露短板：
+
+| 场景 | 线性 CoT 的困难 | 需要的结构 |
+|------|-----------------|-----------|
+| **多路探索** | "这道题有 3 种解法，试了第一种不行要转第二种" | 分支结构——一条路走不通可以回退到分支点走另一条 |
+| **依赖回溯** | "后来的发现推翻了前面的假设" | 双向边——后面的节点可以指回前面的节点 |
+| **协同推理** | "两个子任务的输出合在一起才能得到最终答案" | 汇聚结构——多个节点的输出汇聚到一个节点 |
+| **并行执行** | "这两个步骤互不依赖，应该同时跑" | 并行边——一个节点的多条出边可以同时激活 |
+| **动态路径** | "下一步走哪条路取决于上一步的结果" | 条件边——边的激活取决于状态 |
+
+### Graph of Thought 的突破
+
+2023 年，Maciej Besta 等人在论文 *Graph of Thoughts* 中提出了核心洞察：**人类解决复杂问题时，不是一个线性推理链，而是在一张思维图中探索**。
+
+```
+Graph of Thought（图推理）：
+          ┌─ 思路A1 ─┐
+  输入 → 思路A ─→ 思路A2 ─┼─→ 评估 ─→ 输出
+          └─ 思路B1 ─┘          ↑
+                         （选出最优路径）
+```
+
+关键区别：
+
+| 维度 | Chain of Thought | Graph of Thought |
+|------|-----------------|------------------|
+| **拓扑** | 线性链 | 有向图（DAG 或含环） |
+| **方向** | 单向推进 | 分叉、汇聚、回溯 |
+| **路径数** | 单一路径 | 多路径并行探索 |
+| **错误恢复** | 从头重来 | 回退到分支点 |
+| **最优选择** | 不能比较 | 评估多条路径选最优 |
 
 ![Graph Engineering 在 AI 中的定位](/ai-study/ai-infra/graph-engineering/graph-ai-reference.png)
 
-上图清晰地展示了 Graph Engineering 在 AI 技术栈中的定位——它不是图数据库本身，而是连接**数据层**和**智能层**的桥梁：从底层的图数据建模，到中层的图检索与图计算，再到上层的图增强智能。
+### Agent 架构中的 Graph 层
 
-### Graph Engineering 的五层模型
+如果把所有 Agent 架构模式排成一个谱系，"图"处在承上启下的位置：
 
-从 AI 视角看，Graph Engineering 分为五层，每层解决一个核心问题：
+```text
+Prompt Engineering        "写成一条条指令"
+    ↓
+Chain of Thought          "连成一条条推理链"
+    ↓
+Loop Engineering          "套成一层层循环"
+    ↓
+Graph Engineering         "拼成一张张图"   ← 我们在这
+    ↓
+(未来) World Model & Planning Graph
+```
 
-| 层次 | 核心问题 | AI 场景下的技术 |
-|------|---------|--------------|
-| **图建模** | 如何把真实世界的实体与关系建模成图 | LLM 自动抽取实体关系、本体设计 |
-| **图存储** | 如何高效存储和检索图结构 | 图数据库（Neo4j/NebulaGraph）或内存图（DGL） |
-| **图检索** | 如何从图中找到与问题相关的子图 | GraphRAG 的社区检索、子图查询 |
-| **图计算** | 如何在大规模图上运行算法 | 社区检测（Leiden）、PageRank、图嵌入 |
-| **图智能** | 如何让模型理解图结构中的隐含模式 | GNN（GCN/GraphSAGE/GAT）、GraphRAG |
-
-关键洞察：在传统图工程中，五层都是**独立的工程领域**；但在 AI 场景下，它们被 LLM 串联成了**端到端的智能流水线**——LLM 负责抽取和理解，图负责结构化存储和检索，GNN 负责学习隐含模式。
+Loop Engineering 解决的是"Agent 如何持续运行"——通过循环驱动 Agent 自主工作。但循环内部的决策路径是线性的：每一步只有一个"下一步"。Graph Engineering 填补了这个空缺——让"下一步"从一个变成多个，让 Agent 具备**多路径探索和选择**的能力。
 
 ---
 
-## Graph Engineering 全景图
+## Graph Engineering 的核心概念
 
-![Graph Engineering 技术全景](/ai-study/ai-infra/graph-engineering/graph-engineering-overview.svg)
+### 概念一：推理图（Graph of Thought）
 
-上图展示了 AI 视角下 Graph Engineering 的五层架构。与传统的图数据库选型文章不同，本文的焦点是：**每一层如何为 AI 服务**。
+GoT 的核心思想是把推理过程建模为图，其中：
+- **节点** = 一个"Thought"（推理状态/中间结论/假设）
+- **边** = 从一个 Thought 到另一个 Thought 的操作（细化、反驳、组合、泛化）
+
+四种基本操作：
+
+| 操作 | 含义 | 例子 |
+|------|------|------|
+| **细化（Refine）** | 在当前 Thought 上深化 | "这个思路可行 → 展开计算细节" |
+| **反驳（Refute）** | 挑战当前 Thought | "这个假设有问题 → 找到反例" |
+| **组合（Combine）** | 合并多个 Thoughts | "思路 A + 思路 B → 得到综合方案" |
+| **泛化（Generalize）** | 抽取更一般的结论 | "从具体案例 → 提炼出通用规律" |
+
+```python
+# Graph of Thought 的伪代码
+class Thought:
+    content: str          # 当前推理状态
+    score: float          # 评估分数
+    predecessors: List[Thought]  # 前驱节点
+
+class GraphOfThought:
+    thoughts: List[Thought]
+    
+    def explore(self, thought: Thought):
+        # 从当前节点分叉探索多条路径
+        candidates = generate_next_thoughts(thought)
+        for candidate in candidates:
+            candidate.score = evaluate(candidate)
+            self.thoughts.append(candidate)
+    
+    def solve(self, problem: str) -> str:
+        root = Thought(content=problem)
+        while not should_stop(root):
+            # 选择最有希望的节点进行扩展
+            frontier = select_frontier(self.thoughts)
+            for thought in frontier:
+                self.explore(thought)
+        # 返回得分最高的完整路径
+        return extract_best_path(self.thoughts)
+```
+
+### 概念二：编排图（Orchestration Graph）
+
+当 Graph Engineering 从推理层延伸到编排层，就变成了 Agent 的工作流设计：
+
+```
+传统 Agent Loop：
+  while True:
+      next_action = decide_next()   # 只有一个"下一步"
+      execute(next_action)
+      if done: break
+
+Graph-based Agent：
+  graph = {
+      "start": condition(lambda s: "research" if s.complex else "answer"),
+      "research": condition(lambda s: "synthesize" if s.done else "research"),
+      "synthesize": action(generate_answer),
+      "answer": action(final_output)
+  }
+  # 同一个状态可以有多个候选下一步，按条件选
+```
+
+关键区别：**循环是"重复执行同一个函数"，图结构是"按照拓扑遍历不同节点"**。
+
+### 概念三：多 Agent 图（Multi-Agent Graph）
+
+在 Multi-Agent 系统中，图成为一种天然的架构语言：
+
+```
+Multi-Agent Graph：
+  ┌──────────┐     ┌──────────┐
+  │ Researcher│────→│ Synthesizer│
+  └──────────┘     └──────────┘
+       │                 ↑
+       ↓                 │
+  ┌──────────┐          │
+  │ Critic   │──────────┘
+  └──────────┘
+
+  - Researcher 找到的信息传递给 Synthesizer
+  - Critic 审阅 Synthesizer 的输出，不够好就发回重做
+  - 形成带环的图结构（可以返回前面步骤）
+```
+
+### 概念四：Planning Graph
+
+Planning Graph 把 Agent 的规划问题建模为图搜索：
+- **节点** = 世界状态
+- **边** = 行动（从一个状态到另一个状态）
+- **路径** = 一个从初始状态到目标状态的完整规划
+
+与经典 AI Planning 不同，Graph Engineering 中的 Planning Graph 是由 LLM 在运行时**动态构建**的，而非预先定义好的状态机。
+
+---
+
+## Graph Engineering 的技术架构
+
+### 核心架构模式
+
+#### 模式一：DAG 编排（有向无环图）
+
+最常见也是最实用的模式。工作流是一个有向无环图，节点是操作，边是数据流。
+
+```
+DAG 编排示例：
+                   ┌─ 分析子任务1 ─┐
+  用户请求 → 拆解 ─┼─ 分析子任务2 ─┼─→ 汇总 ─→ 输出
+                   └─ 分析子任务3 ─┘
+```
+
+适用场景：任务可以拆成互不依赖的子任务，最终合并。
+
+#### 模式二：循环图（带环图）
+
+引入了条件跳转和循环，让 Agent 可以回溯、重试、迭代优化：
+
+```
+带环图示例：
+  输入 → 生成方案 → 评估
+              ↑         │
+              │    不满意│
+              └─── 修改 ←┘
+               (循环直到满意)
+```
+
+适用场景：需要迭代优化、质量不达标要返回重做的场景。
+
+#### 模式三：自适应路由
+
+根据输入动态选择路径——同一个入口，不同类型的问题走不同的分支：
+
+```
+自适应路由示例：
+               ┌─ 简单问题 → 直接回答 ─┐
+  用户提问 → 分类 ─┼─ 复杂问题 → 深度研究 ─┼─→ 输出
+               └─ 开放问题 → 讨论生成 ─┘
+```
+
+适用场景：输入类型多样，需要不同处理策略。
+
+### LangGraph：Graph Engineering 的工程实践
+
+LangGraph 是 LangChain 推出的图编排框架，可以视为 Graph Engineering 的第一个系统性工程实现。
+
+```python
+from langgraph.graph import StateGraph
+
+# 1. 定义状态
+class AgentState(TypedDict):
+    messages: List[str]
+    next_step: str
+    result: str
+
+# 2. 构建图
+graph = StateGraph(AgentState)
+
+# 3. 添加节点（每节点是一个独立函数/Agent）
+graph.add_node("research", research_node)
+graph.add_node("analyze", analyze_node)
+graph.add_node("synthesize", synthesize_node)
+graph.add_node("review", review_node)
+
+# 4. 添加边（定义节点间的跳转关系）
+graph.add_edge("research", "analyze")
+graph.add_edge("analyze", "synthesize")
+graph.add_conditional_edges("synthesize", 
+    lambda state: "review" if state["needs_review"] else "end")
+graph.add_conditional_edges("review",
+    lambda state: "synthesize" if state["approved"] else "research")
+
+# 5. 编译并运行
+app = graph.compile()
+result = app.invoke({"messages": ["研究主题"]})
+```
+
+LangGraph 的核心设计原则：
+
+| 原则 | 说明 |
+|------|------|
+| **State 是一等公民** | 所有节点共享一个 State 对象，不依赖隐式上下文 |
+| **节点是纯函数** | 输入 State，输出 State 的更新（不可变更新） |
+| **边是显式跳转** | 节点之间的流转条件清晰可见、可测试 |
+| **支持循环和分支** | 天然支持条件跳转和循环重试 |
+| **可持久化** | 支持 checkpoint——暂停、恢复、时间旅行 |
+
+### 与其他编排模式的对比
+
+| 编排模式 | 代表 | 拓扑 | 适合 |
+|---------|------|------|------|
+| **Chain** | LLMChain / Sequential | 线性 | 固定流水线 |
+| **Router** | RouterChain | 星型 | 输入分类分发 |
+| **Loop** | AgentExecutor | 环形 | 单 Agent 反复执行 |
+| **Graph** | LangGraph / CrewAI Flows | 任意图 | 多路径、复杂依赖 |
+
+---
+
+## Graph for AI 的四大工程范式
+
+### 范式一：Graph of Thought —— 推理从链到网
+
+**问题**：复杂问题的推理不是单链，而是需要比较、组合、回溯多条思路。
+
+**GoT 解法**：把推理建模为图，允许同时探索多条推理路径，最终选出最优。
+
+**实际效果**：
+- 在 Sort、Shortest Path 等需要多步探索的任务上，GoT 比 CoT 准确率高 20-70%
+- 允许"群体智慧"——多个 Thought 节点协作，综合得到更优结论
+- 关键代价：推理成本与图的宽度（同时探索的路径数）线性增长
+
+### 范式二：Graph-based Orchestration —— 工作流从线到图
+
+**问题**：Agent 的工作流越来越复杂——有条件分支、有并行子任务、有循环重试。线性 Loop 表达不了。
+
+**解法**：用有向图编排 Agent 的工作流，节点是操作步骤，边是跳转条件。
+
+**实际案例**：
+
+```text
+研究助手 Agent 的图结构：
+
+  用户提问 → 意图分类
+              ├─ 事实型 → 检索 → 验证 → 回答
+              ├─ 分析型 → 拆解 → [并行研究子问题] → 交叉验证 → 综合回答
+              └─ 观点型 → 正反论证 → 评估 → 带立场的回答
+```
+
+### 范式三：Multi-Agent Graph —— 协作从中心化到网络化
+
+**问题**：多个 Agent 协作时，谁是中心？谁分配任务？谁汇总结果？中心化调度容易成为瓶颈。
+
+**解法**：用图定义 Agent 之间的协作关系——哪些 Agent 的输出喂给谁，谁有权力触发重做。
+
+```text
+代码审查 Multi-Agent Graph：
+
+  CodeWriter → CodeReviewer → TestRunner
+                    ↑                │
+                    └─── BugReport ←─┘
+                    
+  - CodeWriter 写完代码给 CodeReviewer
+  - CodeReviewer 审查通过 → 交给 TestRunner 测
+  - TestRunner 发现问题 → 返回给 CodeReviewer（不是直接给 CodeWriter）
+  - CodeReviewer 决定是直接修改还是退回 CodeWriter 重写
+```
+
+### 范式四：Planning Graph —— 规划从序列到图搜索
+
+**问题**：Agent 的规划问题（"为了达成目标，先做什么后做什么"）如果只用线性规划，无法处理执行过程中的不确定性。
+
+**解法**：把 Planning 建模为图搜索——状态空间中的路径搜索，LLM 负责生成候选行动和评估状态。
+
+---
+
+## Graph Engineering 的全景图
 
 ### 与已有文章的关系
 
@@ -63,381 +348,72 @@ LLM 的输入是一条**线性序列**——token by token，从左到右。这�
 
 | 文章 | 涉及层次 | 核心贡献 |
 |------|---------|---------|
-| [CodeGraph 介绍](/ai-study/codegraph-introduction/) | 图建模 + 图检索 | 用 tree-sitter 把代码解析成知识图谱，让 AI Agent 直接查询调用关系 |
-| [GraphRAG 技术详解](/ai-study/graphrag-introduction/) | 图检索 + 图计算 | 用 LLM 从文本抽取实体关系建图，再用社区检测生成层级摘要增强 RAG |
+| [CodeGraph 介绍](/ai-study/codegraph-introduction/) | 图建模 + 图检索 | 把代码的调用关系建模成图，让 Agent 通过图查询理解代码结构 |
+| [GraphRAG 技术详解](/ai-study/graphrag-introduction/) | 图检索 + 图计算 | 用图结构增强 RAG，实现多跳推理和全局理解 |
 
-这两篇文章分别从**代码智能**和**文档智能**角度展示了 Graph for AI 的价值。本文则从更宏观的技术地图层面，梳理 Graph Engineering 在 AI 中的完整技术栈。
+这两篇文章侧重于"图作为知识表示"——用图来**存**信息。本文则侧重于"图作为计算范式"——用图来**编排**和**推理**。
 
----
+### 与 Loop Engineering 的关系
 
-## 图建模：从文本到知识图谱
+Loop Engineering 和 Graph Engineering 是 Agent 架构的两面：
 
-图建模是 Graph Engineering 的起点。在 AI 场景下，图建模的核心问题不再是"ER 图怎么设计"，而是**如何让 LLM 自动从非结构化文本中抽取结构化的图**。
+| 维度 | Loop Engineering | Graph Engineering |
+|------|-----------------|-------------------|
+| **关注点** | 时间维度——Agent 如何持续运行 | 空间维度——Agent 的决策如何拓扑展开 |
+| **核心问题** | "下一步做什么？" | "下一步有哪些选项？" |
+| **结构** | while 循环 | 有向图 |
+| **决策** | 单步决策 | 多路径评估 |
+| **适用场景** | 单一 Agent 反复执行 | 多路径探索、多 Agent 协作 |
 
-### 两大数据模型
-
-![属性图与RDF对比](/ai-study/ai-infra/graph-engineering/property-graph-vs-rdf.svg)
-
-| 模型 | 特点 | AI 场景适用性 |
-|------|------|-------------|
-| **属性图** | 节点和边都可带属性，直觉化 | GraphRAG、CodeGraph 等主流 AI 场景 |
-| **RDF 三元组** | W3C 标准，语义网，支持 OWL 推理 | 学术图谱、语义集成 |
-
-AI 场景下**属性图占绝对主流**——GraphRAG、CodeGraph、LlamaIndex 的 Knowledge Graph 都基于属性图。原因是 LLM 抽取的实体关系天然带有属性（如 `WORKS_AT {since: 2020, role: "Tech Lead"}`），属性图能直接表达，RDF 需要把边属性转为节点。
-
-### LLM 驱动的图构建
-
-传统知识图谱构建需要：本体设计 → NER 模型 → 关系抽取模型 → 实体链接。每个环节都是独立的工程任务。
-
-LLM 时代的新范式是**端到端抽取**：
-
-```python
-# GraphRAG 的核心思路：让 LLM 直接从文本抽取实体+关系
-prompt = """
-从以下文本中抽取实体和关系，输出 JSON 格式：
-
-文本：{text}
-
-输出格式：
-{{
-  "entities": [
-    {{"name": "实体名", "type": "类型", "description": "描述"}}
-  ],
-  "relationships": [
-    {{"source": "实体A", "target": "实体B", "type": "关系类型", "description": "描述"}}
-  ]
-}}
-"""
-```
-
-这种方式的优势是**零训练成本**——不需要标注数据，不需要训练 NER 模型，直接用 LLM 的语言理解能力做抽取。劣势是抽取质量依赖 prompt 设计和模型能力。
-
-### 图建模实践：代码知识图谱
-
-以 CodeGraph 为例，代码场景的图建模与文本场景不同——它不需要 LLM 抽取，因为代码本身就有明确的语法结构：
-
-```text
-代码知识图谱模型：
-
-节点类型：
-  - Function: {name, file, params, return_type}
-  - Class: {name, file, methods}
-  - Module: {name, path}
-  - Variable: {name, type, scope}
-
-边类型：
-  - Function -[CALLS]-> Function      # 函数调用
-  - Class -[INHERITS]-> Class          # 类继承
-  - Function -[DEFINED_IN]-> Module    # 定义位置
-  - Variable -[REFERENCES]-> Function  # 变量引用
-  - Function -[IMPORTS]-> Module       # 模块导入
-```
-
-用 tree-sitter 解析代码语法树，可以 100% 准确地抽取这些结构化关系——不需要 LLM，不需要训练。这就是图建模的核心原则：**结构化数据的图建模用规则，非结构化数据的图建模用 LLM**。
-
----
-
-## 图存储与检索：为 AI 构建图索引
-
-### 存储选型的 AI 视角
-
-传统图数据库文章会花大量篇幅对比 Neo4j、NebulaGraph、TigerGraph 的架构差异。但从 AI 工程师的视角，真正需要关心的只有一个问题：**我的图需要在线查询还是离线计算？**
-
-| 使用方式 | 典型场景 | 推荐方案 | 理由 |
-|---------|---------|---------|------|
-| **在线查询** | Agent 实时查询代码知识图谱 | Neo4j / SQLite + 图扩展 | 查询延迟比规模更重要 |
-| **离线计算** | GraphRAG 索引阶段跑社区检测 | 内存图 + NetworkX / GraphX | 算法库丰富，不需要持久化 |
-| **GNN 训练** | 图神经网络特征采样 | DGL / PyG 内置图结构 | 与深度学习框架无缝集成 |
-
-GraphRAG 的做法很有代表性——**索引阶段**用 Python + NetworkX 在内存中构建图并跑 Leiden 社区检测，**查询阶段**把社区摘要存成文本索引，不需要在线图数据库。CodeGraph 则用 SQLite 存储图结构，通过 MCP 工具让 Agent 查询——够用就好。
-
-::: tip AI 场景的图存储原则
-不要为"图数据库"而图数据库。AI 场景下图的核心价值是**结构化关系**，不是存储引擎。很多场景下，SQLite + JSON 就够了。只有当你的图规模达到十亿边以上且需要毫秒级在线查询时，才需要专业图数据库。
-:::
-
-### GraphRAG 的检索机制
-
-GraphRAG 的图检索是其核心创新——不同于传统 RAG 的向量相似度检索，GraphRAG 通过**社区层级摘要**实现全局理解：
-
-![GraphRAG 检索机制](/ai-study/ai-infra/graph-engineering/kg-pipeline-mechanism.svg)
-
-```text
-GraphRAG 检索流程：
-
-1. 全局检索（Global Search）：
-   用户问题 → 遍历所有社区摘要 → LLM 综合多个社区的答案
-   适合："这个文档集的整体主题是什么？"
-
-2. 局部检索（Local Search）：
-   用户问题 → 向量检索找到相关实体 → 扩展到实体所在社区 → LLM 生成答案
-   适合："张三在蓝星科技负责什么？"
-```
-
-与向量 RAG 的关键差异：
-
-| 维度 | 向量 RAG | GraphRAG |
-|------|---------|----------|
-| **检索单元** | 文本块 | 社区摘要 + 实体关系 |
-| **全局理解** | 弱（只检索 Top-K 相关块） | 强（遍历社区层级摘要） |
-| **多跳推理** | 依赖 LLM 在上下文中推理 | 图遍历显式找路径 |
-| **构建成本** | 低（切块 + 向量化） | 高（LLM 抽取 + 社区检测） |
-| **适用场景** | 文档问答 | 知识发现、全局分析 |
-
----
-
-## 图计算：让 AI 看见全局结构
-
-### 图算法在 AI 中的角色
-
-图计算引擎在传统场景下用于跑 PageRank、最短路径等算法。在 AI 场景下，图算法的核心价值是**发现隐含的社区结构**——这正是 GraphRAG 的关键。
-
-| 算法 | AI 场景用途 |
-|------|-----------|
-| **社区检测（Leiden/Louvain）** | GraphRAG 的核心——把图分成社区，每个社区生成摘要 |
-| **PageRank** | 识别关键实体（如知识图谱中最重要的概念） |
-| **中心性** | 找到知识图谱的"枢纽"节点 |
-| **连通分量** | 发现知识孤岛 |
-| **图嵌入** | 把图结构编码为向量，供下游 ML 使用 |
-
-::: tip 社区检测的选择
-Louvain 是最经典的社区检测算法，速度快但可能产生不连通的社区。Leiden 是 Louvain 的改进版，保证社区内部连通——GraphRAG 就采用了 Leiden。对于实时性要求高的场景，Label Propagation 是更轻量的选择。
-:::
-
-### BSP vs GAS：图计算模型
-
-![图计算引擎模型](/ai-study/ai-infra/graph-engineering/graph-compute-mechanism.svg)
-
-大规模图计算的核心挑战是**超级节点**（如明星的社交账号有上亿连接）导致的负载倾斜。两种主流计算模型：
-
-| 模型 | 核心思想 | 优势 | 劣势 | 代表 |
-|------|---------|------|------|------|
-| **BSP** | 超步 + 全局同步屏障 | 编程简单 | 快节点等慢节点 | Pregel / Giraph |
-| **GAS** | Gather-Apply-Scatter，超级节点拆分 | 负载均衡好 | 编程复杂 | PowerGraph / Plato |
-
-对大多数 AI 场景来说，图规模在百万节点以内，用 NetworkX 单机跑 Leiden 就够了。只有当图规模达到十亿边以上时才需要考虑分布式图计算。
-
----
-
-## 图神经网络（GNN）
-
-图神经网络是 Graph Engineering 的"图智能"层——让机器学习模型直接理解图结构，而不只是把节点当独立样本。
-
-### 为什么 AI 需要 GNN
-
-传统 ML 模型（MLP、CNN、RNN）处理的是**欧几里得结构**数据——图像是规则网格，文本是规则序列。但很多 AI 场景的数据天然是图：
-
-| 场景 | 图结构 | GNN 的价值 |
-|------|--------|-----------|
-| 推荐系统 | 用户-商品二部图 | 学习用户和商品的图表示，做协同过滤 |
-| 欺诈检测 | 用户-设备-IP 关系图 | 异常节点的图嵌入偏离正常分布 |
-| 药物发现 | 分子图 | 预测分子性质和药物-靶点相互作用 |
-| 社交网络 | 用户好友图 | 好友推荐、社区发现 |
-| 代码理解 | AST/调用图 | 代码缺陷检测、代码搜索 |
-
-GNN 的核心思想是**消息传递**——每个节点从邻居收集信息，更新自己的表示：
-
-```text
-GNN 消息传递框架：
-
-对每个节点 v，在第 l 层：
-  1. 消息计算：m_v = aggregate({h_u : u ∈ neighbors(v)})
-  2. 状态更新：h_v^(l) = update(h_v^(l-1), m_v)
-
-其中：
-  - h_v^(l) 是节点 v 在第 l 层的隐藏表示
-  - aggregate 是聚合函数（如求和、平均、最大值）
-  - update 是更新函数（通常是 MLP + 非线性）
-```
-
-### 三大经典 GNN 模型
-
-![GNN模型架构对比](/ai-study/ai-infra/graph-engineering/gnn-models-overview.svg)
-
-| 模型 | 核心创新 | 适用场景 | AI 工程意义 |
-|------|---------|---------|-----------|
-| **GCN** | 谱图卷积的一阶近似 | 节点分类（同质图） | 基线模型，简洁有效 |
-| **GraphSAGE** | 归纳式学习 + 邻居采样 | 大规模图、动态图 | 工业首选——Pinterest 的 PinSage 处理 30 亿节点 |
-| **GAT** | 注意力机制学习邻居权重 | 异质图、关键邻居识别 | 可解释性——可视化注意力权重 |
-
-$$H^{(l+1)} = \sigma(\tilde{D}^{-1/2}\tilde{A}\tilde{D}^{-1/2}H^{(l)}W^{(l)})$$
-
-GCN 的公式直觉理解：每个节点的新表示 = 自己的旧表示 + 邻居旧表示的加权平均，再做线性变换和非线性激活。
-
-GraphSAGE 的关键改进是**邻居采样**——不使用全部邻居（避免超级节点问题），而是固定数量 $K$ 个。这让推理时可以直接对没见过的节点做预测（归纳式学习）。
-
-```python
-# GraphSAGE 伪代码
-def graphsage_forward(node, layers):
-    h = node.features  # 初始特征
-    for layer in layers:
-        # 采样固定数量的邻居
-        neighbors = sample(node.neighbors, k=layer.k)
-        # 聚合邻居表示
-        neighbor_agg = aggregate([n.h for n in neighbors])
-        # 拼接自身表示和邻居聚合，过 MLP
-        h = relu(W * concat(h, neighbor_agg))
-    return h
-```
-
-### GNN 工程框架
-
-| 框架 | 背景 | 特点 | 适用场景 |
-|------|------|------|---------|
-| **DGL** | AWS / NYU | 底层抽象完善，支持多种后端 | 研究与生产通用 |
-| **PyG** | PyTorch 团队 | 简洁 API，丰富模型库 | 学术研究、快速实验 |
-| **Euler** | 阿里巴巴 | 大规模分布式 GNN | 工业级推荐系统 |
-
-```python
-import dgl
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
-from dgl.nn import GraphConv
-
-# 构建图
-g = dgl.graph(([0, 1, 1, 2, 3, 4], [1, 0, 2, 3, 4, 1]))
-g.ndata['feat'] = torch.randn(5, 16)  # 5 个节点，每个 16 维特征
-
-# 两层 GCN
-class GCN(nn.Module):
-    def __init__(self, in_feats, h_feats, num_classes):
-        super().__init__()
-        self.conv1 = GraphConv(in_feats, h_feats, allow_zero_in_degree=True)
-        self.conv2 = GraphConv(h_feats, num_classes, allow_zero_in_degree=True)
-
-    def forward(self, g, in_feat):
-        h = F.relu(self.conv1(g, in_feat))
-        h = self.conv2(g, h)
-        return h
-
-model = GCN(16, 32, 3)  # 输入16维 → 隐藏32维 → 输出3类
-logits = model(g, g.ndata['feat'])
-print(logits.shape)  # torch.Size([5, 3])
-```
-
-### 图嵌入：从图到向量
-
-图嵌入（Graph Embedding）是 GNN 的一个核心应用——把图结构映射到低维向量空间，让相似的节点在向量空间中距离更近。
-
-| 方法 | 思路 | 代表算法 |
-|------|------|---------|
-| **随机游走** | 用游走序列类比 NLP 的句子 | DeepWalk、node2vec |
-| **GNN 编码** | 用神经网络学习节点表示 | GraphSAGE、GAT |
-| **对比学习** | 让相邻节点表示相似，不相邻的拉远 | GraphCL、DGI |
-
-图嵌入是连接**图工程**和**向量工程**的桥梁——它把图结构转化为可以被 LLM 或向量数据库消费的向量表示。
-
----
-
-## Graph for AI 的核心范式
-
-### 范式一：GraphRAG —— 图增强的检索增强生成
-
-GraphRAG 是 Graph Engineering 在 AI 中最热门的应用方向。它的核心创新是用**图结构**替代**向量相似度**来做检索：
-
-```text
-传统 RAG：
-  文档 → 切块 → 向量化 → 向量检索 → Top-K 块 → LLM 生成
-
-GraphRAG：
-  文档 → LLM 抽取实体关系 → 建图 → 社区检测 → 层级摘要
-                                                    ↓
-  查询 → 遍历社区摘要 → 局部/全局检索 → LLM 生成
-```
-
-GraphRAG 的价值在于**全局理解**——传统 RAG 只能检索到局部相关文本块，GraphRAG 通过社区摘要可以回答"这个文档集的整体主题是什么"这类全局问题。
-
-### 范式二：知识图谱 + LLM —— 结构化知识注入
-
-知识图谱（Knowledge Graph）在 AI 中的角色是**为 LLM 提供结构化的外部知识**。与向量 RAG 不同，知识图谱提供的是**精确的、可追溯的**知识：
-
-| 维度 | 向量 RAG | 知识图谱 + LLM |
-|------|---------|--------------|
-| **知识形式** | 文本块 | 实体 + 关系三元组 |
-| **检索精度** | 模糊匹配 | 精确查询 |
-| **可追溯性** | 引用文本块 | 引用实体和关系路径 |
-| **推理能力** | 依赖 LLM | 图遍历 + LLM 推理 |
-| **适用场景** | 文档问答 | 领域知识问答（医疗/法律/金融） |
-
-### 范式三：代码知识图谱 —— 让 Agent 读懂代码
-
-CodeGraph 代表了 Graph for AI 的另一个方向——让 AI Agent 不再靠 grep 盲目搜索代码，而是通过图查询精确找到调用关系：
-
-```text
-用户："这个函数被哪些地方调用？"
-  → 传统方式：grep 函数名（漏掉间接调用）
-  → CodeGraph：MATCH (f:Function)-[:CALLED_BY*]->(caller) RETURN caller
-  → Agent 直接获得完整的调用链
-```
-
-### 范式四：GNN + LLM —— 结构感知的智能
-
-GNN 和 LLM 的融合是一个前沿方向——LLM 理解文本语义，GNN 理解拓扑结构，两者互补：
-
-```text
-GNN + LLM 融合范式：
-
-1. GNN 编码图结构 → 生成图嵌入
-2. LLM 编码文本 → 生成文本嵌入
-3. 拼接/融合两种嵌入 → 下游任务（分类/推荐/推理）
-
-典型应用：
-  - 推荐系统：用户-商品图（GNN）+ 商品描述（LLM）
-  - 代码理解：调用图（GNN）+ 代码文本（LLM）
-  - 知识问答：知识图谱（GNN）+ 问题文本（LLM）
-```
+两者互补：循环内部可以是图，图节点内部可以有循环。
 
 ---
 
 ## 实践建议与选型指南
 
-![Graph Engineering 选型决策图](/ai-study/ai-infra/graph-engineering/graph-engineering-guide.svg)
+### 场景一：单 Agent 多步推理（GoT 模式）
 
-### 场景一：文档智能（GraphRAG）
-
-**需求**：让 LLM 理解大文档集的全局结构和实体关系。
+**需求**：一个 Agent 解决复杂问题，需要探索多条思路并选出最优。
 
 **推荐**：
-- 图构建：LLM 端到端抽取（GraphRAG 方案）
-- 图存储：内存图 + NetworkX（索引阶段），文本索引（查询阶段）
-- 图算法：Leiden 社区检测
-- 不需要图数据库和 GNN
+- 架构：Graph of Thought
+- 节点：思考步骤（假设、推理、验证）
+- 操作：细化、反驳、组合、泛化
+- 评估：为每条路径打分，选出最优
 
-### 场景二：领域知识问答（知识图谱 + LLM）
+### 场景二：多步骤工作流（DAG 编排）
 
-**需求**：基于精确的领域知识（医疗/法律/金融）做问答。
-
-**推荐**：
-- 图构建：人工本体设计 + LLM/NER 抽取
-- 图存储：Neo4j（支持在线查询）
-- 查询：Cypher + LLM 自然语言转 Cypher
-- 质量控制：人工校验 + 规则约束
-
-### 场景三：代码智能（CodeGraph）
-
-**需求**：让 AI Agent 理解代码的调用关系和依赖结构。
+**需求**：Agent 需要按步骤执行，步骤间有条件分支和并行。
 
 **推荐**：
-- 图构建：tree-sitter 语法解析（100% 准确）
-- 图存储：SQLite + MCP 工具
-- 查询：Agent 直接调用图查询工具
-- 不需要 LLM 抽取和 GNN
+- 架构：DAG / StateGraph
+- 框架：LangGraph / CrewAI Flows
+- 关键点：定义好 State 结构、节点函数、边条件
 
-### 场景四：推荐/风控（GNN）
+### 场景三：迭代优化（循环图）
 
-**需求**：用图结构学习用户行为模式，做推荐或欺诈检测。
+**需求**：Agent 生成内容后需要评估和重试，直到达标。
 
 **推荐**：
-- 图构建：用户行为日志 → 构建用户-商品/用户-设备图
-- 图存储：DGL 内置图结构（训练阶段）
-- 模型：GraphSAGE（大规模）或 GAT（需要可解释性）
-- 框架：DGL 或 PyG
+- 架构：带环图（Loop Graph）
+- 节点：生成 → 评估 → (不满意) → 修改 → 评估 → ...
+- 终止条件：评估分数达标 / 达到最大迭代次数
+
+### 场景四：多 Agent 协作（Multi-Agent Graph）
+
+**需求**：多个 Agent 各司其职，协作完成复杂任务。
+
+**推荐**：
+- 架构：Multi-Agent Graph
+- 关键设计：谁产生信息、谁消费信息、谁有终止权
+- 陷阱：避免循环依赖（A 等 B、B 等 C、C 又等 A）
 
 ::: warning 常见踩坑
-1. **过早引入图数据库**：很多 AI 场景用 SQLite + NetworkX 就够了，过早引入 Neo4j 会增加运维成本
-2. **忽视图建模**：错误的图建模让再好的算法也学不到有用的模式——先想清楚"什么实体连到什么实体"
-3. **GNN 不是万能药**：如果向量 RAG 能解决的问题，不要急着上 GNN——训练成本和不确定性都更高
-4. **混淆图存储和图智能**：图数据库存的是"数据"，GNN 学的是"模式"——两者是不同层次的东西
+1. **过度设计**：只有 3 步的简单工作流不需要图编排——Chain 或 Loop 更合适
+2. **图太宽**：GoT 同时探索太多路径会导致成本激增——设定最大分支数
+3. **循环终点**：带环图必须有明确的终止条件——否则 Agent 死循环
+4. **State 设计不当**：图编排的 State 应该包含所有节点需要的信息——State 是节点间通信的唯一通道
+5. **忽视可观测性**：图的执行路径比线性链难追踪——要记录"走了哪条路径"
 :::
 
 ---
@@ -448,33 +424,33 @@ GNN + LLM 融合范式：
 
 | 要点 | 说明 |
 |------|------|
-| **Graph for AI 的本质** | 让 AI 从"读文本"进化到"读图"——把结构化关系作为一等公民喂给模型 |
-| **五层模型** | 图建模 → 图存储 → 图检索 → 图计算 → 图智能，每层都为 AI 服务 |
-| **GraphRAG** | 用图社区检测替代向量相似度，实现全局理解和多跳推理 |
-| **知识图谱 + LLM** | 为 LLM 提供精确的、可追溯的结构化知识 |
-| **代码知识图谱** | 让 Agent 从 grep 搜索进化到图查询，精确理解调用关系 |
-| **GNN 三大模型** | GCN（基线）、GraphSAGE（工业首选）、GAT（可解释性） |
-| **图嵌入** | 连接图工程和向量工程的桥梁 |
+| **Chain → Graph** | Agent 从线性推理进化到图推理，从单一路径进化到多路径探索 |
+| **GoT 四种操作** | 细化、反驳、组合、泛化——图的节点扩展基本操作 |
+| **编排图三模式** | DAG 编排、循环图、自适应路由 |
+| **LangGraph 五原则** | State 一等公民、节点纯函数、边显式跳转、支持循环分支、可持久化 |
+| **四大工程范式** | Graph of Thought、Graph-based Orchestration、Multi-Agent Graph、Planning Graph |
+| **Loop + Graph** | 循环解决时间维度（持续运行），图解决空间维度（多路径探索） |
 
 ### 设计哲学
 
-Graph Engineering 在 AI 时代的核心洞察可以浓缩为一句话：**关系本身就是知识**。
+Graph Engineering 的核心洞察可以浓缩为一句话：**Agent 的能力瓶颈不在于"能不能执行下一步"，而在于"能不能看到所有可能的下一步，并选出最优的那条路"。**
 
-LLM 很强，但它看到的是线性序列——它不知道"张三的经理的上级"是一条三跳路径，不知道"函数 A 间接调用了函数 B"是一条调用链。Graph Engineering 的使命就是把这些隐含在数据中的**拓扑关系**显式地建模、存储、检索和学习。
+线性 Chain 让 Agent 变成了一个"只能往前看一步"的迷宫探索者——每次都选一个方向，碰壁就退回重来。图结构让 Agent 拥有了"鸟瞰地图"的能力——看到全局拓扑，比较多条路径，做出更好的选择。
 
-这个理念贯穿了整条 AI 技术链：
+这个理念贯穿了从推理到编排的完整链路：
 
-- **GraphRAG** 把文档的实体关系存成图，让 RAG 能做多跳推理和全局理解
-- **CodeGraph** 把代码的调用关系存成图，让 Agent 不再靠 grep 盲目搜索
-- **GNN** 把图结构编码进向量空间，让机器学习模型理解"连接"的语义
-- **知识图谱** 把领域知识存成图，让 LLM 有精确的、可追溯的外部知识
+- **Graph of Thought** 让推理从"一条链"变成"一张网"，可以回溯、比较、组合
+- **Graph-based Orchestration** 让工作流从"一个循环"变成"一张图"，可以分叉、并行、条件跳转
+- **Multi-Agent Graph** 让协作从"中心化调度"变成"网络化协作"，每个 Agent 都可以触发其他 Agent
+- **Planning Graph** 让规划从"序列执行"变成"图搜索"，可以动态调整路径
 
-> **结构化关系优先。** 无论你是在做 RAG、Agent 还是推荐系统，先把结构化的关系网络建好——图的威力在于它让 AI 看到文本看不到的连接。
+> **让 Agent 看到地图，而不只是看到下一步。** 这是 Graph Engineering 给出的答案。
 
 ### 进一步阅读
 
-- [GraphRAG 论文](https://arxiv.org/abs/2404.16130) — *From Local to Global: A Graph RAG Approach*
-- [DGL 教程](https://docs.dgl.ai/) — 深度学习框架的图神经网络实践
-- [Neo4j GraphRAG](https://neo4j.com/labs/graphrag/) — Neo4j 的 GraphRAG 工具包
-- 本博客 [CodeGraph 介绍](/ai-study/codegraph-introduction/) — 代码场景下的图工程实践
-- 本博客 [GraphRAG 技术详解](/ai-study/graphrag-introduction/) — 文档场景下的图增强 RAG
+- [Graph of Thought 论文](https://arxiv.org/abs/2308.09932) — Maciej Besta et al., 2023
+- [LangGraph 官方文档](https://langchain-ai.github.io/langgraph/)
+- [CrewAI Flows](https://docs.crewai.com/concepts/flows) — CrewAI 的图编排能力
+- 本博客 [Loop Engineering 解析](/ai-study/loop-engineering/) — 理解循环与图的关系
+- 本博客 [CodeGraph 介绍](/ai-study/codegraph-introduction/) — 代码知识图谱实践
+- 本博客 [GraphRAG 技术详解](/ai-study/graphrag-introduction/) — 图增强 RAG
