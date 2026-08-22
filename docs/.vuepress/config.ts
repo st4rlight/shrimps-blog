@@ -148,6 +148,7 @@ export default defineUserConfig({
             items: [
               'ai-infra/anthropic-managed-agents.md',
               'ai-infra/loop-engineering.md',
+              'ai-infra/graph-engineering.md',
             ],
           },
           {
@@ -167,7 +168,6 @@ export default defineUserConfig({
               'ai-ecosystem/a2ui-study-notes.md',
               'ai-ecosystem/codegraph-introduction.md',
               'ai-ecosystem/graphrag-introduction.md',
-              'ai-ecosystem/graph-engineering.md',
             ],
           },
         ],

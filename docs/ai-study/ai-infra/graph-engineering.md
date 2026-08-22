@@ -58,7 +58,7 @@ RETURN DISTINCT fof.name
 
 关键差异在于：图数据库在存储层面**直接保存了邻接关系**——给定一个节点，获取它的邻居链表头指针是 $O(1)$ 的，不需要扫描全表。这使得多跳遍历从关系型数据库的「每次 JOIN 都需要全表扫描或索引查找」变为沿邻接链表直接遍历，复杂度从 $O(d^n)$ 降低到 $O(b^n)$（$d$ 为平均度数，$b$ 为实际遍历的分支数，$n$ 为跳数），且支持沿路剪枝。
 
-![图查询 vs 表格JOIN对比](/ai-study/ai-ecosystem/graph-engineering/graph-vs-table-comparison.svg)
+![图查询 vs 表格JOIN对比](/ai-study/ai-infra/graph-engineering/graph-vs-table-comparison.svg)
 
 但这只是"图存储"这一层。Graph Engineering 真正的含义远不止"换个数据库"。
 
@@ -80,7 +80,7 @@ RETURN DISTINCT fof.name
 
 ## Graph Engineering 全景图
 
-![Graph Engineering 技术全景](/ai-study/ai-ecosystem/graph-engineering/graph-engineering-overview.svg)
+![Graph Engineering 技术全景](/ai-study/ai-infra/graph-engineering/graph-engineering-overview.svg)
 
 上图展示了 Graph Engineering 的五层架构以及每层的主要技术选型。值得注意的是，这五层并非严格的串行流水线——你可以只用图存储 + 图查询构建一个简单的图查询服务，也可以打通五层构建端到端的知识图谱智能平台。
 
@@ -103,7 +103,7 @@ RETURN DISTINCT fof.name
 
 ### 两大主流模型：属性图 vs RDF
 
-![属性图与RDF对比](/ai-study/ai-ecosystem/graph-engineering/property-graph-vs-rdf.svg)
+![属性图与RDF对比](/ai-study/ai-infra/graph-engineering/property-graph-vs-rdf.svg)
 
 #### 属性图（Property Graph）
 
@@ -215,7 +215,7 @@ Neo4j 的"免索引邻接"（Index-Free Adjacency）是属性图数据库的标�
 
 ### 主流图数据库对比
 
-![主流图数据库对比](/ai-study/ai-ecosystem/graph-engineering/graph-database-comparison.svg)
+![主流图数据库对比](/ai-study/ai-infra/graph-engineering/graph-database-comparison.svg)
 
 | 维度 | Neo4j | NebulaGraph | TigerGraph | Memgraph |
 |------|-------|-------------|------------|----------|
@@ -274,7 +274,7 @@ Memgraph 是内存优先的图数据库，完全兼容 Cypher 查询语言。它
 
 ### 图计算模型：BSP 与 GAS
 
-![图计算引擎模型](/ai-study/ai-ecosystem/graph-engineering/graph-compute-mechanism.svg)
+![图计算引擎模型](/ai-study/ai-infra/graph-engineering/graph-compute-mechanism.svg)
 
 分布式图计算的核心挑战是：图天然不均匀——有些节点连接很少（度数低），有些节点连接极多（超级节点，如明星的社交账号）。这会导致分布式计算时负载严重倾斜。
 
@@ -376,7 +376,7 @@ Louvain 是最经典的社区检测算法，速度快但可能产生不连通的
 
 ### 四大查询语言对比
 
-![图查询语言对比](/ai-study/ai-ecosystem/graph-engineering/query-language-comparison.svg)
+![图查询语言对比](/ai-study/ai-infra/graph-engineering/query-language-comparison.svg)
 
 | 维度 | Cypher | Gremlin | GQL | nGQL |
 |------|--------|---------|-----|------|
@@ -472,7 +472,7 @@ GQL 的意义在于**标准化**——未来不同图数据库可以用同一种
 
 ### 知识图谱构建流程
 
-![知识图谱构建流程](/ai-study/ai-ecosystem/graph-engineering/kg-pipeline-mechanism.svg)
+![知识图谱构建流程](/ai-study/ai-infra/graph-engineering/kg-pipeline-mechanism.svg)
 
 知识图谱的构建是一个多阶段流水线：
 
@@ -588,7 +588,7 @@ GNN 消息传递框架：
 
 ### 三大经典 GNN 模型
 
-![GNN模型架构对比](/ai-study/ai-ecosystem/graph-engineering/gnn-models-overview.svg)
+![GNN模型架构对比](/ai-study/ai-infra/graph-engineering/gnn-models-overview.svg)
 
 | 模型 | 核心创新 | 聚合方式 | 适用场景 |
 |------|---------|---------|---------|
@@ -701,7 +701,7 @@ GNN 的一个核心应用是**图嵌入**（Graph Embedding）——把图结构
 
 ## 实践建议与选型指南
 
-![Graph Engineering 选型决策图](/ai-study/ai-ecosystem/graph-engineering/graph-engineering-guide.svg)
+![Graph Engineering 选型决策图](/ai-study/ai-infra/graph-engineering/graph-engineering-guide.svg)
 
 ### 场景一：简单图查询（社交网络、推荐系统）
 
