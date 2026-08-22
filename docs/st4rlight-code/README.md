@@ -12,13 +12,8 @@ permalink: /st4rlight-code/
 
 ## 文章目录
 
-### 一、Agent 循环
 - [01. Agent 循环](./01-agent-loop.md)
-
-### 二、工具系统
 - [02. 工具系统](./02-tools.md)
-
-### 三、Prompt 工程
 - [03. System Prompt 工程](./03-system-prompt.md)
 
 ## 关于这个项目
