@@ -1,0 +1,161 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 420" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <linearGradient id="blueG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="greenG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#34d399;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="amberG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.12"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5"
+            markerWidth="8" markerHeight="8"
+            markerUnits="userSpaceOnUse"
+            orient="auto"
+            preserveAspectRatio="xMidYMid meet">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/>
+    </marker>
+    <marker id="arrowR" viewBox="0 0 10 10" refX="10" refY="5"
+            markerWidth="8" markerHeight="8"
+            markerUnits="userSpaceOnUse"
+            orient="auto"
+            preserveAspectRatio="xMidYMid meet">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#ef4444"/>
+    </marker>
+    <marker id="arrowG" viewBox="0 0 10 10" refX="10" refY="5"
+            markerWidth="8" markerHeight="8"
+            markerUnits="userSpaceOnUse"
+            orient="auto"
+            preserveAspectRatio="xMidYMid meet">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#10b981"/>
+    </marker>
+  </defs>
+
+  <!-- ===== Background ===== -->
+  <rect width="820" height="420" rx="12" fill="#f8fafc"/>
+
+  <!-- ===== Title ===== -->
+  <text x="410" y="30" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">从 Chain 到 Graph：拓扑复杂度演进</text>
+  <text x="410" y="50" text-anchor="middle" font-size="12" fill="#94a3b8">任务处理拓扑的三个复杂度级别</text>
+
+  <!-- ===== Column 1: Chain ===== -->
+  <g filter="url(#shadow)">
+    <rect x="30" y="75" width="240" height="300" rx="12" fill="white" stroke="#3b82f6" stroke-width="2"/>
+  </g>
+  <rect x="30" y="75" width="240" height="36" rx="12" fill="url(#blueG)"/>
+  <rect x="30" y="95" width="240" height="16" fill="url(#blueG)"/>
+  <text x="150" y="98" text-anchor="middle" font-size="14" font-weight="700" fill="white">Chain（链）</text>
+
+  <!-- Chain nodes -->
+  <rect x="60" y="130" width="180" height="30" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="150" y="150" text-anchor="middle" font-size="11" fill="#1d4ed8">输入</text>
+
+  <line x1="150" y1="160" x2="150" y2="186" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <rect x="60" y="190" width="180" height="30" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="150" y="210" text-anchor="middle" font-size="11" fill="#1d4ed8">步骤 A</text>
+
+  <line x1="150" y1="220" x2="150" y2="246" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <rect x="60" y="250" width="180" height="30" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="150" y="270" text-anchor="middle" font-size="11" fill="#1d4ed8">步骤 B</text>
+
+  <line x1="150" y1="280" x2="150" y2="306" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <rect x="60" y="310" width="180" height="30" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="150" y="330" text-anchor="middle" font-size="11" fill="#1d4ed8">输出</text>
+
+  <text x="150" y="360" text-anchor="middle" font-size="10" fill="#64748b">无法分支 · 无法回头</text>
+
+  <!-- ===== Column 2: DAG ===== -->
+  <g filter="url(#shadow)">
+    <rect x="290" y="75" width="240" height="300" rx="12" fill="white" stroke="#10b981" stroke-width="2"/>
+  </g>
+  <rect x="290" y="75" width="240" height="36" rx="12" fill="url(#greenG)"/>
+  <rect x="290" y="95" width="240" height="16" fill="url(#greenG)"/>
+  <text x="410" y="98" text-anchor="middle" font-size="14" font-weight="700" fill="white">DAG（有向无环图）</text>
+
+  <!-- DAG input -->
+  <rect x="350" y="130" width="120" height="30" rx="6" fill="#d1fae5" stroke="#86efac" stroke-width="1"/>
+  <text x="410" y="150" text-anchor="middle" font-size="11" fill="#047857">步骤 A（拆解）</text>
+
+  <!-- Branch lines from A -->
+  <path d="M 380 160 L 380 186 L 330 186 L 330 206" stroke="#94a3b8" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
+  <path d="M 410 160 L 410 206" stroke="#94a3b8" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
+  <path d="M 440 160 L 440 186 L 490 186 L 490 206" stroke="#94a3b8" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
+
+  <!-- Three parallel nodes -->
+  <rect x="300" y="210" width="60" height="30" rx="6" fill="#d1fae5" stroke="#86efac" stroke-width="1"/>
+  <text x="330" y="230" text-anchor="middle" font-size="10" fill="#047857">子任务1</text>
+
+  <rect x="380" y="210" width="60" height="30" rx="6" fill="#d1fae5" stroke="#86efac" stroke-width="1"/>
+  <text x="410" y="230" text-anchor="middle" font-size="10" fill="#047857">子任务2</text>
+
+  <rect x="460" y="210" width="60" height="30" rx="6" fill="#d1fae5" stroke="#86efac" stroke-width="1"/>
+  <text x="490" y="230" text-anchor="middle" font-size="10" fill="#047857">子任务3</text>
+
+  <!-- Merge lines -->
+  <path d="M 330 240 L 330 266 L 380 266 L 380 286" stroke="#94a3b8" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
+  <path d="M 410 240 L 410 286" stroke="#94a3b8" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
+  <path d="M 490 240 L 490 266 L 440 266 L 440 286" stroke="#94a3b8" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
+
+  <!-- Merge node -->
+  <rect x="350" y="290" width="120" height="30" rx="6" fill="#d1fae5" stroke="#86efac" stroke-width="1"/>
+  <text x="410" y="310" text-anchor="middle" font-size="11" fill="#047857">步骤 D（汇总）</text>
+
+  <line x1="410" y1="320" x2="410" y2="346" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <rect x="350" y="350" width="120" height="20" rx="6" fill="#d1fae5" stroke="#86efac" stroke-width="1"/>
+  <text x="410" y="364" text-anchor="middle" font-size="10" fill="#047857">输出</text>
+
+  <text x="410" y="385" text-anchor="middle" font-size="10" fill="#64748b">可分支并行 · 但不能回头</text>
+
+  <!-- ===== Column 3: Directed Graph ===== -->
+  <g filter="url(#shadow)">
+    <rect x="550" y="75" width="240" height="300" rx="12" fill="white" stroke="#f59e0b" stroke-width="2"/>
+  </g>
+  <rect x="550" y="75" width="240" height="36" rx="12" fill="url(#amberG)"/>
+  <rect x="550" y="95" width="240" height="16" fill="url(#amberG)"/>
+  <text x="670" y="98" text-anchor="middle" font-size="14" font-weight="700" fill="white">Graph（有向图）</text>
+
+  <!-- Graph input -->
+  <rect x="610" y="130" width="120" height="30" rx="6" fill="#fef3c7" stroke="#fbbf24" stroke-width="1"/>
+  <text x="670" y="150" text-anchor="middle" font-size="11" fill="#92400e">生成</text>
+
+  <line x1="670" y1="160" x2="670" y2="186" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Evaluate node -->
+  <rect x="610" y="190" width="120" height="30" rx="6" fill="#fef3c7" stroke="#fbbf24" stroke-width="1"/>
+  <text x="670" y="210" text-anchor="middle" font-size="11" fill="#92400e">评估</text>
+
+  <!-- Pass branch (right) -->
+  <path d="M 730 205 L 760 205 L 760 280 L 736 280" stroke="#10b981" stroke-width="1.5" fill="none" marker-end="url(#arrowG)"/>
+  <text x="768" y="245" text-anchor="start" font-size="9" fill="#10b981" font-weight="600">通过</text>
+
+  <!-- Output -->
+  <rect x="610" y="265" width="120" height="30" rx="6" fill="#d1fae5" stroke="#86efac" stroke-width="1"/>
+  <text x="670" y="285" text-anchor="middle" font-size="11" fill="#047857">输出</text>
+
+  <!-- Fail branch (left, loops back) -->
+  <path d="M 610 205 L 575 205 L 575 145 L 606 145" stroke="#ef4444" stroke-width="1.5" fill="none" marker-end="url(#arrowR)"/>
+  <text x="567" y="180" text-anchor="end" font-size="9" fill="#ef4444" font-weight="600">不通过</text>
+
+  <!-- Modify node (in the loop back path) -->
+  <rect x="555" y="165" width="40" height="20" rx="4" fill="#fee2e2" stroke="#fca5a5" stroke-width="1"/>
+  <text x="575" y="179" text-anchor="middle" font-size="9" fill="#991b1b">修改</text>
+
+  <text x="670" y="320" text-anchor="middle" font-size="10" fill="#64748b">可分支 · 可并行 · 可回溯</text>
+
+  <text x="670" y="345" text-anchor="middle" font-size="10" fill="#64748b">支持循环和条件跳转</text>
+
+  <!-- ===== Bottom tip ===== -->
+  <rect x="120" y="392" width="580" height="22" rx="11" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1"/>
+  <text x="410" y="407" text-anchor="middle" font-size="11" fill="#15803d">💡 一旦允许流程"回头"，就不再是 DAG，而是更通用的有向 Graph</text>
+</svg>

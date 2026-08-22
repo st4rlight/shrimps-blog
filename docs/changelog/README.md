@@ -25,7 +25,7 @@ icon: mdi:timeline-clock-outline
       <div class="timeline-entry">
         <span class="timeline-entry__tag timeline-entry__tag--ai">AI学习</span>
         <a class="timeline-entry__link" href="/ai-study/graph-engineering/">新增《Graph Engineering 全景解析》</a>
-        <span class="timeline-entry__desc">—— Agent 架构从 Chain 到 Graph 的范式跃迁：Graph of Thought 推理图、LangGraph 编排图、Multi-Agent Graph 协作范式、Planning Graph 规划搜索，含 GoT 四种操作与四大工程场景选型</span>
+        <span class="timeline-entry__desc">—— Graph Engineering 没有新技术，变的是 Graph 连接的对象：从连接 Step 到连接 Agent。梳理两次 Graph 热潮的背景差异、Chain→DAG→Graph 拓扑演进、Loop vs Graph 层次关系、五层工程嵌套控制圈、六大适用信号与 Anthropic 多 Agent 研究系统实践</span>
       </div>
       <div class="timeline-entry">
         <span class="timeline-entry__tag timeline-entry__tag--code">st4rlight-code</span>
