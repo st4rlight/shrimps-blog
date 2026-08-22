@@ -180,6 +180,8 @@ Graph 负责高层的组织关系；Loop 负责每个 Agent 节点内部的行�
 
 什么时候 Graph 真正开始有价值？不能简单地用"任务复杂"来概括，而是从以下六个关键信号开始：
 
+![什么时候需要 Graph Engineering — 六大信号总览](/ai-study/ai-infra/graph-engineering/six-signals-overview.svg)
+
 #### 信号一：一个 Agent 已经不适合对整个任务负责
 
 当任务内不同步骤的专业方向与职责有较大差异时，把所有事情塞给一个超级 Agent 反而会更难控制，输出质量下降。
@@ -298,6 +300,8 @@ Anthropic 的分析揭示了三个关键发现：
 ---
 
 ## 七、实践建议
+
+![Graph Engineering 实践建议决策指南](/ai-study/ai-infra/graph-engineering/practice-decision-guide.svg)
 
 ### 7.1 什么时候不用 Graph
 
