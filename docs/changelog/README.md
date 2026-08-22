@@ -27,6 +27,30 @@ icon: mdi:timeline-clock-outline
         <a class="timeline-entry__link" href="/ai-study/graph-engineering/">新增《Graph Engineering 全景解析》</a>
         <span class="timeline-entry__desc">—— Agent 架构从 Chain 到 Graph 的范式跃迁：Graph of Thought 推理图、LangGraph 编排图、Multi-Agent Graph 协作范式、Planning Graph 规划搜索，含 GoT 四种操作与四大工程场景选型</span>
       </div>
+      <div class="timeline-entry">
+        <span class="timeline-entry__tag timeline-entry__tag--code">st4rlight-code</span>
+        <a class="timeline-entry__link" href="/st4rlight-code/04-session-persistence/">新增《04. CLI 与会话》</a>
+        <span class="timeline-entry__desc">—— 从一次性到能记住、能中断：commander 参数解析、两种运行模式与 resolveApiKey 安全读 key、REPL 的 rl.once 串行与 Ctrl+C 双语义、多会话持久化 + agent 自动保存</span>
+      </div>
+      <div class="timeline-entry">
+        <span class="timeline-entry__tag timeline-entry__tag--code">st4rlight-code</span>
+        <a class="timeline-entry__link" href="/st4rlight-code/05-terminal-ui/">新增《05. 终端 UI》</a>
+        <span class="timeline-entry__desc">—— 真实 Claude Code 比这多做了什么：React/Ink 组件模型、可观察的自主性、工具 4 态渲染、JSONL 追加式会话存储，以及为什么终端原生是主动选择</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="timeline-item">
+  <div class="timeline-item__dot"></div>
+  <div class="timeline-item__content">
+    <div class="timeline-item__date">8 月 18 日</div>
+    <div class="timeline-item__entries">
+      <div class="timeline-entry">
+        <span class="timeline-entry__tag timeline-entry__tag--code">st4rlight-code</span>
+        <a class="timeline-entry__link" href="/st4rlight-code/03-system-prompt/">新增《03. System Prompt 工程》</a>
+        <span class="timeline-entry__desc">—— 提示词拆成静态核心 + 动态上下文为前缀缓存让路，CLAUDE.md 向上递归加载、@include 模块化引用与 .claude/rules 自动加载，注入第一条 user 消息吃近因效应</span>
+      </div>
     </div>
   </div>
 </div>

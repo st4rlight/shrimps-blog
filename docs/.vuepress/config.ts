@@ -258,6 +258,7 @@ export default defineUserConfig({
               '02-tools.md',
               '03-system-prompt.md',
               '04-session-persistence.md',
+              '05-terminal-ui.md',
             ],
           },
         ],
