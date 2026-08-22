@@ -20,6 +20,20 @@ icon: mdi:timeline-clock-outline
 <div class="timeline-item">
   <div class="timeline-item__dot"></div>
   <div class="timeline-item__content">
+    <div class="timeline-item__date">8 月 23 日</div>
+    <div class="timeline-item__entries">
+      <div class="timeline-entry">
+        <span class="timeline-entry__tag timeline-entry__tag--ai">AI学习</span>
+        <a class="timeline-entry__link" href="/ai-study/graph-engineering/">新增《Graph Engineering 全景解析》</a>
+        <span class="timeline-entry__desc">—— 系统梳理 Graph Engineering 五层技术栈：图建模（属性图 vs RDF）、图存储（Neo4j/NebulaGraph/TigerGraph/Memgraph）、图计算（BSP vs GAS）、图查询语言（Cypher/Gremlin/GQL）、知识图谱工程化与图神经网络（GCN/GraphSAGE/GAT），含选型决策指南</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="timeline-item">
+  <div class="timeline-item__dot"></div>
+  <div class="timeline-item__content">
     <div class="timeline-item__date">8 月 16 日</div>
     <div class="timeline-item__entries">
       <div class="timeline-entry">

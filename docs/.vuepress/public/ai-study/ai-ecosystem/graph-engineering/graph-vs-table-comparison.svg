@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 420" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <linearGradient id="redG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#f87171;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ef4444;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="greenG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#34d399;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.12"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto" preserveAspectRatio="xMidYMid meet">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/>
+    </marker>
+  </defs>
+
+  <!-- ===== Background ===== -->
+  <rect width="800" height="420" rx="12" fill="#f8fafc"/>
+
+  <!-- ===== Title ===== -->
+  <text x="400" y="35" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">图查询 vs 表格 JOIN</text>
+  <text x="400" y="55" text-anchor="middle" font-size="12" fill="#94a3b8">三度人脉查询的两种范式对比</text>
+
+  <!-- ===== Left: Table JOIN (Anti-pattern) ===== -->
+  <g filter="url(#shadow)">
+    <rect x="30" y="80" width="350" height="290" rx="12" fill="white" stroke="#ef4444" stroke-width="2"/>
+  </g>
+  <rect x="30" y="80" width="350" height="40" rx="12" fill="url(#redG)"/>
+  <rect x="30" y="100" width="350" height="20" fill="url(#redG)"/>
+  <text x="205" y="105" text-anchor="middle" font-size="15" font-weight="700" fill="white">❌ 关系型数据库 JOIN</text>
+
+  <!-- Table flow -->
+  <rect x="55" y="135" width="300" height="30" rx="6" fill="#fee2e2" stroke="#fca5a5" stroke-width="1"/>
+  <text x="205" y="155" text-anchor="middle" font-size="11" fill="#991b1b">users → 查找张三</text>
+
+  <line x1="205" y1="165" x2="205" y2="180" stroke="#ef4444" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <rect x="55" y="185" width="300" height="30" rx="6" fill="#fee2e2" stroke="#fca5a5" stroke-width="1"/>
+  <text x="205" y="205" text-anchor="middle" font-size="11" fill="#991b1b">JOIN friendships → 一度人脉</text>
+
+  <line x1="205" y1="215" x2="205" y2="230" stroke="#ef4444" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <rect x="55" y="235" width="300" height="30" rx="6" fill="#fee2e2" stroke="#fca5a5" stroke-width="1"/>
+  <text x="205" y="255" text-anchor="middle" font-size="11" fill="#991b1b">JOIN friendships → 二度人脉</text>
+
+  <line x1="205" y1="265" x2="205" y2="280" stroke="#ef4444" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <rect x="55" y="285" width="300" height="30" rx="6" fill="#fee2e2" stroke="#fca5a5" stroke-width="1"/>
+  <text x="205" y="305" text-anchor="middle" font-size="11" fill="#991b1b">JOIN friendships → 三度人脉</text>
+
+  <rect x="55" y="325" width="300" height="30" rx="6" fill="#f1f5f9"/>
+  <text x="205" y="345" text-anchor="middle" font-size="10" fill="#64748b">复杂度 O(dⁿ) · 中间结果指数膨胀</text>
+
+  <!-- ===== Center: VS ===== -->
+  <circle cx="400" cy="225" r="25" fill="white" stroke="#94a3b8" stroke-width="2"/>
+  <text x="400" y="230" text-anchor="middle" font-size="14" font-weight="700" fill="#475569">VS</text>
+
+  <!-- ===== Right: Graph Traversal (Correct) ===== -->
+  <g filter="url(#shadow)">
+    <rect x="420" y="80" width="350" height="290" rx="12" fill="white" stroke="#10b981" stroke-width="2"/>
+  </g>
+  <rect x="420" y="80" width="350" height="40" rx="12" fill="url(#greenG)"/>
+  <rect x="420" y="100" width="350" height="20" fill="url(#greenG)"/>
+  <text x="595" y="105" text-anchor="middle" font-size="15" font-weight="700" fill="white">✅ 图数据库遍历</text>
+
+  <!-- Graph nodes -->
+  <circle cx="595" cy="155" r="20" fill="#d1fae5" stroke="#10b981" stroke-width="2"/>
+  <text x="595" y="160" text-anchor="middle" font-size="11" font-weight="600" fill="#047857">张三</text>
+
+  <line x1="595" y1="175" x2="595" y2="200" stroke="#10b981" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <circle cx="595" cy="220" r="20" fill="#d1fae5" stroke="#10b981" stroke-width="2"/>
+  <text x="595" y="225" text-anchor="middle" font-size="10" fill="#047857">朋友</text>
+
+  <line x1="595" y1="240" x2="595" y2="265" stroke="#10b981" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <circle cx="595" cy="285" r="20" fill="#d1fae5" stroke="#10b981" stroke-width="2"/>
+  <text x="595" y="290" text-anchor="middle" font-size="10" fill="#047857">朋友</text>
+
+  <line x1="595" y1="305" x2="595" y2="330" stroke="#10b981" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <circle cx="595" cy="350" r="20" fill="#d1fae5" stroke="#10b981" stroke-width="2"/>
+  <text x="595" y="355" text-anchor="middle" font-size="10" fill="#047857">朋友</text>
+
+  <!-- Side annotations -->
+  <text x="470" y="160" font-size="10" fill="#64748b">1跳</text>
+  <text x="470" y="225" font-size="10" fill="#64748b">2跳</text>
+  <text x="470" y="290" font-size="10" fill="#64748b">3跳</text>
+
+  <!-- Bottom annotation -->
+  <rect x="445" y="325" width="300" height="30" rx="6" fill="#f0fdf4"/>
+  <text x="595" y="345" text-anchor="middle" font-size="10" fill="#64748b">复杂度 O(bⁿ) · 邻接指针直达</text>
+
+  <!-- ===== Bottom tip ===== -->
+  <rect x="130" y="385" width="540" height="26" rx="13" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1"/>
+  <text x="400" y="402" text-anchor="middle" font-size="11" fill="#15803d">💡 图数据库存储邻接关系，找邻居是 O(1) 指针解引用</text>
+</svg>

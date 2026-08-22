@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 440" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <linearGradient id="blueG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="greenG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#34d399;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="amberG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="violetG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#a78bfa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.12"/>
+    </filter>
+  </defs>
+
+  <!-- ===== Background ===== -->
+  <rect width="800" height="440" rx="12" fill="#f8fafc"/>
+
+  <!-- ===== Title ===== -->
+  <text x="400" y="35" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">主流图数据库对比</text>
+  <text x="400" y="55" text-anchor="middle" font-size="12" fill="#94a3b8">Neo4j · NebulaGraph · TigerGraph · Memgraph</text>
+
+  <!-- ===== 4 Cards in 2x2 grid ===== -->
+
+  <!-- Card 1: Neo4j (top-left) -->
+  <g filter="url(#shadow)">
+    <rect x="30" y="80" width="365" height="155" rx="10" fill="white" stroke="#3b82f6" stroke-width="2"/>
+  </g>
+  <rect x="30" y="80" width="365" height="32" rx="10" fill="url(#blueG)"/>
+  <rect x="30" y="96" width="365" height="16" fill="url(#blueG)"/>
+  <text x="50" y="101" font-size="14" font-weight="700" fill="white">Neo4j</text>
+  <text x="375" y="101" text-anchor="end" font-size="10" fill="#dbeafe">生态王者</text>
+
+  <text x="50" y="132" font-size="10" fill="#64748b">架构：单机为主，集群版较新</text>
+  <text x="50" y="150" font-size="10" fill="#64748b">存储：免索引邻接（磁盘）</text>
+  <text x="50" y="168" font-size="10" fill="#64748b">查询：Cypher / GQL</text>
+  <text x="50" y="186" font-size="10" fill="#64748b">规模：~百亿边</text>
+  <text x="50" y="208" font-size="10" font-weight="600" fill="#3b82f6">强项：生态成熟、Cypher、GDS 算法库</text>
+  <text x="50" y="224" font-size="10" fill="#ef4444">弱项：分布式能力弱</text>
+
+  <!-- Card 2: NebulaGraph (top-right) -->
+  <g filter="url(#shadow)">
+    <rect x="410" y="80" width="360" height="155" rx="10" fill="white" stroke="#10b981" stroke-width="2"/>
+  </g>
+  <rect x="410" y="80" width="360" height="32" rx="10" fill="url(#greenG)"/>
+  <rect x="410" y="96" width="360" height="16" fill="url(#greenG)"/>
+  <text x="430" y="101" font-size="14" font-weight="700" fill="white">NebulaGraph</text>
+  <text x="750" y="101" text-anchor="end" font-size="10" fill="#d1fae5">大规模分布式</text>
+
+  <text x="430" y="132" font-size="10" fill="#64748b">架构：分布式（Raft + 分片）</text>
+  <text x="430" y="150" font-size="10" fill="#64748b">存储：KV 存储（RocksDB）</text>
+  <text x="430" y="168" font-size="10" fill="#64748b">查询：nGQL</text>
+  <text x="430" y="186" font-size="10" fill="#64748b">规模：~千亿边</text>
+  <text x="430" y="208" font-size="10" font-weight="600" fill="#10b981">强项：横向扩展、高吞吐写入</text>
+  <text x="430" y="224" font-size="10" fill="#ef4444">弱项：学习曲线陡</text>
+
+  <!-- Card 3: TigerGraph (bottom-left) -->
+  <g filter="url(#shadow)">
+    <rect x="30" y="255" width="365" height="155" rx="10" fill="white" stroke="#f59e0b" stroke-width="2"/>
+  </g>
+  <rect x="30" y="255" width="365" height="32" rx="10" fill="url(#amberG)"/>
+  <rect x="30" y="271" width="365" height="16" fill="url(#amberG)"/>
+  <text x="50" y="276" font-size="14" font-weight="700" fill="white">TigerGraph</text>
+  <text x="375" y="276" text-anchor="end" font-size="10" fill="#fef3c7">分析型重器</text>
+
+  <text x="50" y="307" font-size="10" fill="#64748b">架构：MPP 分布式</text>
+  <text x="50" y="325" font-size="10" fill="#64748b">存储：CSR + GSQL 原生</text>
+  <text x="50" y="343" font-size="10" fill="#64748b">查询：GSQL（图原生编程语言）</text>
+  <text x="50" y="361" font-size="10" fill="#64748b">规模：~千亿边</text>
+  <text x="50" y="383" font-size="10" font-weight="600" fill="#f59e0b">强项：内置图算法+ML，GSQL 表达力强</text>
+  <text x="50" y="399" font-size="10" fill="#ef4444">弱项：闭源、价格高</text>
+
+  <!-- Card 4: Memgraph (bottom-right) -->
+  <g filter="url(#shadow)">
+    <rect x="410" y="255" width="360" height="155" rx="10" fill="white" stroke="#8b5cf6" stroke-width="2"/>
+  </g>
+  <rect x="410" y="255" width="360" height="32" rx="10" fill="url(#violetG)"/>
+  <rect x="410" y="271" width="360" height="16" fill="url(#violetG)"/>
+  <text x="430" y="276" font-size="14" font-weight="700" fill="white">Memgraph</text>
+  <text x="750" y="276" text-anchor="end" font-size="10" fill="#ede9fe">实时之选</text>
+
+  <text x="430" y="307" font-size="10" fill="#64748b">架构：单机内存优先</text>
+  <text x="430" y="325" font-size="10" fill="#64748b">存储：内存 + 持久化</text>
+  <text x="430" y="343" font-size="10" fill="#64748b">查询：Cypher（兼容）</text>
+  <text x="430" y="361" font-size="10" fill="#64748b">规模：~亿级边</text>
+  <text x="430" y="383" font-size="10" font-weight="600" fill="#8b5cf6">强项：毫秒级实时响应</text>
+  <text x="430" y="399" font-size="10" fill="#ef4444">弱项：单机容量限制</text>
+
+  <!-- ===== Bottom tip ===== -->
+  <rect x="130" y="420" width="540" height="0" rx="13" fill="none"/>
+</svg>

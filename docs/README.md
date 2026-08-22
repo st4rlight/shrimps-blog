@@ -53,6 +53,15 @@ config:
 <div class="home-timeline__item">
   <div class="home-timeline__dot"></div>
   <div class="home-timeline__body">
+    <span class="home-timeline__date">08-23</span>
+    <span class="home-timeline__tag home-timeline__tag--ai">AI学习</span>
+    <a href="/ai-study/graph-engineering/">新增《Graph Engineering 全景解析》</a>
+  </div>
+</div>
+
+<div class="home-timeline__item">
+  <div class="home-timeline__dot"></div>
+  <div class="home-timeline__body">
     <span class="home-timeline__date">08-16</span>
     <span class="home-timeline__tag home-timeline__tag--code">st4rlight-code</span>
     <a href="/st4rlight-code/02-tools/">新增《02. 工具系统》</a>
