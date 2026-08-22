@@ -1,0 +1,118 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 440" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <linearGradient id="blueG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="greenG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#34d399;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="amberG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="violetG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#a78bfa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.12"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5"
+            markerWidth="8" markerHeight="8"
+            markerUnits="userSpaceOnUse"
+            orient="auto"
+            preserveAspectRatio="xMidYMid meet">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/>
+    </marker>
+    <marker id="arrowG" viewBox="0 0 10 10" refX="10" refY="5"
+            markerWidth="8" markerHeight="8"
+            markerUnits="userSpaceOnUse"
+            orient="auto"
+            preserveAspectRatio="xMidYMid meet">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#10b981"/>
+    </marker>
+    <marker id="arrowR" viewBox="0 0 10 10" refX="10" refY="5"
+            markerWidth="8" markerHeight="8"
+            markerUnits="userSpaceOnUse"
+            orient="auto"
+            preserveAspectRatio="xMidYMid meet">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#ef4444"/>
+    </marker>
+  </defs>
+
+  <!-- ===== Background ===== -->
+  <rect width="820" height="440" rx="12" fill="#f8fafc"/>
+
+  <!-- ===== Title ===== -->
+  <text x="410" y="30" text-anchor="middle" font-size="19" font-weight="700" fill="#1e293b">研究报告 Agent Graph</text>
+  <text x="410" y="50" text-anchor="middle" font-size="12" fill="#94a3b8">Researcher → Writer → Reviewer，审核不通过带反馈回到 Writer</text>
+
+  <!-- ===== User Request ===== -->
+  <rect x="340" y="70" width="140" height="32" rx="16" fill="#e0e7ff" stroke="#6366f1" stroke-width="1.5"/>
+  <text x="410" y="91" text-anchor="middle" font-size="12" font-weight="600" fill="#4338ca">用户请求</text>
+
+  <line x1="410" y1="102" x2="410" y2="126" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- ===== Researcher Agent ===== -->
+  <g filter="url(#shadow)">
+    <rect x="280" y="130" width="260" height="50" rx="10" fill="white" stroke="#3b82f6" stroke-width="2"/>
+  </g>
+  <rect x="280" y="130" width="260" height="24" rx="10" fill="url(#blueG)"/>
+  <rect x="280" y="144" width="260" height="10" fill="url(#blueG)"/>
+  <text x="410" y="148" text-anchor="middle" font-size="12" font-weight="700" fill="white">Researcher Agent</text>
+  <text x="410" y="170" text-anchor="middle" font-size="10" fill="#64748b">搜索资料 · 提取关键信息</text>
+
+  <line x1="410" y1="180" x2="410" y2="206" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- State annotation 1 -->
+  <rect x="560" y="188" width="100" height="20" rx="4" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="610" y="202" text-anchor="middle" font-size="9" fill="#64748b">State: 研究结果</text>
+  <line x1="540" y1="193" x2="560" y2="193" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="3 2"/>
+
+  <!-- ===== Writer Agent ===== -->
+  <g filter="url(#shadow)">
+    <rect x="280" y="210" width="260" height="50" rx="10" fill="white" stroke="#8b5cf6" stroke-width="2"/>
+  </g>
+  <rect x="280" y="210" width="260" height="24" rx="10" fill="url(#violetG)"/>
+  <rect x="280" y="224" width="260" height="10" fill="url(#violetG)"/>
+  <text x="410" y="228" text-anchor="middle" font-size="12" font-weight="700" fill="white">Writer Agent</text>
+  <text x="410" y="250" text-anchor="middle" font-size="10" fill="#64748b">撰写报告草稿</text>
+
+  <line x1="410" y1="260" x2="410" y2="286" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- State annotation 2 -->
+  <rect x="560" y="268" width="100" height="20" rx="4" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="610" y="282" text-anchor="middle" font-size="9" fill="#64748b">State: 草稿内容</text>
+  <line x1="540" y1="273" x2="560" y2="273" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="3 2"/>
+
+  <!-- ===== Reviewer Agent ===== -->
+  <g filter="url(#shadow)">
+    <rect x="280" y="290" width="260" height="50" rx="10" fill="white" stroke="#f59e0b" stroke-width="2"/>
+  </g>
+  <rect x="280" y="290" width="260" height="24" rx="10" fill="url(#amberG)"/>
+  <rect x="280" y="304" width="260" height="10" fill="url(#amberG)"/>
+  <text x="410" y="308" text-anchor="middle" font-size="12" font-weight="700" fill="white">Reviewer Agent</text>
+  <text x="410" y="330" text-anchor="middle" font-size="10" fill="#64748b">审查质量 · 提出反馈</text>
+
+  <!-- Pass branch (right) -->
+  <path d="M 540 315 L 640 315 L 640 370 L 536 370" stroke="#10b981" stroke-width="1.5" fill="none" marker-end="url(#arrowG)"/>
+  <text x="650" y="345" text-anchor="start" font-size="10" fill="#10b981" font-weight="600">通过</text>
+
+  <!-- Publish node -->
+  <rect x="340" y="355" width="190" height="30" rx="6" fill="#d1fae5" stroke="#86efac" stroke-width="1"/>
+  <text x="435" y="375" text-anchor="middle" font-size="11" fill="#047857">发布报告</text>
+
+  <!-- Fail branch (left, loops back to Writer) -->
+  <path d="M 280 315 L 180 315 L 180 235 L 276 235" stroke="#ef4444" stroke-width="1.5" fill="none" marker-end="url(#arrowR)"/>
+  <text x="170" y="280" text-anchor="end" font-size="10" fill="#ef4444" font-weight="600">不通过</text>
+
+  <!-- Feedback annotation -->
+  <rect x="100" y="265" width="75" height="20" rx="4" fill="#fee2e2" stroke="#fca5a5" stroke-width="1"/>
+  <text x="137" y="279" text-anchor="middle" font-size="9" fill="#991b1b">带反馈返回</text>
+
+  <!-- ===== Bottom tip ===== -->
+  <rect x="150" y="408" width="520" height="24" rx="12" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1"/>
+  <text x="410" y="424" text-anchor="middle" font-size="11" fill="#15803d">💡 谁负责什么、往哪里走、状态传递什么——都由 Graph 决定，而非 Agent 自行决定</text>
+</svg>

@@ -23,11 +23,7 @@ permalink: /ai-study/graph-engineering/
 
 ### 1.1 两次 Graph 热潮的背景差异
 
-2024 年初，LangChain 发布了 LangGraph。当时的 Agent 远没有今天这么能干，典型的 Agent 就是一个 ReAct 范式的循环：
-
-```text
-思考 → 调工具 → 看结果 → 再思考 → ...周而复始
-```
+2024 年初，LangChain 发布了 LangGraph。当时的 Agent 远没有今天这么能干，典型的 Agent 就是一个 ReAct 范式的循环：**思考 → 调工具 → 看结果 → 再思考 → ……周而复始**。
 
 这个范式把大量决定都交给了当时还不够强大的 LLM。单一的 ReAct Agent 无法满足复杂任务的需要——工具调错了怎么办？任务跑了几步开始偏怎么办？中途需要人工确认怎么办？我想强制"必须先查数据库，再做判断"又怎么办？
 
@@ -78,34 +74,11 @@ permalink: /ai-study/graph-engineering/
 
 ![从 Chain 到 Graph 的拓扑演进](/ai-study/ai-infra/graph-engineering/topology-evolution-mechanism.svg)
 
-**第一级：链（Chain）**——任务只需要一路向前：
+- **链（Chain）**：一路向前，无法分支、无法回头。LangChain 最初的 Chain 就是这个级别
+- **有向无环图（DAG）**：开始出现分支和并行，但还是不能"回头"。一些早期的工作流编排框架只支持 DAG
+- **有向图（Directed Graph）**：允许循环、回退、重试。在 Claude Code 这样的 Coding Agent 系统中，这种循环能力不可或缺——失败了可以返工、结果不如人意再优化，直到满足条件
 
-```text
-  输入 → 步骤A → 步骤B → 步骤C → 输出
-```
-
-这也是一种简单的 Graph，只不过无法分支、无法回头。LangChain 最初的 Chain 就是这个级别。
-
-**第二级：有向无环图（DAG）**——任务开始出现分支和并行：
-
-```text
-               ┌─ 步骤B1 ─┐
-  输入 → 步骤A ─┼─ 步骤B2 ─┼─→ 步骤D → 输出
-               └─ 步骤B3 ─┘
-```
-
-有方向，但还是不能"回头"。一些早期的工作流编排框架只支持 DAG。
-
-**第三级：有向图（Directed Graph）**——允许循环、回退、重试：
-
-```text
-  输入 → 生成 → 评估 ──→ 通过 → 输出
-               ↑          │
-               │  不通过  │
-               └── 修改 ←─┘
-```
-
-一旦允许流程"回头"，就不再是 DAG，而是更通用的有向图。在 Claude Code 这样的 Coding Agent 系统中，这种循环能力不可或缺——失败了可以返工、结果不如人意再优化，直到满足条件。
+一旦允许流程"回头"，就不再是 DAG，而是更通用的有向图。
 
 ### 2.2 Agent Graph 的三要素
 
@@ -121,35 +94,7 @@ permalink: /ai-study/graph-engineering/
 
 以编写研究报告为例：
 
-```text
-  用户请求
-     │
-     ▼
-  ┌──────────┐
-  │ Researcher│ ── 找资料 ──┐
-  │  Agent    │              │
-  └──────────┘              │
-     │                       │
-     ▼                       │
-  ┌──────────┐              │
-  │ Writer    │ ── 写稿 ──┐ │
-  │  Agent    │             │ │
-  └──────────┘             │ │
-     │                      │ │
-     ▼                      │ │
-  ┌──────────┐              │ │
-  │ Reviewer │ ── 审查 ──┐  │ │
-  │  Agent   │            │  │ │
-  └──────────┘            │  │ │
-     │                    │  │ │
-     ├─ 通过 → 发布       │  │ │
-     │                    │  │ │
-     └─ 不通过 → 带反馈 ──┘  │ │
-        回到 Writer        │ │
-                            │ │
-     ◄──────────────────────┘ │
-     ◄─────────────────────────┘
-```
+![研究报告 Agent Graph](/ai-study/ai-infra/graph-engineering/research-pipeline-mechanism.svg)
 
 看起来只是几个方框和箭头。但重要的是，在这张 Graph 中：**谁负责什么、什么情况下往哪里走、状态传递了什么、什么时候结束**，都不再由某个 Agent 自己决定，而是成为 Agent 系统的一部分。
 
@@ -165,25 +110,11 @@ permalink: /ai-study/graph-engineering/
 
 关键不在于"有没有 Loop"，而在于**两者关注与解决的问题不一样**。
 
-**Loop Engineering** 关注的是：
+**Loop Engineering** 关注的是：一个 Agent 如何持续推进工作，Loop 是必须的机制。它关心的是如何让这个 Coding Agent 不需要人类介入，就能自己验证结果、修复代码、持续推进，直到完成目标。
 
-> 一个 Agent 如何持续推进工作，Loop 是必须的机制。
+**Graph Engineering** 关注的是：多个 Agent 如何协同运行，而 Loop 只是其中一种模式。Graph 关心的是：Researcher 做完以后交给谁？Writer 写完谁来审核？审核失败回到哪里返工？哪些任务可以并行？如何让 Writer 知道 Reviewer 的审查结果？什么时候必须让人介入？
 
-```text
-  典型 Loop Engineering（Coding Agent）：
-
-  接收任务 → 写代码 → 跑测试 → 测试失败？
-                                ├─ 是 → 分析错误 → 修代码 → 跑测试 → ...
-                                └─ 否 → 完成
-```
-
-它关心的是：如何让这个 Coding Agent 不需要人类介入，就能自己验证结果、修复代码、持续推进，直到完成目标。
-
-**Graph Engineering** 关注的是：
-
-> 多个 Agent 如何协同运行，而 Loop 只是其中一种模式。
-
-Graph 关心的是：Researcher 做完以后交给谁？Writer 写完谁来审核？审核失败回到哪里返工？哪些任务可以并行？如何让 Writer 知道 Reviewer 的审查结果？什么时候必须让人介入？
+![Loop vs Graph 关注层次对比](/ai-study/ai-infra/graph-engineering/loop-vs-graph-comparison.svg)
 
 | 维度 | Loop Engineering | Graph Engineering |
 |------|-----------------|-------------------|
@@ -196,21 +127,7 @@ Graph 关心的是：Researcher 做完以后交给谁？Writer 写完谁来审�
 
 你甚至可以把两者"套"在一起。比如一个全栈开发任务：
 
-```text
-  Graph 层（高层组织）：
-  ┌─────────────┐     ┌─────────────┐
-  │ Frontend Dev │────→│ Integration │
-  │    Agent     │     │    Test      │
-  └─────────────┘     └─────────────┘
-                          ↑
-  ┌─────────────┐         │
-  │ Backend Dev  │────────┘
-  │    Agent     │
-  └─────────────┘
-
-  Loop 层（Frontend Dev Agent 内部）：
-  写前端代码 → 跑组件测试 → 修复 → 再跑 → ...通过
-```
+![Graph + Loop 两层共存](/ai-study/ai-infra/graph-engineering/loop-in-graph-mechanism.svg)
 
 Graph 负责高层的组织关系；Loop 负责每个 Agent 节点内部的行动——两者完全可以共存。
 
@@ -229,25 +146,6 @@ Graph 负责高层的组织关系；Loop 负责每个 Agent 节点内部的行�
 它们更适合理解成 **Agent 工程不断向外扩大的五个控制圈**：
 
 ![Agent 工程的五层控制圈](/ai-study/ai-infra/graph-engineering/engineering-layers-overview.svg)
-
-```text
-  ┌───────────────────────────────────────────┐
-  │           Graph Engineering               │  ← 一群 Agent 怎样一起做事
-  │  ┌─────────────────────────────────────┐  │
-  │  │          Loop Engineering           │  │  ← Agent 怎样持续推进做事
-  │  │  ┌───────────────────────────────┐  │  │
-  │  │  │      Harness Engineering      │  │  │  ← Agent 如何做事
-  │  │  │  ┌───────────────────────┐   │  │  │
-  │  │  │  │   Context Engineering  │   │  │  │  ← 模型看到什么
-  │  │  │  │  ┌───────────────┐    │   │  │  │
-  │  │  │  │  │    Prompt     │    │   │  │  │  ← 如何对模型说话
-  │  │  │  │  │  Engineering  │    │   │  │  │
-  │  │  │  │  └───────────────┘    │   │  │  │
-  │  │  │  └───────────────────────┘   │  │  │
-  │  │  └──────────────────────────────┘  │  │
-  │  └────────────────────────────────────┘  │
-  └───────────────────────────────────────────┘
-```
 
 ### 4.2 五层工程的大白话
 
@@ -348,38 +246,7 @@ Graph 由于有着清晰的步骤和状态，借助于持久化机制（落磁�
 
 Anthropic 在 2025 年 6 月分享了他们构建多 Agent 研究系统的工程经验。这个系统使用 **orchestrator-worker 模式**——一个 Lead Agent 协调全局，同时创建多个专门的 Subagent 并行搜索信息。
 
-```text
-  用户查询
-     │
-     ▼
-  ┌──────────────┐
-  │ LeadResearcher│ ── 分析查询、制定策略、保存计划到 Memory
-  │  (Orchestrator)│
-  └──────┬───────┘
-         │ 创建并行子 Agent
-    ┌────┼────┬─────────┐
-    ▼    ▼    ▼         ▼
-  ┌────┐┌────┐┌────┐  ┌────┐
-  │Sub1 ││Sub2 ││Sub3 │  │SubN │  ← 各自独立搜索、评估、返回结果
-  │Agt ││Agt ││Agt │  │Agt │
-  └────┘└────┘└────┘  └────┘
-    │    │    │         │
-    └────┼────┴─────────┘
-         │
-         ▼
-  ┌──────────────┐
-  │ LeadResearcher│ ── 综合结果，决定是否需要更多研究
-  │  (汇总+决策)   │
-  └──────┬───────┘
-         │ 研究完成
-         ▼
-  ┌──────────────┐
-  │ CitationAgent │ ── 处理引用、标注来源
-  └──────┬──────┘
-         │
-         ▼
-     最终报告
-```
+![Anthropic 多 Agent 研究系统](/ai-study/ai-infra/graph-engineering/anthropic-research-mechanism.svg)
 
 他们在内部评估中发现：使用 Claude Opus 4 作为 Lead Agent + Claude Sonnet 4 作为 Subagent 的多 Agent 系统，**在内部研究评估中比单 Agent Claude Opus 4 高出 90.2%**。
 
