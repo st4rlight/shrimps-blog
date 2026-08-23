@@ -17,13 +17,17 @@ permalink: /st4rlight-code/
 - [03. System Prompt 工程](./03-system-prompt.md)
 - [04. 会话持久化](./04-session-persistence.md)
 - [05. 终端 UI](./05-terminal-ui.md)
+- [06. 流式输出与双后端](./06-streaming-and-providers.md)
+- [07. 网络层重试](./07-retry.md)
+- [08. Extended Thinking](./08-thinking-models.md)
+- [09. 工具并行执行](./09-streaming-tools-parallel.md)
 
 ## 关于这个项目
 
 - **项目地址**: [st4rlight-code](https://github.com/st4rlight/st4rlight-code)
 - **技术栈**: TypeScript + OpenAI 兼容协议
 - **运行方式**: Node 原生运行 TS（无编译步骤）
-- **当前进度**: 已实现消息模型、LLM 抽象、工具调用循环、12 个内置工具、System Prompt 工程、CLAUDE.md 加载、多会话持久化（--resume / /clear）、CLI 参数解析（commander）、REPL 优雅中断、终端 UI 层
+- **当前进度**: 已实现消息模型、LLM 抽象、工具调用循环、12 个内置工具、System Prompt 工程、CLAUDE.md 加载、多会话持久化（--resume / /clear）、CLI 参数解析（commander）、REPL 优雅中断、终端 UI 层、流式输出、双后端（OpenAI 兼容 + Anthropic）、网络层重试、Extended Thinking、流式工具执行 + 并行执行
 
 ## 构建思路
 
