@@ -48,6 +48,7 @@ export default defineUserConfig({
       // { text: '存卿偶寄', link: '/blog/', icon: 'mdi:feather' },
       // { text: '思考领悟', link: '/thoughts/', icon: 'mdi:lightbulb-outline' },
       { text: 'st4rlight-code', link: '/st4rlight-code/', icon: 'mdi:code-tags' },
+      { text: 'GitHub', link: 'https://github.com/st4rlight/st4rlight-code', icon: 'mdi:github', target: '_blank', rel: 'noopener' },
       { text: 'AI学习', link: '/ai-study/', icon: 'mdi:robot-outline' },
       { text: 'AI源码', link: '/ai-source/', icon: 'mdi:code-braces' },
       { text: '智能客服体系', link: '/ai-cs/', icon: 'mdi:headset' },

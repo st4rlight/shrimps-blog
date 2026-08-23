@@ -6,7 +6,9 @@ permalink: /st4rlight-code/
 
 # st4rlight-code 构建笔记
 
-这是我从零开始用 TypeScript 构建一个类似于 **Claude Code** 的 AI 编码助手 CLI 的完整记录。
+> 🚀 **项目已开源！** 源码地址：[github.com/st4rlight/st4rlight-code](https://github.com/st4rlight/st4rlight-code)
+>
+> 这里是从零开始用 TypeScript 构建一个类似于 **Claude Code** 的 AI 编码助手 CLI 的完整记录。
 
 我把整个构建过程拆成一篇篇文章，记录每一步的设计决策、代码实现、踩过的坑，以及和真实 Claude Code 的对比思考。
 
