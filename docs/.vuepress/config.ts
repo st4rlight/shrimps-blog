@@ -117,6 +117,14 @@ export default defineUserConfig({
               'search-ads-recommend/search-ads-recommend-pipeline.md',
             ],
           },
+          {
+            text: '核心源码分析',
+            link: '/commercial-tech/',
+            collapsed: false,
+            items: [
+              'core-source-analysis/rocketmq-nameserver.md',
+            ],
+          },
         ],
       },
       {
@@ -259,6 +267,7 @@ export default defineUserConfig({
               '03-system-prompt.md',
               '04-session-persistence.md',
               '05-terminal-ui.md',
+              '06-streaming-and-providers.md',
             ],
           },
         ],

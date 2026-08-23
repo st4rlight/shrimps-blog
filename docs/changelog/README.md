@@ -23,6 +23,11 @@ icon: mdi:timeline-clock-outline
     <div class="timeline-item__date">8 月 23 日</div>
     <div class="timeline-item__entries">
       <div class="timeline-entry">
+        <span class="timeline-entry__tag timeline-entry__tag--commercial">商业技术体系</span>
+        <a class="timeline-entry__link" href="/commercial-tech/core-source-analysis/rocketmq-nameserver/">新增《RocketMQ NameServer 架构与源码深度解析》</a>
+        <span class="timeline-entry__desc">—— NameServer 是 RocketMQ 的轻量级路由注册中心，用极简代码替代 ZooKeeper。从 RouteInfoManager 六大 ConcurrentHashMap 数据结构、Broker 注册五步流程、30s 心跳与可自定义超时剔除机制、双保险故障检测（定时扫描 + Channel 事件）、线程池隔离设计，到 AP vs CP 架构权衡与运维部署决策指南</span>
+      </div>
+      <div class="timeline-entry">
         <span class="timeline-entry__tag timeline-entry__tag--ai">AI学习</span>
         <a class="timeline-entry__link" href="/ai-study/graph-engineering/">新增《Graph Engineering 全景解析》</a>
         <span class="timeline-entry__desc">—— Graph Engineering 没有新技术，变的是 Graph 连接的对象：从连接 Step 到连接 Agent。梳理两次 Graph 热潮的背景差异、Chain→DAG→Graph 拓扑演进、Loop vs Graph 层次关系、五层工程嵌套控制圈、六大适用信号与 Anthropic 多 Agent 研究系统实践，全文配图均使用规范 SVG 替换文本绘图</span>

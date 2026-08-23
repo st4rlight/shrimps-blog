@@ -1,0 +1,116 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 420" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <linearGradient id="blueG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="greenG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#34d399;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="3" stdDeviation="5" flood-opacity="0.15"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto" preserveAspectRatio="xMidYMid meet">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/>
+    </marker>
+    <marker id="arrowB" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto" preserveAspectRatio="xMidYMid meet">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#3b82f6"/>
+    </marker>
+  </defs>
+
+  <!-- ===== Background ===== -->
+  <rect width="820" height="420" rx="16" fill="#f8fafc"/>
+
+  <!-- ===== Title ===== -->
+  <text x="410" y="36" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">Broker 注册流程</text>
+  <text x="410" y="58" text-anchor="middle" font-size="12" fill="#94a3b8">RouteInfoManager.registerBroker() 五步更新路由表（写锁保护）</text>
+
+  <!-- ===== Step 1: Cluster → BrokerName ===== -->
+  <g filter="url(#shadow)">
+    <rect x="30" y="90" width="145" height="120" rx="10" fill="white" stroke="#10b981" stroke-width="1.5"/>
+  </g>
+  <rect x="30" y="90" width="145" height="30" rx="10" fill="url(#greenG)"/>
+  <rect x="30" y="106" width="145" height="14" fill="url(#greenG)"/>
+  <text x="102" y="110" text-anchor="middle" font-size="13" font-weight="700" fill="white">Step 1</text>
+  <text x="102" y="142" text-anchor="middle" font-size="11" font-weight="600" fill="#374151">维护 Cluster</text>
+  <rect x="45" y="155" width="115" height="22" rx="4" fill="#d1fae5" stroke="#86efac" stroke-width="1"/>
+  <text x="102" y="170" text-anchor="middle" font-size="9" fill="#047857">clusterAddrTable</text>
+  <text x="102" y="195" text-anchor="middle" font-size="9" fill="#64748b">Cluster→Set&lt;Name&gt;</text>
+
+  <!-- Arrow Step1 → Step2 -->
+  <line x1="175" y1="150" x2="201" y2="150" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrowB)"/>
+
+  <!-- ===== Step 2: BrokerName → BrokerData ===== -->
+  <g filter="url(#shadow)">
+    <rect x="205" y="90" width="145" height="120" rx="10" fill="white" stroke="#3b82f6" stroke-width="1.5"/>
+  </g>
+  <rect x="205" y="90" width="145" height="30" rx="10" fill="url(#blueG)"/>
+  <rect x="205" y="106" width="145" height="14" fill="url(#blueG)"/>
+  <text x="277" y="110" text-anchor="middle" font-size="13" font-weight="700" fill="white">Step 2</text>
+  <text x="277" y="142" text-anchor="middle" font-size="11" font-weight="600" fill="#374151">维护 BrokerData</text>
+  <rect x="220" y="155" width="115" height="22" rx="4" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="277" y="170" text-anchor="middle" font-size="9" fill="#1d4ed8">brokerAddrTable</text>
+  <text x="277" y="195" text-anchor="middle" font-size="9" fill="#64748b">Name→BrokerData</text>
+
+  <!-- Arrow Step2 → Step3 -->
+  <line x1="350" y1="150" x2="376" y2="150" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrowB)"/>
+
+  <!-- ===== Step 3: Topic → QueueData ===== -->
+  <g filter="url(#shadow)">
+    <rect x="380" y="90" width="145" height="120" rx="10" fill="white" stroke="#3b82f6" stroke-width="1.5"/>
+  </g>
+  <rect x="380" y="90" width="145" height="30" rx="10" fill="url(#blueG)"/>
+  <rect x="380" y="106" width="145" height="14" fill="url(#blueG)"/>
+  <text x="452" y="110" text-anchor="middle" font-size="13" font-weight="700" fill="white">Step 3</text>
+  <text x="452" y="142" text-anchor="middle" font-size="11" font-weight="600" fill="#374151">更新队列路由</text>
+  <rect x="395" y="155" width="115" height="22" rx="4" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="452" y="170" text-anchor="middle" font-size="9" fill="#1d4ed8">topicQueueTable</text>
+  <text x="452" y="195" text-anchor="middle" font-size="9" fill="#64748b">Topic→QueueData</text>
+
+  <!-- Arrow Step3 → Step4 -->
+  <line x1="525" y1="150" x2="551" y2="150" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrowB)"/>
+
+  <!-- ===== Step 4: BrokerAddrInfo → BrokerLiveInfo ===== -->
+  <g filter="url(#shadow)">
+    <rect x="555" y="90" width="145" height="120" rx="10" fill="white" stroke="#3b82f6" stroke-width="1.5"/>
+  </g>
+  <rect x="555" y="90" width="145" height="30" rx="10" fill="url(#blueG)"/>
+  <rect x="555" y="106" width="145" height="14" fill="url(#blueG)"/>
+  <text x="627" y="110" text-anchor="middle" font-size="13" font-weight="700" fill="white">Step 4</text>
+  <text x="627" y="142" text-anchor="middle" font-size="11" font-weight="600" fill="#374151">存活状态</text>
+  <rect x="570" y="155" width="115" height="22" rx="4" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="627" y="170" text-anchor="middle" font-size="9" fill="#1d4ed8">brokerLiveTable</text>
+  <text x="627" y="195" text-anchor="middle" font-size="9" fill="#64748b">AddrInfo→LiveInfo</text>
+
+  <!-- Arrow Step4 → Step5 -->
+  <line x1="700" y1="150" x2="726" y2="150" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrowB)"/>
+
+  <!-- ===== Step 5: Filter Server ===== -->
+  <g filter="url(#shadow)">
+    <rect x="730" y="90" width="65" height="120" rx="10" fill="white" stroke="#3b82f6" stroke-width="1.5"/>
+  </g>
+  <rect x="730" y="90" width="65" height="30" rx="10" fill="url(#blueG)"/>
+  <rect x="730" y="106" width="65" height="14" fill="url(#blueG)"/>
+  <text x="762" y="110" text-anchor="middle" font-size="12" font-weight="700" fill="white">Step5</text>
+  <text x="762" y="142" text-anchor="middle" font-size="10" font-weight="600" fill="#374151">Filter</text>
+  <rect x="740" y="155" width="45" height="22" rx="4" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="762" y="170" text-anchor="middle" font-size="8" fill="#1d4ed8">filterSrv</text>
+  <text x="762" y="195" text-anchor="middle" font-size="8" fill="#64748b">可选</text>
+
+  <!-- ===== WriteLock indicator ===== -->
+  <rect x="30" y="240" width="765" height="40" rx="8" fill="#fef3c7" stroke="#fbbf24" stroke-width="1.5"/>
+  <text x="412" y="265" text-anchor="middle" font-size="12" font-weight="600" fill="#92400e">🔒 写锁保护（ReentrantReadWriteLock.writeLock） — 跨六个 Map 的复合操作一致性</text>
+
+  <!-- ===== Broker input ===== -->
+  <rect x="250" y="305" width="320" height="35" rx="8" fill="#d1fae5" stroke="#86efac" stroke-width="1"/>
+  <text x="410" y="328" text-anchor="middle" font-size="11" font-weight="500" fill="#047857">输入：ClusterName + BrokerAddr + BrokerName + BrokerId + TopicConfig + Channel</text>
+
+  <!-- Arrow: input → Step1 -->
+  <path d="M 410 305 L 410 295 L 102 295 L 102 210" stroke="#10b981" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+
+  <!-- ===== Bottom tip ===== -->
+  <rect x="100" y="360" width="620" height="45" rx="10" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1"/>
+  <text x="410" y="378" text-anchor="middle" font-size="11" fill="#15803d">💡 注册即心跳：Broker 首次注册与后续心跳使用同一请求码 REGISTER_BROKER</text>
+  <text x="410" y="393" text-anchor="middle" font-size="11" fill="#15803d">BrokerLiveInfo 携带可自定义的 heartbeatTimeoutMillis，默认 120s，Slave 注册返回 Master HA 地址</text>
+</svg>
