@@ -974,3 +974,20 @@ a.timeline-entry__link:hover {
     max-height: 150px;
   }
 }
+
+/* ==================== 右上角 social link 外链箭头 ==================== */
+
+.vp-social-link::after {
+  content: '↗';
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  font-size: 9px;
+  font-weight: 700;
+  color: rgb(100 116 139 / 60%);
+  line-height: 1;
+}
+
+.vp-social-link {
+  position: relative;
+}
