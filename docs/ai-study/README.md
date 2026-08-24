@@ -18,6 +18,7 @@ permalink: /ai-study/
 
 - [Superpowers 使用技巧](./sdd/superpowers-guide.md)
 - [OpenSpec 实战指南](./sdd/openspec-guide.md)
+- [Grill Me 技能详解](./sdd/grill-me-guide.md)
 
 ### Harness Engineering
 
