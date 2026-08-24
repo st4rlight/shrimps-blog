@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 480" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <!-- Gradients -->
+    <linearGradient id="blueG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="greenG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#34d399;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="amberG" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:1" />
+    </linearGradient>
+
+    <!-- Shadow filter -->
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.12"/>
+    </filter>
+  </defs>
+
+  <!-- ===== Background ===== -->
+  <rect width="800" height="480" rx="14" fill="#f8fafc"/>
+
+  <!-- ===== Title ===== -->
+  <text x="400" y="38" text-anchor="middle" font-size="22" font-weight="700" fill="#1e293b">Plan Mode vs Grill Me</text>
+  <text x="400" y="60" text-anchor="middle" font-size="13" fill="#94a3b8">同样「先讨论再动手」，目标却完全不同</text>
+
+  <!-- ===== Left: Plan Mode ===== -->
+  <g filter="url(#shadow)">
+    <rect x="30" y="85" width="340" height="330" rx="12" fill="white" stroke="#3b82f6" stroke-width="2"/>
+  </g>
+  <rect x="30" y="85" width="340" height="40" rx="12" fill="url(#blueG)"/>
+  <rect x="30" y="105" width="340" height="20" fill="url(#blueG)"/>
+  <text x="200" y="110" text-anchor="middle" font-size="15" font-weight="700" fill="white">Plan Mode</text>
+
+  <!-- properties -->
+  <text x="50" y="155" font-size="12" font-weight="600" fill="#1d4ed8">默认目标</text>
+  <text x="170" y="155" font-size="12" fill="#475569">尽快产出可执行 plan</text>
+  <line x1="50" y1="170" x2="350" y2="170" stroke="#e2e8f0" stroke-width="1"/>
+
+  <text x="50" y="200" font-size="12" font-weight="600" fill="#1d4ed8">提问数量</text>
+  <text x="170" y="200" font-size="12" fill="#475569">0 ~ 5 个</text>
+  <line x1="50" y1="215" x2="350" y2="215" stroke="#e2e8f0" stroke-width="1"/>
+
+  <text x="50" y="245" font-size="12" font-weight="600" fill="#1d4ed8">提问形式</text>
+  <text x="170" y="245" font-size="12" fill="#475569">一次问一段</text>
+  <line x1="50" y1="260" x2="350" y2="260" stroke="#e2e8f0" stroke-width="1"/>
+
+  <text x="50" y="290" font-size="12" font-weight="600" fill="#1d4ed8">推荐答案</text>
+  <text x="170" y="290" font-size="12" fill="#475569">否</text>
+  <line x1="50" y1="305" x2="350" y2="305" stroke="#e2e8f0" stroke-width="1"/>
+
+  <text x="50" y="335" font-size="12" font-weight="600" fill="#1d4ed8">探索代码库</text>
+  <text x="170" y="335" font-size="12" fill="#475569">偶尔</text>
+  <line x1="50" y1="350" x2="350" y2="350" stroke="#e2e8f0" stroke-width="1"/>
+
+  <text x="200" y="385" text-anchor="middle" font-size="11" fill="#64748b">适合：已经想清楚，想确认方案</text>
+
+  <!-- ===== VS circle ===== -->
+  <circle cx="400" cy="250" r="26" fill="url(#amberG)"/>
+  <text x="400" y="257" text-anchor="middle" font-size="14" font-weight="700" fill="white">VS</text>
+
+  <!-- ===== Right: Grill Me ===== -->
+  <g filter="url(#shadow)">
+    <rect x="430" y="85" width="340" height="330" rx="12" fill="white" stroke="#10b981" stroke-width="2"/>
+  </g>
+  <rect x="430" y="85" width="340" height="40" rx="12" fill="url(#greenG)"/>
+  <rect x="430" y="105" width="340" height="20" fill="url(#greenG)"/>
+  <text x="600" y="110" text-anchor="middle" font-size="15" font-weight="700" fill="white">Grill Me</text>
+
+  <text x="450" y="155" font-size="12" font-weight="600" fill="#047857">默认目标</text>
+  <text x="570" y="155" font-size="12" fill="#475569">先达成共识，plan 是副产物</text>
+  <line x1="450" y1="170" x2="750" y2="170" stroke="#e2e8f0" stroke-width="1"/>
+
+  <text x="450" y="200" font-size="12" font-weight="600" fill="#047857">提问数量</text>
+  <text x="570" y="200" font-size="12" fill="#475569">20 ~ 100 个</text>
+  <line x1="450" y1="215" x2="750" y2="215" stroke="#e2e8f0" stroke-width="1"/>
+
+  <text x="450" y="245" font-size="12" font-weight="600" fill="#047857">提问形式</text>
+  <text x="570" y="245" font-size="12" fill="#475569">一次问一题</text>
+  <line x1="450" y1="260" x2="750" y2="260" stroke="#e2e8f0" stroke-width="1"/>
+
+  <text x="450" y="290" font-size="12" font-weight="600" fill="#047857">推荐答案</text>
+  <text x="570" y="290" font-size="12" fill="#475569">是，每题都推荐</text>
+  <line x1="450" y1="305" x2="750" y2="305" stroke="#e2e8f0" stroke-width="1"/>
+
+  <text x="450" y="335" font-size="12" font-weight="600" fill="#047857">探索代码库</text>
+  <text x="570" y="335" font-size="12" fill="#475569">主动（明确指令）</text>
+  <line x1="450" y1="350" x2="750" y2="350" stroke="#e2e8f0" stroke-width="1"/>
+
+  <text x="600" y="385" text-anchor="middle" font-size="11" fill="#64748b">适合：还没想清楚，需要被逼着想清楚</text>
+
+  <!-- ===== Bottom tip ===== -->
+  <rect x="220" y="435" width="360" height="28" rx="14" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1"/>
+  <text x="400" y="453" text-anchor="middle" font-size="11" fill="#15803d">💡 最大的差异是「急不急」——把想清楚当主任务</text>
+</svg>

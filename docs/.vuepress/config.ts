@@ -140,6 +140,7 @@ export default defineUserConfig({
             items: [
               'sdd/openspec-guide.md',
               'sdd/superpowers-guide.md',
+              'sdd/grill-me-guide.md',
             ],
           },
           {

@@ -20,6 +20,20 @@ icon: mdi:timeline-clock-outline
 <div class="timeline-item">
   <div class="timeline-item__dot"></div>
   <div class="timeline-item__content">
+    <div class="timeline-item__date">8 月 24 日</div>
+    <div class="timeline-item__entries">
+      <div class="timeline-entry">
+        <span class="timeline-entry__tag timeline-entry__tag--ai">AI学习</span>
+        <a class="timeline-entry__link" href="/ai-study/grill-me-guide/">新增《Grill Me 技能详解》</a>
+        <span class="timeline-entry__desc">—— Matt Pocock 最火的 AI Skill：7 行 markdown 让 AI 在写代码前连续拷问你的计划、设计与边界条件，直到双方对同一 design concept 达成共识。拆解 design tree 理论依据、Skill 全文逐句解读、与 Plan Mode 差异对比、使用边界决策与进阶用法</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="timeline-item">
+  <div class="timeline-item__dot"></div>
+  <div class="timeline-item__content">
     <div class="timeline-item__date">8 月 23 日</div>
     <div class="timeline-item__entries">
       <div class="timeline-entry">

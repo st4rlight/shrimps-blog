@@ -13,36 +13,25 @@ permalink: /ai-study/grill-me-guide/
 
 # Grill Me 技能详解
 
-用 AI 写代码，最怕的不是写不出来，而是写出来的和你想的不一样。
+> 用 AI 写代码，最怕的不是写不出来，而是写出来的和你想的不一样。`Grill Me` 让 Claude Code 在动手前先拷问你 20~100 个问题，把脑子里的模糊需求逼清楚，直到你和 AI 对同一个设计概念达成共识。适合所有用 AI 编程、但被「需求没对齐 AI 就写完代码」折磨过的人。
 
-你脑子里以为很清楚的需求，让 AI 一写出来——完全不是那回事。Matt Pocock 在演讲里描述过这种体感：让 AI 写个功能，跑起来一看不对，改一下更差，再改直接变成垃圾代码。问题不在 AI 不会写代码，而在 **需求还没对齐，AI 已经把代码写完了**。
+---
 
-`Grill Me` 就是冲着这个问题来的：它让 Claude Code 在动手前先拷问你 20~100 个问题，把脑子里的模糊需求逼清楚，直到你和 AI 对同一个设计概念达成共识。
+## 背景与动机
 
-这篇文章聚焦四件事：
+让 AI 写个功能，跑起来一看不对，改一下更差，再改直接变成垃圾代码——这是很多人用 AI 编程的真实体感。问题不在 AI 不会写代码，而在 **需求还没对齐，AI 已经把代码写完了**。
 
-- `Grill Me` 是什么，它背后的理论依据
-- 7 行 Skill 全文逐句拆解
-- 怎么装、怎么用、配合哪些 skill 更佳
-- 和 Plan Mode 的差异、使用边界与我的判断
+你脑子里以为很清楚的需求，让 AI 一写出来——完全不是那回事。`Grill Me` 就是冲着这个问题来的。
 
-## 它是什么
+## 核心概念：design concept 与 design tree
 
-**Grill Me 是一个用于需求澄清和方案拷问的 AI Skill**：它让 Claude Code 在写代码前连续追问你的计划、设计和边界条件，直到你和 AI 对同一个 design concept 达成共识。
-
-它解决的不是「AI 代码写得不够快」，而是另一个更常见的问题：**需求还没对齐，AI 已经把代码写完了**。
-
-> 没有人确切知道自己想要什么。
->
-> —— David Thomas & Andrew Hunt《程序员修炼之道》
-
-### 为什么会这样：design concept 跑偏
-
-Matt 引用 Frederick P. Brooks 在《The Design of Design》里的 **design concept**（设计概念）：
+Grill Me 的理论基础来自 Frederick P. Brooks 在《The Design of Design》里的 **design concept**（设计概念）：
 
 > 当多人合作设计一个东西时，你们之间会有一个**正在被造出来的东西**——它在脑子里飘着，是个隐形的「关于这个东西的理论」。它不是 asset，不是塞进 markdown 文件的资产，而是看不见的共识。
 
 AI 一上来就动手写代码，意味着它根本没和你共享同一个 design concept。代码写出来错的不是语法，是**前提**。
+
+![Grill Me 工作原理总览](/ai-study/sdd/grill-me-guide/grill-me-overview.svg)
 
 要修这个问题，得在动手前先做 design concept 对齐。Brooks 给的工具叫 **design tree**——把一个决策拆成多分支，每个分支再拆。你不能跳过上游决策直接做下游决策，否则上游一变下游全要重做。
 
@@ -78,7 +67,7 @@ codebase instead.
 
 7 行内容，但每一句都对应一个具体的 LLM 行为偏差。
 
-## 怎么装、怎么用
+### 怎么装、怎么用
 
 **安装**：
 
@@ -103,9 +92,11 @@ npx skills@latest add mattpocock/skills
 
 Matt 在《5 Agent Skills I Use Every Day》里给了几个具体数字：
 
-- **新增视频编辑器功能** —— 16 个问题就达成共识
-- **复杂功能** —— 30~50 个问题
-- **极端复杂的** —— 100 个问题，session 长达 45 分钟
+| 功能复杂度 | 问题数量 | 耗时 |
+|---|---|---|
+| 新增视频编辑器功能 | 16 个 | 达成共识 |
+| 复杂功能 | 30~50 个 | — |
+| 极端复杂的功能 | 100 个 | session 长达 45 分钟 |
 
 问题样例（从 Matt 的视频/博文还原）：
 
@@ -122,6 +113,8 @@ Claude Code 自带 `plan mode`（按 Shift+Tab 进入）。表面看上去和 gr
 
 > 别杠我，但我个人认为这比我用的工具（Claude Code）自带的 plan mode 更好。Plan mode 太急着产出 asset 了。它真的就是想赶紧出一个 plan 然后开干。我觉得先达成共享设计概念会舒服得多。
 
+![Plan Mode vs Grill Me 对比](/ai-study/sdd/grill-me-guide/grill-vs-plan-mode.svg)
+
 | 维度 | Plan Mode | Grill Me |
 |---|---|---|
 | 默认目标 | 尽快产出可执行 plan | 先达成共识，plan 是副产物 |
@@ -133,33 +126,11 @@ Claude Code 自带 `plan mode`（按 Shift+Tab 进入）。表面看上去和 gr
 
 最大的实际差异是「**急不急**」。Plan mode 急着开干，grill-me 不急——它把「想清楚」当作主任务而不是序章。
 
-## 进阶用法
-
-### 1. 非编程场景
-
-`grill-me` 不绑定代码，纯产品决策对话也能用。Matt 自己用它做：
-
-- 课程大纲设计
-- 文章写作
-- 内部沟通文档
-
-只要你脑子里有个模糊的想法、想被逼着想清楚，就能用。
-
-### 2. 配合 `/to-prd`
-
-grill-me session 结束后，直接说 `/to-prd`，Claude 会把整段对话浓缩成结构化 PRD（含 user story、模块拆分、测试策略），并提交到你的 issue tracker。**关键点：不要在中间清 context**——to-prd 是从对话上下文里直接提取，不会再问你一遍。
-
-### 3. 配合 `/grill-with-docs`
-
-如果项目已经有 `CONTEXT.md`（领域语言）和 `docs/adr/`（架构决策），用 `/grill-with-docs` 替代 `/grill-me`。它会在拷问的同时**同步更新 CONTEXT.md**——决策一边做、文档一边更，不再有「文档永远过时」问题。
-
-### 4. 自定义提问深度
-
-如果你时间紧，可以在 `/grill-me` 之后直接补一句：「Limit to 10 questions, focus only on architecture decisions.」 它会按你的限制收敛。但 Matt 不推荐——他认为「问得多」恰恰是这个 skill 的价值，砍掉就和 plan mode 差不多了。
-
-## 使用边界
+## 实践建议：什么时候该用
 
 Grill Me 的价值来自「提前暴露决策树」，所以它并不是越多用越好。判断标准很简单：**如果这个任务失败后的返工成本很低，就不要用；如果失败后会牵连产品逻辑、数据模型、权限边界或用户流程，就应该先被拷问。**
+
+![Grill Me 使用决策](/ai-study/sdd/grill-me-guide/grill-me-guide.svg)
 
 | 任务类型 | 是否建议用 Grill Me | 原因 |
 |---|---|---|
@@ -169,28 +140,35 @@ Grill Me 的价值来自「提前暴露决策树」，所以它并不是越多�
 | 重构已有模块 | 强烈建议 | 需要先确认行为兼容性、迁移路径和回滚方案 |
 | 写 PRD、课程大纲、内部方案 | 建议 | 它能把隐含假设问出来，再交给后续写作或 PRD skill 沉淀 |
 
+### 第一次用的小技巧
+
 第一次跑会觉得烦。习惯了「一句话生成 500 行」的人，第一次被 AI 反问 30 次会觉得在浪费时间。Matt 的建议是**忍住前 5 题**——前 5 题往往会暴露你自己都没想清楚的事。
 
 如果 AI 问到你不在乎的技术细节，直接回「your call」「你定」即可。Grill Me 的目的不是逼你亲自决定所有事，而是把真正重要的上游决策暴露出来。
 
-## 我的使用判断
+### 进阶用法
 
-我会把 Grill Me 当成 AI 编程里的「刹车系统」，不是「加速器」。它表面上让你慢下来，多花 20~45 分钟回答问题；但真正节省的是后面 review、返工和推倒重来的时间。
+**非编程场景**：`grill-me` 不绑定代码，纯产品决策对话也能用。Matt 自己用它做课程大纲设计、文章写作、内部沟通文档。
 
-我不建议把它包装成万能 prompt。它真正厉害的地方不是"问很多问题"，而是让 AI 承认：**在共享设计概念没有形成之前，马上写代码是一种过早行动。**
+**配合 `/to-prd`**：grill-me session 结束后，直接说 `/to-prd`，Claude 会把整段对话浓缩成结构化 PRD（含 user story、模块拆分、测试策略），并提交到你的 issue tracker。**关键点：不要在中间清 context**——to-prd 是从对话上下文里直接提取，不会再问你一遍。
 
-## 这个 Skill 为什么火
+**配合 `/grill-with-docs`**：如果项目已经有 `CONTEXT.md`（领域语言）和 `docs/adr/`（架构决策），用 `/grill-with-docs` 替代 `/grill-me`。它会在拷问的同时**同步更新 CONTEXT.md**——决策一边做、文档一边更，不再有「文档永远过时」问题。
 
-`/grill-me` 是 Matt 整套 skill 里**最常被截图转发**的一个。原因不复杂：
+**自定义提问深度**：时间紧的话可以在 `/grill-me` 之后补一句：「Limit to 10 questions, focus only on architecture decisions.」 它会按你的限制收敛。但 Matt 不推荐——他认为「问得多」恰恰是这个 skill 的价值，砍掉就和 plan mode 差不多了。
 
-1. **极度极简**：7 行 markdown，复制粘贴就用
+## 总结
+
+`Grill Me` 是 AI 编程里的「刹车系统」，不是「加速器」。它表面上让你慢下来，多花 20~45 分钟回答问题；但真正节省的是后面 review、返工和推倒重来的时间。
+
+它值得学的三个原因：
+
+1. **极度极简**：7 行 markdown，复制粘贴就用，成了「skill 不一定要长」的最佳论据
 2. **效果立竿见影**：第一次跑就能感受到 AI 的「问题密度」变化
 3. **可移植**：不依赖 Claude Code，Codex、Cursor、Aider 都能用
-4. **自带反 LLM 默认行为**：每个词都在反一个具体的 LLM 偏差，工程审美高
 
-它的成功也成了「**skill 不一定要长**」这件事的最佳论据。
+它真正厉害的地方不是"问很多问题"，而是让 AI 承认：**在共享设计概念没有形成之前，马上写代码是一种过早行动。**
 
-## 参考资源
+进一步阅读：
 
 - [My Grill Me Skill Has Gone Viral](https://www.aihero.dev/my-grill-me-skill-has-gone-viral) —— Matt 本人写的爆火原因复盘，讲了它和 rubber-duck debugging 的渊源
 - [grill-me Skill 源文件](https://github.com/mattpocock/skills/blob/main/skills/productivity/grill-me/SKILL.md) —— 真实的 SKILL.md，7 行 markdown
