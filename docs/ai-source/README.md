@@ -25,6 +25,13 @@ permalink: /ai-source/
 
 - [DeepAgents 源码分析总览](./deep-agents/deep-agents-overview.md)
 
+### DeepSeek Harness源码分析
+
+这一部分主要记录 `DeepSeek-V3` 推理框架的源码分析，从插件式架构设计、MLA 注意力、MoE 路由到推理引擎运行时的系统性拆解。
+
+- [DeepSeek-V3 底层插件式框架技术分析](./deepseek-harness/deepseek-v3-plugin-framework-analysis.md) — ModelArgs 配置驱动、MLA 低秩压缩、DeepSeekMoE 路由、FP8 Triton Kernel、分布式并行抽象
+- [DeepSeek Harness 推理引擎技术实现分析](./deepseek-harness/deepseek-harness-inference-engine-analysis.md) — Prefill/Decode 推理循环、KV Cache 生命周期、Gumbel-Max 采样、分布式 NCCL 通信
+
 ### OpenClaw源码分析
 
 这一部分主要记录 `OpenClaw` 开源 AI 编程工具的源码分析，从架构设计、核心模块到关键机制的系统性拆解。
@@ -45,4 +52,5 @@ permalink: /ai-source/
 
 - `Claude Code` 的更多机制分析
 - `DeepAgents` 的更多源码分析
+- `DeepSeek` V3.1/V4 异步架构与 DSA 注意力的新特性分析
 - 其他 AI 编程工具的源码分析
