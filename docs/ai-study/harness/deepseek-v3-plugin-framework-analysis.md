@@ -8,7 +8,7 @@ tags:
   - 源码分析
 excerpt: 从 ModelArgs 配置驱动、模块化组件设计、可切换 Kernel 策略到分布式并行抽象，系统拆解 DeepSeek-V3 inference 框架的插件式架构设计哲学。
 createTime: 2026/10/02 14:00:00
-permalink: /ai-source/deepseek-v3-plugin-framework-analysis/
+permalink: /ai-study/deepseek-v3-plugin-framework-analysis/
 ---
 
 # DeepSeek-V3 底层插件式框架技术分析
@@ -31,7 +31,7 @@ DeepSeek-V3 是一个 671B 总参数量、37B 激活参数的 Mixture-of-Experts
 
 ## 框架总览
 
-![DeepSeek-V3 插件式框架总览](/ai-source/deepseek-harness/plugin-framework-overview.svg)
+![DeepSeek-V3 插件式框架总览](/ai-study/harness/plugin-framework-overview.svg)
 
 整个 inference 框架由四个文件构成，每个文件承担一个清晰的职责：
 
@@ -180,7 +180,7 @@ MLA 是 DeepSeek-V2 引入、V3 继续沿用的核心注意力机制，通过**�
 
 ### 核心思想
 
-![MLA 低秩压缩机制](/ai-source/deepseek-harness/mla-compression-mechanism.svg)
+![MLA 低秩压缩机制](/ai-study/harness/mla-compression-mechanism.svg)
 
 传统 MHA 需要缓存每个 head 的 K 和 V（维度 × 头数 × 序列长度），而 MLA 只缓存**压缩后的潜在向量** `kv_cache`（维度 `kv_lora_rank=512`）和解耦的 RoPE 部分 `pe_cache`（维度 `qk_rope_head_dim=64`）。
 

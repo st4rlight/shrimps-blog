@@ -23,13 +23,13 @@ icon: mdi:timeline-clock-outline
     <div class="timeline-item__date">10 月 2 日</div>
     <div class="timeline-item__entries">
       <div class="timeline-entry">
-        <span class="timeline-entry__tag timeline-entry__tag--ai">AI源码</span>
-        <a class="timeline-entry__link" href="/ai-source/deepseek-v3-plugin-framework-analysis/">新增《DeepSeek-V3 底层插件式框架技术分析》</a>
+        <span class="timeline-entry__tag timeline-entry__tag--ai">AI学习</span>
+        <a class="timeline-entry__link" href="/ai-study/deepseek-v3-plugin-framework-analysis/">新增《DeepSeek-V3 底层插件式框架技术分析》</a>
         <span class="timeline-entry__desc">—— 从 ModelArgs 配置驱动、MLA 低秩压缩注意力、DeepSeekMoE 稀疏路由、可切换 FP8/BF16 Kernel 策略到分布式并行抽象，系统拆解 DeepSeek-V3 inference 框架如何用约 1300 行代码支撑 671B MoE 模型的高效推理。涵盖 absorb 模式下 KV Cache 压缩近 57× 的机制、auxiliary-loss-free 路由策略与 Triton autotune 自动调优</span>
       </div>
       <div class="timeline-entry">
-        <span class="timeline-entry__tag timeline-entry__tag--ai">AI源码</span>
-        <a class="timeline-entry__link" href="/ai-source/deepseek-harness-inference-engine-analysis/">新增《DeepSeek Harness 推理引擎技术实现分析》</a>
+        <span class="timeline-entry__tag timeline-entry__tag--ai">AI学习</span>
+        <a class="timeline-entry__link" href="/ai-study/deepseek-harness-inference-engine-analysis/">新增《DeepSeek Harness 推理引擎技术实现分析》</a>
         <span class="timeline-entry__desc">—— 从推理循环架构（Prefill + Decode 两阶段）、KV Cache 生命周期与位置追踪、Gumbel-Max 采样技巧、分布式 NCCL 通信模式到权重分片加载与 Triton Kernel 预热，逐行拆解 generate.py 的运行时技术实现，并对比 vLLM / SGLang / TensorRT-LLM 的生产级特性差异与选型建议</span>
       </div>
     </div>

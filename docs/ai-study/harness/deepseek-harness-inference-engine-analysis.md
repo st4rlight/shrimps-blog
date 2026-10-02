@@ -8,7 +8,7 @@ tags:
   - 源码分析
 excerpt: 从推理循环架构、KV Cache 生命周期、采样策略到分布式初始化与权重加载，系统拆解 DeepSeek-V3 Harness 推理引擎的运行时技术实现。
 createTime: 2026/10/02 14:30:00
-permalink: /ai-source/deepseek-harness-inference-engine-analysis/
+permalink: /ai-study/deepseek-harness-inference-engine-analysis/
 ---
 
 # DeepSeek Harness 推理引擎技术实现分析
@@ -39,7 +39,7 @@ DeepSeek-V3 的 `generate.py` 只有不到 180 行，却完整实现了：
 
 ## 推理引擎总览
 
-![Harness 推理引擎执行流程](/ai-source/deepseek-harness/inference-engine-flow.svg)
+![Harness 推理引擎执行流程](/ai-study/harness/inference-engine-flow.svg)
 
 整个推理引擎的执行分为三个阶段：
 
@@ -565,7 +565,7 @@ DeepSeek Harness 是一个**参考实现**（reference implementation），它�
 
 ## 实践建议
 
-![推理引擎选型决策](/ai-source/deepseek-harness/inference-guide.svg)
+![推理引擎选型决策](/ai-study/harness/inference-guide.svg)
 
 | 场景 | 推荐方案 | 原因 |
 |------|----------|------|

@@ -149,6 +149,8 @@ export default defineUserConfig({
             collapsed: false,
             items: [
               'harness/dewu-harness-practice.md',
+              'harness/deepseek-v3-plugin-framework-analysis.md',
+              'harness/deepseek-harness-inference-engine-analysis.md',
             ],
           },
           {
@@ -202,15 +204,6 @@ export default defineUserConfig({
             collapsed: false,
             items: [
               'deep-agents/deep-agents-overview.md',
-            ],
-          },
-          {
-            text: 'DeepSeek Harness源码分析',
-            link: '/ai-source/',
-            collapsed: false,
-            items: [
-              'deepseek-harness/deepseek-v3-plugin-framework-analysis.md',
-              'deepseek-harness/deepseek-harness-inference-engine-analysis.md',
             ],
           },
           {
