@@ -205,6 +205,15 @@ export default defineUserConfig({
             ],
           },
           {
+            text: 'DeepSeek Harness源码分析',
+            link: '/ai-source/',
+            collapsed: false,
+            items: [
+              'deepseek-harness/deepseek-v3-plugin-framework-analysis.md',
+              'deepseek-harness/deepseek-harness-inference-engine-analysis.md',
+            ],
+          },
+          {
             text: 'OpenClaw源码分析',
             link: '/ai-source/',
             collapsed: false,

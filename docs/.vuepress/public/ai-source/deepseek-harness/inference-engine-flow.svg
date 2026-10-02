@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 560" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <linearGradient id="blueG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="emeraldG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#34d399;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="amberG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.12"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto" preserveAspectRatio="xMidYMid meet">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/>
+    </marker>
+  </defs>
+
+  <rect width="820" height="560" fill="#f8fafc" rx="12"/>
+
+  <text x="410" y="30" font-size="16" font-weight="600" fill="#1e293b" text-anchor="middle">Harness 推理引擎执行流程</text>
+
+  <!-- 初始化阶段 -->
+  <g filter="url(#shadow)">
+    <rect x="40" y="55" width="740" height="115" rx="8" fill="#dbeafe" stroke="#3b82f6" stroke-width="2"/>
+    <text x="60" y="78" font-size="11" font-weight="600" fill="#1d4ed8" letter-spacing="1.5">PHASE 1: INITIALIZATION (main)</text>
+  </g>
+  <g>
+    <rect x="55" y="90" width="130" height="30" rx="6" fill="#ffffff" stroke="#93c5fd" stroke-width="1"/>
+    <text x="120" y="109" font-size="10" fill="#374151" text-anchor="middle">torchrun 注入环境变量</text>
+    <rect x="200" y="90" width="130" height="30" rx="6" fill="#ffffff" stroke="#93c5fd" stroke-width="1"/>
+    <text x="265" y="109" font-size="10" fill="#374151" text-anchor="middle">NCCL init_process_group</text>
+    <rect x="345" y="90" width="130" height="30" rx="6" fill="#ffffff" stroke="#93c5fd" stroke-width="1"/>
+    <text x="410" y="109" font-size="10" fill="#374151" text-anchor="middle">Transformer(args) 构建</text>
+    <rect x="490" y="90" width="130" height="30" rx="6" fill="#fef3c7" stroke="#f59e0b" stroke-width="1"/>
+    <text x="555" y="109" font-size="10" fill="#92400e" text-anchor="middle">预热生成 (Kernel 编译)</text>
+    <rect x="635" y="90" width="130" height="30" rx="6" fill="#ffffff" stroke="#93c5fd" stroke-width="1"/>
+    <text x="700" y="109" font-size="10" fill="#374151" text-anchor="middle">load_model (按 rank 分片)</text>
+  </g>
+  <text x="60" y="145" font-size="10" fill="#64748b">set_device · set_default_dtype(bf16) · manual_seed(965)</text>
+  <text x="60" y="160" font-size="10" fill="#64748b">权重文件: model{rank}-mp{world_size}.safetensors</text>
+
+  <line x1="410" y1="170" x2="410" y2="188" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- 推理循环 -->
+  <g filter="url(#shadow)">
+    <rect x="40" y="190" width="740" height="220" rx="8" fill="#d1fae5" stroke="#10b981" stroke-width="2"/>
+    <text x="60" y="213" font-size="11" font-weight="600" fill="#047857" letter-spacing="1.5">PHASE 2: GENERATE LOOP (generate)</text>
+  </g>
+
+  <!-- Prefill 阶段 -->
+  <g>
+    <rect x="60" y="225" width="320" height="105" rx="8" fill="#ffffff" stroke="#6ee7b7" stroke-width="2"/>
+    <text x="80" y="245" font-size="12" font-weight="600" fill="#047857">Prefill (第 1 次迭代)</text>
+    <text x="80" y="265" font-size="10" fill="#374151">prev_pos=0, cur_pos=N</text>
+    <text x="80" y="282" font-size="10" fill="#374151">输入: tokens[:, 0:N] (全部 prompt)</text>
+    <text x="80" y="299" font-size="10" fill="#374151">KV Cache 写入 [0, N)</text>
+    <text x="80" y="316" font-size="10" fill="#f59e0b" font-weight="600">计算密集型 — 矩阵乘法 N×dim×dim</text>
+  </g>
+
+  <!-- Decode 阶段 -->
+  <g>
+    <rect x="420" y="225" width="340" height="105" rx="8" fill="#ffffff" stroke="#6ee7b7" stroke-width="2"/>
+    <text x="440" y="245" font-size="12" font-weight="600" fill="#047857">Decode (后续每次迭代)</text>
+    <text x="440" y="265" font-size="10" fill="#374151">prev_pos=cur-1, cur_pos=cur</text>
+    <text x="440" y="282" font-size="10" fill="#374151">输入: tokens[:, prev_pos:cur_pos] (1 token)</text>
+    <text x="440" y="299" font-size="10" fill="#374151">KV Cache 增量写入 [cur-1, cur)</text>
+    <text x="440" y="316" font-size="10" fill="#f59e0b" font-weight="600">访存密集型 — 权重加载是瓶颈</text>
+  </g>
+
+  <!-- 循环流程 -->
+  <g>
+    <rect x="60" y="345" width="110" height="28" rx="6" fill="#dbeafe" stroke="#3b82f6" stroke-width="1"/>
+    <text x="115" y="363" font-size="10" fill="#1d4ed8" text-anchor="middle">model.forward()</text>
+    <rect x="185" y="345" width="110" height="28" rx="6" fill="#fef3c7" stroke="#f59e0b" stroke-width="1"/>
+    <text x="240" y="363" font-size="10" fill="#92400e" text-anchor="middle">sample() / argmax</text>
+    <rect x="310" y="345" width="110" height="28" rx="6" fill="#fce7f3" stroke="#ec4899" stroke-width="1"/>
+    <text x="365" y="363" font-size="10" fill="#9d174d" text-anchor="middle">prompt_mask 检查</text>
+    <rect x="435" y="345" width="110" height="28" rx="6" fill="#dcfce7" stroke="#10b981" stroke-width="1"/>
+    <text x="490" y="363" font-size="10" fill="#047857" text-anchor="middle">终止判断 (eos)</text>
+    <rect x="560" y="345" width="110" height="28" rx="6" fill="#ede9fe" stroke="#8b5cf6" stroke-width="1"/>
+    <text x="615" y="363" font-size="10" fill="#5b21b6" text-anchor="middle">prev_pos = cur_pos</text>
+  </g>
+
+  <line x1="615" y1="373" x2="115" y2="373" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arrow)"/>
+  <text x="365" y="390" font-size="9" fill="#94a3b8" text-anchor="middle">循环直到 finished.all() 或达到 total_len</text>
+
+  <line x1="410" y1="410" x2="410" y2="428" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- 采样阶段 -->
+  <g filter="url(#shadow)">
+    <rect x="40" y="430" width="740" height="55" rx="8" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+    <text x="60" y="453" font-size="11" font-weight="600" fill="#92400e" letter-spacing="1.5">PHASE 3: SAMPLING (sample)</text>
+    <text x="60" y="472" font-size="11" fill="#374151">温度缩放 → softmax → Gumbel-Max 采样 (probs / Exp(1) → argmax)</text>
+  </g>
+
+  <!-- 结果输出 -->
+  <g filter="url(#shadow)">
+    <rect x="40" y="500" width="740" height="45" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+    <text x="60" y="522" font-size="11" font-weight="600" fill="#475569" letter-spacing="1.5">OUTPUT</text>
+    <text x="60" y="538" font-size="11" fill="#374151">截断到 EOS · tokenizer.decode · 打印 / 返回 completion_tokens</text>
+  </g>
+</svg>

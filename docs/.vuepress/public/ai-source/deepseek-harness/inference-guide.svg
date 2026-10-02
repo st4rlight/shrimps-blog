@@ -1,0 +1,108 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 420" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.12"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto" preserveAspectRatio="xMidYMid meet">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/>
+    </marker>
+  </defs>
+
+  <rect width="820" height="420" fill="#f8fafc" rx="12"/>
+
+  <text x="410" y="30" font-size="16" font-weight="600" fill="#1e293b" text-anchor="middle">推理引擎选型决策</text>
+
+  <!-- 决策树根节点 -->
+  <g filter="url(#shadow)">
+    <rect x="280" y="50" width="260" height="45" rx="8" fill="#dbeafe" stroke="#3b82f6" stroke-width="2"/>
+    <text x="410" y="78" font-size="13" font-weight="600" fill="#1d4ed8" text-anchor="middle">你的目标是什么？</text>
+  </g>
+
+  <!-- 分支1: 学习/验证 -->
+  <line x1="340" y1="95" x2="150" y2="120" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="220" y="110" font-size="10" fill="#64748b">学习 MLA/MoE 原理</text>
+  <g filter="url(#shadow)">
+    <rect x="40" y="125" width="220" height="60" rx="8" fill="#ede9fe" stroke="#8b5cf6" stroke-width="2"/>
+    <text x="60" y="148" font-size="12" font-weight="600" fill="#5b21b6">DeepSeek Harness</text>
+    <text x="60" y="166" font-size="10" fill="#374151">代码最简洁 (~1300 行)</text>
+    <text x="60" y="180" font-size="10" fill="#374151">逐行理解，最小依赖</text>
+  </g>
+
+  <!-- 分支2: 快速验证 -->
+  <line x1="340" y1="95" x2="410" y2="120" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="380" y="110" font-size="10" fill="#64748b">快速验证</text>
+  <g filter="url(#shadow)">
+    <rect x="300" y="125" width="220" height="60" rx="8" fill="#ede9fe" stroke="#8b5cf6" stroke-width="2"/>
+    <text x="320" y="148" font-size="12" font-weight="600" fill="#5b21b6">DeepSeek Harness</text>
+    <text x="320" y="166" font-size="10" fill="#374151">直接 torchrun 启动</text>
+    <text x="320" y="180" font-size="10" fill="#374151">无需额外部署组件</text>
+  </g>
+
+  <!-- 分支3: 生产服务化 -->
+  <line x1="480" y1="95" x2="650" y2="120" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="560" y="110" font-size="10" fill="#64748b">生产部署</text>
+  <g filter="url(#shadow)">
+    <rect x="560" y="125" width="220" height="60" rx="8" fill="#d1fae5" stroke="#10b981" stroke-width="2"/>
+    <text x="580" y="148" font-size="12" font-weight="600" fill="#047857">SGLang</text>
+    <text x="580" y="166" font-size="10" fill="#374151">Continuous batching</text>
+    <text x="580" y="180" font-size="10" fill="#374151">+ Prefix cache 支持</text>
+  </g>
+
+  <!-- 二级决策：生产分支 -->
+  <line x1="670" y1="185" x2="670" y2="210" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="680" y="202" font-size="10" fill="#64748b">高并发？</text>
+  <g filter="url(#shadow)">
+    <rect x="440" y="215" width="220" height="55" rx="8" fill="#ffffff" stroke="#93c5fd" stroke-width="1.5"/>
+    <text x="460" y="238" font-size="12" font-weight="600" fill="#3b82f6">vLLM</text>
+    <text x="460" y="256" font-size="10" fill="#374151">PagedAttention</text>
+    <text x="460" y="268" font-size="10" fill="#374151">生态最成熟</text>
+  </g>
+  <g filter="url(#shadow)">
+    <rect x="680" y="215" width="120" height="55" rx="8" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+    <text x="700" y="238" font-size="11" font-weight="600" fill="#92400e">TensorRT-LLM</text>
+    <text x="700" y="256" font-size="10" fill="#374151">极致延迟</text>
+    <text x="700" y="268" font-size="10" fill="#374151">INT4/8 量化</text>
+  </g>
+
+  <line x1="620" y1="185" x2="550" y2="210" stroke="#94a3b8" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arrow)"/>
+  <line x1="720" y1="185" x2="740" y2="210" stroke="#94a3b8" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arrow)"/>
+
+  <!-- 非 NVIDIA 硬件 -->
+  <line x1="150" y1="185" x2="150" y2="210" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arrow)"/>
+  <text x="170" y="202" font-size="10" fill="#64748b">非 NVIDIA？</text>
+  <g filter="url(#shadow)">
+    <rect x="40" y="215" width="220" height="55" rx="8" fill="#fce7f3" stroke="#ec4899" stroke-width="1.5"/>
+    <text x="60" y="238" font-size="12" font-weight="600" fill="#9d174d">LMDeploy</text>
+    <text x="60" y="256" font-size="10" fill="#374151">支持 AMD GPU / Ascend NPU</text>
+    <text x="60" y="268" font-size="10" fill="#374151">国产硬件友好</text>
+  </g>
+
+  <!-- 底部对比表 -->
+  <text x="40" y="305" font-size="11" font-weight="600" fill="#475569" letter-spacing="1">特性对比</text>
+  <g font-size="10" fill="#374151">
+    <rect x="40" y="315" width="740" height="25" fill="#f1f5f9" rx="4"/>
+    <text x="60" y="332" font-weight="600" fill="#1e293b">引擎</text>
+    <text x="230" y="332" font-weight="600" fill="#1e293b">Continuous Batching</text>
+    <text x="400" y="332" font-weight="600" fill="#1e293b">Prefix Cache</text>
+    <text x="540" y="332" font-weight="600" fill="#1e293b">FP8</text>
+    <text x="640" y="332" font-weight="600" fill="#1e293b">MLA 原生</text>
+
+    <text x="60" y="355">Harness</text>
+    <text x="230" y="355" fill="#ef4444">❌</text>
+    <text x="400" y="355" fill="#ef4444">❌</text>
+    <text x="540" y="355" fill="#10b981">✅ (Triton)</text>
+    <text x="640" y="355" fill="#10b981">✅</text>
+
+    <text x="60" y="375">SGLang / vLLM</text>
+    <text x="230" y="375" fill="#10b981">✅</text>
+    <text x="400" y="375" fill="#10b981">✅</text>
+    <text x="540" y="375" fill="#10b981">✅</text>
+    <text x="640" y="375" fill="#10b981">✅</text>
+
+    <text x="60" y="395">TensorRT-LLM</text>
+    <text x="230" y="395" fill="#10b981">✅</text>
+    <text x="400" y="395" fill="#10b981">✅</text>
+    <text x="540" y="395" fill="#10b981">✅ (INT4/8)</text>
+    <text x="640" y="395" fill="#10b981">✅</text>
+  </g>
+</svg>

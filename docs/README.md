@@ -53,6 +53,24 @@ config:
 <div class="home-timeline__item">
   <div class="home-timeline__dot"></div>
   <div class="home-timeline__body">
+    <span class="home-timeline__date">10-02</span>
+    <span class="home-timeline__tag home-timeline__tag--ai">AI源码</span>
+    <a href="/ai-source/deepseek-v3-plugin-framework-analysis/">新增《DeepSeek-V3 底层插件式框架技术分析》</a>
+  </div>
+</div>
+
+<div class="home-timeline__item">
+  <div class="home-timeline__dot"></div>
+  <div class="home-timeline__body">
+    <span class="home-timeline__date">10-02</span>
+    <span class="home-timeline__tag home-timeline__tag--ai">AI源码</span>
+    <a href="/ai-source/deepseek-harness-inference-engine-analysis/">新增《DeepSeek Harness 推理引擎技术实现分析》</a>
+  </div>
+</div>
+
+<div class="home-timeline__item">
+  <div class="home-timeline__dot"></div>
+  <div class="home-timeline__body">
     <span class="home-timeline__date">08-23</span>
     <span class="home-timeline__tag home-timeline__tag--commercial">商业技术体系</span>
     <a href="/commercial-tech/core-source-analysis/rocketmq-nameserver/">新增《RocketMQ NameServer 架构与源码深度解析》</a>
