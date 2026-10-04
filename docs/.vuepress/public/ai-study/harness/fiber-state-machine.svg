@@ -1,0 +1,157 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 540" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <linearGradient id="blueG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="violetG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#a78bfa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="emeraldG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#34d399;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="amberG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="redG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#f87171;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ef4444;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.12"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto" preserveAspectRatio="xMidYMid meet">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/>
+    </marker>
+    <marker id="arrowG" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto" preserveAspectRatio="xMidYMid meet">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#10b981"/>
+    </marker>
+    <marker id="arrowR" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto" preserveAspectRatio="xMidYMid meet">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#ef4444"/>
+    </marker>
+    <marker id="arrowY" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto" preserveAspectRatio="xMidYMid meet">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#f59e0b"/>
+    </marker>
+  </defs>
+
+  <!-- ===== Background ===== -->
+  <rect width="820" height="540" rx="12" fill="#f8fafc"/>
+
+  <!-- ===== Title ===== -->
+  <text x="410" y="32" text-anchor="middle" font-size="19" font-weight="700" fill="#1e293b">Fiber 生命周期状态机</text>
+  <text x="410" y="52" text-anchor="middle" font-size="12" fill="#94a3b8">六态状态机 · epoch 驱动转换 · inertia 链式最终一致性</text>
+
+  <!-- ===== Create node ===== -->
+  <g filter="url(#shadow)">
+    <rect x="335" y="72" width="150" height="36" rx="18" fill="url(#violetG)"/>
+  </g>
+  <text x="410" y="95" text-anchor="middle" font-size="12" font-weight="700" fill="white">Fiber 创建</text>
+
+  <!-- ===== PENDING state ===== -->
+  <g filter="url(#shadow)">
+    <rect x="335" y="130" width="150" height="48" rx="10" fill="#ede9fe" stroke="#8b5cf6" stroke-width="2"/>
+  </g>
+  <text x="410" y="152" text-anchor="middle" font-size="14" font-weight="700" fill="#5b21b6">PENDING</text>
+  <text x="410" y="169" text-anchor="middle" font-size="10" fill="#64748b">等待依赖服务就绪</text>
+
+  <!-- ===== LOADING state ===== -->
+  <g filter="url(#shadow)">
+    <rect x="335" y="205" width="150" height="48" rx="10" fill="#dbeafe" stroke="#3b82f6" stroke-width="2"/>
+  </g>
+  <text x="410" y="227" text-anchor="middle" font-size="14" font-weight="700" fill="#1d4ed8">LOADING</text>
+  <text x="410" y="244" text-anchor="middle" font-size="10" fill="#64748b">callback 正在执行</text>
+
+  <!-- ===== ACTIVE state ===== -->
+  <g filter="url(#shadow)">
+    <rect x="335" y="280" width="150" height="48" rx="10" fill="#d1fae5" stroke="#10b981" stroke-width="2"/>
+  </g>
+  <text x="410" y="302" text-anchor="middle" font-size="14" font-weight="700" fill="#047857">ACTIVE</text>
+  <text x="410" y="319" text-anchor="middle" font-size="10" fill="#64748b">已加载并正常运行</text>
+
+  <!-- ===== FAILED state ===== -->
+  <g filter="url(#shadow)">
+    <rect x="125" y="280" width="150" height="48" rx="10" fill="#fee2e2" stroke="#ef4444" stroke-width="2"/>
+  </g>
+  <text x="200" y="302" text-anchor="middle" font-size="14" font-weight="700" fill="#991b1b">FAILED</text>
+  <text x="200" y="319" text-anchor="middle" font-size="10" fill="#64748b">callback 或验证抛异常</text>
+
+  <!-- ===== UNLOADING state ===== -->
+  <g filter="url(#shadow)">
+    <rect x="335" y="355" width="150" height="48" rx="10" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+  </g>
+  <text x="410" y="377" text-anchor="middle" font-size="14" font-weight="700" fill="#92400e">UNLOADING</text>
+  <text x="410" y="394" text-anchor="middle" font-size="10" fill="#64748b">逆序执行 disposers</text>
+
+  <!-- ===== DISPOSED state ===== -->
+  <g filter="url(#shadow)">
+    <rect x="335" y="430" width="150" height="48" rx="10" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="2"/>
+  </g>
+  <text x="410" y="452" text-anchor="middle" font-size="14" font-weight="700" fill="#475569">DISPOSED</text>
+  <text x="410" y="469" text-anchor="middle" font-size="10" fill="#64748b">已销毁，不可重启</text>
+
+  <!-- ===== Arrows: main flow (vertical) ===== -->
+  <!-- Create → PENDING -->
+  <line x1="410" y1="108" x2="410" y2="126" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <!-- PENDING → LOADING (green: dependencies ready) -->
+  <line x1="410" y1="178" x2="410" y2="201" stroke="#10b981" stroke-width="2" marker-end="url(#arrowG)"/>
+  <text x="423" y="194" text-anchor="start" font-size="9" fill="#10b981" font-weight="600">依赖就绪</text>
+  <!-- LOADING → ACTIVE (green: callback success) -->
+  <line x1="410" y1="253" x2="410" y2="276" stroke="#10b981" stroke-width="2" marker-end="url(#arrowG)"/>
+  <text x="423" y="269" text-anchor="start" font-size="9" fill="#10b981" font-weight="600">执行成功</text>
+  <!-- LOADING → FAILED (red: exception) -->
+  <path d="M 335 229 L 279 229 L 279 304 L 279 304" stroke="#ef4444" stroke-width="1.5" fill="none" marker-end="url(#arrowR)"/>
+  <text x="290" y="222" text-anchor="middle" font-size="9" fill="#ef4444" font-weight="600">异常</text>
+  <!-- ACTIVE → UNLOADING (amber: dependency change / dispose) -->
+  <line x1="410" y1="328" x2="410" y2="351" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrowY)"/>
+  <text x="423" y="344" text-anchor="start" font-size="9" fill="#f59e0b" font-weight="600">依赖变更</text>
+  <!-- FAILED → UNLOADING (amber) -->
+  <path d="M 200 328 L 200 379 L 331 379" stroke="#f59e0b" stroke-width="1.5" fill="none" marker-end="url(#arrowY)"/>
+  <text x="250" y="372" text-anchor="middle" font-size="9" fill="#f59e0b" font-weight="600">dispose</text>
+  <!-- UNLOADING → LOADING (green: deps re-ready, reload) -->
+  <path d="M 490 379 L 540 379 L 540 229 L 489 229" stroke="#10b981" stroke-width="1.5" fill="none" marker-end="url(#arrowG)"/>
+  <text x="548" y="304" text-anchor="start" font-size="9" fill="#10b981" font-weight="600">依赖重新就绪</text>
+  <text x="548" y="318" text-anchor="start" font-size="9" fill="#10b981">→ reload</text>
+  <!-- UNLOADING → DISPOSED (gray: dispose complete) -->
+  <line x1="410" y1="403" x2="410" y2="426" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="423" y="419" text-anchor="start" font-size="9" fill="#64748b" font-weight="600">dispose 完成</text>
+
+  <!-- ===== Right side: epoch mechanism ===== -->
+  <rect x="585" y="130" width="200" height="130" rx="10" fill="#ffffff" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="605" y="152" font-size="12" font-weight="700" fill="#92400e">epoch 依赖指纹</text>
+  <text x="605" y="170" font-size="9" fill="#64748b">依赖 Fiber uid 拼接</text>
+  <rect x="605" y="178" width="160" height="20" rx="4" fill="#fef3c7" stroke="#fbbf24" stroke-width="1"/>
+  <text x="685" y="192" text-anchor="middle" font-size="9" font-family="monospace" fill="#92400e">":3:7:12"</text>
+  <text x="605" y="212" font-size="9" fill="#374151">epoch ≠ INACTIVE → LOADING</text>
+  <text x="605" y="226" font-size="9" fill="#374151">epoch = INACTIVE → UNLOADING</text>
+  <text x="605" y="244" font-size="9" fill="#374151">一次字符串比较 = O(1)</text>
+
+  <!-- Arrow from epoch to LOADING transition -->
+  <path d="M 585 199 L 489 199 L 489 205" stroke="#f59e0b" stroke-width="1" fill="none" stroke-dasharray="4,3" marker-end="url(#arrowY)"/>
+
+  <!-- ===== Left side: effect lifecycle ===== -->
+  <rect x="30" y="130" width="80" height="230" rx="10" fill="#ffffff" stroke="#8b5cf6" stroke-width="1.5"/>
+  <text x="70" y="152" text-anchor="middle" font-size="11" font-weight="700" fill="#5b21b6">effect</text>
+  <text x="70" y="168" text-anchor="middle" font-size="11" font-weight="700" fill="#5b21b6">副作用</text>
+  <text x="45" y="192" font-size="9" fill="#374151">注册：</text>
+  <text x="45" y="206" font-size="9" fill="#374151">ctx.on()</text>
+  <text x="45" y="220" font-size="9" fill="#374151">ctx.provide()</text>
+  <text x="45" y="234" font-size="9" fill="#374151">ctx.effect()</text>
+  <text x="45" y="258" font-size="9" fill="#374151">清理：</text>
+  <text x="45" y="272" font-size="9" fill="#374151">UNLOADING</text>
+  <text x="45" y="286" font-size="9" fill="#374151">→ 逆序执行</text>
+  <text x="45" y="300" font-size="9" fill="#374151">disposers</text>
+  <text x="45" y="324" font-size="9" fill="#374151">绑定：</text>
+  <text x="45" y="338" font-size="9" fill="#374151">DisposableList</text>
+  <text x="45" y="352" font-size="9" fill="#374151">O(1) 删除</text>
+
+  <!-- Arrow from effect to UNLOADING -->
+  <path d="M 110 295 L 330 379" stroke="#8b5cf6" stroke-width="1" fill="none" stroke-dasharray="4,3" marker-end="url(#arrow)"/>
+
+  <!-- ===== Bottom: state transition table ===== -->
+  <rect x="30" y="498" width="760" height="30" rx="6" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="50" y="517" font-size="10" fill="#475569" font-weight="600">转换路径：</text>
+  <text x="115" y="517" font-size="10" fill="#64748b">PENDING→LOADING(依赖就绪) · LOADING→ACTIVE(成功)/FAILED(异常) · ACTIVE/FAILED→UNLOADING(dispose) · UNLOADING→LOADING(reload)/DISPOSED(完成)</text>
+</svg>

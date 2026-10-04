@@ -1,0 +1,153 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 460" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <linearGradient id="blueG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="violetG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#a78bfa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="emeraldG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#34d399;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="amberG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="redG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#f87171;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ef4444;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.12"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto" preserveAspectRatio="xMidYMid meet">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/>
+    </marker>
+    <marker id="arrowG" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto" preserveAspectRatio="xMidYMid meet">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#10b981"/>
+    </marker>
+    <marker id="arrowR" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto" preserveAspectRatio="xMidYMid meet">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#ef4444"/>
+    </marker>
+  </defs>
+
+  <!-- ===== Background ===== -->
+  <rect width="820" height="460" rx="12" fill="#f8fafc"/>
+
+  <!-- ===== Title ===== -->
+  <text x="410" y="32" text-anchor="middle" font-size="19" font-weight="700" fill="#1e293b">Cordis 运行时机制总览</text>
+  <text x="410" y="52" text-anchor="middle" font-size="12" fill="#94a3b8">Fiber 生命周期 · Events 五种派发 · Logger 结构化日志 · epoch 依赖追踪</text>
+
+  <!-- ===== Five Phase Flow ===== -->
+
+  <!-- Phase 1: Plugin Loading -->
+  <g filter="url(#shadow)">
+    <rect x="30" y="75" width="145" height="100" rx="10" fill="#dbeafe" stroke="#3b82f6" stroke-width="2"/>
+  </g>
+  <text x="102" y="97" text-anchor="middle" font-size="11" font-weight="700" fill="#1d4ed8">插件加载</text>
+  <text x="102" y="113" text-anchor="middle" font-size="9" fill="#64748b">ctx.plugin()</text>
+  <text x="45" y="131" font-size="9" fill="#374151">1. 创建 Fiber</text>
+  <text x="45" y="145" font-size="9" fill="#374151">2. 检查依赖</text>
+  <text x="45" y="159" font-size="9" fill="#374151">3. 激活执行</text>
+
+  <!-- Phase 2: Effect Management -->
+  <g filter="url(#shadow)">
+    <rect x="195" y="75" width="145" height="100" rx="10" fill="#ede9fe" stroke="#8b5cf6" stroke-width="2"/>
+  </g>
+  <text x="267" y="97" text-anchor="middle" font-size="11" font-weight="700" fill="#5b21b6">副作用管理</text>
+  <text x="267" y="113" text-anchor="middle" font-size="9" fill="#64748b">ctx.effect()</text>
+  <text x="210" y="131" font-size="9" fill="#374151">· 函数 / Promise</text>
+  <text x="210" y="145" font-size="9" fill="#374151">· 生成器 / 异步生成器</text>
+  <text x="210" y="159" font-size="9" fill="#374151">· 逆序清理 disposers</text>
+
+  <!-- Phase 3: Event Dispatch -->
+  <g filter="url(#shadow)">
+    <rect x="360" y="75" width="145" height="100" rx="10" fill="#fce7f3" stroke="#ec4899" stroke-width="2"/>
+  </g>
+  <text x="432" y="97" text-anchor="middle" font-size="11" font-weight="700" fill="#9d174d">事件分发</text>
+  <text x="432" y="113" text-anchor="middle" font-size="9" fill="#64748b">ctx.emit() 等</text>
+  <text x="375" y="131" font-size="9" fill="#374151">· emit 同步不管</text>
+  <text x="375" y="145" font-size="9" fill="#374151">· parallel 并发等待</text>
+  <text x="375" y="159" font-size="9" fill="#374151">· bail / waterfall</text>
+
+  <!-- Phase 4: Dependency Change -->
+  <g filter="url(#shadow)">
+    <rect x="525" y="75" width="145" height="100" rx="10" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+  </g>
+  <text x="597" y="97" text-anchor="middle" font-size="11" font-weight="700" fill="#92400e">依赖变更</text>
+  <text x="597" y="113" text-anchor="middle" font-size="9" fill="#64748b">notify()</text>
+  <text x="540" y="131" font-size="9" fill="#374151">· epoch 字符串比较</text>
+  <text x="540" y="145" font-size="9" fill="#374151">· O(1) 变更检测</text>
+  <text x="540" y="159" font-size="9" fill="#374151">· 自动 reload</text>
+
+  <!-- Phase 5: Logging -->
+  <g filter="url(#shadow)">
+    <rect x="690" y="75" width="100" height="100" rx="10" fill="#d1fae5" stroke="#10b981" stroke-width="2"/>
+  </g>
+  <text x="740" y="97" text-anchor="middle" font-size="11" font-weight="700" fill="#047857">日志输出</text>
+  <text x="740" y="113" text-anchor="middle" font-size="9" fill="#64748b">logger.info()</text>
+  <text x="705" y="131" font-size="9" fill="#374151">· 环形缓冲区</text>
+  <text x="705" y="145" font-size="9" fill="#374151">· 多 Exporter</text>
+  <text x="705" y="159" font-size="9" fill="#374151">· 长栈追踪</text>
+
+  <!-- ===== Arrows between phases ===== -->
+  <line x1="175" y1="125" x2="191" y2="125" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="340" y1="125" x2="356" y2="125" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="505" y1="125" x2="521" y2="125" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="670" y1="125" x2="686" y2="125" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- ===== Core Mechanisms (bottom) ===== -->
+
+  <!-- epoch mechanism -->
+  <g filter="url(#shadow)">
+    <rect x="30" y="210" width="245" height="110" rx="10" fill="#ffffff" stroke="#f59e0b" stroke-width="2"/>
+  </g>
+  <text x="50" y="232" font-size="12" font-weight="700" fill="#92400e">epoch 依赖追踪</text>
+  <text x="50" y="249" font-size="10" fill="#64748b">Fiber uid 拼接指纹</text>
+  <rect x="50" y="258" width="205" height="22" rx="4" fill="#fef3c7" stroke="#fbbf24" stroke-width="1"/>
+  <text x="152" y="273" text-anchor="middle" font-size="9" font-family="monospace" fill="#92400e">epoch = ":3:7:12"</text>
+  <text x="50" y="294" font-size="9" fill="#374151">一次字符串比较 = 依赖变更检测</text>
+  <text x="50" y="308" font-size="9" fill="#374151">epoch 变 → reload; INACTIVE → unload</text>
+
+  <!-- Fiber state machine -->
+  <g filter="url(#shadow)">
+    <rect x="295" y="210" width="245" height="110" rx="10" fill="#ffffff" stroke="#8b5cf6" stroke-width="2"/>
+  </g>
+  <text x="315" y="232" font-size="12" font-weight="700" fill="#5b21b6">Fiber 六态状态机</text>
+  <rect x="315" y="242" width="62" height="22" rx="4" fill="#ede9fe" stroke="#c4b5fd" stroke-width="1"/>
+  <text x="346" y="257" text-anchor="middle" font-size="8" fill="#5b21b6">PENDING</text>
+  <rect x="382" y="242" width="62" height="22" rx="4" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="413" y="257" text-anchor="middle" font-size="8" fill="#1d4ed8">LOADING</text>
+  <rect x="449" y="242" width="55" height="22" rx="4" fill="#d1fae5" stroke="#86efac" stroke-width="1"/>
+  <text x="476" y="257" text-anchor="middle" font-size="8" fill="#047857">ACTIVE</text>
+  <rect x="315" y="270" width="62" height="22" rx="4" fill="#fee2e2" stroke="#fca5a5" stroke-width="1"/>
+  <text x="346" y="285" text-anchor="middle" font-size="8" fill="#991b1b">FAILED</text>
+  <rect x="382" y="270" width="62" height="22" rx="4" fill="#fef3c7" stroke="#fbbf24" stroke-width="1"/>
+  <text x="413" y="285" text-anchor="middle" font-size="8" fill="#92400e">UNLOADING</text>
+  <rect x="449" y="270" width="55" height="22" rx="4" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="476" y="285" text-anchor="middle" font-size="8" fill="#475569">DISPOSED</text>
+  <text x="315" y="306" font-size="9" fill="#374151">inertia 链式驱动 → 最终一致性</text>
+
+  <!-- Event dispatch modes -->
+  <g filter="url(#shadow)">
+    <rect x="560" y="210" width="230" height="110" rx="10" fill="#ffffff" stroke="#ec4899" stroke-width="2"/>
+  </g>
+  <text x="580" y="232" font-size="12" font-weight="700" fill="#9d174d">五种事件派发模式</text>
+  <text x="580" y="250" font-size="9" fill="#374151">emit    同步执行，不等待</text>
+  <text x="580" y="264" font-size="9" fill="#374151">parallel  并发执行，等待全部</text>
+  <text x="580" y="278" font-size="9" fill="#374151">serial  串行 await，直到 bail</text>
+  <text x="580" y="292" font-size="9" fill="#374151">bail   同步串行，首个非空返回</text>
+  <text x="580" y="306" font-size="9" fill="#374151">waterfall  瀑布流包装 next()</text>
+
+  <!-- ===== Bottom: Performance optimizations ===== -->
+  <rect x="30" y="345" width="760" height="50" rx="10" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="50" y="365" font-size="11" font-weight="700" fill="#475569">性能优化四板斧</text>
+  <text x="50" y="382" font-size="10" fill="#64748b">DisposableList O(1) 双索引删除  ·  epoch 字符串比较 O(1) 变更检测  ·  Traceable 代理懒创建  ·  Logger 环形缓冲区零 I/O</text>
+
+  <!-- ===== Bottom tip ===== -->
+  <rect x="140" y="415" width="540" height="28" rx="14" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1"/>
+  <text x="410" y="433" text-anchor="middle" font-size="11" fill="#15803d">💡 运行时核心：epoch 驱动状态机 + inertia 链式最终一致性 + DisposableList 自动清理</text>
+</svg>

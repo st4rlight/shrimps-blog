@@ -55,7 +55,7 @@ config:
   <div class="home-timeline__body">
     <span class="home-timeline__date">10-02</span>
     <span class="home-timeline__tag home-timeline__tag--ai">AI学习</span>
-    <a href="/ai-study/deepseek-v3-plugin-framework-analysis/">新增《DeepSeek-V3 底层插件式框架技术分析》</a>
+    <a href="/ai-study/deepseek-v3-plugin-framework-analysis/">新增《DeepSeek Harness 底层 Cordis 插件式框架核心架构分析》</a>
   </div>
 </div>
 
@@ -64,7 +64,7 @@ config:
   <div class="home-timeline__body">
     <span class="home-timeline__date">10-02</span>
     <span class="home-timeline__tag home-timeline__tag--ai">AI学习</span>
-    <a href="/ai-study/deepseek-harness-inference-engine-analysis/">新增《DeepSeek Harness 推理引擎技术实现分析》</a>
+    <a href="/ai-study/deepseek-harness-inference-engine-analysis/">新增《DeepSeek Harness Cordis 运行时机制深度分析》</a>
   </div>
 </div>
 

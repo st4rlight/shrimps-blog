@@ -1,593 +1,1024 @@
 ---
-title: DeepSeek Harness 推理引擎技术实现分析
+title: DeepSeek Harness Cordis 运行时机制深度分析
 tags:
   - DeepSeek
-  - 推理引擎
-  - KV Cache
-  - FP8
+  - Cordis
+  - Fiber
+  - 事件总线
   - 源码分析
-excerpt: 从推理循环架构、KV Cache 生命周期、采样策略到分布式初始化与权重加载，系统拆解 DeepSeek-V3 Harness 推理引擎的运行时技术实现。
+excerpt: 从 Fiber 生命周期状态机、Events 五种派发模式到 Logger 结构化日志体系，系统拆解 Cordis 框架运行时层面的技术实现。
 createTime: 2026/10/02 14:30:00
 permalink: /ai-study/deepseek-harness-inference-engine-analysis/
 ---
 
-# DeepSeek Harness 推理引擎技术实现分析
+# DeepSeek Harness Cordis 运行时机制深度分析
 
-> 源码分析版本：2025-08 · 核心仓库：`deepseek-ai/DeepSeek-V3`（commit `9b4e978`）
-> 论文：[DeepSeek-V3 Technical Report](https://arxiv.org/abs/2412.19437)
-> 核心文件：`inference/generate.py`、`inference/model.py`（Transformer 类）、`inference/kernel.py`
+> 源码分析版本：2026-10 · 核心仓库：`deepseek-ai/deepseek-harness`（master 分支）
+> 核心包：`vendor/cordis/`（`@deepseek-ai/cordis` v4.0.5-alpha.1）
+> 核心文件：`fiber.ts`、`events.ts`、`logger.ts`、`utils.ts`
 
 ---
 
 ## 背景与动机
 
-上一篇 [《DeepSeek-V3 底层插件式框架技术分析》](./deepseek-v3-plugin-framework-analysis.md) 拆解了框架的"静态架构"——配置驱动、模块化组件、可切换 Kernel。本文则聚焦"动态运行时"：**当用户输入一条 prompt，Harness 推理引擎如何一步步把它变成生成的文本？**
+上一篇 [《DeepSeek Harness 底层 Cordis 插件式框架核心架构分析》](./deepseek-v3-plugin-framework-analysis.md) 拆解了 Cordis 的"静态架构"——Context 代理、Registry 注册、Reflect 服务解析。本文则聚焦"动态运行时"：**当一个插件被 `ctx.plugin()` 加载后，Cordis 如何管理它的生命周期、事件分发和日志输出？**
 
-DeepSeek-V3 的 `generate.py` 只有不到 180 行，却完整实现了：
+Cordis 的运行时由三个核心机制支撑：
 
-- **推理循环**（Prefill + Decode 两阶段）
-- **KV Cache 管理**（增量更新、位置追踪）
-- **采样策略**（温度采样、贪心解码）
-- **分布式初始化**（NCCL 进程组、rank 通信）
-- **交互式 / 批量两种模式**
+- **Fiber 生命周期**：六态状态机 + effect 副作用管理 + 依赖驱动的自动 reload
+- **Events 事件总线**：五种派发模式 + Context 过滤 + 内部事件钩子
+- **Logger 日志体系**：结构化日志 + 多 Exporter + Traceable 名称解析
 
-这套实现虽然简洁，但每一个设计决策都直接关系到 671B 模型的推理效率。本文从源码层面逐行拆解。
+这套实现虽然精巧，但每一个设计决策都直接关系到插件系统的可靠性和开发体验。本文从源码层面逐行拆解。
 
-> 💡 **前置阅读**：本文假设读者已读过 [《DeepSeek-V3 底层插件式框架技术分析》](./deepseek-v3-plugin-framework-analysis.md)，了解 `ModelArgs` 配置驱动、MLA 注意力和 DeepSeekMoE 的基本概念。
+> 💡 **前置阅读**：本文假设读者已读过 [《Cordis 插件式框架核心架构分析》](./deepseek-v3-plugin-framework-analysis.md)，了解 Context 代理、Registry 插件注册和 Reflect 服务解析的基本概念。
 
 ---
 
-## 推理引擎总览
+## 运行时总览
 
-![Harness 推理引擎执行流程](/ai-study/harness/inference-engine-flow.svg)
+![Cordis 运行时机制总览](/ai-study/harness/cordis-runtime-overview.svg)
 
-整个推理引擎的执行分为三个阶段：
+Cordis 运行时的核心执行流如下：
 
-| 阶段 | 入口函数 | 核心逻辑 | 涉及文件 |
-|------|----------|----------|----------|
-| **初始化** | `main()` | 分布式设置 → 模型构建 → 权重加载 → 预热 | `generate.py` |
-| **推理循环** | `generate()` | Prefill → 逐 token Decode → 终止判断 | `generate.py` + `model.py` |
-| **采样** | `sample()` | 温度缩放 → softmax → 采样 | `generate.py` |
+| 阶段 | 入口 | 核心逻辑 | 涉及模块 |
+|------|------|----------|----------|
+| **插件加载** | `ctx.plugin()` | 创建 Fiber → 检查依赖 → 激活 → 执行 callback | `Fiber` |
+| **副作用管理** | `ctx.effect()` | 注册 effect → 收集 disposer → 绑定 Fiber | `Fiber.effect()` |
+| **事件分发** | `ctx.emit()` 等 | Context 过滤 → 派发到监听器 | `EventsService` |
+| **依赖变更** | `notify()` | 重新检查依赖 → 触发 reload/unload | `Fiber._refresh()` |
+| **日志输出** | `ctx.logger.info()` | 构造 Message → 分发到 Exporter | `LoggerService` |
 
 ---
 
-## 初始化阶段：从裸进程到就绪模型
+## Fiber：插件生命周期状态机
 
-### 分布式环境搭建
+### FiberState 六态状态机
 
-```python
-def main(ckpt_path, config, input_file="", interactive=True, 
-         max_new_tokens=100, temperature=1.0):
-    world_size = int(os.getenv("WORLD_SIZE", "1"))
-    rank = int(os.getenv("RANK", "0"))
-    local_rank = int(os.getenv("LOCAL_RANK", "0"))
+Fiber 是每个插件运行的运行时实例，其生命周期由六个状态组成：
 
-    if world_size > 1:
-        dist.init_process_group("nccl")  # 使用 NCCL 后端
+```ts
+export const enum FiberState {
+  PENDING,    // 等待依赖服务就绪
+  LOADING,    // 插件 callback 正在执行
+  ACTIVE,     // 已加载并正常运行
+  FAILED,     // callback 或配置验证抛出异常
+  DISPOSED,   // 已销毁，不可重启
+  UNLOADING,  // 正在执行清理 disposers
+}
+```
 
-    global print
-    if rank != 0:
-        print = lambda *_, **__: None    # 非 rank 0 静默
+![Fiber 生命周期状态机](/ai-study/harness/fiber-state-machine.svg)
+
+状态转换路径：
+
+| 起始状态 | 目标状态 | 触发条件 |
+|---------|---------|----------|
+| `(创建)` | `PENDING` | Fiber 构造完成，检查依赖 |
+| `PENDING` | `LOADING` | 所有依赖服务就绪（epoch ≠ INACTIVE） |
+| `LOADING` | `ACTIVE` | callback 执行成功 |
+| `LOADING` | `FAILED` | callback 或配置验证抛出异常 |
+| `ACTIVE` | `UNLOADING` | 依赖服务变更或 `dispose()` 被调用 |
+| `FAILED` | `UNLOADING` | 依赖服务变更或 `dispose()` 被调用 |
+| `UNLOADING` | `LOADING` | 卸载完成后依赖重新就绪 |
+| `UNLOADING` | `DISPOSED` | `dispose()` 完成且不可重启 |
+| `任何状态` | `DISPOSED` | `uid` 被清空 |
+
+### Fiber 构造：从创建到激活
+
+Fiber 构造函数处理两种场景——根 Fiber 和插件 Fiber：
+
+```ts
+constructor(
+  public parent: Context,
+  config: any,
+  public inject: Dict<any>,        // 依赖声明（已 resolve）
+  public runtime: Plugin.Runtime | null,  // null = 根 Fiber
+  getOuterStack: () => string[],
+) {
+  this._config = config
+  const collect = (dispose: Disposable) => {
+    this._disposables.push(dispose)
+  }
+
+  if (runtime) {
+    // 插件 Fiber
+    this.uid = parent.registry.counter
+    this.ctx = this.context = parent.extend({ fiber: this })
+
+    // 将 inject 中的拦截配置写入 context
+    const injectEntries = Object.entries(this.inject)
+    if (injectEntries.length) {
+      this.ctx[Context.intercept] = Object.create(parent[Context.intercept])
+      for (const [name, config] of injectEntries) {
+        if (isNullable(config)) continue
+        this.ctx[Context.intercept][name] = config
+      }
+    }
+
+    // 创建 effect runner
+    this._runner = {
+      epoch: INACTIVE,
+      getOuterStack,
+      execute: function () {
+        if (isConstructor(runtime.callback)) {
+          // 类插件：new + initHooks + [Symbol.init]
+          const instance = new runtime.callback(this.ctx, this.config)
+          for (const hook of instance?.[symbols.initHooks] ?? []) {
+            hook()
+          }
+          return instance?.[symbols.init]?.()
+        } else {
+          // 函数插件：直接调用
+          return runtime.callback(this.ctx, this.config)
+        }
+      },
+      collect,
+    }
+
+    // 注册 dispose 到父 Fiber——父卸载时子自动卸载
+    this.dispose = parent.fiber.effect(() => {
+      const remove = runtime.fibers.push(this)
+      return async () => {
+        this.uid = null
+        emitPluginDisposed(this.context, this)
+        if (this.ctx.registry.has(runtime.callback)) {
+          remove()
+          if (!runtime.fibers.length) {
+            this.ctx.registry.delete(runtime.callback)
+          }
+        }
+        this._setEpoch(INACTIVE)
+        if (!this.inertia) {
+          this._updateState(() => {
+            this.inertia = this._unload()
+            return FiberState.UNLOADING
+          })
+        }
+        while (this.inertia) {
+          await this.inertia
+        }
+      }
+    }, 'ctx.plugin()')
+
+    // 通知 internal/plugin 事件
+    this.context.emit('internal/plugin', this)
+
+    // 检查依赖并尝试激活
+    if (this.uid !== null && parent.fiber.state !== FiberState.UNLOADING) {
+      for (const name of Object.keys(this.inject)) {
+        this._checkImpl(name)
+      }
+      this._refresh()
+    }
+  } else {
+    // 根 Fiber——始终 ACTIVE
+    this.uid = 0
+    this.ctx = this.context = parent
+    this.state = FiberState.ACTIVE
+    this.store = Object.create(null)
+    this.dispose = () => this.restart()
+  }
+}
 ```
 
 **关键设计**：
 
-1. **环境变量驱动**：`WORLD_SIZE` / `RANK` / `LOCAL_RANK` 由 `torchrun` 注入，代码零硬编码
-2. **NCCL 后端**：NVIDIA GPU 通信的唯一选择，支持 all_reduce / broadcast 等集合通信
-3. **rank 0 打印**：多卡时只有 rank 0 输出日志，避免重复输出
+1. **Context 继承**：插件 Fiber 的 ctx 通过 `parent.extend({ fiber: this })` 创建子上下文，继承父的所有属性但拥有自己的 Fiber
+2. **拦截配置注入**：`inject` 中声明的拦截配置被写入子上下文的 `intercept` 映射
+3. **dispose 级联**：Fiber 的 dispose 注册为父 Fiber 的 effect，父卸载时子自动卸载
+4. **类插件 vs 函数插件**：类插件用 `new` 构造并触发 `initHooks` 和 `[Symbol.init]`；函数插件直接调用
+5. **internal/plugin 事件**：Fiber 创建后立即发出事件，允许其他插件观察插件生命周期
 
-> 💡 **启动命令**：`torchrun --nnodes 2 --nproc-per-node 8 --node-rank $RANK --master-addr $ADDR generate.py ...` — 这意味着 2 台机器 × 8 GPU = 16 卡并行推理。
+### 依赖检查与刷新
 
-### 全局精度与设备设置
+Fiber 通过 epoch 机制跟踪依赖状态：
 
-```python
-    torch.cuda.set_device(local_rank)
-    torch.set_default_dtype(torch.bfloat16)
-    torch.set_num_threads(8)
-    torch.manual_seed(965)
+```ts
+_checkImpl(name: string) {
+  const impl = this.ctx.reflect._getImpl(name, true)
+  if (!impl) return delete this._store[name]
+  try {
+    if (impl.check && !impl.check.call(getTraceable(this.ctx, impl.value))) {
+      return delete this._store[name]
+    }
+  } catch (error) {
+    impl.fiber.ctx.logger.error(error)
+    return delete this._store[name]
+  }
+  this._store[name] = impl
+}
+
+_refresh() {
+  let epoch: string = ''
+  for (const name of Object.keys(this.inject)) {
+    const impl = this._store[name]
+    if (!impl) {
+      epoch = INACTIVE  // 依赖缺失→不激活
+      break
+    }
+    epoch += ':' + impl.fiber.uid  // 依赖版本指纹
+  }
+  this._setEpoch(epoch)
+}
 ```
 
-四行设置各有深意：
+> 🔑 **epoch 机制**：epoch 是一个字符串，由所有依赖服务的 Fiber uid 拼接而成。当任一依赖服务的 Fiber 变化（uid 改变）时，epoch 改变，触发 reload。这种设计使得**依赖变更检测只需一次字符串比较**，而非深度遍历。
 
-| 设置 | 作用 | 为什么 |
-|------|------|--------|
-| `set_device(local_rank)` | 绑定当前进程到对应 GPU | 避免跨 GPU 通信开销 |
-| `set_default_dtype(bfloat16)` | 默认张量类型为 BF16 | 671B 模型精度与显存的平衡点 |
-| `set_num_threads(8)` | CPU 线程数 | 控制数据加载和 tokenizer 的并行度 |
-| `manual_seed(965)` | 固定随机种子 | 保证采样的可复现性 |
+### _setEpoch：状态转换驱动
 
-### 模型构建与权重加载
+```ts
+private _setEpoch(epoch: string) {
+  const oldEpoch = this._runner.epoch
+  if (epoch === oldEpoch) return
+  this._runner.epoch = epoch
+  if (this.inertia) return  // 正在进行中的加载/卸载不重叠
 
-```python
-    with open(config) as f:
-        args = ModelArgs(**json.load(f))
-    
-    with torch.device("cuda"):
-        model = Transformer(args)     # 在 GPU 上构建模型
-
-    tokenizer = AutoTokenizer.from_pretrained(ckpt_path)
-    
-    # 预热：先跑一次极短生成，触发 CUDA Kernel 编译
-    tokenizer.decode(generate(model, [tokenizer.encode("DeepSeek")], 2, -1, 1.)[0])
-
-    # 加载权重
-    load_model(model, os.path.join(ckpt_path, f"model{rank}-mp{world_size}.safetensors"))
+  this._updateState(() => {
+    if (epoch !== INACTIVE && oldEpoch === INACTIVE) {
+      // 从非激活→激活：开始加载
+      this.inertia = this._reload()
+      return FiberState.LOADING
+    } else {
+      // 从激活→非激活：开始卸载
+      this.inertia = this._unload()
+      return FiberState.UNLOADING
+    }
+  })
+}
 ```
 
-**三个容易被忽略的细节**：
+### _reload 与 _unload
 
-1. **`with torch.device("cuda")`**：在 GPU 上构建模型，避免"先 CPU 创建再 `.cuda()` 移动"的额外显存峰值
-2. **预热生成**：用 2 个 token 的极短生成触发 Triton Kernel 的 JIT 编译和 `@triton.autotune` 的配置搜索，确保首次真实推理不会有编译延迟
-3. **权重按 rank 加载**：`model{rank}-mp{world_size}.safetensors` — 每个 rank 只加载自己分片的权重，避免全量加载再切分的显存浪费
+```ts
+private async _reload() {
+  this.store = { ...this._store }
+  const oldEpoch = this._runner.epoch
+  try {
+    await Promise.resolve()  // 微任务检查点——允许排队的 disposer 先执行
+    if (this._runner.epoch === oldEpoch) {
+      this.config = this._resolveConfig(this._config)
+      await this._execute(this._runner)  // 执行插件 callback
+      this._error = undefined
+    }
+  } catch (reason) {
+    this.ctx.logger.error(reason)
+    this._error = reason
+    this._runner.epoch = INACTIVE
+  }
+  this._updateState(() => {
+    if (this._runner.epoch === oldEpoch) {
+      this.inertia = undefined
+    } else {
+      // epoch 在加载期间变了——需要卸载后重新加载
+      this.inertia = this._unload()
+      return FiberState.UNLOADING
+    }
+  })
+}
 
-> 🔑 **`load_model` 之前的模型是随机初始化的**，预热生成产出的内容是"随机噪声"——它的唯一目的是触发 Kernel 编译。这是一个工程上很务实的做法。
+private async _unload() {
+  // 逆序执行所有 disposables
+  await Promise.all(this._disposables.clear().map(async (dispose) => {
+    try {
+      await composeError(async (info) => {
+        await Promise.resolve()
+        info.error = new Error()
+        await runDisposable(dispose)
+      }, this._runner.getOuterStack)
+    } catch (reason) {
+      this.ctx.logger.error(reason)
+    }
+  }))
+  this.store = undefined
+  this._updateState(() => {
+    if (this._runner.epoch === INACTIVE) {
+      this.inertia = undefined
+    } else {
+      // 依赖重新就绪——重新加载
+      this.inertia = this._reload()
+      return FiberState.LOADING
+    }
+  })
+}
+```
+
+> 💡 **epoch 竞态处理**：`_reload` 和 `_unload` 都在执行后检查 epoch 是否变化。如果加载期间依赖变更，加载完成后会立即触发卸载；如果卸载期间依赖恢复，卸载完成后会立即触发重新加载。这种 **inertia 链式驱动** 确保了依赖变更的最终一致性。
+
+### update()：配置热更新
+
+Fiber 支持 `update()` 方法进行配置热更新，它走 `internal/update` waterfall：
+
+```ts
+update(config: any, noSave = false) {
+  this.assertActive()
+  this._config = config
+  if (this.state !== FiberState.ACTIVE) {
+    // 非 ACTIVE 状态：延迟到激活时再生效
+    this._error = undefined
+    this._setEpoch(INACTIVE)
+    this._refresh()
+    return
+  }
+  config = this._resolveConfig(config)
+  this.context.waterfall(this, 'internal/update', config, noSave, () => {
+    this.config = config
+    this._error = undefined
+    return this.restart()
+  })
+}
+```
+
+`internal/update` waterfall 允许 HMR 插件拦截更新——可以选择跳过 `next()` 来阻止重启，或修改配置后再继续。
 
 ---
 
-## 推理循环：generate() 逐行拆解
+## effect()：副作用注册与清理
 
-### 函数签名与参数
+### Effect 的多种形态
 
-```python
-@torch.inference_mode()
-def generate(
-    model: Transformer,
-    prompt_tokens: List[List[int]],   # batch 个 prompt，每个是 token id 列表
-    max_new_tokens: int,
-    eos_id: int,
-    temperature: float = 1.0
-) -> List[List[int]]:
+`ctx.effect()` 是 Cordis 副作用管理的核心 API，支持多种返回形态：
+
+```ts
+export type Effect<T = any> =
+  | SyncEffect<T>      // 同步：Disposable | Iterable<Disposable>
+  | AsyncEffect<T>     // 异步：Promise<Disposable> | AsyncIterable<Disposable>
+
+type SyncEffect<T = any> =
+  | Disposable<T>                      // 返回一个清理函数
+  | Iterable<Disposable<T>, void, void> // 生成器：yield 多个清理函数
+
+type AsyncEffect<T = any> =
+  | Promise<Disposable<T>>              // 异步返回一个清理函数
+  | AsyncIterable<Disposable<T>, void, void>  // 异步生成器
 ```
 
-`@torch.inference_mode()` 是 `@torch.no_grad()` 的更强版本——不仅禁用梯度计算，还禁用版本追踪和 autograd 上下文，在推理场景下性能更优。
+### effect() 实现核心
 
-### Step 1：长度校验与 token 矩阵初始化
+`effect()` 方法是 Cordis 中最复杂的方法之一，它处理同步/异步 effect、setup 竞态、重入清理等边界情况：
 
-```python
-    prompt_lens = [len(t) for t in prompt_tokens]
-    assert max(prompt_lens) <= model.max_seq_len
-    
-    total_len = min(model.max_seq_len, max_new_tokens + max(prompt_lens))
-    
-    # 初始化全 -1 的 token 矩阵
-    tokens = torch.full(
-        (len(prompt_tokens), total_len), -1, 
-        dtype=torch.long, device="cuda"
+```ts
+effect(execute: () => Effect, label = 'anonymous'): AsyncDisposable {
+  this.assertActive()
+  if (this.state === FiberState.UNLOADING) {
+    throw new CordisError('INACTIVE_EFFECT')
+  }
+
+  const disposables: Disposable[] = []
+  let disposing = false
+  let disposalTask: void | Promise<void>
+
+  const dispose = () => {
+    if (disposing) return disposalTask  // 幂等——多次调用返回同一个 Promise
+    disposing = true
+    let task!: void | Promise<void>
+    // 逆序执行 disposables
+    for (const disposable of disposables.splice(0).reverse()) {
+      if (task) {
+        task = task.then(() => runDisposable(disposable))
+      } else {
+        const result = runDisposable(disposable)
+        if (isObject(result) && 'then' in result) {
+          task = result as any
+        }
+      }
+    }
+    return disposalTask = task
+  }
+
+  // ... setup 竞态处理、async barrier、inFlight 追踪 ...
+
+  const wrapper = defineProperty(() => {
+    if (!runner.epoch) return setupFailed ? inFlight : undefined
+    runner.epoch = false
+    return finalizeDisposal(() => {
+      if (executing) return disposeAfter(waitForSetup())
+      return task ? disposeAfter(task) : dispose()
+    })
+  }, symbols.effect, meta) as AsyncDisposable
+
+  // 先注册到 _disposables，再执行——允许重入的父级卸载看到这个 effect
+  removeWrapper = this._disposables.push(wrapper)
+  try {
+    task = this._execute(runner)
+  } catch (reason) {
+    // 同步 setup 失败——清理并拒绝
+    executing = false
+    setupFailed = true
+    runner.epoch = false
+    let cleanup: void | Promise<void>
+    try { cleanup = finalizeDisposal(dispose) }
+    finally { rejectSetup?.(reason) }
+    if (isObject(cleanup) && 'then' in cleanup) {
+      cleanup.catch(error => this.ctx.logger.error(error))
+    }
+    throw reason
+  }
+  // ...
+  return wrapper
+}
+```
+
+**关键设计**：
+
+1. **幂等 dispose**：多次调用返回同一个 `disposalTask`，避免重复清理
+2. **逆序清理**：`disposables.splice(0).reverse()`——后注册的先清理，确保依赖顺序
+3. **先注册后执行**：`removeWrapper = this._disposables.push(wrapper)` 在 `execute` 之前执行，确保重入的父级卸载能看到这个 effect
+4. **setup 竞态**：`waitForSetup()` barrier 确保 async effect 的 setup 完成后再允许 dispose
+
+### _execute：Effect 执行引擎
+
+`_execute` 处理 Effect 的四种返回形态：
+
+```ts
+private _execute<T>(runner: EffectRunner<T>) {
+  const oldEpoch = runner.epoch
+  return composeError((info) => {
+    const safeCollect = (dispose: void | Disposable) => {
+      if (typeof dispose === 'function') {
+        runner.collect(dispose)
+      } else if (!isNullable(dispose)) {
+        throw new TypeError('Invalid effect')
+      }
+    }
+    const effect: Effect = runner.execute.call(this)
+    if (typeof effect === 'function') {
+      // 1. 同步返回 disposer
+      return runner.collect(effect)
+    } else if (isNullable(effect)) {
+      // 2. 返回 null/undefined——无副作用
+    } else if (!isObject(effect)) {
+      throw new TypeError('Invalid effect')
+    } else if ('then' in effect) {
+      // 3. Promise——异步返回 disposer
+      return effect.then(safeCollect)
+    } else if (Symbol.iterator in effect) {
+      // 4. 同步生成器——yield 多个 disposer
+      info.error = new Error()
+      const iter = effect[Symbol.iterator]()
+      while (true) {
+        const result = iter.next()
+        safeCollect(result.value)
+        if (result.done) return
+      }
+    } else if (Symbol.asyncIterator in effect) {
+      // 5. 异步生成器——异步 yield 多个 disposer
+      const iter = effect[Symbol.asyncIterator]()
+      return (async () => {
+        await Promise.resolve()
+        info.error = new Error()
+        while (true) {
+          if (runner.epoch !== oldEpoch) return  // epoch 变了——中止
+          const result = await iter.next()
+          safeCollect(result.value)
+          if (result.done) return
+        }
+      })()
+    }
+  }, runner.getOuterStack)
+}
+```
+
+> 🔑 **生成器 Effect 的威力**：异步生成器允许 effect 在 yield 后继续执行异步操作，且每个 yield 的 disposer 都会被收集。如果 epoch 变化（依赖变更），生成器会中止——这是实现"响应式副作用"的基础。例如 `ReflectService.mixin` 就使用生成器 effect 来为每个 mixin key 注册独立的 accessor。
+
+### Effect 诊断元数据
+
+每个 effect 都携带诊断元数据，形成树状结构：
+
+```ts
+export interface EffectMeta {
+  label: string         // 人类可读标签，如 'ctx.on("event")'
+  children: EffectMeta[]  // 嵌套 effect 的元数据
+}
+```
+
+通过 `fiber.getEffects()` 可以获取当前所有活跃 effect 的元数据树——这对调试插件生命周期问题非常有用。
+
+---
+
+## Events：五种派发模式
+
+### 派发模式总览
+
+Cordis 事件总线支持五种派发模式，覆盖了从"发射后不管"到"串行拦截"的全部需求：
+
+| 模式 | 方法 | 行为 | 返回值 |
+|------|------|------|--------|
+| `emit` | `ctx.emit()` | 同步执行所有监听器，不等待 Promise | `void` |
+| `parallel` | `ctx.parallel()` | 并发执行所有监听器，等待全部完成 | `Promise<void>` |
+| `serial` | `ctx.serial()` | 串行执行，等待每个完成后继续，直到 bail | `Promise<any>` |
+| `bail` | `ctx.bail()` | 同步串行执行，直到第一个非空返回 | `any` |
+| `waterfall` | `ctx.waterfall()` | 瀑布流：每个监听器包装 `next()` | `any` |
+
+### dispatch：监听器过滤与解析
+
+所有派发模式共享 `dispatch()` 方法，它负责解析监听器并应用 Context 过滤：
+
+```ts
+dispatch(type: string, args: any[]) {
+  // 第一个参数可以是 thisArg（用于 Context 过滤）
+  const thisArg = typeof args[0] === 'object' || typeof args[0] === 'function'
+    ? args.shift() : null
+  const name: string = args.shift()
+  
+  // 非内部事件触发 internal/dispatch 事件（用于诊断）
+  if (!name.startsWith('internal/')) {
+    this.emit('internal/dispatch', type, name, args, thisArg)
+  }
+  
+  // Context 过滤：只通知与 thisArg 同作用域的监听器
+  const filter = thisArg?.[Context.filter]
+  return (this._hooks[name] || [])
+    .filter(hook => hook.global || !filter || filter.call(thisArg, hook.ctx))
+    .map(hook => hook.callback.bind(thisArg))
+}
+```
+
+> 💡 **Context 过滤**：事件分发时，如果 `thisArg` 携带了 `[Context.filter]` 函数，只有该函数返回 `true` 的监听器才会被调用。这使得事件可以限定在特定作用域内传播——不同隔离作用域的插件不会互相干扰。
+
+### 五种派发实现
+
+```ts
+// emit：同步，不等待 Promise
+emit(...args: any[]) {
+  this.dispatch('emit', args).map(cb => cb(...args))
+}
+
+// parallel：并发，等待全部完成
+async parallel(...args: any[]) {
+  const results = await Promise.allSettled(
+    this.dispatch('emit', args).map(async cb => cb(...args))
+  )
+  const errors = results.filter((r): r is PromiseRejectedResult => 
+    r.status === 'rejected'
+  )
+  if (errors.length) throw new AggregateError(errors.map(e => e.reason))
+}
+
+// serial：串行，await 每个，直到 bail
+async serial(...args: any[]) {
+  for (const cb of this.dispatch('serial', args)) {
+    const result = await cb(...args)
+    if (isBailed(result)) return result
+  }
+}
+
+// bail：同步串行，直到 bail
+bail(...args: any[]) {
+  for (const cb of this.dispatch('bail', args)) {
+    const result = cb(...args)
+    if (isBailed(result)) return result
+  }
+}
+
+// waterfall：瀑布流，每个监听器包装 next
+waterfall(...args: any[]) {
+  const cbs = this.dispatch('waterfall', args)
+  const inner = args.pop()  // 最内层的 next 回调
+  const next = () => {
+    const cb = cbs.shift() ?? inner
+    return cb(...args)
+  }
+  args.push(next)
+  return next()
+}
+```
+
+**bail 判断**：
+
+```ts
+export function isBailed(value: any) {
+  return value !== null && value !== false && value !== undefined
+}
+```
+
+### on()：监听器注册
+
+`ctx.on()` 将监听器注册为 Fiber effect，自动随 Fiber 卸载清理：
+
+```ts
+on(name: string | symbol, listener: (...args: any) => any, 
+   options?: boolean | EventOptions) {
+  this.ctx.fiber.assertActive()
+  // 通过 reflect.bind 包装——使监听器内的 this 绑定到注册时的 ctx
+  listener = this.ctx.reflect.bind(listener)
+  
+  // internal/listener 事件允许自定义注册行为
+  const result = this.bail(this.ctx, 'internal/listener', name, listener, options)
+  if (result) return result
+  
+  const hooks = this._hooks[name] ||= []
+  return this.register(`ctx.on(${JSON.stringify(name)})`, hooks, listener, options)
+}
+
+register(label: string, hooks: Hook[], callback: any, options: EventOptions) {
+  const method = options.prepend ? 'unshift' : 'push'
+  return this.ctx.fiber.effect(() => {
+    hooks[method]({ ctx: this.ctx, callback, ...options })
+    return () => this.unregister(hooks, callback)
+  }, label)
+}
+```
+
+**关键设计**：
+
+1. **reflect.bind**：监听器通过 `reflect.bind` 包装，使调用时的 `this` 和参数都经过 Traceable 代理
+2. **internal/listener 拦截**：`internal/listener` 是一个 bail 事件，允许其他插件替换监听器注册行为
+3. **effect 绑定**：监听器注册为 Fiber effect，Fiber 卸载时自动移除
+
+### 内部事件体系
+
+Cordis 定义了一组内部事件，构成框架的扩展点：
+
+| 事件 | 模式 | 触发时机 | 用途 |
+|------|------|----------|------|
+| `internal/plugin` | emit | Fiber 创建/销毁 | 观察插件生命周期 |
+| `internal/status` | emit | Fiber 状态变更 | 诊断与监控 |
+| `internal/config` | waterfall | 配置解析 | 配置变换/插值 |
+| `internal/service` | emit | 服务注册/注销 | 服务发现 |
+| `internal/update` | waterfall | Fiber 配置更新 | HMR、持久化 |
+| `internal/get` | waterfall | 服务读取 | 服务访问拦截 |
+| `internal/set` | waterfall | 服务写入 | 服务写入拦截 |
+| `internal/listener` | bail | 监听器注册 | 自定义注册行为 |
+| `internal/dispatch` | emit | 事件分发 | 事件诊断 |
+
+> 🔑 **waterfall 内部事件**：`internal/config`、`internal/update`、`internal/get`、`internal/set` 都是 waterfall 模式——每个监听器可以包装 `next()` 来拦截或修改默认行为。例如 Loader 插件通过 `internal/config` 实现配置插值，通过 `internal/update` 实现配置持久化。
+
+### internal/update 的特殊处理
+
+`internal/update` 有一个特殊的钩子机制——Loader 通过 `internal/listener` 拦截它的注册：
+
+```ts
+// EventsService 构造函数中
+this.on('internal/listener', function (this: Context, name, listener, options) {
+  if (name === 'internal/update' && !options.global) {
+    // 非 global 的 internal/update 监听器存储到 fiber._hooks
+    const hooks = this.fiber._hooks['internal/update'] ??= new DisposableList()
+    const method = options.prepend ? 'unshift' : 'push'
+    return hooks[method](listener)  // bail 返回值替换默认注册
+  }
+})
+
+// internal/update 的 waterfall 执行时先走 fiber 的 hooks
+this.on('internal/update', function (config, noSave, next) {
+  const cbs = [...this._hooks['internal/update'] || []]
+  const _next = () => {
+    const cb = cbs.shift() ?? next
+    return cb.call(this, config, noSave, _next)
+  }
+  return _next()
+}, { global: true, prepend: true })
+```
+
+这使得每个 Fiber 可以有自己的 `internal/update` 钩子链，且这些钩子在全局 waterfall 之前执行——HMR 插件利用这个机制在配置更新时决定是否需要热重载。
+
+---
+
+## Logger：结构化日志体系
+
+### LoggerService 架构
+
+Cordis 的日志系统是一个可调用的 Service，支持多种输出目标（Exporter）：
+
+```ts
+export class LoggerService {
+  bufferSize = 1000
+  buffer: Message[] = []           // 环形缓冲区
+  _snMessage = 0                   // 消息序号
+  _snExporter = 0                  // Exporter 序号
+  exporters = new Map<number, Exporter>()
+
+  constructor(ctx: Context) {
+    // 创建可调用实例——ctx.logger(name) 返回 Logger
+    const self = createCallable('logger', 
+      joinPrototype(Object.getPrototypeOf(this), Function.prototype), 
+      { property: 'ctx', noShadow: true }
     )
-    
-    # 填入 prompt
-    for i, t in enumerate(prompt_tokens):
-        tokens[i, :len(t)] = torch.tensor(t, dtype=torch.long, device="cuda")
-    
-    prev_pos = 0
-    finished = torch.tensor([False] * len(prompt_tokens), device="cuda")
-    prompt_mask = tokens != -1
+    // 注册默认 exporter（缓冲区）
+    self.exporter({
+      colors: 3,
+      export: (message) => {
+        self.buffer.push(message)
+        if (self.buffer.length > self.bufferSize) {
+          self.buffer = self.buffer.slice(-self.bufferSize)
+        }
+      },
+    })
+    return self
+  }
+
+  [symbols.invoke](name?: string): Logger {
+    const config = this._resolveConfig()
+    const fiber = ((this.ctx as any)[symbols.shadow] ?? this.ctx).fiber
+    name ??= config.name
+    name ??= hyphenate(fiber.name)  // 默认使用 Fiber 名称
+    return new Logger({ name, level: config.level, meta: { fiber: new WeakRef(fiber) } }, this)
+  }
+}
 ```
 
-**设计要点**：
+> 🔑 **noShadow 设计**：LoggerService 是 `noShadow: true` 的服务——这意味着 Traceable 代理不会用调用者的 ctx 覆盖它的 ctx。日志名称始终来源于**注册 logger 的 Fiber**，而非调用 logger 的 Fiber。
 
-- **`-1` 填充**：用 `-1` 而非 `0` 作为 padding 值，避免与真实 token id 0 冲突
-- **`prompt_mask`**：记录哪些位置是 prompt（不需要生成），哪些需要生成
-- **`prev_pos = 0`**：KV Cache 的起始位置，Prefill 阶段从 0 开始
+### Logger 门面
 
-### Step 2：Prefill + Decode 循环
+`Logger` 是一个轻量门面，提供 `error/info/warn/debug` 四个方法：
 
-```python
-    for cur_pos in range(min(prompt_lens), total_len):
-        # 前向传播：传入 prev_pos 到 cur_pos 的 token，返回下一个 token 的 logits
-        logits = model.forward(tokens[:, prev_pos:cur_pos], prev_pos)
-        
-        # 采样
-        if temperature > 0:
-            next_token = sample(logits, temperature)
-        else:
-            next_token = logits.argmax(dim=-1)   # 贪心解码
-        
-        # 如果当前位置原本是 prompt（batch 中短 prompt 对齐用），保留原值
-        next_token = torch.where(
-            prompt_mask[:, cur_pos], 
-            tokens[:, cur_pos], 
-            next_token
-        )
-        
-        tokens[:, cur_pos] = next_token
-        
-        # 终止判断
-        finished |= torch.logical_and(
-            ~prompt_mask[:, cur_pos], 
-            next_token == eos_id
-        )
-        
-        prev_pos = cur_pos  # 更新 KV Cache 位置
-        
-        if finished.all():
-            break
+```ts
+export class Logger {
+  constructor(options: LoggerOptions, private service: LoggerService) {
+    Object.assign(this, options)
+    this.error = this._method('error', LoggerLevel.ERROR)
+    this.info = this._method('info', LoggerLevel.INFO)
+    this.warn = this._method('warn', LoggerLevel.WARN)
+    this.debug = this._method('debug', LoggerLevel.DEBUG)
+  }
+
+  private _method(type: LoggerType, level: number): LoggerMethod {
+    return (...args: any[]) => {
+      // Error 展开处理
+      if (args.length === 1 && args[0] instanceof Error) {
+        if (args[0].cause) {
+          this[type](args[0].cause)  // 递归打印 cause 链
+        } else if (isAggregateError(args[0])) {
+          args[0].errors.forEach(error => this[type](error))
+          return
+        }
+      }
+
+      const sn = ++this.service._snMessage
+      const ts = Date.now()
+      // 分发到所有 Exporter
+      for (const exporter of this.service.exporters.values()) {
+        const targetLevel = exporter.levels?.[this.name] 
+          ?? exporter.levels?.default 
+          ?? this.level 
+          ?? LoggerLevel.INFO
+        if (targetLevel < level) continue  // 级别过滤
+        const message: Message = { 
+          sn, ts, type, level, name: this.name, ...this.meta, args 
+        }
+        exporter.export(message)
+      }
+    }
+  }
+}
 ```
 
-### Prefill vs Decode 的关键区别
+### 日志级别与过滤
 
-虽然代码中是同一个循环，但第一次迭代（`prev_pos=0`，`cur_pos=min(prompt_lens)`）和后续迭代的行为完全不同：
-
-| 维度 | Prefill（第一次迭代） | Decode（后续迭代） |
-|------|----------------------|-------------------|
-| 输入长度 | `prompt_lens[i]`（可能数百~数千） | 1（单个 token） |
-| KV Cache | 从零写入 | 增量追加 |
-| `prev_pos` | 0 | `cur_pos - 1` |
-| 计算量 | 大（并行处理所有 prompt token） | 小（单 token 前向） |
-| 瓶颈 | 计算密集型 | 访存密集型 |
-
-> 💡 **为什么 Prefill 是计算密集型而 Decode 是访存密集型？**
->
-> Prefill 时一次处理 N 个 token，矩阵乘法是 `N × dim × dim`，计算量大但可充分利用 GPU 并行。Decode 时每次只处理 1 个 token，矩阵乘法是 `1 × dim × dim`，计算量小但需要从 HBM 加载完整权重，访存带宽成为瓶颈。
-
-### Step 3：结果提取
-
-```python
-    completion_tokens = []
-    for i, toks in enumerate(tokens.tolist()):
-        # 只取 prompt 之后的部分
-        toks = toks[prompt_lens[i]:prompt_lens[i]+max_new_tokens]
-        if eos_id in toks:
-            toks = toks[:toks.index(eos_id)]  # 截断到 EOS
-        completion_tokens.append(toks)
-    return completion_tokens
+```ts
+export const enum LoggerLevel {
+  ERROR = 0,
+  INFO = 1,
+  WARN = 2,
+  DEBUG = 3,
+}
 ```
+
+每个 Exporter 可以按 logger 名称设置不同的级别阈值：
+
+```ts
+export interface Exporter {
+  colors?: number | false
+  maxLength?: number
+  levels?: Record<string, number>  // { default: 1, "loader": 3, "timer": 0 }
+  formatters?: Record<string, Formatter>
+  export(message: Message): void
+}
+```
+
+### printf 格式化
+
+Logger 支持 printf 风格的格式化，兼容 Node.js `console` 的使用习惯：
+
+```ts
+static format(exporter: Exporter, message: Message): string {
+  const args = message.args.slice()
+  if (args[0] instanceof Error) {
+    args[0] = args[0].stack || args[0].message
+    args.unshift('%s')
+  } else if (typeof args[0] !== 'string') {
+    args.unshift('%o')
+  }
+
+  let format: string = args.shift()
+  format = format.replace(/%([a-zA-Z%])/g, (match, char) => {
+    if (match === '%%') return '%'
+    const formatter = exporter.formatters?.[char] ?? defaultFormatters[char]
+    if (typeof formatter === 'function') {
+      const value = args.shift()
+      return formatter(value, exporter, message)
+    }
+    return match
+  })
+  // ... 追加剩余参数 ...
+  return format
+}
+```
+
+内置格式化器：
+
+| 占位符 | 描述 |
+|--------|------|
+| `%s` | `String(value)` |
+| `%d` / `%i` | `Math.trunc(Number(value))` |
+| `%f` | `Number(value)` |
+| `%o` / `%O` | `JSON.stringify(value)` |
+| `%c` / `%C` | 彩色输出（ANSI 颜色码） |
+
+### Logger 名称着色
+
+Logger 名称自动着色，基于名称哈希选择颜色：
+
+```ts
+static code(name: string, level?: false | number) {
+  let hash = 0
+  for (let i = 0; i < name.length; i++) {
+    hash = ((hash << 3) - hash) + name.charCodeAt(i) + 13
+    hash |= 0
+  }
+  const colors = !level ? [] : level >= 2 ? c256 : c16
+  return colors[Math.abs(hash) % colors.length]
+}
+```
+
+16 色和 256 色调色板使得不同名称的 logger 在终端中视觉上易于区分，无需手动配置颜色。
 
 ---
 
-## KV Cache 生命周期
+## composeError：长栈追踪
 
-### Cache 写入与读取
+### 问题与方案
 
-KV Cache 的管理内聚在 `MLA.forward()` 中，对 `generate()` 透明：
+异步错误的一个核心问题是**栈追踪断裂**——`async/await` 中的错误堆栈只包含从 `await` 点到 `throw` 点的帧，丢失了调用方的上下文。Cordis 通过 `composeError` 解决这个问题。
 
-```python
-class MLA(nn.Module):
-    def forward(self, x, start_pos, freqs_cis, mask):
-        bsz, seqlen, _ = x.size()
-        end_pos = start_pos + seqlen
-        
-        # ... 计算 q, kv, pe ...
-        
-        if attn_impl == "naive":
-            # 写入完整 K/V cache
-            self.k_cache[:bsz, start_pos:end_pos] = k
-            self.v_cache[:bsz, start_pos:end_pos] = v
-            # 读取全部已缓存的 K/V
-            k = self.k_cache[:bsz, :end_pos]
-            v = self.v_cache[:bsz, :end_pos]
-        else:
-            # 写入压缩 latent cache + pe cache
-            self.kv_cache[:bsz, start_pos:end_pos] = self.kv_norm(kv)
-            self.pe_cache[:bsz, start_pos:end_pos] = pe
-            # 读取全部已缓存的 latent + pe
-            kv = self.kv_cache[:bsz, :end_pos]
-            pe = self.pe_cache[:bsz, :end_pos]
-        
-        # 注意力计算...
+### 实现
+
+```ts
+export function composeError<T>(
+  callback: (info: StackInfo) => T, 
+  getOuterStack = buildOuterStack()
+): T {
+  const info: StackInfo = { offset: 1, error: new Error() }
+
+  try {
+    const result: any = callback(info)
+    if (isObject(result) && 'then' in result) {
+      // Promise——在 rejection 时拼接外层栈
+      return (result as any).then(undefined, (reason) => 
+        handleError(info, reason, getOuterStack)
+      ) as T
+    }
+    return result
+  } catch (reason: any) {
+    handleError(info, reason, getOuterStack)
+  }
+}
+
+function handleError(info: StackInfo, reason: any, getOuterStack: () => string[]): never {
+  const innerLines = info.error.stack!.split('\n')
+  if (typeof reason?.stack !== 'string') {
+    // 非 Error 对象——构造新 Error
+    const outerError = new Error(reason)
+    const lines = outerError.stack!.split('\n')
+    lines.splice(1, Infinity, ...getOuterStack())
+    outerError.stack = lines.join('\n')
+    throw outerError
+  }
+
+  // 长栈追踪：找到内层栈与外层栈的交界点，替换为外层栈
+  const lines: string[] = reason.stack.split('\n')
+  let index = lines.indexOf(innerLines[2])  // 内层栈的起始帧
+  if (index === -1) throw reason
+
+  index -= info.offset
+  while (index > 0) {
+    if (!lines[index - 1].endsWith(' (<anonymous>)')) break
+    index -= 1
+  }
+  lines.splice(index, Infinity, ...getOuterStack())  // 用外层栈替换内层栈
+  reason.stack = lines.join('\n')
+  throw reason
+}
 ```
 
-### Cache 位置追踪
-
-`generate()` 通过 `prev_pos` 参数控制 Cache 的写入位置：
-
-```
-Prefill:  prev_pos=0,           cur_pos=N     → Cache 写入 [0, N)
-Decode 1: prev_pos=N,           cur_pos=N+1   → Cache 写入 [N, N+1)
-Decode 2: prev_pos=N+1,         cur_pos=N+2   → Cache 写入 [N+1, N+2)
-...
-```
-
-**关键**：`model.forward(tokens[:, prev_pos:cur_pos], prev_pos)` 每次只传入**新增的 token**和**起始位置**，模型内部知道要写入 Cache 的哪个位置，以及从哪里开始读取。
-
-### Transformer 前向传播中的 Cache 传递
-
-```python
-class Transformer(nn.Module):
-    def forward(self, tokens, prev_pos):
-        bsz, seqlen = tokens.shape
-        
-        # 1. 词嵌入
-        h = self.embed(tokens)
-        
-        # 2. 逐层前向
-        for layer in self.layers:
-            h = layer(h, prev_pos, freqs_cis, mask)
-        
-        # 3. 最终 Norm + LM Head
-        h = self.norm(h)
-        logits = self.head(h)
-        
-        # 4. 只返回最后一个 token 的 logits
-        return logits
-```
-
-> 🔑 **`logits` 的返回方式**：`Transformer.forward` 返回完整的 `logits` 张量（形状 `(batch, seqlen, vocab_size)`），但 `generate()` 中实际只用了最后一个位置的预测——因为 `sample(logits, temperature)` 和 `argmax(dim=-1)` 是在最后一维（vocab 维度）上操作，而传入的 `logits` 在 Decode 时只有一个 token 的输出。Prefill 阶段虽然计算了所有位置的 logits，但只有最后一个位置被采样使用。
-
----
-
-## 采样策略
-
-### 温度采样实现
-
-```python
-def sample(logits, temperature: float = 1.0):
-    logits = logits / max(temperature, 1e-5)    # 温度缩放
-    probs = torch.softmax(logits, dim=-1)       # 转概率
-    # Gumbel-Max 采样：等价于从 categorical 分布采样
-    return probs.div_(
-        torch.empty_like(probs).exponential_(1)
-    ).argmax(dim=-1)
-```
-
-这 4 行代码用了一个**极其精巧的采样技巧**：
-
-### Gumbel-Max 采样
-
-传统采样是 `torch.multinomial(probs, 1)`，但这里用的是 **Gumbel-Max 技巧**：
-
-$$
-\text{token} = \arg\max_i \left( \frac{p_i}{g_i} \right), \quad g_i \sim \text{Exp}(1)
-$$
-
-**数学等价性**：`argmax(probs / Exp(1))` 与 `Categorical(probs).sample()` 在分布上完全等价，但实现上更高效：
-
-| 方法 | 实现 | 优势 | 劣势 |
-|------|------|------|------|
-| `torch.multinomial` | 在 GPU 上需要同步 | 直观 | 多次内核启动 |
-| Gumbel-Max | `exponential_` + `div_` + `argmax` | 纯元素级操作，单次内核 | 不直观 |
-
-> 💡 **`div_` 的下划线**：原地操作（in-place），避免分配中间张量。在推理场景下每一微秒的节省都有意义。
-
-### 温度参数的行为
-
-| `temperature` | 行为 | 应用场景 |
-|---------------|------|----------|
-| `0` | `argmax`（贪心解码） | 确定性输出、代码生成 |
-| `0.2`（默认） | 低温度，分布更尖锐 | 大多数推理任务 |
-| `1.0` | 原始分布 | 创意写作 |
-| `> 1.0` | 高温度，分布更平坦 | 头脑风暴、数据增强 |
-
----
-
-## 交互模式与批量模式
-
-### 交互式对话
-
-```python
-    if interactive:
-        messages = []
-        while True:
-            # 多卡时只有 rank 0 读输入，再广播给其他 rank
-            if world_size == 1:
-                prompt = input(">>> ")
-            elif rank == 0:
-                prompt = input(">>> ")
-                objects = [prompt]
-                dist.broadcast_object_list(objects, 0)
-            else:
-                objects = [None]
-                dist.broadcast_object_list(objects, 0)
-                prompt = objects[0]
-            
-            if prompt == "/exit":
-                break
-            elif prompt == "/clear":
-                messages.clear()
-                continue
-            
-            messages.append({"role": "user", "content": prompt})
-            prompt_tokens = tokenizer.apply_chat_template(
-                messages, add_generation_prompt=True
-            )
-            
-            completion_tokens = generate(
-                model, [prompt_tokens], max_new_tokens, 
-                tokenizer.eos_token_id, temperature
-            )
-            completion = tokenizer.decode(
-                completion_tokens[0], skip_special_tokens=True
-            )
-            print(completion)
-            messages.append({"role": "assistant", "content": completion})
-```
-
-**多卡输入广播**：这是一个容易被忽略的细节——多卡推理时，用户输入只在 rank 0 可用（因为 `print` 被静默了），必须通过 `dist.broadcast_object_list` 广播给所有 rank，否则各 rank 的输入不一致会导致输出错乱。
-
-**`/clear` 命令**：清空 `messages` 列表，但**不会清空 KV Cache**——因为每次 `generate()` 调用是独立的，`prev_pos` 从 0 开始。这意味着多轮对话的上下文是通过 `messages` 列表重新拼接 prompt 实现的，而非利用 KV Cache 的持久化。
-
-### 批量推理
-
-```python
-    else:
-        with open(input_file) as f:
-            prompts = [line.strip() for line in f.readlines()]
-        
-        assert len(prompts) <= model.max_batch_size  # 受限于 KV Cache 预分配大小
-        
-        prompt_tokens = [
-            tokenizer.apply_chat_template(
-                [{"role": "user", "content": prompt}], 
-                add_generation_prompt=True
-            ) 
-            for prompt in prompts
-        ]
-        
-        completion_tokens = generate(
-            model, prompt_tokens, max_new_tokens, 
-            tokenizer.eos_token_id, temperature
-        )
-        
-        completions = tokenizer.batch_decode(
-            completion_tokens, skip_special_tokens=True
-        )
-```
-
-批量推理的 `max_batch_size` 受限于 KV Cache 预分配的大小：
-
-```python
-# MLA 中的 cache 预分配
-self.register_buffer("kv_cache", torch.zeros(
-    max_batch_size,    # ← 这里限制了批量大小
-    max_seq_len, 
-    kv_lora_rank
-))
-```
-
-> ⚠️ **left-padding 对齐**：`generate()` 用 `-1` 填充短 prompt 对齐到 `total_len`，但 `model.forward()` 传入的是 `tokens[:, prev_pos:cur_pos]`——在 batch 内不同 prompt 长度不一致时，`prompt_mask` 确保已完成的 prompt 不会被覆盖。但这里有一个潜在问题：**短 prompt 会等待长 prompt 完成**，导致无效计算。生产级推理引擎通常用 continuous batching 解决此问题。
-
----
-
-## Mask 机制：因果注意力与位置感知
-
-### Mask 的构建
-
-```python
-class Transformer(nn.Module):
-    def forward(self, tokens, prev_pos):
-        bsz, seqlen = tokens.shape
-        src_len = prev_pos + seqlen
-        
-        # 构建因果 mask
-        if src_len > 1:
-            mask = torch.zeros(
-                (1, 1, seqlen, src_len), 
-                dtype=torch.bool, device="cuda"
-            )
-            # 当前位置只能看到之前的位置（含自身）
-            mask[:, :, :, :prev_pos] = True    # 已缓存的部分全部可见
-            for i in range(seqlen):
-                mask[:, :, i, prev_pos + i + 1:] = False  # 未来位置不可见
-        else:
-            mask = None  # 单 token decode 时无需 mask
-        
-        # ... 使用 mask 进行注意力计算 ...
-```
-
-### 不同阶段的 Mask 形状
-
-| 阶段 | `seqlen` | `src_len` | Mask 形状 | 含义 |
-|------|----------|-----------|-----------|------|
-| Prefill | N | N | `(1, 1, N, N)` | 因果三角矩阵 |
-| Decode | 1 | N+1 | `None` | 单 token 无需 mask |
-
-> 💡 **Decode 时 mask=None 的原因**：Decode 只输入 1 个 token，它与已缓存的所有 token 做注意力，不存在"未来"位置需要屏蔽。
-
----
-
-## 分布式推理的通信模式
-
-### 通信操作清单
-
-| 通信操作 | 位置 | 频率 | 作用 |
-|----------|------|------|------|
-| `dist.init_process_group` | 初始化 | 1 次 | 建立 NCCL 通信 |
-| `dist.broadcast_object_list` | 交互模式输入 | 每轮对话 | 同步用户输入 |
-| `dist.all_reduce` | RowParallelLinear | 每层 2 次 | 汇总并行计算结果 |
-| `dist.all_reduce` | ParallelEmbedding | 1 次 | 汇总词嵌入 |
-
-### 通信开销估算
-
-以 61 层 Transformer、16 卡并行为例：
-
-```
-每层 all_reduce 次数：
-  - MLA: wo (RowParallel) → 1 次
-  - MLP/MoE: w2 (RowParallel) → 1 次（稠密层）或每个激活专家 1 次
-  共约 2 次/层
-
-61 层 × 2 次/层 = 122 次 all_reduce / token
-```
-
-**每次 all_reduce 的数据量**：`batch_size × seq_len × dim`（BF16），对于 batch_size=8、seq_len=1、dim=7168，约 112KB。在 NVLink 互联下延迟约 5-10μs，总计约 0.6-1.2ms/token 的通信开销。
+> 💡 **长栈追踪原理**：`composeError` 在 effect 执行时创建一个"标记 Error"（`info.error`），其堆栈包含外层调用帧。当 effect 内部抛出异步错误时，`handleError` 在错误堆栈中找到标记 Error 的帧位置，将该位置之后的所有帧替换为外层调用栈——从而将内层错误和外层调用上下文拼接成一条完整的栈追踪。
 
 ---
 
 ## 性能优化要点
 
-### 1. `@torch.inference_mode()`
+### 1. DisposableList 的 O(1) 删除
 
-```python
-@torch.inference_mode()
-def generate(...):
+```ts
+push(value: T) {
+  const sn = ++this.sn
+  this.map.set(sn, value)
+  this.weak.set(value, sn)  // WeakMap 反向索引
+  return () => this.map.delete(sn)  // O(1) 删除
+}
 ```
 
-比 `@torch.no_grad()` 更激进地禁用 autograd 上下文，减少约 10-15% 的开销。
+Map + WeakMap 双索引使得按值删除的时间复杂度为 O(1)，而非线性的 `indexOf + splice`。在插件频繁注册/注销副作用的场景下，这显著降低了清理开销。
 
-### 2. 预分配 KV Cache
+### 2. epoch 字符串比较
 
-```python
-self.register_buffer("kv_cache", torch.zeros(
-    max_batch_size, max_seq_len, kv_lora_rank
-), persistent=False)
+依赖状态变更检测使用字符串比较而非深度遍历：
+
+```ts
+// 只需比较字符串——无需遍历所有依赖
+if (epoch === oldEpoch) return
 ```
 
-- **预分配**：启动时一次性分配，避免推理中动态分配
-- **`persistent=False`**：不写入 state_dict，避免 `load_model` 时冲突
+epoch 是所有依赖 Fiber uid 的拼接字符串，一次比较即可判断依赖是否变更。
 
-### 3. `@triton.autotune` 自动调优
+### 3. Traceable 代理懒创建
 
-```python
-@triton.autotune(configs=fp8_gemm_configs, key=['N', 'K'])
-@triton.jit
-def fp8_gemm_kernel(...):
+```ts
+function createTraceable(ctx: Context, value: any, tracker: Tracker) {
+  const proxy = new Proxy(value, {
+    get: (target, prop, receiver) => {
+      // 只有在访问属性时才创建嵌套 Traceable
+      const innerTracker = innerValue?.[symbols.tracker]
+      if (innerTracker) {
+        return createTraceable(ctx, innerValue, innerTracker)  // 懒创建
+      }
+      // ...
+    },
+  })
+  return proxy
+}
 ```
 
-首次调用时自动搜索最优分块配置，结果按 `['N', 'K']` 缓存——相同形状的矩阵复用之前的最优配置。这就是为什么 `main()` 中要做一次预热生成。
+嵌套 Traceable 只在属性被访问时才创建，避免不必要的代理开销。
 
-### 4. FP8 减半访存
+### 4. Logger 缓冲区
 
-| 精度 | 权重字节/元素 | 671B 模型显存 | Decode 瓶颈 |
-|------|-------------|-------------|-------------|
-| BF16 | 2 | ~1.3TB | 访存受限 |
-| FP8 | 1 | ~670GB | 访存减半 |
+```ts
+bufferSize = 1000
+buffer: Message[] = []
 
-> 🔑 **FP8 对 Decode 的意义**：Decode 是访存密集型，权重从 HBM 加载是瓶颈。FP8 将权重体积减半，等效于访存带宽翻倍，对 Decode 吞吐有直接提升。
+// 默认 exporter 只写入缓冲区，不阻塞
+export: (message) => {
+  self.buffer.push(message)
+  if (self.buffer.length > self.bufferSize) {
+    self.buffer = self.buffer.slice(-self.bufferSize)  // 环形截断
+  }
+}
+```
+
+默认 exporter 只写入内存缓冲区，不产生 I/O。只有当用户注册了控制台 exporter（`@deepseek-ai/cordis-plugin-logger-console`）时才有实际输出。
 
 ---
 
-## 与生产级推理引擎的对比
+## 与其他框架运行时的对比
 
-| 特性 | DeepSeek Harness | vLLM | SGLang | TensorRT-LLM |
-|------|-----------------|------|--------|--------------|
-| 定位 | 参考实现 | 高吞吐服务化 | 高吞吐 + 复杂调度 | 极致延迟 |
-| Continuous Batching | ❌ | ✅ | ✅ | ✅ |
-| PagedAttention | ❌ | ✅ | ✅ | ❌ |
-| Prefix Cache | ❌ | ✅ | ✅ | ✅ |
-| 多轮对话 KV 复用 | ❌（重算） | ✅ | ✅ | ✅ |
-| FP8 支持 | ✅（Triton） | ✅ | ✅ | ✅（INT4/8） |
-| MLA 支持 | ✅（原生） | ✅ | ✅ | ✅ |
-| 代码量 | ~1300 行 | 数万行 | 数万行 | 数万行 |
+| 特性 | Cordis | Node.js EventEmitter | Koa | NestJS Events |
+|------|--------|----------------------|-----|---------------|
+| 派发模式 | 5 种（emit/parallel/serial/bail/waterfall） | 1 种（emit） | 1 种（洋葱模型） | 2 种（sync/async） |
+| Context 过滤 | Symbol-based 作用域 | 无 | 无 | 无 |
+| 自动清理 | Fiber effect 绑定 | 手动 | 无 | 手动 |
+| 生命周期状态机 | 6 态 FiberState | 无 | 无 | 简单 |
+| 依赖驱动 reload | epoch 机制 | 无 | 无 | 无 |
+| 长栈追踪 | composeError | 无 | 无 | 无 |
+| 结构化日志 | Logger + Exporter | console | 无 | LoggerService |
 
-DeepSeek Harness 是一个**参考实现**（reference implementation），它展示了"如何正确推理 DeepSeek-V3"，但缺少生产级特性（continuous batching、prefix cache 等）。生产部署建议使用 SGLang 或 vLLM。
+Cordis 的独特之处在于 **epoch 机制驱动的依赖变更自动 reload**——当依赖服务变更时，Fiber 自动卸载并重新加载，无需手动重启。配合 `internal/update` waterfall，HMR 插件可以实现真正的热模块替换。
 
 ---
 
 ## 实践建议
 
-![推理引擎选型决策](/ai-study/harness/inference-guide.svg)
+![Cordis 插件开发指南](/ai-study/harness/cordis-plugin-guide.svg)
 
 | 场景 | 推荐方案 | 原因 |
 |------|----------|------|
-| 学习 MLA/MoE 原理 | DeepSeek Harness | 代码最简洁，易于逐行理解 |
-| 快速验证模型正确性 | DeepSeek Harness | 最小依赖，直接 `torchrun` 启动 |
-| 生产服务化部署 | SGLang | 支持 continuous batching + prefix cache |
-| 高并发 API 服务 | vLLM | 生态成熟，PagedAttention 支持高并发 |
-| 极致延迟优化 | TensorRT-LLM | NVIDIA 官方优化，支持 INT4/8 量化 |
-| 非 NVIDIA 硬件 | LMDeploy | 支持 AMD GPU / Ascend NPU |
+| 注册事件监听 | `ctx.on()` | 自动随 Fiber 卸载清理，无需手动 `off()` |
+| 注册定时器 | `ctx.effect(() => { const t = setTimeout(...); return () => clearTimeout(t) })` | effect 绑定确保定时器不会泄漏 |
+| 注册服务 | `extends Service` 或 `ctx.provide()` | Service 基类自动注册、Callable 支持 |
+| 声明依赖 | `inject: ['serviceA', 'serviceB']` | 依赖就绪前 callback 不会执行 |
+| 配置拦截 | `ctx.intercept('logger', { level: 3 })` | 父级为子插件预设日志级别 |
+| 服务隔离 | `ctx.isolate('database')` | 同名服务多实例互不干扰 |
+| 热更新 | `fiber.update(newConfig)` | 走 `internal/update` waterfall，支持 HMR |
+| 异步副作用 | `ctx.effect(function* () { yield disposer1; yield disposer2 })` | 生成器 effect 支持多个 disposer |
+| 事件串行拦截 | `ctx.serial('event', ...)` | 适合需要按顺序处理的链式逻辑 |
+| 事件瀑布流 | `ctx.waterfall('event', data, next)` | 适合中间件模式的请求处理 |
 
 ---
 
 ## 总结
 
-本文从运行时视角拆解了 DeepSeek-V3 Harness 推理引擎的技术实现。核心要点回顾：
+本文从运行时视角拆解了 Cordis 框架的核心机制。核心要点回顾：
 
-1. **初始化阶段**：`torchrun` 注入环境变量 → NCCL 进程组 → GPU 上构建模型 → 预热触发 Kernel 编译 → 按分片加载权重
-2. **推理循环**：统一的 `for` 循环覆盖 Prefill 和 Decode，通过 `prev_pos` 追踪 KV Cache 位置
-3. **KV Cache 管理**：Cache 预分配 + 增量写入，absorb 模式下压缩近 57×，对 `generate()` 完全透明
-4. **采样策略**：Gumbel-Max 技巧实现高效采样，温度参数控制输出多样性
-5. **分布式通信**：RowParallel 的 all_reduce 是主要通信开销，交互模式需广播用户输入
+1. **Fiber 状态机**：六态生命周期（PENDING → LOADING → ACTIVE → UNLOADING → DISPOSED），通过 epoch 机制驱动状态转换
+2. **epoch 依赖追踪**：依赖服务的 Fiber uid 拼接为 epoch 字符串，一次比较即可检测变更，触发自动 reload
+3. **effect 副作用管理**：支持函数/Promise/生成器/异步生成器四种形态，幂等 dispose，逆序清理，setup 竞态处理
+4. **五种事件派发**：emit（同步不管）、parallel（并发等待）、serial（串行 await）、bail（同步串行拦截）、waterfall（瀑布流包装）
+5. **Context 过滤**：事件分发按 `[Context.filter]` 限定作用域，不同隔离作用域的插件互不干扰
+6. **内部事件扩展点**：9 个 internal/* 事件构成框架扩展点，waterfall 模式允许拦截默认行为
+7. **Logger 体系**：Callable Service + 多 Exporter + printf 格式化 + 名称自动着色
+8. **composeError 长栈追踪**：标记 Error + 栈帧拼接，解决 async/await 栈追踪断裂
 
-> 🎯 **一句话总结**：DeepSeek Harness 推理引擎用 180 行代码展示了 671B MoE 模型推理的"最小可行实现"——它不追求生产级特性，但把 Prefill/Decode 两阶段、KV Cache 生命周期、分布式通信和采样策略的每一个细节都做到了正确且高效，是理解大模型推理引擎的最佳学习材料。
+> 🎯 **一句话总结**：Cordis 用 epoch 字符串比较实现 O(1) 依赖变更检测、用 inertia 链式驱动实现状态机最终一致性、用 DisposableList 双索引实现 O(1) 副作用清理、用 composeError 实现异步长栈追踪——四个机制协同，构建了一个声明式依赖注入、自动生命周期管理、开发体验友好的插件运行时。
 
-结合上一篇框架分析，我们已经完整拆解了 DeepSeek-V3 inference 框架的"静态架构"和"动态运行时"。建议读者对照源码阅读，重点关注 `ModelArgs` 的配置驱动设计、`MLA` 的 absorb 模式实现、以及 `generate()` 的 `prev_pos` 位置追踪机制——这三处是理解整个框架的关键。
+结合上一篇架构分析，我们已经完整拆解了 Cordis 框架的"静态架构"和"动态运行时"。建议读者对照源码阅读，重点关注 `Fiber._setEpoch` 的状态转换逻辑、`effect()` 的 setup 竞态处理、以及 `dispatch()` 的 Context 过滤机制——这三处是理解整个运行时的关键。

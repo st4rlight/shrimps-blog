@@ -1,0 +1,139 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 560" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <linearGradient id="indigoG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#818cf8;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#6366f1;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="blueG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="emeraldG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#34d399;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="amberG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="violetG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#a78bfa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.12"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto" preserveAspectRatio="xMidYMid meet">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/>
+    </marker>
+    <marker id="arrowY" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto" preserveAspectRatio="xMidYMid meet">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#f59e0b"/>
+    </marker>
+    <marker id="arrowG" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto" preserveAspectRatio="xMidYMid meet">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#10b981"/>
+    </marker>
+  </defs>
+
+  <!-- ===== Background ===== -->
+  <rect width="820" height="560" rx="12" fill="#f8fafc"/>
+
+  <!-- ===== Title ===== -->
+  <text x="410" y="32" text-anchor="middle" font-size="19" font-weight="700" fill="#1e293b">Cordis 插件开发实践指南</text>
+  <text x="410" y="52" text-anchor="middle" font-size="12" fill="#94a3b8">按场景选择 API · effect 绑定自动清理 · 声明式依赖注入</text>
+
+  <!-- ===== Start node ===== -->
+  <g filter="url(#shadow)">
+    <rect x="300" y="72" width="220" height="36" rx="18" fill="url(#indigoG)"/>
+  </g>
+  <text x="410" y="95" text-anchor="middle" font-size="13" font-weight="700" fill="white">开始 Cordis 插件开发</text>
+
+  <!-- ===== Decision 1: What are you building? ===== -->
+  <g filter="url(#shadow)">
+    <rect x="295" y="130" width="230" height="44" rx="6" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+  </g>
+  <text x="410" y="149" text-anchor="middle" font-size="12" font-weight="600" fill="#92400e">你要构建什么？</text>
+  <text x="410" y="165" text-anchor="middle" font-size="10" fill="#64748b">场景决策</text>
+
+  <!-- Arrow: Start → Decision1 -->
+  <line x1="410" y1="108" x2="410" y2="126" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- ===== Three branches from Decision 1 ===== -->
+
+  <!-- Branch A: Register event listener (left) -->
+  <g filter="url(#shadow)">
+    <rect x="30" y="200" width="235" height="90" rx="10" fill="#dbeafe" stroke="#3b82f6" stroke-width="2"/>
+  </g>
+  <text x="147" y="222" text-anchor="middle" font-size="12" font-weight="700" fill="#1d4ed8">注册事件监听</text>
+  <text x="147" y="239" text-anchor="middle" font-size="10" fill="#64748b">ctx.on(name, callback)</text>
+  <text x="45" y="258" font-size="9" fill="#374151">✓ 自动随 Fiber 卸载清理</text>
+  <text x="45" y="272" font-size="9" fill="#374151">✓ reflect.bind 绑定注册时 ctx</text>
+  <text x="45" y="286" font-size="9" fill="#374151">✓ 无需手动 off()</text>
+
+  <!-- Branch B: Register service (center) -->
+  <g filter="url(#shadow)">
+    <rect x="292" y="200" width="235" height="90" rx="10" fill="#d1fae5" stroke="#10b981" stroke-width="2"/>
+  </g>
+  <text x="409" y="222" text-anchor="middle" font-size="12" font-weight="700" fill="#047857">注册服务</text>
+  <text x="409" y="239" text-anchor="middle" font-size="10" fill="#64748b">extends Service / ctx.provide()</text>
+  <text x="307" y="258" font-size="9" fill="#374151">✓ Service 基类自动注册</text>
+  <text x="307" y="272" font-size="9" fill="#374151">✓ Callable 可调用服务</text>
+  <text x="307" y="286" font-size="9" fill="#374151">✓ effect 绑定自动注销</text>
+
+  <!-- Branch C: Manage side effects (right) -->
+  <g filter="url(#shadow)">
+    <rect x="555" y="200" width="235" height="90" rx="10" fill="#ede9fe" stroke="#8b5cf6" stroke-width="2"/>
+  </g>
+  <text x="672" y="222" text-anchor="middle" font-size="12" font-weight="700" fill="#5b21b6">管理副作用</text>
+  <text x="672" y="239" text-anchor="middle" font-size="10" fill="#64748b">ctx.effect(() => disposer)</text>
+  <text x="570" y="258" font-size="9" fill="#374151">✓ 定时器/订阅自动清理</text>
+  <text x="570" y="272" font-size="9" fill="#374151">✓ 生成器 yield 多 disposer</text>
+  <text x="570" y="286" font-size="9" fill="#374151">✓ 逆序清理保证依赖序</text>
+
+  <!-- Arrows: Decision1 → three branches -->
+  <path d="M 330 174 L 147 174 L 147 196" stroke="#3b82f6" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
+  <path d="M 410 174 L 410 196" stroke="#10b981" stroke-width="1.5" fill="none" marker-end="url(#arrowG)"/>
+  <path d="M 490 174 L 672 174 L 672 196" stroke="#8b5cf6" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
+
+  <!-- ===== Decision 2: Need dependency injection? ===== -->
+  <g filter="url(#shadow)">
+    <rect x="295" y="320" width="230" height="44" rx="6" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+  </g>
+  <text x="410" y="339" text-anchor="middle" font-size="12" font-weight="600" fill="#92400e">需要声明依赖？</text>
+  <text x="410" y="355" text-anchor="middle" font-size="10" fill="#64748b">inject 机制</text>
+
+  <!-- Arrows: branches → Decision2 -->
+  <path d="M 147 290 L 147 310 L 330 310 L 330 320" stroke="#94a3b8" stroke-width="1" fill="none" marker-end="url(#arrow)"/>
+  <line x1="410" y1="290" x2="410" y2="316" stroke="#94a3b8" stroke-width="1" marker-end="url(#arrow)"/>
+  <path d="M 672 290 L 672 310 L 490 310 L 490 320" stroke="#94a3b8" stroke-width="1" fill="none" marker-end="url(#arrow)"/>
+
+  <!-- ===== Yes: inject declaration ===== -->
+  <g filter="url(#shadow)">
+    <rect x="30" y="395" width="235" height="75" rx="10" fill="#d1fae5" stroke="#10b981" stroke-width="2"/>
+  </g>
+  <text x="147" y="417" text-anchor="middle" font-size="12" font-weight="700" fill="#047857">是 → 声明 inject</text>
+  <text x="45" y="436" font-size="9" fill="#374151">inject: ['database', 'logger']</text>
+  <text x="45" y="450" font-size="9" fill="#374151">依赖就绪前 callback 不执行</text>
+  <text x="45" y="464" font-size="9" fill="#374151">依赖变更自动 reload</text>
+
+  <!-- Arrow: Decision2 → Yes -->
+  <path d="M 330 364 L 147 364 L 147 391" stroke="#10b981" stroke-width="1.5" fill="none" marker-end="url(#arrowG)"/>
+  <text x="230" y="358" text-anchor="middle" font-size="9" fill="#10b981" font-weight="600">是</text>
+
+  <!-- ===== No: direct plugin call ===== -->
+  <g filter="url(#shadow)">
+    <rect x="555" y="395" width="235" height="75" rx="10" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="2"/>
+  </g>
+  <text x="672" y="417" text-anchor="middle" font-size="12" font-weight="700" fill="#475569">否 → 直接 plugin()</text>
+  <text x="570" y="436" font-size="9" fill="#374151">ctx.plugin(callback, config)</text>
+  <text x="570" y="450" font-size="9" fill="#374151">无依赖声明，立即执行</text>
+  <text x="570" y="464" font-size="9" fill="#374151">适合独立工具插件</text>
+
+  <!-- Arrow: Decision2 → No -->
+  <path d="M 490 364 L 672 364 L 672 391" stroke="#94a3b8" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
+  <text x="585" y="358" text-anchor="middle" font-size="9" fill="#64748b" font-weight="600">否</text>
+
+  <!-- ===== Bottom: advanced patterns ===== -->
+  <rect x="30" y="490" width="760" height="50" rx="10" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="50" y="510" font-size="11" font-weight="700" fill="#475569">进阶模式</text>
+  <text x="50" y="527" font-size="10" fill="#64748b">ctx.isolate('db') 多实例隔离  ·  ctx.intercept('logger', {level:3}) 配置拦截  ·  ctx.waterfall() 中间件模式  ·  fiber.update() 热更新  ·  ctx.inject() 快捷依赖</text>
+</svg>

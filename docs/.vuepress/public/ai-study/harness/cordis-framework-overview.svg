@@ -1,0 +1,129 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 560" font-family="'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <linearGradient id="blueG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="violetG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#a78bfa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="emeraldG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#34d399;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#10b981;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="amberG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.12"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto" preserveAspectRatio="xMidYMid meet">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/>
+    </marker>
+  </defs>
+
+  <!-- ===== Background ===== -->
+  <rect width="820" height="560" rx="12" fill="#f8fafc"/>
+
+  <!-- ===== Title ===== -->
+  <text x="410" y="32" text-anchor="middle" font-size="19" font-weight="700" fill="#1e293b">Cordis 插件式框架核心架构总览</text>
+  <text x="410" y="52" text-anchor="middle" font-size="12" fill="#94a3b8">9 个源文件 · ~2700 行 TypeScript · Context Proxy + Registry + Reflect 三层架构</text>
+
+  <!-- ===== Layer 1: Context Proxy (入口层) ===== -->
+  <g filter="url(#shadow)">
+    <rect x="30" y="72" width="760" height="80" rx="10" fill="#ffffff" stroke="#3b82f6" stroke-width="2"/>
+  </g>
+  <rect x="30" y="72" width="760" height="32" rx="10" fill="url(#blueG)"/>
+  <rect x="30" y="88" width="760" height="16" fill="url(#blueG)"/>
+  <text x="50" y="93" font-size="13" font-weight="700" fill="white">Context Proxy — 入口代理层</text>
+  <text x="50" y="123" font-size="11" fill="#475569">context.ts (146 行)</text>
+  <text x="50" y="140" font-size="11" fill="#64748b">new Context() 返回 Proxy 代理 · extend / isolate / intercept 三种作用域 · 跨域 Symbol 判断</text>
+
+  <!-- ===== Layer 2: Three Core Services (核心服务层) ===== -->
+  <!-- Registry -->
+  <g filter="url(#shadow)">
+    <rect x="30" y="172" width="240" height="95" rx="10" fill="#ede9fe" stroke="#8b5cf6" stroke-width="2"/>
+  </g>
+  <text x="50" y="194" font-size="12" font-weight="700" fill="#5b21b6">Registry 注册表</text>
+  <text x="50" y="211" font-size="10" fill="#64748b">registry.ts · 337 行</text>
+  <text x="50" y="228" font-size="10" fill="#374151">· 函数/类/对象三种插件形态</text>
+  <text x="50" y="243" font-size="10" fill="#374151">· resolve() 归一化为 callback</text>
+  <text x="50" y="258" font-size="10" fill="#374151">· inject 声明式依赖注入</text>
+
+  <!-- Reflect -->
+  <g filter="url(#shadow)">
+    <rect x="290" y="172" width="240" height="95" rx="10" fill="#dbeafe" stroke="#3b82f6" stroke-width="2"/>
+  </g>
+  <text x="310" y="194" font-size="12" font-weight="700" fill="#1d4ed8">Reflect 反射层</text>
+  <text x="310" y="211" font-size="10" fill="#64748b">reflect.ts · 418 行</text>
+  <text x="310" y="228" font-size="10" fill="#374151">· Proxy handler get trap</text>
+  <text x="310" y="243" font-size="10" fill="#374151">· provide() 服务注册为 effect</text>
+  <text x="310" y="258" font-size="10" fill="#374151">· mixin() 方法混入到 ctx</text>
+
+  <!-- Service -->
+  <g filter="url(#shadow)">
+    <rect x="550" y="172" width="240" height="95" rx="10" fill="#d1fae5" stroke="#10b981" stroke-width="2"/>
+  </g>
+  <text x="570" y="194" font-size="12" font-weight="700" fill="#047857">Service 服务基类</text>
+  <text x="570" y="211" font-size="10" fill="#64748b">service.ts · 115 行</text>
+  <text x="570" y="228" font-size="10" fill="#374151">· 自动注册 super(ctx, name)</text>
+  <text x="570" y="243" font-size="10" fill="#374151">· Callable 可调用服务</text>
+  <text x="570" y="258" font-size="10" fill="#374151">· resolveConfig 拦截配置</text>
+
+  <!-- ===== Layer 3: Runtime (运行时层) ===== -->
+  <g filter="url(#shadow)">
+    <rect x="30" y="287" width="370" height="95" rx="10" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+  </g>
+  <text x="50" y="309" font-size="12" font-weight="700" fill="#92400e">Fiber 生命周期</text>
+  <text x="50" y="326" font-size="10" fill="#64748b">fiber.ts · 754 行 · 六态状态机</text>
+  <text x="50" y="343" font-size="10" fill="#374151">· PENDING → LOADING → ACTIVE → DISPOSED</text>
+  <text x="50" y="358" font-size="10" fill="#374151">· epoch 字符串指纹 · 自动 reload</text>
+  <text x="50" y="373" font-size="10" fill="#374151">· effect() 四种副作用形态</text>
+
+  <!-- Events -->
+  <g filter="url(#shadow)">
+    <rect x="420" y="287" width="370" height="95" rx="10" fill="#fce7f3" stroke="#ec4899" stroke-width="2"/>
+  </g>
+  <text x="440" y="309" font-size="12" font-weight="700" fill="#9d174d">Events 事件总线</text>
+  <text x="440" y="326" font-size="10" fill="#64748b">events.ts · 352 行 · 五种派发模式</text>
+  <text x="440" y="343" font-size="10" fill="#374151">· emit / parallel / serial / bail / waterfall</text>
+  <text x="440" y="358" font-size="10" fill="#374151">· Context 过滤 · 作用域隔离</text>
+  <text x="440" y="373" font-size="10" fill="#374151">· 9 个 internal/* 内部事件扩展点</text>
+
+  <!-- ===== Layer 4: Infrastructure (基础设施层) ===== -->
+  <g filter="url(#shadow)">
+    <rect x="30" y="402" width="240" height="75" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+  </g>
+  <text x="50" y="424" font-size="11" font-weight="600" fill="#475569">Logger 日志体系</text>
+  <text x="50" y="441" font-size="10" fill="#64748b">logger.ts · 271 行</text>
+  <text x="50" y="458" font-size="10" fill="#374151">Callable Service + 多 Exporter</text>
+  <text x="50" y="471" font-size="10" fill="#374151">printf 格式化 · 名称自动着色</text>
+
+  <g filter="url(#shadow)">
+    <rect x="290" y="402" width="240" height="75" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+  </g>
+  <text x="310" y="424" font-size="11" font-weight="600" fill="#475569">Utils 工具集</text>
+  <text x="310" y="441" font-size="10" fill="#64748b">utils.ts · 287 行</text>
+  <text x="310" y="458" font-size="10" fill="#374151">DisposableList O(1) 双索引</text>
+  <text x="310" y="471" font-size="10" fill="#374151">createTraceable · composeError</text>
+
+  <g filter="url(#shadow)">
+    <rect x="550" y="402" width="240" height="75" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+  </g>
+  <text x="570" y="424" font-size="11" font-weight="600" fill="#475569">Index 统一导出</text>
+  <text x="570" y="441" font-size="10" fill="#64748b">index.ts · 16 行</text>
+  <text x="570" y="458" font-size="10" fill="#374151">re-export 所有公共 API</text>
+  <text x="570" y="471" font-size="10" fill="#374151">declare module 类型扩展</text>
+
+  <!-- ===== Arrows: Layer connections ===== -->
+  <line x1="410" y1="152" x2="410" y2="168" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="410" y1="267" x2="410" y2="283" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="410" y1="382" x2="410" y2="398" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- ===== Bottom tip ===== -->
+  <rect x="160" y="500" width="500" height="28" rx="14" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1"/>
+  <text x="410" y="518" text-anchor="middle" font-size="11" fill="#15803d">💡 设计哲学：Proxy 透明服务解析 + Fiber 链作用域可见性 + Traceable 调用时上下文绑定</text>
+  <text x="410" y="542" text-anchor="middle" font-size="10" fill="#94a3b8">vendor/cordis/ · @deepseek-ai/cordis v4.0.5-alpha.1</text>
+</svg>
